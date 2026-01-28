@@ -4,17 +4,17 @@ import heroImage from "@/assets/hero-parent-child.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[85vh] md:min-h-[75vh] flex items-center">
+    <section className="relative min-h-[70vh] md:min-h-[65vh] lg:min-h-[60vh] flex items-center">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
-          className="w-full h-full object-cover object-left"
+          className="w-full h-full object-cover object-right"
         />
-        {/* Gradient overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent md:from-background/90 md:via-background/50" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+        {/* Gradient overlay for text readability - stronger on left for text */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent md:from-background/95 md:via-background/60 md:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/20" />
       </div>
 
       {/* Content */}
