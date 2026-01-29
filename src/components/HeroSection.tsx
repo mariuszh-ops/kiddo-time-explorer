@@ -4,13 +4,13 @@ import heroImage from "@/assets/hero-parent-child.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-[70vh] md:min-h-[65vh] lg:min-h-[60vh] flex items-center">
+    <section className="relative min-h-[85vh] md:min-h-[80vh] flex items-center">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
-          className="w-full h-full object-cover object-top"
+          className="w-full h-full object-cover object-[center_30%]"
         />
         {/* Subtle gradient overlay for text readability (keep photo natural) */}
         <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/20 to-transparent md:from-background/45 md:via-background/15 md:to-transparent" />
