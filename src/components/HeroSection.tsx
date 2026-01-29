@@ -10,11 +10,10 @@ const HeroSection = () => {
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
-          className="w-full h-full object-cover object-right"
+          className="w-full h-full object-cover object-top"
         />
-        {/* Gradient overlay for text readability - stronger on left for text */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/80 to-transparent md:from-background/95 md:via-background/60 md:to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-background/20" />
+        {/* Subtle gradient overlay for text readability - minimal to preserve image */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent md:from-background/70 md:via-background/30 md:to-transparent" />
       </div>
 
       {/* Content */}
