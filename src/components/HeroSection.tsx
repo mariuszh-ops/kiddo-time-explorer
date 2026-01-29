@@ -12,8 +12,8 @@ const HeroSection = () => {
           alt="Rodzic z dzieckiem odkrywają świat razem"
           className="w-full h-full object-cover object-top"
         />
-        {/* Subtle gradient overlay for text readability - minimal to preserve image */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-background/40 to-transparent md:from-background/70 md:via-background/30 md:to-transparent" />
+        {/* Subtle gradient overlay for text readability (keep photo natural) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/20 to-transparent md:from-background/45 md:via-background/15 md:to-transparent" />
       </div>
 
       {/* Content */}
