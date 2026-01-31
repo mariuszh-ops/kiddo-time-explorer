@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ActivityCardProps {
   id: number;
@@ -26,6 +26,8 @@ const ActivityCard = ({
   imageUrl,
   tags,
 }: ActivityCardProps) => {
+  const { isLoggedIn } = useAuth();
+
   return (
     <Link to={`/activity/${id}`}>
       <article className="group cursor-pointer transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-soft rounded-xl">
@@ -37,15 +39,17 @@ const ActivityCard = ({
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         
-        {/* Match percentage badge */}
-        <div className="absolute top-2 right-2">
-          <Badge 
-            variant="secondary" 
-            className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
-          >
-            {matchPercentage}% dopasowania
-          </Badge>
-        </div>
+        {/* Match percentage badge - only visible for logged-in users */}
+        {isLoggedIn && (
+          <div className="absolute top-2 right-2">
+            <Badge 
+              variant="secondary" 
+              className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
+            >
+              {matchPercentage}% dopasowania
+            </Badge>
+          </div>
+        )}
       </div>
 
       {/* Content */}
