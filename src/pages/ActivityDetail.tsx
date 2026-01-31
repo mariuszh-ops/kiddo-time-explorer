@@ -18,12 +18,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockActivities } from "@/data/activities";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -97,44 +98,65 @@ const ActivityDetail = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [wantToVisit, setWantToVisit] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const isMobile = useIsMobile();
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
+  
+  // Use saved activities context
+  const { 
+    isFavorite: checkIsFavorite, 
+    isWantToVisit: checkIsWantToVisit,
+    toggleFavorite,
+    toggleWantToVisit 
+  } = useSavedActivities();
 
-  const handleFavoriteClick = () => {
+  const activityId = Number(id);
+  const isFavorite = checkIsFavorite(activityId);
+  const wantToVisit = checkIsWantToVisit(activityId);
+
+  const handleFavoriteClick = async () => {
     if (!isLoggedIn) {
       setIsAuthModalOpen(true);
       return;
     }
-    const newState = !isFavorite;
-    setIsFavorite(newState);
     
-    // Subtle toast feedback
-    if (newState) {
-      toast.success("Dodano do ulubionych", {
-        duration: 2000,
-        icon: <Heart className="w-4 h-4 fill-current" />,
-      });
+    setIsProcessing(true);
+    try {
+      const newState = await toggleFavorite(activityId);
+      
+      // Subtle toast feedback
+      if (newState) {
+        toast.success("Dodano do ulubionych", {
+          duration: 2000,
+          icon: <Heart className="w-4 h-4 fill-current" />,
+        });
+      }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
-  const handleWantToVisitClick = () => {
+  const handleWantToVisitClick = async () => {
     if (!isLoggedIn) {
       setIsAuthModalOpen(true);
       return;
     }
-    const newState = !wantToVisit;
-    setWantToVisit(newState);
     
-    // Subtle toast feedback
-    if (newState) {
-      toast.success("Dodano do listy", {
-        duration: 2000,
-        icon: <Check className="w-4 h-4" />,
-      });
+    setIsProcessing(true);
+    try {
+      const newState = await toggleWantToVisit(activityId);
+      
+      // Subtle toast feedback
+      if (newState) {
+        toast.success("Dodano do listy", {
+          duration: 2000,
+          icon: <Check className="w-4 h-4" />,
+        });
+      }
+    } finally {
+      setIsProcessing(false);
     }
   };
 
