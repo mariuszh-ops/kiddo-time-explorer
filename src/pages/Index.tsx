@@ -1,14 +1,39 @@
+import { useRef, useState, useCallback } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
+import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 
 const Index = () => {
-  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
+  const listingRef = useRef<HTMLDivElement>(null);
+  const { detectCity, defaultCity } = useGeolocationCity();
+  const [initialCity, setInitialCity] = useState<string | undefined>(undefined);
+  
+  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters(initialCity);
 
   // Check if any filters are active
-  const hasActiveFilters = Object.values(filters).some(arr => arr.length > 0) || searchQuery.length > 0;
+  const hasActiveFilters = Object.values(filters).some(val => val !== undefined && val !== "") || searchQuery.length > 0;
+
+  const handleExplore = useCallback(async () => {
+    // Detect city from geolocation (or use default)
+    const city = await detectCity();
+    
+    // Update the city filter
+    setInitialCity(city);
+    updateFilter("city", city);
+    
+    // Scroll to the listing
+    if (listingRef.current) {
+      const headerHeight = 56; // Account for sticky header
+      const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({
+        top: elementPosition - headerHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [detectCity, updateFilter]);
 
   return (
     <main className="min-h-screen bg-background">
@@ -16,17 +41,19 @@ const Index = () => {
       <Header />
 
       {/* Hero section with full-width lifestyle image */}
-      <HeroSection />
+      <HeroSection onExplore={handleExplore} />
 
-      {/* Sticky filter bar */}
-      <FilterBar
-        filters={filters}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        filterCounts={filterCounts}
-        onUpdateFilter={updateFilter}
-        onClearAll={clearAllFilters}
-      />
+      {/* Sticky filter bar - this is the scroll target */}
+      <div ref={listingRef}>
+        <FilterBar
+          filters={filters}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          filterCounts={filterCounts}
+          onUpdateFilter={updateFilter}
+          onClearAll={clearAllFilters}
+        />
+      </div>
 
       {/* Activity cards grid */}
       <ActivityGrid 

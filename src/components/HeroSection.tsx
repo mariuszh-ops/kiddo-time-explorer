@@ -2,7 +2,11 @@ import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-parent-child.jpg";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onExplore: () => void;
+}
+
+const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
     <section className="relative min-h-[85vh] md:min-h-[80vh] flex items-center">
       {/* Background image */}
@@ -37,7 +41,12 @@ const HeroSection = () => {
             className="mt-8 md:mt-10 animate-fade-in"
             style={{ animationDelay: "0.3s", opacity: 0 }}
           >
-            <Button variant="hero" size="xl" className="w-full sm:w-auto">
+            <Button 
+              variant="hero" 
+              size="xl" 
+              className="w-full sm:w-auto"
+              onClick={onExplore}
+            >
               <MapPin className="w-5 h-5" />
               Sprawdź atrakcje w pobliżu
             </Button>
