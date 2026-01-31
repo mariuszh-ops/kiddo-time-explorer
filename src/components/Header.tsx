@@ -16,7 +16,7 @@ const Header = () => {
           <div className="w-8 h-8 md:w-9 md:h-9 rounded-lg bg-primary flex items-center justify-center shadow-sm group-hover:shadow-md transition-shadow">
             <MapPin className="w-4 h-4 md:w-5 md:h-5 text-primary-foreground" />
           </div>
-          <span className="font-semibold text-lg text-foreground">Razem</span>
+          <span className="font-semibold text-lg text-foreground">kidsmoment</span>
         </Link>
 
         {/* Navigation */}

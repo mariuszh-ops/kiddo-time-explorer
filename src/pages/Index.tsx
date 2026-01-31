@@ -40,7 +40,7 @@ const Index = () => {
         <div className="container">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              © 2026 Razem. Wszystkie prawa zastrzeżone.
+              © 2026 kidsmoment. Wszystkie prawa zastrzeżone.
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors">
