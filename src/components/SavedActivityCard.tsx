@@ -87,7 +87,7 @@ const SavedActivityCard = ({
   };
 
   return (
-    <article className="group relative transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl">
+    <article className="group relative transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl w-full min-w-0 overflow-hidden">
       {/* Remove button - top left corner */}
       <div className="absolute top-2 left-2 z-10">
         <AlertDialog>
@@ -213,7 +213,7 @@ const SavedActivityCard = ({
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors text-sm md:text-base break-words">
             {title}
           </h3>
 
@@ -222,7 +222,7 @@ const SavedActivityCard = ({
             {location}
           </p>
 
-          {/* Tags row */}
+          {/* Tags row - hidden on very small screens to prevent overflow */}
           <div className="flex items-center gap-1.5 flex-wrap">
             <Badge 
               variant="outline" 
