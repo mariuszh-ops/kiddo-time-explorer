@@ -4,16 +4,29 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ImageLightbox from "./ImageLightbox";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { getPlaceholderImage } from "@/data/placeholders";
 
 interface ImageGalleryProps {
   images: string[];
   activityTitle: string;
+  activityType?: string;
+  activityId?: number;
 }
 
-const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
+const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const isMobile = useIsMobile();
+  const fallbackImage = getPlaceholderImage(activityType, activityId);
+  
+  const getImageSrc = (image: string, index: number) => {
+    return failedImages.has(index) ? fallbackImage : image;
+  };
+
+  const handleImageError = (index: number) => {
+    setFailedImages(prev => new Set(prev).add(index));
+  };
   
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: true,
@@ -66,9 +79,10 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
           onClick={() => openLightbox(0)}
         >
           <img
-            src={images[0]}
+            src={getImageSrc(images[0], 0)}
             alt={activityTitle}
             className="w-full h-full object-cover object-top"
+            onError={() => handleImageError(0)}
           />
         </div>
         <ImageLightbox
@@ -98,10 +112,11 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
-                  src={image}
+                  src={getImageSrc(image, index)}
                   alt={`${activityTitle} - zdjęcie ${index + 1}`}
                   className="w-full h-full object-cover object-top"
                   draggable={false}
+                  onError={() => handleImageError(index)}
                 />
               </div>
             ))}
@@ -171,9 +186,10 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
               )}
             >
               <img
-                src={image}
+                src={getImageSrc(image, index)}
                 alt={`Miniatura ${index + 1}`}
                 className="w-full h-full object-cover"
+                onError={() => handleImageError(index)}
               />
             </button>
           ))}

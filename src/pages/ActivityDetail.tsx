@@ -238,6 +238,8 @@ const ActivityDetail = () => {
         <ImageGallery 
           images={activity.imageUrls || [activity.imageUrl]} 
           activityTitle={activity.title}
+          activityType={activity.type}
+          activityId={activity.id}
         />
         
         {/* Content overlay */}

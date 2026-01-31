@@ -123,6 +123,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   matchPercentage={activity.matchPercentage}
                   imageUrl={activity.imageUrl}
                   tags={activity.tags}
+                  type={activity.type}
                 />
               </motion.div>
             ))}

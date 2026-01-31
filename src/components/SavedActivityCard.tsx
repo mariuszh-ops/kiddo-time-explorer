@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { getPlaceholderImage } from "@/data/placeholders";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -29,6 +30,7 @@ interface SavedActivityCardProps {
   tags: string[];
   listType: "favorites" | "wantToVisit";
   onRemove: (id: number) => Promise<void> | void;
+  type?: string;
 }
 
 const SavedActivityCard = ({
@@ -43,12 +45,21 @@ const SavedActivityCard = ({
   tags,
   listType,
   onRemove,
+  type = "inne",
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(imageUrl);
   const hasReviews = reviewCount > 0;
   const removeLabel = listType === "favorites" ? "Usuń z ulubionych" : "Usuń z listy";
+  const fallbackImage = getPlaceholderImage(type, id);
+
+  const handleImageError = () => {
+    if (imgSrc !== fallbackImage) {
+      setImgSrc(fallbackImage);
+    }
+  };
 
   // Auto-dismiss error after 5 seconds
   useEffect(() => {
@@ -182,9 +193,10 @@ const SavedActivityCard = ({
         {/* Image - 16:10 aspect ratio */}
         <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
           <img
-            src={imageUrl}
+            src={imgSrc}
             alt={title}
             className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
+            onError={handleImageError}
           />
           
           {/* Match percentage badge - only visible for logged-in users */}

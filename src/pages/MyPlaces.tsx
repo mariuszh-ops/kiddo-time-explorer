@@ -97,6 +97,7 @@ const MyPlaces = () => {
                         tags={activity.tags}
                         listType="favorites"
                         onRemove={removeFromFavorites}
+                        type={activity.type}
                       />
                     </motion.div>
                   ))}
@@ -141,6 +142,7 @@ const MyPlaces = () => {
                         tags={activity.tags}
                         listType="wantToVisit"
                         onRemove={removeFromWantToVisit}
+                        type={activity.type}
                       />
                     </motion.div>
                   ))}
