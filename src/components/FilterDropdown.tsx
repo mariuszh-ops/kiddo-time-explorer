@@ -42,7 +42,7 @@ const FilterDropdown = ({
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative">
+    <div ref={dropdownRef} className="relative z-40">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
@@ -78,7 +78,7 @@ const FilterDropdown = ({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 min-w-[180px] bg-popover border border-border rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
+        <div className="absolute top-full left-0 mt-2 min-w-[180px] bg-popover border border-border rounded-xl shadow-lg z-[100] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
           <div className="py-1">
             {options.map((option) => (
               <button
