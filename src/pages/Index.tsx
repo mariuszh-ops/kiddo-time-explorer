@@ -6,6 +6,9 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 const Index = () => {
   const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
+  // Check if any filters are active
+  const hasActiveFilters = Object.values(filters).some(arr => arr.length > 0) || searchQuery.length > 0;
+
   return (
     <main className="min-h-screen bg-background">
       {/* Hero section with full-width lifestyle image */}
@@ -22,7 +25,11 @@ const Index = () => {
       />
 
       {/* Activity cards grid */}
-      <ActivityGrid activities={filteredActivities} />
+      <ActivityGrid 
+        activities={filteredActivities} 
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={clearAllFilters}
+      />
 
       {/* Footer */}
       <footer className="bg-card border-t border-border py-8">
