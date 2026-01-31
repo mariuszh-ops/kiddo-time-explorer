@@ -1,8 +1,9 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ImageLightbox from "./ImageLightbox";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ImageGalleryProps {
   images: string[];
@@ -12,7 +13,12 @@ interface ImageGalleryProps {
 const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+  const isMobile = useIsMobile();
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    dragFree: false,
+  });
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -22,19 +28,21 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  const onSelect = useCallback(() => {
-    if (!emblaApi) return;
-    setSelectedIndex(emblaApi.selectedScrollSnap());
-  }, [emblaApi]);
-
   // Subscribe to scroll events
-  useCallback(() => {
+  useEffect(() => {
     if (!emblaApi) return;
+    
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+    };
+    
     emblaApi.on("select", onSelect);
+    onSelect(); // Initial call
+    
     return () => {
       emblaApi.off("select", onSelect);
     };
-  }, [emblaApi, onSelect]);
+  }, [emblaApi]);
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -54,7 +62,7 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
     return (
       <>
         <div 
-          className="h-[50vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden cursor-pointer"
+          className="h-[40vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden cursor-pointer"
           onClick={() => openLightbox(0)}
         >
           <img
@@ -77,22 +85,23 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
   return (
     <>
       <div className="relative">
-        {/* Main carousel */}
+        {/* Main carousel - swipeable on mobile */}
         <div 
-          className="overflow-hidden cursor-pointer" 
+          className="overflow-hidden cursor-pointer touch-pan-y" 
           ref={emblaRef}
         >
           <div className="flex">
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full h-[50vh] md:h-auto md:aspect-[21/9]"
-                onClick={() => openLightbox(index)}
+                className="flex-none w-full h-[40vh] md:h-auto md:aspect-[21/9]"
+                onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
                   src={image}
                   alt={`${activityTitle} - zdjęcie ${index + 1}`}
                   className="w-full h-full object-cover object-top"
+                  draggable={false}
                 />
               </div>
             ))}
@@ -121,21 +130,41 @@ const ImageGallery = ({ images, activityTitle }: ImageGalleryProps) => {
           <ChevronRight className="w-5 h-5 text-foreground" />
         </button>
 
-        {/* Image counter badge */}
-        <div className="absolute bottom-4 right-4 bg-foreground/80 text-background px-3 py-1.5 rounded-full text-sm font-medium">
+        {/* Dot indicators for mobile */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 md:hidden">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={(e) => {
+                e.stopPropagation();
+                scrollTo(index);
+              }}
+              className={cn(
+                "w-2 h-2 rounded-full transition-all",
+                selectedIndex === index
+                  ? "bg-background w-4"
+                  : "bg-background/50"
+              )}
+              aria-label={`Przejdź do zdjęcia ${index + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Image counter badge - desktop only */}
+        <div className="hidden md:block absolute bottom-4 right-4 bg-foreground/80 text-background px-3 py-1.5 rounded-full text-sm font-medium">
           {selectedIndex + 1} / {images.length}
         </div>
       </div>
 
-      {/* Thumbnail strip */}
-      <div className="container py-3">
+      {/* Thumbnail strip - desktop only */}
+      <div className="hidden md:block container py-3">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {images.map((image, index) => (
             <button
               key={index}
               onClick={() => scrollTo(index)}
               className={cn(
-                "flex-none w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden border-2 transition-all",
+                "flex-none w-20 h-14 rounded-lg overflow-hidden border-2 transition-all",
                 selectedIndex === index
                   ? "border-primary ring-1 ring-primary"
                   : "border-transparent opacity-70 hover:opacity-100"

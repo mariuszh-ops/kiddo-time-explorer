@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { 
   Heart, 
   Star, 
@@ -11,7 +11,8 @@ import {
   Sun,
   Sparkles,
   Brain,
-  Zap
+  Zap,
+  ArrowLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +23,7 @@ import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { useAuth } from "@/contexts/AuthContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Extended activity data for detail page
 const activityDetails: Record<number, {
@@ -89,10 +91,12 @@ const getActivityTypeIcon = (type: string) => {
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [wantToVisit, setWantToVisit] = useState(false);
+  const isMobile = useIsMobile();
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
@@ -118,6 +122,10 @@ const ActivityDetail = () => {
     login();
     setIsAuthModalOpen(false);
   };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
   
   const activity = mockActivities.find((a) => a.id === Number(id));
   
@@ -136,61 +144,84 @@ const ActivityDetail = () => {
 
   const details = activityDetails[activity.id] || defaultDetails;
   const averageRating = details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length;
+  
+  // Number of reviews to show initially (1-2 on mobile)
+  const initialReviewCount = isMobile ? 2 : 3;
 
   return (
     <main className="min-h-screen bg-background pb-8">
-      {/* Global header */}
-      <Header />
+      {/* Desktop: Global header */}
+      <div className="hidden md:block">
+        <Header />
+      </div>
 
-      {/* 1. Header section */}
+      {/* Mobile: Back button overlay on gallery */}
+      <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4">
+        <button
+          onClick={handleBack}
+          className="w-10 h-10 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+          aria-label="Wróć"
+        >
+          <ArrowLeft className="w-5 h-5 text-foreground" />
+        </button>
+      </div>
+
+      {/* 1. Header section with gallery */}
       <section className="relative">
-        {/* Image gallery */}
+        {/* Image gallery - swipeable carousel on mobile */}
         <ImageGallery 
           images={activity.imageUrls || [activity.imageUrl]} 
           activityTitle={activity.title}
         />
         
-        {/* Content overlay - less overlap to show more of the image */}
+        {/* Content overlay */}
         <div className="container">
-          <div className="relative -mt-12 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-6 md:p-8 shadow-soft">
-            {/* Activity name & location */}
-            <h1 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
+          <div className="relative -mt-6 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
+            {/* Activity title */}
+            <h1 className="text-xl md:text-3xl font-serif text-foreground mb-1 md:mb-2 leading-tight">
               {activity.title}
             </h1>
-            <p className="text-muted-foreground mb-3">
-              <MapPin className="w-4 h-4 inline-block mr-1" />
-              {activity.location}
+            
+            {/* Location */}
+            <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
+              <MapPin className="w-4 h-4 shrink-0" />
+              <span className="line-clamp-1">{activity.location}</span>
             </p>
             
-            {/* Unified rating display */}
-            <div className="flex items-center gap-2 mb-6">
-              <Star className="w-5 h-5 fill-primary text-primary" />
-              <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
-              <span className="text-muted-foreground">·</span>
-              <span className="text-muted-foreground">{activity.reviewCount} opinii rodziców</span>
+            {/* Rating display */}
+            <div className="flex items-center gap-2 mb-5">
+              <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                <Star className="w-4 h-4 fill-primary text-primary" />
+                <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                ({activity.reviewCount} opinii)
+              </span>
             </div>
 
-            {/* Action buttons */}
+            {/* Action buttons - prominent placement */}
             <div className="flex flex-col gap-3">
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex gap-3">
                 <Button 
                   onClick={handleFavoriteClick}
                   variant={isFavorite ? "default" : "default"}
-                  className={`w-full sm:w-auto ${isFavorite ? "bg-primary" : ""}`}
+                  size={isMobile ? "lg" : "default"}
+                  className={`flex-1 ${isFavorite ? "bg-primary" : ""}`}
                 >
                   <Heart className={`w-4 h-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
-                  {isFavorite ? "W ulubionych" : "Dodaj do ulubionych"}
+                  {isFavorite ? "W ulubionych" : "Ulubione"}
                 </Button>
                 <Button 
                   onClick={handleWantToVisitClick}
                   variant={wantToVisit ? "secondary" : "outline"}
-                  className="w-full sm:w-auto"
+                  size={isMobile ? "lg" : "default"}
+                  className="flex-1"
                 >
                   <MapPin className={`w-4 h-4 mr-2 ${wantToVisit ? "fill-current" : ""}`} />
-                  {wantToVisit ? "Chcę odwiedzić ✓" : "Chcę odwiedzić"}
+                  {wantToVisit ? "Na liście ✓" : "Chcę odwiedzić"}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground text-center md:text-left">
                 Zapisz, żeby wrócić do tego miejsca później
               </p>
             </div>
@@ -198,72 +229,72 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 2. Key facts section */}
-      <section className="container mt-6">
-        <div className="bg-card rounded-xl p-5 border border-border">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+      {/* 2. Key facts section - compact grid on mobile */}
+      <section className="container mt-5 md:mt-6">
+        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+          <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
             Podstawowe informacje
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
             {/* Age range */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-accent rounded-lg">
-                <Users className="w-5 h-5 text-accent-foreground" />
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-accent rounded-lg shrink-0">
+                <Users className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Wiek</p>
-                <p className="text-sm font-medium text-foreground">{activity.ageRange}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground">Wiek</p>
+                <p className="text-xs md:text-sm font-medium text-foreground truncate">{activity.ageRange}</p>
               </div>
             </div>
 
             {/* Indoor/Outdoor */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-accent rounded-lg">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-accent rounded-lg shrink-0">
                 {activity.isIndoor ? (
-                  <Home className="w-5 h-5 text-accent-foreground" />
+                  <Home className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
                 ) : (
-                  <Sun className="w-5 h-5 text-accent-foreground" />
+                  <Sun className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
                 )}
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Lokalizacja</p>
-                <p className="text-sm font-medium text-foreground">
-                  {activity.isIndoor ? "W pomieszczeniu" : "Na zewnątrz"}
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground">Lokalizacja</p>
+                <p className="text-xs md:text-sm font-medium text-foreground truncate">
+                  {activity.isIndoor ? "Wewnątrz" : "Na zewnątrz"}
                 </p>
               </div>
             </div>
 
             {/* Estimated time */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-accent rounded-lg">
-                <Clock className="w-5 h-5 text-accent-foreground" />
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-accent rounded-lg shrink-0">
+                <Clock className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Czas</p>
-                <p className="text-sm font-medium text-foreground">{details.estimatedTime}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground">Czas</p>
+                <p className="text-xs md:text-sm font-medium text-foreground truncate">{details.estimatedTime}</p>
               </div>
             </div>
 
             {/* Activity type */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-accent rounded-lg">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-accent rounded-lg shrink-0">
                 {(() => {
                   const IconComponent = getActivityTypeIcon(details.activityTypes[0]);
-                  return <IconComponent className="w-5 h-5 text-accent-foreground" />;
+                  return <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />;
                 })()}
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Typ</p>
-                <p className="text-sm font-medium text-foreground">{details.activityTypes[0]}</p>
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground">Typ</p>
+                <p className="text-xs md:text-sm font-medium text-foreground truncate">{details.activityTypes[0]}</p>
               </div>
             </div>
 
-            {/* Price range */}
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-accent rounded-lg">
+            {/* Price range - hidden on mobile, shown in full grid on tablet+ */}
+            <div className="hidden md:flex items-center gap-2.5">
+              <div className="p-2 bg-accent rounded-lg shrink-0">
                 <Ticket className="w-5 h-5 text-accent-foreground" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs text-muted-foreground">Cena</p>
                 <p className="text-sm font-medium text-foreground">{details.priceRange}</p>
               </div>
@@ -272,16 +303,16 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 3. Experience overview */}
-      <section className="container mt-6">
-        <div className="bg-card rounded-xl p-5 border border-border">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+      {/* 3. Experience overview - scannable list */}
+      <section className="container mt-5 md:mt-6">
+        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+          <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
             Co Was czeka
           </h2>
-          <ul className="space-y-3">
+          <ul className="space-y-2.5 md:space-y-3">
             {details.experiencePoints.map((point, index) => (
-              <li key={index} className="flex items-start gap-3">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+              <li key={index} className="flex items-start gap-2.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
                 <p className="text-foreground text-sm leading-relaxed">{point}</p>
               </li>
             ))}
@@ -290,9 +321,9 @@ const ActivityDetail = () => {
       </section>
 
       {/* 4. Practical information */}
-      <section className="container mt-6">
-        <div className="bg-card rounded-xl p-5 border border-border">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+      <section className="container mt-5 md:mt-6">
+        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+          <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
             Informacje praktyczne
           </h2>
           
@@ -300,8 +331,8 @@ const ActivityDetail = () => {
             {/* Opening hours */}
             <div className="flex items-start gap-3">
               <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div>
-                <p className="text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
                 <p className="text-sm text-foreground">{details.openingHours}</p>
               </div>
             </div>
@@ -309,14 +340,14 @@ const ActivityDetail = () => {
             {/* Address */}
             <div className="flex items-start gap-3">
               <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div>
-                <p className="text-xs text-muted-foreground mb-0.5">Adres</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
                 <p className="text-sm text-foreground">{details.address}</p>
                 <a 
                   href="#" 
-                  className="text-sm text-primary hover:underline inline-flex items-center gap-1 mt-1"
+                  className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1"
                 >
-                  Sprawdź trasę w Google Maps
+                  Otwórz w Mapach
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -325,14 +356,14 @@ const ActivityDetail = () => {
             {/* Ticket sources */}
             <div className="flex items-start gap-3">
               <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div>
-                <p className="text-xs text-muted-foreground mb-1.5">Kup bilety</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
                 <div className="flex flex-wrap gap-2">
                   {details.ticketSources.map((source, index) => (
                     <a
                       key={index}
                       href={source.url}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary text-secondary-foreground text-sm rounded-full hover:bg-secondary/80 transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
                     >
                       {source.name}
                       <ExternalLink className="w-3 h-3" />
@@ -345,29 +376,33 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 5. Reviews preview */}
-      <section className="container mt-6">
-        <div className="bg-card rounded-xl p-5 border border-border">
-          <div className="mb-4">
-            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+      {/* 5. Reviews preview - show 1-2 on mobile */}
+      <section className="container mt-5 md:mt-6">
+        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+          <div className="flex items-center justify-between mb-3 md:mb-4">
+            <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Opinie rodziców
             </h2>
+            <div className="flex items-center gap-1">
+              <Star className="w-4 h-4 fill-primary text-primary" />
+              <span className="text-sm font-medium text-foreground">{averageRating.toFixed(1)}</span>
+            </div>
           </div>
 
-          {/* Review cards */}
-          <div className="space-y-4 mb-4">
-            {details.reviews.slice(0, 3).map((review, index) => (
-              <div key={index} className="pb-4 border-b border-border last:border-0 last:pb-0">
+          {/* Review cards - limited on mobile */}
+          <div className="space-y-3 md:space-y-4 mb-4">
+            {details.reviews.slice(0, initialReviewCount).map((review, index) => (
+              <div key={index} className="pb-3 md:pb-4 border-b border-border last:border-0 last:pb-0">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center">
-                      <span className="text-sm font-medium text-accent-foreground">
+                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center">
+                      <span className="text-xs md:text-sm font-medium text-accent-foreground">
                         {review.author.charAt(0)}
                       </span>
                     </div>
                     <span className="text-sm font-medium text-foreground">{review.author}</span>
                   </div>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
@@ -380,19 +415,22 @@ const ActivityDetail = () => {
                     ))}
                   </div>
                 </div>
-                <p className="text-sm text-foreground leading-relaxed">{review.text}</p>
+                <p className="text-sm text-foreground leading-relaxed line-clamp-3">{review.text}</p>
                 <p className="text-xs text-muted-foreground mt-1">{review.date}</p>
               </div>
             ))}
           </div>
 
-          <Button 
-            variant="outline" 
-            className="w-full"
-            onClick={() => setIsReviewsModalOpen(true)}
-          >
-            Zobacz wszystkie opinie
-          </Button>
+          {details.reviews.length > initialReviewCount && (
+            <Button 
+              variant="outline" 
+              size={isMobile ? "lg" : "default"}
+              className="w-full"
+              onClick={() => setIsReviewsModalOpen(true)}
+            >
+              Zobacz wszystkie opinie ({details.reviews.length})
+            </Button>
+          )}
         </div>
       </section>
 
