@@ -124,18 +124,18 @@ const ActivityDetail = () => {
 
       {/* 1. Header section */}
       <section className="relative">
-        {/* Hero image */}
-        <div className="aspect-[16/9] md:aspect-[21/9] w-full overflow-hidden">
+        {/* Hero image - taller on mobile for better visibility */}
+        <div className="h-[50vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden">
           <img
             src={activity.imageUrl}
             alt={activity.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-top"
           />
         </div>
         
-        {/* Content overlay on mobile, below on desktop */}
+        {/* Content overlay - less overlap to show more of the image */}
         <div className="container">
-          <div className="relative -mt-16 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-6 md:p-8 shadow-soft">
+          <div className="relative -mt-12 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-6 md:p-8 shadow-soft">
             {/* Rating badge - top right */}
             <div className="absolute top-4 right-4 md:top-6 md:right-6">
               <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
