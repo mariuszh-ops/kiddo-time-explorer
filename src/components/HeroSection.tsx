@@ -59,7 +59,7 @@ const HeroSection = () => {
               ))}
             </div>
             <span className="text-sm text-muted-foreground">
-              +2500 rodziców korzysta z Razem
+              +2500 rodziców korzysta z kidsmoment
             </span>
           </div>
         </div>
