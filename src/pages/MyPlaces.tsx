@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import SavedActivityCard from "@/components/SavedActivityCard";
@@ -6,6 +7,9 @@ import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 
 const MyPlaces = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const defaultTab = searchParams.get("tab") === "wantToVisit" ? "wantToVisit" : "favorites";
+  
   const {
     favorites,
     wantToVisit,
@@ -14,6 +18,10 @@ const MyPlaces = () => {
     favoritesCount,
     wantToVisitCount,
   } = useSavedActivities();
+  
+  const handleTabChange = (value: string) => {
+    setSearchParams({ tab: value });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,7 +42,7 @@ const MyPlaces = () => {
 
       {/* Main content */}
       <main className="container py-6 md:py-8">
-        <Tabs defaultValue="favorites" className="w-full">
+        <Tabs value={defaultTab} onValueChange={handleTabChange} className="w-full">
           {/* Segmented control with dynamic counts */}
           <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 md:mb-8">
             <TabsTrigger value="favorites" className="text-sm md:text-base">
