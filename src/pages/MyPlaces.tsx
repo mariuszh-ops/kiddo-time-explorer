@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Header from "@/components/Header";
 import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import { mockActivities, Activity } from "@/data/activities";
@@ -26,23 +25,17 @@ const MyPlaces = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-background/95 backdrop-blur-sm sticky top-0 z-40">
-        <div className="container py-4">
-          <div className="flex items-center gap-4">
-            <Link 
-              to="/" 
-              className="p-2 -ml-2 rounded-lg hover:bg-accent transition-colors"
-              aria-label="Wróć do strony głównej"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground">
-              Moje miejsca
-            </h1>
-          </div>
+      {/* Global header */}
+      <Header />
+
+      {/* Page title */}
+      <div className="border-b border-border/50">
+        <div className="container py-6 md:py-8">
+          <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
+            Moje miejsca
+          </h1>
         </div>
-      </header>
+      </div>
 
       {/* Main content */}
       <main className="container py-6 md:py-8">

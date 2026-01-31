@@ -19,14 +19,6 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 container">
         <div className="max-w-xl md:max-w-lg lg:max-w-xl">
-          {/* Logo/Brand */}
-          <div className="flex items-center gap-2 mb-8">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-soft">
-              <MapPin className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-semibold text-xl text-foreground">Razem</span>
-          </div>
-
           {/* Headline */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
             Sprawdzone pomysły na wspólny czas z dzieckiem
