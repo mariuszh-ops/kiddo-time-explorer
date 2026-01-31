@@ -15,11 +15,24 @@ const MyPlaces = () => {
     mockActivities.slice(4, 7) // Mock: next 3 activities as want to visit
   );
 
-  const handleRemoveFromFavorites = (id: number) => {
+  // Simulate async removal with potential failure
+  const handleRemoveFromFavorites = async (id: number): Promise<void> => {
+    // Simulate API call - uncomment the throw to test error state
+    // throw new Error("Network error");
+    
+    // Simulated delay for realistic feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     setFavorites((prev) => prev.filter((activity) => activity.id !== id));
   };
 
-  const handleRemoveFromWantToVisit = (id: number) => {
+  const handleRemoveFromWantToVisit = async (id: number): Promise<void> => {
+    // Simulate API call - uncomment the throw to test error state
+    // throw new Error("Network error");
+    
+    // Simulated delay for realistic feedback
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     setWantToVisit((prev) => prev.filter((activity) => activity.id !== id));
   };
 

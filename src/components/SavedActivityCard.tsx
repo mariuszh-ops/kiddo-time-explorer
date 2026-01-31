@@ -1,8 +1,10 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star, X } from "lucide-react";
+import { Star, X, AlertCircle, RefreshCw } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,7 +28,7 @@ interface SavedActivityCardProps {
   imageUrl: string;
   tags: string[];
   listType: "favorites" | "wantToVisit";
-  onRemove: (id: number) => void;
+  onRemove: (id: number) => Promise<void> | void;
 }
 
 const SavedActivityCard = ({
@@ -43,11 +45,50 @@ const SavedActivityCard = ({
   onRemove,
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
+  const [isRemoving, setIsRemoving] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const removeLabel = listType === "favorites" ? "Usuń z ulubionych" : "Usuń z listy";
 
+  // Auto-dismiss error after 5 seconds
+  useEffect(() => {
+    if (hasError) {
+      const timer = setTimeout(() => {
+        setHasError(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasError]);
+
+  const handleRemove = async () => {
+    setIsRemoving(true);
+    setHasError(false);
+    
+    try {
+      await onRemove(id);
+      // Success - component will be removed by parent
+    } catch (error) {
+      // Error - show inline message
+      setHasError(true);
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
+  const handleRetry = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await handleRemove();
+  };
+
+  const handleDismissError = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setHasError(false);
+  };
+
   return (
-    <article className="group relative transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-soft rounded-xl">
-      {/* Remove button - top right corner */}
+    <article className="group relative transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl">
+      {/* Remove button - top left corner */}
       <div className="absolute top-2 left-2 z-10">
         <AlertDialog>
           <AlertDialogTrigger asChild>
@@ -56,8 +97,18 @@ const SavedActivityCard = ({
               size="icon"
               className="h-8 w-8 bg-background/90 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground transition-colors"
               onClick={(e) => e.stopPropagation()}
+              disabled={isRemoving}
             >
-              <X className="h-4 w-4" />
+              {isRemoving ? (
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <RefreshCw className="h-3.5 w-3.5" />
+                </motion.span>
+              ) : (
+                <X className="h-4 w-4" />
+              )}
               <span className="sr-only">{removeLabel}</span>
             </Button>
           </AlertDialogTrigger>
@@ -76,23 +127,63 @@ const SavedActivityCard = ({
             <AlertDialogFooter>
               <AlertDialogCancel>Anuluj</AlertDialogCancel>
               <AlertDialogAction 
-                onClick={() => onRemove(id)}
+                onClick={handleRemove}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                disabled={isRemoving}
               >
-                Usuń
+                {isRemoving ? "Usuwanie..." : "Usuń"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </div>
 
+      {/* Inline error message */}
+      <AnimatePresence>
+        {hasError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-12 left-2 right-2 z-10"
+          >
+            <div className="bg-destructive/95 backdrop-blur-sm text-destructive-foreground rounded-lg p-2.5 shadow-lg">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium leading-tight">
+                    Nie udało się usunąć z listy.
+                  </p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <button
+                      onClick={handleRetry}
+                      className="text-xs underline underline-offset-2 hover:no-underline"
+                    >
+                      Spróbuj ponownie
+                    </button>
+                    <span className="text-destructive-foreground/50">·</span>
+                    <button
+                      onClick={handleDismissError}
+                      className="text-xs text-destructive-foreground/70 hover:text-destructive-foreground"
+                    >
+                      Zamknij
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Link to={`/activity/${id}`}>
         {/* Image - 16:10 aspect ratio */}
-        <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:brightness-105">
+        <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
           />
           
           {/* Match percentage badge - only visible for logged-in users */}
