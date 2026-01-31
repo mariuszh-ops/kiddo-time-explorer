@@ -98,7 +98,8 @@ const ActivityDetail = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState<'favorite' | 'visit' | null>(null);
+  const [saveError, setSaveError] = useState<'favorite' | 'visit' | null>(null);
   const isMobile = useIsMobile();
   
   // Use auth context
@@ -116,13 +117,24 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
+  // Auto-dismiss error after 4 seconds
+  useEffect(() => {
+    if (saveError) {
+      const timer = setTimeout(() => {
+        setSaveError(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [saveError]);
+
   const handleFavoriteClick = async () => {
     if (!isLoggedIn) {
       setIsAuthModalOpen(true);
       return;
     }
     
-    setIsProcessing(true);
+    setSaveError(null);
+    setIsProcessing('favorite');
     try {
       const newState = await toggleFavorite(activityId);
       
@@ -133,8 +145,10 @@ const ActivityDetail = () => {
           icon: <Heart className="w-4 h-4 fill-current" />,
         });
       }
+    } catch (error) {
+      setSaveError('favorite');
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(null);
     }
   };
 
@@ -144,7 +158,8 @@ const ActivityDetail = () => {
       return;
     }
     
-    setIsProcessing(true);
+    setSaveError(null);
+    setIsProcessing('visit');
     try {
       const newState = await toggleWantToVisit(activityId);
       
@@ -155,8 +170,10 @@ const ActivityDetail = () => {
           icon: <Check className="w-4 h-4" />,
         });
       }
+    } catch (error) {
+      setSaveError('visit');
     } finally {
-      setIsProcessing(false);
+      setIsProcessing(null);
     }
   };
 
@@ -250,6 +267,7 @@ const ActivityDetail = () => {
                   variant={isFavorite ? "default" : "default"}
                   size={isMobile ? "lg" : "default"}
                   className={`flex-1 transition-all duration-200 ${isFavorite ? "bg-primary" : ""}`}
+                  disabled={isProcessing !== null}
                 >
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -260,8 +278,21 @@ const ActivityDetail = () => {
                       transition={{ duration: 0.15 }}
                       className="flex items-center"
                     >
-                      <Heart className={`w-4 h-4 mr-2 transition-all duration-200 ${isFavorite ? "fill-current scale-110" : ""}`} />
-                      {isFavorite ? "W ulubionych" : "Ulubione"}
+                      {isProcessing === 'favorite' ? (
+                        <>
+                          <motion.span
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full"
+                          />
+                          Zapisuję...
+                        </>
+                      ) : (
+                        <>
+                          <Heart className={`w-4 h-4 mr-2 transition-all duration-200 ${isFavorite ? "fill-current scale-110" : ""}`} />
+                          {isFavorite ? "W ulubionych" : "Ulubione"}
+                        </>
+                      )}
                     </motion.span>
                   </AnimatePresence>
                 </Button>
@@ -270,6 +301,7 @@ const ActivityDetail = () => {
                   variant={wantToVisit ? "secondary" : "outline"}
                   size={isMobile ? "lg" : "default"}
                   className="flex-1 transition-all duration-200"
+                  disabled={isProcessing !== null}
                 >
                   <AnimatePresence mode="wait">
                     <motion.span
@@ -280,19 +312,58 @@ const ActivityDetail = () => {
                       transition={{ duration: 0.15 }}
                       className="flex items-center"
                     >
-                      {wantToVisit ? (
-                        <Check className="w-4 h-4 mr-2" />
+                      {isProcessing === 'visit' ? (
+                        <>
+                          <motion.span
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full"
+                          />
+                          Zapisuję...
+                        </>
                       ) : (
-                        <MapPin className="w-4 h-4 mr-2" />
+                        <>
+                          {wantToVisit ? (
+                            <Check className="w-4 h-4 mr-2" />
+                          ) : (
+                            <MapPin className="w-4 h-4 mr-2" />
+                          )}
+                          {wantToVisit ? "Na liście" : "Chcę odwiedzić"}
+                        </>
                       )}
-                      {wantToVisit ? "Na liście" : "Chcę odwiedzić"}
                     </motion.span>
                   </AnimatePresence>
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground text-center md:text-left">
-                Zapisz, żeby wrócić do tego miejsca później
-              </p>
+              
+              {/* Inline error message */}
+              <AnimatePresence>
+                {saveError && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex items-center justify-between gap-2 px-3 py-2 bg-destructive/10 border border-destructive/20 rounded-lg"
+                  >
+                    <p className="text-sm text-destructive">
+                      Nie udało się zapisać. Spróbuj ponownie.
+                    </p>
+                    <button
+                      onClick={() => setSaveError(null)}
+                      className="text-xs text-destructive/70 hover:text-destructive underline underline-offset-2"
+                    >
+                      Zamknij
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
+              {!saveError && (
+                <p className="text-xs text-muted-foreground text-center md:text-left">
+                  Zapisz, żeby wrócić do tego miejsca później
+                </p>
+              )}
             </div>
           </div>
         </div>
