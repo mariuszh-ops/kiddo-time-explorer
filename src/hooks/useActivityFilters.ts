@@ -6,10 +6,12 @@ export interface Filters {
   age?: string;
   type?: string;
   indoor?: string;
+  search?: string;
 }
 
 export function useActivityFilters() {
   const [filters, setFilters] = useState<Filters>({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   const updateFilter = useCallback((key: keyof Filters, value: string | undefined) => {
     setFilters((prev) => ({
@@ -20,10 +22,22 @@ export function useActivityFilters() {
 
   const clearAllFilters = useCallback(() => {
     setFilters({});
+    setSearchQuery("");
   }, []);
 
   const filteredActivities = useMemo(() => {
     let result = [...mockActivities];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter(
+        (a) =>
+          a.title.toLowerCase().includes(query) ||
+          a.location.toLowerCase().includes(query) ||
+          a.tags.some((tag) => tag.toLowerCase().includes(query))
+      );
+    }
 
     // Filter by city
     if (filters.city) {
@@ -59,7 +73,7 @@ export function useActivityFilters() {
     });
 
     return result;
-  }, [filters]);
+  }, [filters, searchQuery]);
 
   // Calculate counts for each filter option
   const filterCounts = useMemo(() => {
@@ -126,6 +140,8 @@ export function useActivityFilters() {
 
   return {
     filters,
+    searchQuery,
+    setSearchQuery,
     updateFilter,
     clearAllFilters,
     filteredActivities,
