@@ -1,7 +1,10 @@
 import { useState } from "react";
 import FilterDropdown from "@/components/FilterDropdown";
+import MobileFilterSheet from "@/components/MobileFilterSheet";
 import { Filters } from "@/hooks/useActivityFilters";
-import { X, Search } from "lucide-react";
+import { X, Search, SlidersHorizontal } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 interface FilterBarProps {
   filters: Filters;
@@ -28,8 +31,57 @@ const FilterBar = ({
   onClearAll,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const hasActiveFilters = Object.values(filters).some(Boolean) || searchQuery.trim().length > 0;
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  const activeFilterCount = Object.values(filters).filter(Boolean).length + (searchQuery.trim() ? 1 : 0);
+  const hasActiveFilters = activeFilterCount > 0;
 
+  // Mobile layout
+  if (isMobile) {
+    return (
+      <>
+        <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
+          <div className="container py-3">
+            {/* Mobile: Single filter button */}
+            <div className="flex items-center justify-between gap-3">
+              <button
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                <span>Filtry</span>
+                {activeFilterCount > 0 && (
+                  <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                    {activeFilterCount}
+                  </Badge>
+                )}
+              </button>
+
+              {/* Results count */}
+              <span className="text-sm text-muted-foreground">
+                <span className="font-medium text-foreground">{filterCounts.filtered}</span> wyników
+              </span>
+            </div>
+          </div>
+        </section>
+
+        {/* Mobile filter sheet */}
+        <MobileFilterSheet
+          isOpen={isMobileFilterOpen}
+          onClose={() => setIsMobileFilterOpen(false)}
+          filters={filters}
+          searchQuery={searchQuery}
+          onSearchChange={onSearchChange}
+          filterCounts={filterCounts}
+          onUpdateFilter={onUpdateFilter}
+          onClearAll={onClearAll}
+        />
+      </>
+    );
+  }
+
+  // Desktop layout (unchanged)
   return (
     <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
       <div className="container py-3">
