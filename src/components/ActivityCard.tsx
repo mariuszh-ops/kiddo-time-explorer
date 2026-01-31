@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -27,6 +27,7 @@ const ActivityCard = ({
   tags,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
+  const hasReviews = reviewCount > 0;
 
   return (
     <Link to={`/activity/${id}`}>
@@ -54,15 +55,29 @@ const ActivityCard = ({
 
       {/* Content */}
       <div className="space-y-2">
-        {/* Rating - MOST PROMINENT */}
+        {/* Rating or New badge */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-            <Star className="w-4 h-4 fill-primary text-primary" />
-            <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
-          </div>
-          <span className="text-sm text-muted-foreground">
-            ({reviewCount} opinii)
-          </span>
+          {hasReviews ? (
+            <>
+              <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                <Star className="w-4 h-4 fill-primary text-primary" />
+                <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                ({reviewCount} opinii)
+              </span>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
+                <Sparkles className="w-4 h-4 text-accent-foreground" />
+                <span className="font-medium text-accent-foreground text-sm">Nowa atrakcja</span>
+              </div>
+              <span className="text-xs text-muted-foreground">
+                Brak opinii rodziców
+              </span>
+            </>
+          )}
         </div>
 
         {/* Title */}

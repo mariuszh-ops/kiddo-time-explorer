@@ -13,7 +13,8 @@ import {
   Brain,
   Zap,
   ArrowLeft,
-  Check
+  Check,
+  MessageSquarePlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -203,7 +204,10 @@ const ActivityDetail = () => {
   }
 
   const details = activityDetails[activity.id] || defaultDetails;
-  const averageRating = details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length;
+  const hasReviews = activity.reviewCount > 0;
+  const averageRating = details.reviews.length > 0 
+    ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
+    : 0;
   
   // Number of reviews to show initially (1-2 on mobile)
   const initialReviewCount = isMobile ? 2 : 3;
@@ -248,15 +252,29 @@ const ActivityDetail = () => {
               <span className="line-clamp-1">{activity.location}</span>
             </p>
             
-            {/* Rating display */}
+            {/* Rating display or New badge */}
             <div className="flex items-center gap-2 mb-5">
-              <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                <Star className="w-4 h-4 fill-primary text-primary" />
-                <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
-              </div>
-              <span className="text-sm text-muted-foreground">
-                ({activity.reviewCount} opinii)
-              </span>
+              {hasReviews ? (
+                <>
+                  <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    ({activity.reviewCount} opinii)
+                  </span>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-1.5 bg-accent px-3 py-1.5 rounded-lg">
+                    <Sparkles className="w-4 h-4 text-accent-foreground" />
+                    <span className="font-medium text-accent-foreground">Nowa atrakcja</span>
+                  </div>
+                  <span className="text-sm text-muted-foreground">
+                    Brak opinii rodziców
+                  </span>
+                </>
+              )}
             </div>
 
             {/* Action buttons - prominent placement */}
@@ -516,60 +534,79 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 5. Reviews preview - show 1-2 on mobile */}
+      {/* 5. Reviews section */}
       <section className="container mt-5 md:mt-6">
         <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Opinie rodziców
             </h2>
-            <div className="flex items-center gap-1">
-              <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="text-sm font-medium text-foreground">{averageRating.toFixed(1)}</span>
-            </div>
-          </div>
-
-          {/* Review cards - limited on mobile */}
-          <div className="space-y-3 md:space-y-4 mb-4">
-            {details.reviews.slice(0, initialReviewCount).map((review, index) => (
-              <div key={index} className="pb-3 md:pb-4 border-b border-border last:border-0 last:pb-0">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center">
-                      <span className="text-xs md:text-sm font-medium text-accent-foreground">
-                        {review.author.charAt(0)}
-                      </span>
-                    </div>
-                    <span className="text-sm font-medium text-foreground">{review.author}</span>
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-3 h-3 ${
-                          i < review.rating
-                            ? "fill-primary text-primary"
-                            : "text-muted-foreground/30"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-sm text-foreground leading-relaxed line-clamp-3">{review.text}</p>
-                <p className="text-xs text-muted-foreground mt-1">{review.date}</p>
+            {hasReviews && (
+              <div className="flex items-center gap-1">
+                <Star className="w-4 h-4 fill-primary text-primary" />
+                <span className="text-sm font-medium text-foreground">{averageRating.toFixed(1)}</span>
               </div>
-            ))}
+            )}
           </div>
 
-          {details.reviews.length > initialReviewCount && (
-            <Button 
-              variant="outline" 
-              size={isMobile ? "lg" : "default"}
-              className="w-full"
-              onClick={() => setIsReviewsModalOpen(true)}
-            >
-              Zobacz wszystkie opinie ({details.reviews.length})
-            </Button>
+          {hasReviews ? (
+            <>
+              {/* Review cards - limited on mobile */}
+              <div className="space-y-3 md:space-y-4 mb-4">
+                {details.reviews.slice(0, initialReviewCount).map((review, index) => (
+                  <div key={index} className="pb-3 md:pb-4 border-b border-border last:border-0 last:pb-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center">
+                          <span className="text-xs md:text-sm font-medium text-accent-foreground">
+                            {review.author.charAt(0)}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-foreground">{review.author}</span>
+                      </div>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3 h-3 ${
+                              i < review.rating
+                                ? "fill-primary text-primary"
+                                : "text-muted-foreground/30"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed line-clamp-3">{review.text}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{review.date}</p>
+                  </div>
+                ))}
+              </div>
+
+              {details.reviews.length > initialReviewCount && (
+                <Button 
+                  variant="outline" 
+                  size={isMobile ? "lg" : "default"}
+                  className="w-full"
+                  onClick={() => setIsReviewsModalOpen(true)}
+                >
+                  Zobacz wszystkie opinie ({details.reviews.length})
+                </Button>
+              )}
+            </>
+          ) : (
+            /* Empty state for no reviews */
+            <div className="text-center py-6 md:py-8">
+              <div className="w-12 h-12 mx-auto mb-3 bg-accent rounded-full flex items-center justify-center">
+                <MessageSquarePlus className="w-6 h-6 text-accent-foreground" />
+              </div>
+              <p className="text-foreground font-medium mb-1">
+                Brak opinii
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Bądź pierwszy, który oceni tę atrakcję
+              </p>
+            </div>
           )}
         </div>
       </section>
