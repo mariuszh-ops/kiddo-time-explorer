@@ -1,6 +1,5 @@
 import { useParams, Link } from "react-router-dom";
 import { 
-  ArrowLeft, 
   Heart, 
   Star, 
   Clock, 
@@ -18,9 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockActivities } from "@/data/activities";
 import { useState } from "react";
+import Header from "@/components/Header";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
-import AuthRequiredModal from "@/components/AuthRequiredModal";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Extended activity data for detail page
 const activityDetails: Record<number, {
@@ -89,26 +89,17 @@ const getActivityTypeIcon = (type: string) => {
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [wantToVisit, setWantToVisit] = useState(false);
   
-  // Simulate logged out state - replace with actual auth check
-  const isLoggedIn = false;
+  // Use auth context - defaults to logged in for design purposes
+  const { isLoggedIn } = useAuth();
 
   const handleFavoriteClick = () => {
-    if (!isLoggedIn) {
-      setIsAuthModalOpen(true);
-      return;
-    }
     setIsFavorite(!isFavorite);
   };
 
   const handleWantToVisitClick = () => {
-    if (!isLoggedIn) {
-      setIsAuthModalOpen(true);
-      return;
-    }
     setWantToVisit(!wantToVisit);
   };
   
@@ -132,18 +123,8 @@ const ActivityDetail = () => {
 
   return (
     <main className="min-h-screen bg-background pb-8">
-      {/* Back navigation */}
-      <nav className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
-        <div className="container py-3 flex items-center gap-3">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Wróć do listy</span>
-          </Link>
-        </div>
-      </nav>
+      {/* Global header */}
+      <Header />
 
       {/* 1. Header section */}
       <section className="relative">
@@ -406,27 +387,6 @@ const ActivityDetail = () => {
         reviews={details.reviews}
         activityName={activity.title}
         averageRating={averageRating}
-      />
-
-      {/* Auth Required Modal */}
-      <AuthRequiredModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onGoogleClick={() => {
-          // TODO: Implement Google auth
-          console.log("Google auth clicked");
-          setIsAuthModalOpen(false);
-        }}
-        onEmailClick={() => {
-          // TODO: Navigate to email signup
-          console.log("Email signup clicked");
-          setIsAuthModalOpen(false);
-        }}
-        onLoginClick={() => {
-          // TODO: Navigate to login
-          console.log("Login clicked");
-          setIsAuthModalOpen(false);
-        }}
       />
     </main>
   );

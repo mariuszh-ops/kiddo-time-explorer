@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
@@ -11,6 +12,9 @@ const Index = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      {/* Global header with navigation */}
+      <Header />
+
       {/* Hero section with full-width lifestyle image */}
       <HeroSection />
 
