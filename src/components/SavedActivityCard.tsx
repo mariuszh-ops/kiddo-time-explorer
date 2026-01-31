@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Star, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -41,6 +42,7 @@ const SavedActivityCard = ({
   listType,
   onRemove,
 }: SavedActivityCardProps) => {
+  const { isLoggedIn } = useAuth();
   const removeLabel = listType === "favorites" ? "Usuń z ulubionych" : "Usuń z listy";
 
   return (
@@ -93,15 +95,17 @@ const SavedActivityCard = ({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           
-          {/* Match percentage badge */}
-          <div className="absolute top-2 right-2">
-            <Badge 
-              variant="secondary" 
-              className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
-            >
-              {matchPercentage}% dopasowania
-            </Badge>
-          </div>
+          {/* Match percentage badge - only visible for logged-in users */}
+          {isLoggedIn && (
+            <div className="absolute top-2 right-2">
+              <Badge 
+                variant="secondary" 
+                className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
+              >
+                {matchPercentage}% dopasowania
+              </Badge>
+            </div>
+          )}
         </div>
 
         {/* Content */}
