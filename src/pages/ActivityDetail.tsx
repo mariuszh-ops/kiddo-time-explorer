@@ -136,16 +136,8 @@ const ActivityDetail = () => {
         {/* Content overlay - less overlap to show more of the image */}
         <div className="container">
           <div className="relative -mt-12 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-6 md:p-8 shadow-soft">
-            {/* Rating badge - top right */}
-            <div className="absolute top-4 right-4 md:top-6 md:right-6">
-              <div className="flex items-center gap-1.5 bg-primary/10 px-3 py-1.5 rounded-full">
-                <Star className="w-5 h-5 fill-primary text-primary" />
-                <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
-              </div>
-            </div>
-
             {/* Activity name & location */}
-            <h1 className="text-2xl md:text-3xl font-serif text-foreground pr-20 mb-2">
+            <h1 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
               {activity.title}
             </h1>
             <p className="text-muted-foreground mb-3">
@@ -153,20 +145,37 @@ const ActivityDetail = () => {
               {activity.location}
             </p>
             
-            {/* Review count */}
-            <p className="text-sm text-muted-foreground mb-6">
-              {activity.reviewCount} opinii rodziców
-            </p>
+            {/* Unified rating display */}
+            <div className="flex items-center gap-2 mb-6">
+              <Star className="w-5 h-5 fill-primary text-primary" />
+              <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
+              <span className="text-muted-foreground">·</span>
+              <span className="text-muted-foreground">{activity.reviewCount} opinii rodziców</span>
+            </div>
 
-            {/* Primary action */}
-            <Button 
-              onClick={() => setIsFavorite(!isFavorite)}
-              variant={isFavorite ? "default" : "outline"}
-              className="w-full md:w-auto"
-            >
-              <Heart className={`w-4 h-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
-              {isFavorite ? "W ulubionych" : "Dodaj do ulubionych"}
-            </Button>
+            {/* Action buttons */}
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button 
+                  onClick={() => setIsFavorite(!isFavorite)}
+                  variant={isFavorite ? "default" : "default"}
+                  className={`w-full sm:w-auto ${isFavorite ? "bg-primary" : ""}`}
+                >
+                  <Heart className={`w-4 h-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
+                  {isFavorite ? "W ulubionych" : "Dodaj do ulubionych"}
+                </Button>
+                <Button 
+                  variant="outline"
+                  className="w-full sm:w-auto"
+                >
+                  <MapPin className="w-4 h-4 mr-2" />
+                  Chcę odwiedzić
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Zapisz, żeby wrócić do tego miejsca później
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -321,15 +330,10 @@ const ActivityDetail = () => {
       {/* 5. Reviews preview */}
       <section className="container mt-6">
         <div className="bg-card rounded-xl p-5 border border-border">
-          <div className="flex items-center justify-between mb-4">
+          <div className="mb-4">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Opinie rodziców
             </h2>
-            <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="font-semibold text-foreground">{averageRating.toFixed(1)}</span>
-              <span className="text-sm text-muted-foreground">({details.reviews.length})</span>
-            </div>
           </div>
 
           {/* Review cards */}
