@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { SlidersHorizontal, X } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
+import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
 
 interface ActivityGridProps {
   activities: Activity[];
+  hasActiveFilters?: boolean;
+  onClearFilters?: () => void;
 }
 
 const ITEMS_PER_PAGE = 18;
 
-const ActivityGrid = ({ activities }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters }: ActivityGridProps) => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
   // Reset visible count when activities change (filter applied)
@@ -33,14 +37,37 @@ const ActivityGrid = ({ activities }: ActivityGridProps) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="text-center py-16"
+            className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-md mx-auto"
           >
-            <p className="text-muted-foreground text-lg">
-              Nie znaleziono aktywności pasujących do wybranych filtrów.
+            <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
+              Żadna z atrakcji nie pasuje do zadanych kryteriów.
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              Spróbuj zmienić lub usunąć niektóre filtry, aby zobaczyć więcej propozycji.
             </p>
-            <p className="text-muted-foreground text-sm mt-2">
-              Spróbuj zmienić kryteria wyszukiwania.
-            </p>
+            
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              {/* Primary: scroll to filters */}
+              <Button
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="w-full sm:w-auto"
+              >
+                <SlidersHorizontal className="w-4 h-4 mr-2" />
+                Zmień filtry
+              </Button>
+              
+              {/* Secondary: clear all filters */}
+              {hasActiveFilters && onClearFilters && (
+                <button
+                  onClick={onClearFilters}
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+                >
+                  Wyczyść wszystkie filtry
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       </section>
