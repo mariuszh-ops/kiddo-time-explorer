@@ -24,9 +24,9 @@ const ActivityCard = ({
   tags,
 }: ActivityCardProps) => {
   return (
-    <article className="group cursor-pointer">
+    <article className="group cursor-pointer transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-soft rounded-xl">
       {/* Image - 16:10 aspect ratio (rectangular, not square) */}
-      <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3">
+      <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:brightness-105">
         <img
           src={imageUrl}
           alt={title}
