@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, X } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
+import ActivityLoadError from "@/components/ActivityLoadError";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
 
@@ -9,11 +10,14 @@ interface ActivityGridProps {
   activities: Activity[];
   hasActiveFilters?: boolean;
   onClearFilters?: () => void;
+  isLoading?: boolean;
+  hasError?: boolean;
+  onRetry?: () => void;
 }
 
 const ITEMS_PER_PAGE = 18;
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry }: ActivityGridProps) => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
   // Reset visible count when activities change (filter applied)
@@ -24,6 +28,11 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters }: Activity
   const visibleActivities = activities.slice(0, visibleCount);
   const hasMore = visibleCount < activities.length;
   const remainingCount = Math.min(ITEMS_PER_PAGE, activities.length - visibleCount);
+
+  // Show error state if there's an error
+  if (hasError && onRetry) {
+    return <ActivityLoadError onRetry={onRetry} />;
+  }
 
   const handleLoadMore = () => {
     setVisibleCount((prev) => Math.min(prev + ITEMS_PER_PAGE, activities.length));
