@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 interface ActivityCardProps {
+  id: number;
   title: string;
   location: string;
   rating: number;
@@ -14,6 +16,7 @@ interface ActivityCardProps {
 }
 
 const ActivityCard = ({
+  id,
   title,
   location,
   rating,
@@ -24,7 +27,8 @@ const ActivityCard = ({
   tags,
 }: ActivityCardProps) => {
   return (
-    <article className="group cursor-pointer transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-soft rounded-xl">
+    <Link to={`/activity/${id}`}>
+      <article className="group cursor-pointer transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-soft rounded-xl">
       {/* Image - 16:10 aspect ratio (rectangular, not square) */}
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 group-hover:brightness-105">
         <img
@@ -89,7 +93,8 @@ const ActivityCard = ({
           ))}
         </div>
       </div>
-    </article>
+      </article>
+    </Link>
   );
 };
 

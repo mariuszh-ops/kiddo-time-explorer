@@ -78,6 +78,7 @@ const ActivityGrid = ({ activities }: ActivityGridProps) => {
                 }}
               >
                 <ActivityCard
+                  id={activity.id}
                   title={activity.title}
                   location={activity.location}
                   rating={activity.rating}
