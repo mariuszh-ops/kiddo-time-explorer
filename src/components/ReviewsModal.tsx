@@ -31,7 +31,7 @@ const ReviewsModal = ({
 }: ReviewsModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-hidden flex flex-col" onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader className="shrink-0">
           <DialogTitle className="text-xl font-serif pr-8">
             Opinie o {activityName}

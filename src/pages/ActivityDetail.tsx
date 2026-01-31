@@ -12,7 +12,8 @@ import {
   Sparkles,
   Brain,
   Zap,
-  ArrowLeft
+  ArrowLeft,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +25,8 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { useAuth } from "@/contexts/AuthContext";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Extended activity data for detail page
 const activityDetails: Record<number, {
@@ -106,7 +109,16 @@ const ActivityDetail = () => {
       setIsAuthModalOpen(true);
       return;
     }
-    setIsFavorite(!isFavorite);
+    const newState = !isFavorite;
+    setIsFavorite(newState);
+    
+    // Subtle toast feedback
+    if (newState) {
+      toast.success("Dodano do ulubionych", {
+        duration: 2000,
+        icon: <Heart className="w-4 h-4 fill-current" />,
+      });
+    }
   };
 
   const handleWantToVisitClick = () => {
@@ -114,7 +126,16 @@ const ActivityDetail = () => {
       setIsAuthModalOpen(true);
       return;
     }
-    setWantToVisit(!wantToVisit);
+    const newState = !wantToVisit;
+    setWantToVisit(newState);
+    
+    // Subtle toast feedback
+    if (newState) {
+      toast.success("Dodano do listy", {
+        duration: 2000,
+        icon: <Check className="w-4 h-4" />,
+      });
+    }
   };
 
   const handleAuthAction = () => {
@@ -206,19 +227,45 @@ const ActivityDetail = () => {
                   onClick={handleFavoriteClick}
                   variant={isFavorite ? "default" : "default"}
                   size={isMobile ? "lg" : "default"}
-                  className={`flex-1 ${isFavorite ? "bg-primary" : ""}`}
+                  className={`flex-1 transition-all duration-200 ${isFavorite ? "bg-primary" : ""}`}
                 >
-                  <Heart className={`w-4 h-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
-                  {isFavorite ? "W ulubionych" : "Ulubione"}
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={isFavorite ? "saved" : "unsaved"}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center"
+                    >
+                      <Heart className={`w-4 h-4 mr-2 transition-all duration-200 ${isFavorite ? "fill-current scale-110" : ""}`} />
+                      {isFavorite ? "W ulubionych" : "Ulubione"}
+                    </motion.span>
+                  </AnimatePresence>
                 </Button>
                 <Button 
                   onClick={handleWantToVisitClick}
                   variant={wantToVisit ? "secondary" : "outline"}
                   size={isMobile ? "lg" : "default"}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-200"
                 >
-                  <MapPin className={`w-4 h-4 mr-2 ${wantToVisit ? "fill-current" : ""}`} />
-                  {wantToVisit ? "Na liście ✓" : "Chcę odwiedzić"}
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={wantToVisit ? "listed" : "unlisted"}
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.8, opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center"
+                    >
+                      {wantToVisit ? (
+                        <Check className="w-4 h-4 mr-2" />
+                      ) : (
+                        <MapPin className="w-4 h-4 mr-2" />
+                      )}
+                      {wantToVisit ? "Na liście" : "Chcę odwiedzić"}
+                    </motion.span>
+                  </AnimatePresence>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground text-center md:text-left">

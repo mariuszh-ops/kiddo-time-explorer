@@ -1,15 +1,19 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
+import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
   const { detectCity, defaultCity } = useGeolocationCity();
   const [initialCity, setInitialCity] = useState<string | undefined>(undefined);
+  
+  // Scroll position restoration
+  useScrollPosition();
   
   const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters(initialCity);
 
