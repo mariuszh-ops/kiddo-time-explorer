@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { mockActivities } from "@/data/activities";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import PageTransition from "@/components/PageTransition";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
@@ -213,7 +214,8 @@ const ActivityDetail = () => {
   const initialReviewCount = isMobile ? 2 : 3;
 
   return (
-    <main className="min-h-screen bg-background pb-8">
+    <PageTransition>
+      <main className="min-h-screen bg-background pb-8">
       {/* Desktop: Global header with back navigation */}
       <div className="hidden md:block">
         <Header />
@@ -638,6 +640,7 @@ const ActivityDetail = () => {
         onLoginClick={handleAuthAction}
       />
     </main>
+    </PageTransition>
   );
 };
 

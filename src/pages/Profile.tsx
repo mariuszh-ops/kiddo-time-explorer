@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import PageTransition from "@/components/PageTransition";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 
 const Profile = () => {
@@ -23,7 +24,8 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition>
+      <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />
 
@@ -112,6 +114,7 @@ const Profile = () => {
         </motion.div>
       </main>
     </div>
+    </PageTransition>
   );
 };
 
