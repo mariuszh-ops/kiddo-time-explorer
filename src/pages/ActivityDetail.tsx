@@ -20,6 +20,7 @@ import { mockActivities } from "@/data/activities";
 import { useState } from "react";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 // Extended activity data for detail page
 const activityDetails: Record<number, {
@@ -88,7 +89,28 @@ const getActivityTypeIcon = (type: string) => {
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [wantToVisit, setWantToVisit] = useState(false);
+  
+  // Simulate logged out state - replace with actual auth check
+  const isLoggedIn = false;
+
+  const handleFavoriteClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setIsFavorite(!isFavorite);
+  };
+
+  const handleWantToVisitClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setWantToVisit(!wantToVisit);
+  };
   
   const activity = mockActivities.find((a) => a.id === Number(id));
   
@@ -155,7 +177,7 @@ const ActivityDetail = () => {
             <div className="flex flex-col gap-3">
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
-                  onClick={() => setIsFavorite(!isFavorite)}
+                  onClick={handleFavoriteClick}
                   variant={isFavorite ? "default" : "default"}
                   className={`w-full sm:w-auto ${isFavorite ? "bg-primary" : ""}`}
                 >
@@ -163,11 +185,12 @@ const ActivityDetail = () => {
                   {isFavorite ? "W ulubionych" : "Dodaj do ulubionych"}
                 </Button>
                 <Button 
-                  variant="outline"
+                  onClick={handleWantToVisitClick}
+                  variant={wantToVisit ? "secondary" : "outline"}
                   className="w-full sm:w-auto"
                 >
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Chcę odwiedzić
+                  <MapPin className={`w-4 h-4 mr-2 ${wantToVisit ? "fill-current" : ""}`} />
+                  {wantToVisit ? "Chcę odwiedzić ✓" : "Chcę odwiedzić"}
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
@@ -383,6 +406,27 @@ const ActivityDetail = () => {
         reviews={details.reviews}
         activityName={activity.title}
         averageRating={averageRating}
+      />
+
+      {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onGoogleClick={() => {
+          // TODO: Implement Google auth
+          console.log("Google auth clicked");
+          setIsAuthModalOpen(false);
+        }}
+        onEmailClick={() => {
+          // TODO: Navigate to email signup
+          console.log("Email signup clicked");
+          setIsAuthModalOpen(false);
+        }}
+        onLoginClick={() => {
+          // TODO: Navigate to login
+          console.log("Login clicked");
+          setIsAuthModalOpen(false);
+        }}
       />
     </main>
   );
