@@ -216,18 +216,9 @@ const ActivityDetail = () => {
   return (
     <PageTransition>
       <main className="min-h-screen bg-background pb-8">
-      {/* Desktop: Global header with back navigation */}
+      {/* Desktop: Global header */}
       <div className="hidden md:block">
         <Header />
-        <div className="container py-3 border-b border-border/50">
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-            <span className="text-sm">Wróć do listy</span>
-          </button>
-        </div>
       </div>
 
       {/* Mobile: Back button overlay on gallery */}
@@ -252,6 +243,15 @@ const ActivityDetail = () => {
         {/* Content overlay */}
         <div className="container">
           <div className="relative -mt-6 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
+            {/* Desktop: Contextual back navigation - above title */}
+            <button
+              onClick={handleBack}
+              className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group mb-4"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              <span className="text-sm">Wróć do listy wydarzeń</span>
+            </button>
+            
             {/* Activity title */}
             <h1 className="text-xl md:text-3xl font-serif text-foreground mb-1 md:mb-2 leading-tight">
               {activity.title}
