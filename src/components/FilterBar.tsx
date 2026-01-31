@@ -34,7 +34,7 @@ const FilterBar = ({
     <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
       <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
-        <div className="flex items-center gap-2 overflow-x-auto overflow-y-visible pb-1 -mb-1 scrollbar-hide">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
           <FilterDropdown
             label="Miasto"
             options={filterCounts.city}
