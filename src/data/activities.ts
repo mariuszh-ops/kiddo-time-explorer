@@ -11,6 +11,7 @@ export interface Activity {
   ageMax: number;
   matchPercentage: number;
   imageUrl: string;
+  imageUrls?: string[]; // Multiple images for gallery
   tags: string[];
   isIndoor: boolean;
   type: string;
@@ -29,6 +30,13 @@ export const mockActivities: Activity[] = [
     ageMax: 12,
     matchPercentage: 95,
     imageUrl: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",
+    imageUrls: [
+      "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507666405895-422eee7d517f?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551316679-9c6ae9dec224?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1459262838948-3e2de6c1ec80?w=1200&auto=format&fit=crop",
+    ],
     tags: ["Na zewnątrz", "Edukacyjne"],
     isIndoor: false,
     type: "zoo",

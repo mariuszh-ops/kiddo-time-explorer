@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { mockActivities } from "@/data/activities";
 import { useState } from "react";
 import ReviewsModal from "@/components/ReviewsModal";
+import ImageGallery from "@/components/ImageGallery";
 
 // Extended activity data for detail page
 const activityDetails: Record<number, {
@@ -124,14 +125,11 @@ const ActivityDetail = () => {
 
       {/* 1. Header section */}
       <section className="relative">
-        {/* Hero image - taller on mobile for better visibility */}
-        <div className="h-[50vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden">
-          <img
-            src={activity.imageUrl}
-            alt={activity.title}
-            className="w-full h-full object-cover object-top"
-          />
-        </div>
+        {/* Image gallery */}
+        <ImageGallery 
+          images={activity.imageUrls || [activity.imageUrl]} 
+          activityTitle={activity.title}
+        />
         
         {/* Content overlay - less overlap to show more of the image */}
         <div className="container">
