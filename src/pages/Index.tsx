@@ -1,15 +1,16 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
+import PageTransition from "@/components/PageTransition";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
-  const { detectCity, defaultCity } = useGeolocationCity();
+  const { detectCity } = useGeolocationCity();
   const [initialCity, setInitialCity] = useState<string | undefined>(undefined);
   
   // Scroll position restoration
@@ -40,7 +41,8 @@ const Index = () => {
   }, [detectCity, updateFilter]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <PageTransition>
+      <main className="min-h-screen bg-background">
       {/* Global header with navigation */}
       <Header />
 
@@ -88,6 +90,7 @@ const Index = () => {
         </div>
       </footer>
     </main>
+    </PageTransition>
   );
 };
 

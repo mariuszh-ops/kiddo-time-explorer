@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
+import PageTransition from "@/components/PageTransition";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 
 const MyPlaces = () => {
@@ -24,7 +25,8 @@ const MyPlaces = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <PageTransition>
+      <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />
 
@@ -149,6 +151,7 @@ const MyPlaces = () => {
         </Tabs>
       </main>
     </div>
+    </PageTransition>
   );
 };
 
