@@ -18,6 +18,23 @@ export interface Activity {
 }
 
 export const mockActivities: Activity[] = [
+  // ===== NEW ACTIVITY WITHOUT REVIEWS (for edge case demo) =====
+  {
+    id: 100,
+    title: "Nowy Park Sensoryczny Kraina Zmysłów",
+    location: "Warszawa, Bielany",
+    city: "warszawa",
+    rating: 0,
+    reviewCount: 0,
+    ageRange: "1–6 lat",
+    ageMin: 1,
+    ageMax: 6,
+    matchPercentage: 93,
+    imageUrl: "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=800&auto=format&fit=crop",
+    tags: ["Na zewnątrz", "Edukacyjne"],
+    isIndoor: false,
+    type: "plac-zabaw",
+  },
   // ===== WARSZAWA (18 activities) =====
   {
     id: 1,

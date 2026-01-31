@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Star, X, AlertCircle, RefreshCw } from "lucide-react";
+import { Star, X, AlertCircle, RefreshCw, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,6 +47,7 @@ const SavedActivityCard = ({
   const { isLoggedIn } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const hasReviews = reviewCount > 0;
   const removeLabel = listType === "favorites" ? "Usuń z ulubionych" : "Usuń z listy";
 
   // Auto-dismiss error after 5 seconds
@@ -201,15 +202,29 @@ const SavedActivityCard = ({
 
         {/* Content */}
         <div className="space-y-2">
-          {/* Rating */}
+          {/* Rating or New badge */}
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-              <Star className="w-4 h-4 fill-primary text-primary" />
-              <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              ({reviewCount} opinii)
-            </span>
+            {hasReviews ? (
+              <>
+                <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                  <Star className="w-4 h-4 fill-primary text-primary" />
+                  <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
+                </div>
+                <span className="text-sm text-muted-foreground">
+                  ({reviewCount} opinii)
+                </span>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
+                  <Sparkles className="w-4 h-4 text-accent-foreground" />
+                  <span className="font-medium text-accent-foreground text-sm">Nowa</span>
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  Brak opinii
+                </span>
+              </>
+            )}
           </div>
 
           {/* Title */}
