@@ -77,10 +77,10 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters }: Activity
   return (
     <section className="bg-background py-6 md:py-10">
       <div className="container">
-        {/* Activity cards grid - 2 cols on mobile, 3 on tablet, 4 on desktop */}
+        {/* Activity cards grid - 1 col on mobile, 2 on sm, 3 on md, 4 on lg */}
         <motion.div 
           layout
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
           <AnimatePresence mode="popLayout">
             {visibleActivities.map((activity, index) => (
