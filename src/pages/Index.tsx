@@ -4,7 +4,7 @@ import ActivityGrid from "@/components/ActivityGrid";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 
 const Index = () => {
-  const { filters, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
+  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
   return (
     <main className="min-h-screen bg-background">
@@ -14,6 +14,8 @@ const Index = () => {
       {/* Sticky filter bar */}
       <FilterBar
         filters={filters}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
         filterCounts={filterCounts}
         onUpdateFilter={updateFilter}
         onClearAll={clearAllFilters}

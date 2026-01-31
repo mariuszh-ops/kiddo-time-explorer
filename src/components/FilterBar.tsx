@@ -1,9 +1,12 @@
+import { useState } from "react";
 import FilterDropdown from "@/components/FilterDropdown";
 import { Filters } from "@/hooks/useActivityFilters";
-import { X } from "lucide-react";
+import { X, Search } from "lucide-react";
 
 interface FilterBarProps {
   filters: Filters;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
   filterCounts: {
     city: { value: string; label: string; count: number }[];
     age: { value: string; label: string; count: number }[];
@@ -18,11 +21,14 @@ interface FilterBarProps {
 
 const FilterBar = ({
   filters,
+  searchQuery,
+  onSearchChange,
   filterCounts,
   onUpdateFilter,
   onClearAll,
 }: FilterBarProps) => {
-  const hasActiveFilters = Object.values(filters).some(Boolean);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const hasActiveFilters = Object.values(filters).some(Boolean) || searchQuery.trim().length > 0;
 
   return (
     <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-30">
@@ -60,6 +66,49 @@ const FilterBar = ({
             totalCount={filterCounts.total}
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
+
+          {/* Search input */}
+          <div className="relative flex items-center">
+            {isSearchExpanded ? (
+              <div className="flex items-center gap-1">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => onSearchChange(e.target.value)}
+                    placeholder="Szukaj..."
+                    autoFocus
+                    className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                    onBlur={() => {
+                      if (!searchQuery.trim()) {
+                        setIsSearchExpanded(false);
+                      }
+                    }}
+                  />
+                </div>
+                {searchQuery && (
+                  <button
+                    onClick={() => {
+                      onSearchChange("");
+                      setIsSearchExpanded(false);
+                    }}
+                    className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                  >
+                    <X className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsSearchExpanded(true)}
+                className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
+                aria-label="Szukaj"
+              >
+                <Search className="w-4 h-4 text-muted-foreground" />
+              </button>
+            )}
+          </div>
 
           {/* Clear all button */}
           {hasActiveFilters && (
