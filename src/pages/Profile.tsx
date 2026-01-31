@@ -1,24 +1,20 @@
-import { User, LogOut } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { LogOut, Heart, MapPin } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { favoritesCount, wantToVisitCount } = useSavedActivities();
 
   // Mock user data - in real app this would come from auth context
   const user = {
     email: "anna.kowalska@email.com",
     initials: "AK",
-  };
-
-  // Mock stats - in real app this would come from backend
-  const stats = {
-    favorites: 4,
-    wantToVisit: 3,
   };
 
   const handleLogout = () => {
@@ -61,28 +57,44 @@ const Profile = () => {
             <p className="text-foreground font-medium">{user.email}</p>
           </section>
 
-          {/* Account summary */}
+          {/* Account summary - clickable stats */}
           <section className="bg-card rounded-xl p-6 border border-border">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
               Twoje zapisane miejsca
             </h2>
 
             <div className="grid grid-cols-2 gap-4">
-              {/* Favorites stat */}
-              <div className="text-center p-4 bg-accent/50 rounded-lg">
-                <p className="text-3xl font-bold text-foreground mb-1">
-                  {stats.favorites}
+              {/* Favorites stat - clickable */}
+              <Link 
+                to="/my-places?tab=favorites"
+                className="text-center p-4 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Heart className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-3xl font-bold text-foreground">
+                    {favoritesCount}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Ulubione
                 </p>
-                <p className="text-sm text-muted-foreground">Ulubione</p>
-              </div>
+              </Link>
 
-              {/* Want to visit stat */}
-              <div className="text-center p-4 bg-accent/50 rounded-lg">
-                <p className="text-3xl font-bold text-foreground mb-1">
-                  {stats.wantToVisit}
+              {/* Want to visit stat - clickable */}
+              <Link 
+                to="/my-places?tab=wantToVisit"
+                className="text-center p-4 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <MapPin className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-3xl font-bold text-foreground">
+                    {wantToVisitCount}
+                  </p>
+                </div>
+                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  Chcę odwiedzić
                 </p>
-                <p className="text-sm text-muted-foreground">Chcę odwiedzić</p>
-              </div>
+              </Link>
             </div>
           </section>
 

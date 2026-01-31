@@ -214,9 +214,18 @@ const ActivityDetail = () => {
 
   return (
     <main className="min-h-screen bg-background pb-8">
-      {/* Desktop: Global header */}
+      {/* Desktop: Global header with back navigation */}
       <div className="hidden md:block">
         <Header />
+        <div className="container py-3 border-b border-border/50">
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+            <span className="text-sm">Wróć do listy</span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile: Back button overlay on gallery */}
