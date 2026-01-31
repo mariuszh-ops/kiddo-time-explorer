@@ -1,18 +1,26 @@
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
+import { useActivityFilters } from "@/hooks/useActivityFilters";
 
 const Index = () => {
+  const { filters, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
+
   return (
     <main className="min-h-screen bg-background">
       {/* Hero section with full-width lifestyle image */}
       <HeroSection />
 
       {/* Sticky filter bar */}
-      <FilterBar />
+      <FilterBar
+        filters={filters}
+        filterCounts={filterCounts}
+        onUpdateFilter={updateFilter}
+        onClearAll={clearAllFilters}
+      />
 
       {/* Activity cards grid */}
-      <ActivityGrid />
+      <ActivityGrid activities={filteredActivities} />
 
       {/* Footer */}
       <footer className="bg-card border-t border-border py-8">

@@ -1,81 +1,89 @@
-import { MapPin, Users, Tag, Home } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import FilterDropdown from "@/components/FilterDropdown";
+import { Filters } from "@/hooks/useActivityFilters";
+import { X } from "lucide-react";
 
-const FilterBar = () => {
+interface FilterBarProps {
+  filters: Filters;
+  filterCounts: {
+    city: { value: string; label: string; count: number }[];
+    age: { value: string; label: string; count: number }[];
+    type: { value: string; label: string; count: number }[];
+    indoor: { value: string; label: string; count: number }[];
+    total: number;
+    filtered: number;
+  };
+  onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
+  onClearAll: () => void;
+}
+
+const FilterBar = ({
+  filters,
+  filterCounts,
+  onUpdateFilter,
+  onClearAll,
+}: FilterBarProps) => {
+  const hasActiveFilters = Object.values(filters).some(Boolean);
+
   return (
-    <section className="bg-card border-b border-border sticky top-0 z-20">
-      <div className="container py-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
-          {/* City filter */}
-          <Select>
-            <SelectTrigger className="w-full md:w-[180px] bg-background">
-              <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Miasto" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="warszawa">Warszawa</SelectItem>
-              <SelectItem value="krakow">Kraków</SelectItem>
-              <SelectItem value="wroclaw">Wrocław</SelectItem>
-              <SelectItem value="gdansk">Gdańsk</SelectItem>
-              <SelectItem value="poznan">Poznań</SelectItem>
-            </SelectContent>
-          </Select>
+    <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-30">
+      <div className="container py-3">
+        {/* Filter pills - horizontal scroll on mobile */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
+          <FilterDropdown
+            label="Miasto"
+            options={filterCounts.city}
+            selectedValue={filters.city}
+            totalCount={filterCounts.total}
+            onSelect={(value) => onUpdateFilter("city", value)}
+          />
+          
+          <FilterDropdown
+            label="Wiek dziecka"
+            options={filterCounts.age}
+            selectedValue={filters.age}
+            totalCount={filterCounts.total}
+            onSelect={(value) => onUpdateFilter("age", value)}
+          />
+          
+          <FilterDropdown
+            label="Typ aktywności"
+            options={filterCounts.type}
+            selectedValue={filters.type}
+            totalCount={filterCounts.total}
+            onSelect={(value) => onUpdateFilter("type", value)}
+          />
+          
+          <FilterDropdown
+            label="Lokalizacja"
+            options={filterCounts.indoor}
+            selectedValue={filters.indoor}
+            totalCount={filterCounts.total}
+            onSelect={(value) => onUpdateFilter("indoor", value)}
+          />
 
-          {/* Age filter */}
-          <Select>
-            <SelectTrigger className="w-full md:w-[160px] bg-background">
-              <Users className="w-4 h-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Wiek dziecka" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="0-2">0-2 lata</SelectItem>
-              <SelectItem value="3-5">3-5 lat</SelectItem>
-              <SelectItem value="6-9">6-9 lat</SelectItem>
-              <SelectItem value="10-12">10-12 lat</SelectItem>
-              <SelectItem value="13+">13+ lat</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* Clear all button */}
+          {hasActiveFilters && (
+            <button
+              onClick={onClearAll}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap"
+            >
+              <X className="w-3.5 h-3.5" />
+              Wyczyść
+            </button>
+          )}
+        </div>
 
-          {/* Activity type filter */}
-          <Select>
-            <SelectTrigger className="w-full md:w-[180px] bg-background">
-              <Tag className="w-4 h-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Typ aktywności" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="zoo">Zoo i zwierzęta</SelectItem>
-              <SelectItem value="muzeum">Muzea</SelectItem>
-              <SelectItem value="plac-zabaw">Place zabaw</SelectItem>
-              <SelectItem value="park">Parki</SelectItem>
-              <SelectItem value="sport">Sport i ruch</SelectItem>
-              <SelectItem value="warsztaty">Warsztaty</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Indoor/Outdoor filter */}
-          <Select>
-            <SelectTrigger className="w-full md:w-[160px] bg-background">
-              <Home className="w-4 h-4 mr-2 text-muted-foreground" />
-              <SelectValue placeholder="Lokalizacja" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Wszystkie</SelectItem>
-              <SelectItem value="indoor">W pomieszczeniu</SelectItem>
-              <SelectItem value="outdoor">Na zewnątrz</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Search button */}
-          <Button className="w-full md:w-auto md:ml-auto" variant="default">
-            Szukaj
-          </Button>
+        {/* Results count - subtle indicator */}
+        <div className="mt-2 text-sm text-muted-foreground">
+          {hasActiveFilters ? (
+            <span>
+              Znaleziono <span className="font-medium text-foreground">{filterCounts.filtered}</span> aktywności
+            </span>
+          ) : (
+            <span>
+              <span className="font-medium text-foreground">{filterCounts.total}</span> aktywności w Twojej okolicy
+            </span>
+          )}
         </div>
       </div>
     </section>
