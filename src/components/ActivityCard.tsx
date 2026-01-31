@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Star, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState } from "react";
+import { getPlaceholderImage } from "@/data/placeholders";
 
 interface ActivityCardProps {
   id: number;
@@ -13,6 +15,7 @@ interface ActivityCardProps {
   matchPercentage: number;
   imageUrl: string;
   tags: string[];
+  type?: string;
 }
 
 const ActivityCard = ({
@@ -25,9 +28,18 @@ const ActivityCard = ({
   matchPercentage,
   imageUrl,
   tags,
+  type = "inne",
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const hasReviews = reviewCount > 0;
+  const [imgSrc, setImgSrc] = useState(imageUrl);
+  const fallbackImage = getPlaceholderImage(type, id);
+
+  const handleImageError = () => {
+    if (imgSrc !== fallbackImage) {
+      setImgSrc(fallbackImage);
+    }
+  };
 
   return (
     <Link to={`/activity/${id}`}>
@@ -35,9 +47,10 @@ const ActivityCard = ({
       {/* Image - 16:10 aspect ratio (rectangular, not square) */}
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
         <img
-          src={imageUrl}
+          src={imgSrc}
           alt={title}
           className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
+          onError={handleImageError}
         />
         
         {/* Match percentage badge - only visible for logged-in users */}
