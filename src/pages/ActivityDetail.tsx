@@ -20,6 +20,7 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { useAuth } from "@/contexts/AuthContext";
 
 // Extended activity data for detail page
@@ -89,18 +90,33 @@ const getActivityTypeIcon = (type: string) => {
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [wantToVisit, setWantToVisit] = useState(false);
   
-  // Use auth context - defaults to logged in for design purposes
-  const { isLoggedIn } = useAuth();
+  // Use auth context
+  const { isLoggedIn, login } = useAuth();
 
   const handleFavoriteClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
     setIsFavorite(!isFavorite);
   };
 
   const handleWantToVisitClick = () => {
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
     setWantToVisit(!wantToVisit);
+  };
+
+  const handleAuthAction = () => {
+    // Simulate successful login for design purposes
+    login();
+    setIsAuthModalOpen(false);
   };
   
   const activity = mockActivities.find((a) => a.id === Number(id));
@@ -387,6 +403,15 @@ const ActivityDetail = () => {
         reviews={details.reviews}
         activityName={activity.title}
         averageRating={averageRating}
+      />
+
+      {/* Auth Required Modal - for logged out users */}
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onGoogleClick={handleAuthAction}
+        onEmailClick={handleAuthAction}
+        onLoginClick={handleAuthAction}
       />
     </main>
   );
