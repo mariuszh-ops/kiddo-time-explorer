@@ -1,4 +1,4 @@
-import { useRef, useState, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
@@ -11,22 +11,21 @@ import { useScrollPosition } from "@/hooks/useScrollPosition";
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
   const { detectCity } = useGeolocationCity();
-  const [initialCity, setInitialCity] = useState<string | undefined>(undefined);
   
   // Scroll position restoration
   useScrollPosition();
   
-  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters(initialCity);
+  // Initialize filters without initial city - city is set explicitly on explore
+  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
-  // Check if any filters are active
-  const hasActiveFilters = Object.values(filters).some(val => val !== undefined && val !== "") || searchQuery.length > 0;
+  // Check if any filters are active - derived directly from filter state
+  const hasActiveFilters = filterCounts.hasAnyFilter;
 
   const handleExplore = useCallback(async () => {
     // Detect city from geolocation (or use default)
     const city = await detectCity();
     
-    // Update the city filter
-    setInitialCity(city);
+    // Update the city filter directly - no separate state needed
     updateFilter("city", city);
     
     // Scroll to the listing

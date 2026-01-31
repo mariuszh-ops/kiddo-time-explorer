@@ -9,20 +9,25 @@ export interface Filters {
   search?: string;
 }
 
-export function useActivityFilters(initialCity?: string) {
-  const [filters, setFilters] = useState<Filters>(() => 
-    initialCity ? { city: initialCity } : {}
-  );
+export function useActivityFilters() {
+  // Single source of truth for all filter state
+  const [filters, setFilters] = useState<Filters>({});
   const [searchQuery, setSearchQuery] = useState("");
 
   const updateFilter = useCallback((key: keyof Filters, value: string | undefined) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setFilters((prev) => {
+      const newFilters = { ...prev };
+      if (value === undefined) {
+        delete newFilters[key];
+      } else {
+        newFilters[key] = value;
+      }
+      return newFilters;
+    });
   }, []);
 
   const clearAllFilters = useCallback(() => {
+    // Complete reset - create new empty object to ensure React detects the change
     setFilters({});
     setSearchQuery("");
   }, []);
