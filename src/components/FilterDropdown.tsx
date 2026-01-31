@@ -45,8 +45,9 @@ const FilterDropdown = ({
     const openUpward = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
     
     setDropdownPosition({
-      top: openUpward ? rect.top + window.scrollY : rect.bottom + window.scrollY + 8,
-      left: rect.left + window.scrollX,
+      // Use viewport-relative positions for fixed positioning
+      top: openUpward ? rect.top : rect.bottom + 8,
+      left: rect.left,
       openUpward,
     });
   }, []);
@@ -91,9 +92,9 @@ const FilterDropdown = ({
         dropdownPosition.openUpward && "origin-bottom"
       )}
       style={{
-        top: dropdownPosition.openUpward ? "auto" : dropdownPosition.top,
+        top: dropdownPosition.openUpward ? "auto" : `${dropdownPosition.top}px`,
         bottom: dropdownPosition.openUpward ? `${window.innerHeight - dropdownPosition.top + 8}px` : "auto",
-        left: dropdownPosition.left,
+        left: `${dropdownPosition.left}px`,
         zIndex: 9999,
       }}
     >
