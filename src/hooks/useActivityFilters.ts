@@ -78,21 +78,36 @@ export function useActivityFilters(initialCity?: string) {
   }, [filters, searchQuery]);
 
   // Calculate counts for each filter option
+  // Contextual: shows how many results will remain if you select this option
   const filterCounts = useMemo(() => {
+    const hasAnyFilter = Boolean(Object.values(filters).some(Boolean) || searchQuery.trim());
+    
+    // Helper: Apply all filters except one, then count how many match a specific value
     const getCountForFilter = (
       key: keyof Filters,
       value: string,
-      baseFilters: Filters
+      otherFilters: Filters
     ) => {
-      const testFilters = { ...baseFilters, [key]: value };
-      let result = mockActivities;
-
-      if (testFilters.city) {
-        result = result.filter((a) => a.city === testFilters.city);
+      // Start with activities matching the search query (if any)
+      let result = [...mockActivities];
+      
+      if (searchQuery.trim()) {
+        const query = searchQuery.toLowerCase().trim();
+        result = result.filter(
+          (a) =>
+            a.title.toLowerCase().includes(query) ||
+            a.location.toLowerCase().includes(query) ||
+            a.tags.some((tag) => tag.toLowerCase().includes(query))
+        );
       }
 
-      if (testFilters.age) {
-        const ageOption = filterOptions.age.find((o) => o.value === testFilters.age);
+      // Apply all OTHER filters (not the one we're calculating for)
+      if (key !== "city" && otherFilters.city) {
+        result = result.filter((a) => a.city === otherFilters.city);
+      }
+
+      if (key !== "age" && otherFilters.age) {
+        const ageOption = filterOptions.age.find((o) => o.value === otherFilters.age);
         if (ageOption) {
           result = result.filter(
             (a) => a.ageMin <= ageOption.max && a.ageMax >= ageOption.min
@@ -100,45 +115,59 @@ export function useActivityFilters(initialCity?: string) {
         }
       }
 
-      if (testFilters.type) {
-        result = result.filter((a) => a.type === testFilters.type);
+      if (key !== "type" && otherFilters.type) {
+        result = result.filter((a) => a.type === otherFilters.type);
       }
 
-      if (testFilters.indoor) {
-        const isIndoor = testFilters.indoor === "indoor";
+      if (key !== "indoor" && otherFilters.indoor) {
+        const isIndoor = otherFilters.indoor === "indoor";
         result = result.filter((a) => a.isIndoor === isIndoor);
       }
 
-      return result.length;
-    };
+      // Now count how many of these remaining activities match the target value
+      if (key === "city") {
+        return result.filter((a) => a.city === value).length;
+      } else if (key === "age") {
+        const ageOption = filterOptions.age.find((o) => o.value === value);
+        if (ageOption) {
+          // Count unique activities matching this age range
+          return result.filter(
+            (a) => a.ageMin <= ageOption.max && a.ageMax >= ageOption.min
+          ).length;
+        }
+        return 0;
+      } else if (key === "type") {
+        return result.filter((a) => a.type === value).length;
+      } else if (key === "indoor") {
+        const isIndoor = value === "indoor";
+        return result.filter((a) => a.isIndoor === isIndoor).length;
+      }
 
-    // Get counts without the current filter applied
-    const filtersWithoutCity = { ...filters, city: undefined };
-    const filtersWithoutAge = { ...filters, age: undefined };
-    const filtersWithoutType = { ...filters, type: undefined };
-    const filtersWithoutIndoor = { ...filters, indoor: undefined };
+      return 0;
+    };
 
     return {
       city: filterOptions.city.map((o) => ({
         ...o,
-        count: getCountForFilter("city", o.value, filtersWithoutCity),
+        count: getCountForFilter("city", o.value, filters),
       })),
       age: filterOptions.age.map((o) => ({
         ...o,
-        count: getCountForFilter("age", o.value, filtersWithoutAge),
+        count: getCountForFilter("age", o.value, filters),
       })),
       type: filterOptions.type.map((o) => ({
         ...o,
-        count: getCountForFilter("type", o.value, filtersWithoutType),
+        count: getCountForFilter("type", o.value, filters),
       })),
       indoor: filterOptions.indoor.map((o) => ({
         ...o,
-        count: getCountForFilter("indoor", o.value, filtersWithoutIndoor),
+        count: getCountForFilter("indoor", o.value, filters),
       })),
       total: mockActivities.length,
       filtered: filteredActivities.length,
+      hasAnyFilter,
     };
-  }, [filters, filteredActivities.length]);
+  }, [filters, filteredActivities.length, searchQuery]);
 
   return {
     filters,

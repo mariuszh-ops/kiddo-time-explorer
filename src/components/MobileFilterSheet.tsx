@@ -25,6 +25,7 @@ interface MobileFilterSheetProps {
     indoor: FilterOption[];
     total: number;
     filtered: number;
+    hasAnyFilter: boolean;
   };
   onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
   onClearAll: () => void;

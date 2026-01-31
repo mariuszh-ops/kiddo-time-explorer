@@ -17,6 +17,7 @@ interface FilterBarProps {
     indoor: { value: string; label: string; count: number }[];
     total: number;
     filtered: number;
+    hasAnyFilter: boolean;
   };
   onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
   onClearAll: () => void;
@@ -91,7 +92,7 @@ const FilterBar = ({
             label="Miasto"
             options={filterCounts.city}
             selectedValue={filters.city}
-            totalCount={filterCounts.total}
+            hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("city", value)}
           />
           
@@ -99,7 +100,7 @@ const FilterBar = ({
             label="Wiek dziecka"
             options={filterCounts.age}
             selectedValue={filters.age}
-            totalCount={filterCounts.total}
+            hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("age", value)}
           />
           
@@ -107,7 +108,7 @@ const FilterBar = ({
             label="Typ aktywności"
             options={filterCounts.type}
             selectedValue={filters.type}
-            totalCount={filterCounts.total}
+            hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("type", value)}
           />
           
@@ -115,7 +116,7 @@ const FilterBar = ({
             label="Lokalizacja"
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
-            totalCount={filterCounts.total}
+            hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
 

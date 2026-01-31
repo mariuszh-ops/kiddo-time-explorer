@@ -13,7 +13,7 @@ interface FilterDropdownProps {
   label: string;
   options: FilterOption[];
   selectedValue?: string;
-  totalCount: number;
+  hasAnyFilter: boolean; // Whether any filter is currently active
   onSelect: (value: string | undefined) => void;
 }
 
@@ -21,7 +21,7 @@ const FilterDropdown = ({
   label,
   options,
   selectedValue,
-  totalCount,
+  hasAnyFilter,
   onSelect,
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +31,6 @@ const FilterDropdown = ({
 
   const selectedOption = options.find((o) => o.value === selectedValue);
   const displayLabel = selectedOption?.label || label;
-  const displayCount = selectedOption?.count || totalCount;
 
   const updatePosition = useCallback(() => {
     if (!buttonRef.current) return;
@@ -140,12 +139,12 @@ const FilterDropdown = ({
         )}
       >
         <span className="max-w-[120px] truncate">{displayLabel}</span>
-        <span className={cn(
-          "text-xs",
-          selectedValue ? "text-primary-foreground/80" : "text-muted-foreground"
-        )}>
-          ({displayCount})
-        </span>
+        {/* Only show count when no filters are active (global count) */}
+        {!hasAnyFilter && !selectedValue && (
+          <span className="text-xs text-muted-foreground">
+            ({options.reduce((sum, o) => Math.max(sum, o.count), 0)})
+          </span>
+        )}
         {selectedValue ? (
           <X
             className="w-3.5 h-3.5 ml-0.5 hover:scale-110 transition-transform"
