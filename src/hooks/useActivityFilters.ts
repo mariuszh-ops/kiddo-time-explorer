@@ -9,8 +9,10 @@ export interface Filters {
   search?: string;
 }
 
-export function useActivityFilters() {
-  const [filters, setFilters] = useState<Filters>({});
+export function useActivityFilters(initialCity?: string) {
+  const [filters, setFilters] = useState<Filters>(() => 
+    initialCity ? { city: initialCity } : {}
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const updateFilter = useCallback((key: keyof Filters, value: string | undefined) => {
