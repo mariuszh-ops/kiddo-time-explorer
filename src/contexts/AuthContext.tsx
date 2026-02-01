@@ -9,9 +9,8 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Default to logged-out state to demonstrate both user states
-  // Toggle to true to preview logged-in state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // Default to logged-in state for preview purposes
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
