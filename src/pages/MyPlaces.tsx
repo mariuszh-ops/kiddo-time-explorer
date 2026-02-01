@@ -5,12 +5,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
+import VisitedActivityCard from "@/components/VisitedActivityCard";
 import PageTransition from "@/components/PageTransition";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
+import { Star } from "lucide-react";
 
 const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") === "wantToVisit" ? "wantToVisit" : "favorites";
+  const tabParam = searchParams.get("tab");
+  const defaultTab = tabParam === "wantToVisit" ? "wantToVisit" : tabParam === "visited" ? "visited" : "favorites";
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -25,6 +29,8 @@ const MyPlaces = () => {
     favoritesCount,
     wantToVisitCount,
   } = useSavedActivities();
+
+  const { visitedActivities, visitedCount } = useUserRatings();
   
   const handleTabChange = (value: string) => {
     setSearchParams({ tab: value });
@@ -52,17 +58,23 @@ const MyPlaces = () => {
       <main className="container py-6 md:py-8">
         <Tabs value={defaultTab} onValueChange={handleTabChange} className="w-full">
           {/* Segmented control with dynamic counts */}
-          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6 md:mb-8">
+          <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 md:mb-8">
             <TabsTrigger value="favorites" className="text-sm md:text-base">
               Ulubione
-              <span className="ml-2 text-xs text-muted-foreground">
+              <span className="ml-1.5 text-xs text-muted-foreground">
                 ({favoritesCount})
               </span>
             </TabsTrigger>
             <TabsTrigger value="wantToVisit" className="text-sm md:text-base">
               Chcę odwiedzić
-              <span className="ml-2 text-xs text-muted-foreground">
+              <span className="ml-1.5 text-xs text-muted-foreground">
                 ({wantToVisitCount})
+              </span>
+            </TabsTrigger>
+            <TabsTrigger value="visited" className="text-sm md:text-base">
+              Odwiedzone
+              <span className="ml-1.5 text-xs text-muted-foreground">
+                ({visitedCount})
               </span>
             </TabsTrigger>
           </TabsList>
@@ -150,6 +162,48 @@ const MyPlaces = () => {
                         onRemove={removeFromWantToVisit}
                         type={activity.type}
                       />
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>
+            )}
+          </TabsContent>
+
+          {/* Visited tab */}
+          <TabsContent value="visited">
+            {visitedActivities.length === 0 ? (
+              <div className="text-center py-12 md:py-16">
+                <div className="w-16 h-16 mx-auto mb-4 bg-accent rounded-full flex items-center justify-center">
+                  <Star className="w-8 h-8 text-accent-foreground" />
+                </div>
+                <h3 className="text-lg font-medium text-foreground mb-2">
+                  Brak ocenionych miejsc
+                </h3>
+                <p className="text-muted-foreground max-w-sm mx-auto">
+                  Kiedy ocenisz odwiedzone atrakcje, pojawią się tutaj wraz z Twoimi opiniami.
+                </p>
+              </div>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
+              >
+                <AnimatePresence mode="popLayout">
+                  {visitedActivities.map((activity, index) => (
+                    <motion.div
+                      key={activity.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ 
+                        opacity: 1, 
+                        scale: 1,
+                        transition: { delay: index * 0.03 }
+                      }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                    >
+                      <VisitedActivityCard activity={activity} />
                     </motion.div>
                   ))}
                 </AnimatePresence>

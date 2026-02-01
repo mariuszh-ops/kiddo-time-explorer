@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
+import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
@@ -37,14 +38,16 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <SavedActivitiesProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <OfflineIndicator />
-          <BrowserRouter>
-            <AnimatedRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
+        <UserRatingsProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <OfflineIndicator />
+            <BrowserRouter>
+              <AnimatedRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+        </UserRatingsProvider>
       </SavedActivitiesProvider>
     </AuthProvider>
   </QueryClientProvider>
