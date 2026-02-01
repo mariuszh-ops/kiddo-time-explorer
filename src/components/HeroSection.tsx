@@ -14,7 +14,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
-          className="w-full h-full object-cover object-[center_25%] md:object-[center_15%]"
+          className="w-full h-full object-cover object-[62%_25%] md:object-[center_15%]"
         />
         {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background/80 md:bg-gradient-to-r md:from-background/45 md:via-background/15 md:to-transparent" />
