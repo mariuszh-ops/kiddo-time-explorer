@@ -68,7 +68,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               ))}
             </div>
             <span className="text-sm text-muted-foreground">
-              +2500 rodziców korzysta z kidsmoment
+              +2500 rodziców korzysta z FamilyFun
             </span>
           </div>
         </div>
