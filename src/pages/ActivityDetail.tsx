@@ -119,9 +119,21 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
-  // Scroll to top when entering the detail page
+  // Scroll to position title at ~1/3 from top of viewport
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Small delay to ensure layout is complete
+    const timer = setTimeout(() => {
+      const titleCard = document.getElementById('activity-title-card');
+      if (titleCard) {
+        const cardTop = titleCard.getBoundingClientRect().top + window.scrollY;
+        // Position title card at roughly 1/3 from top of viewport
+        const targetScroll = Math.max(0, cardTop - (window.innerHeight * 0.15));
+        window.scrollTo({ top: targetScroll, behavior: 'instant' });
+      } else {
+        window.scrollTo(0, 0);
+      }
+    }, 50);
+    return () => clearTimeout(timer);
   }, [id]);
 
   // Auto-dismiss error after 4 seconds
@@ -249,7 +261,7 @@ const ActivityDetail = () => {
         
         {/* Content overlay */}
         <div className="container">
-          <div className="relative -mt-6 md:-mt-24 bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
+          <div id="activity-title-card" className="relative -mt-8 md:-mt-16 bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
             {/* Desktop: Contextual back navigation - above title */}
             <button
               onClick={handleBack}
