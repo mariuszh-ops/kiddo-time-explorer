@@ -25,10 +25,9 @@ import PageTransition from "@/components/PageTransition";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
-import UserRatingSection from "@/components/UserRatingSection";
+import InlineRatingAction from "@/components/InlineRatingAction";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
-import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -415,6 +414,12 @@ const ActivityDetail = () => {
                   Zapisz, żeby wrócić do tego miejsca później
                 </p>
               )}
+
+              {/* Rating action - directly below CTA buttons */}
+              <InlineRatingAction 
+                activityId={activityId} 
+                onAuthRequired={() => setIsAuthModalOpen(true)}
+              />
             </div>
           </div>
         </div>
@@ -567,15 +572,6 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 5. User's own rating section - for logged in users */}
-      {isLoggedIn && (
-        <section className="container mt-5 md:mt-6">
-          <UserRatingSection 
-            activityId={activityId} 
-            onAuthRequired={() => setIsAuthModalOpen(true)}
-          />
-        </section>
-      )}
 
       {/* 6. Reviews section */}
       <section className="container mt-5 md:mt-6">
