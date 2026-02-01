@@ -292,7 +292,8 @@ const ActivityDetail = () => {
 
             {/* Action buttons - prominent placement */}
             <div className="flex flex-col gap-3">
-              <div className="flex gap-3">
+              {/* Stack vertically on mobile, side-by-side on desktop */}
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={handleFavoriteClick}
                   variant={isFavorite ? "default" : "default"}
