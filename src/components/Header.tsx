@@ -29,7 +29,7 @@ const Header = () => {
             <img 
               src={familyFunLogo} 
               alt="FamilyFun" 
-              className="h-8 md:h-10 w-auto object-contain"
+              className="h-[30px] md:h-10 w-auto object-contain"
             />
           </Link>
 
