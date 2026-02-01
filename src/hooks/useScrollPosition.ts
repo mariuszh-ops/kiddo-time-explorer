@@ -22,8 +22,13 @@ export function useScrollPosition() {
     };
   }, [location.pathname]);
 
-  // Restore scroll position when returning to a page
+  // Restore scroll position when returning to a page (skip for activity detail pages)
   useEffect(() => {
+    // Don't restore scroll for activity detail pages - they should always start at top
+    if (location.pathname.startsWith('/activity/')) {
+      return;
+    }
+    
     const savedPosition = scrollPositions.get(location.pathname);
     
     if (savedPosition !== undefined && savedPosition > 0) {

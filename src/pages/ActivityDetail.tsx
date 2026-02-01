@@ -119,6 +119,11 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
+  // Scroll to top when entering the detail page
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [id]);
+
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
     if (saveError) {
