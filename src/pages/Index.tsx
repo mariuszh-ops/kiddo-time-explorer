@@ -65,6 +65,7 @@ const Index = () => {
         activities={filteredActivities} 
         hasActiveFilters={hasActiveFilters}
         onClearFilters={clearAllFilters}
+        filters={filters}
       />
 
       {/* Footer */}

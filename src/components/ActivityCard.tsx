@@ -16,6 +16,7 @@ interface ActivityCardProps {
   imageUrl: string;
   tags: string[];
   type?: string;
+  socialProofBadge?: string;
 }
 
 const ActivityCard = ({
@@ -29,6 +30,7 @@ const ActivityCard = ({
   imageUrl,
   tags,
   type = "inne",
+  socialProofBadge,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const hasReviews = reviewCount > 0;
@@ -124,6 +126,13 @@ const ActivityCard = ({
             </Badge>
           ))}
         </div>
+
+        {/* Social proof badge - subtle, only when context allows */}
+        {socialProofBadge && (
+          <p className="text-xs text-muted-foreground/80 mt-1.5 italic">
+            {socialProofBadge}
+          </p>
+        )}
       </div>
       </article>
     </Link>
