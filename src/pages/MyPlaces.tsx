@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +11,11 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultTab = searchParams.get("tab") === "wantToVisit" ? "wantToVisit" : "favorites";
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const {
     favorites,

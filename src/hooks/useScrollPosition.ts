@@ -22,10 +22,10 @@ export function useScrollPosition() {
     };
   }, [location.pathname]);
 
-  // Restore scroll position when returning to a page (skip for activity detail pages)
+  // Restore scroll position when returning to a page (skip for pages that handle their own scroll)
   useEffect(() => {
-    // Don't restore scroll for activity detail pages - they should always start at top
-    if (location.pathname.startsWith('/activity/')) {
+    // Don't restore scroll for these pages - they should always start at top
+    if (location.pathname.startsWith('/activity/') || location.pathname === '/my-places') {
       return;
     }
     
