@@ -8,16 +8,16 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[85vh] md:min-h-[80vh] flex items-center">
+    <section className="relative min-h-[auto] py-16 md:py-0 md:min-h-[80vh] flex items-center">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
-          className="w-full h-full object-cover object-[center_15%]"
+          className="w-full h-full object-cover object-center md:object-[center_15%]"
         />
-        {/* Subtle gradient overlay for text readability (keep photo natural) */}
-        <div className="absolute inset-0 bg-gradient-to-r from-background/55 via-background/20 to-transparent md:from-background/45 md:via-background/15 md:to-transparent" />
+        {/* Gradient overlay - stronger on mobile for text readability over adaptive height */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background/70 md:bg-gradient-to-r md:from-background/45 md:via-background/15 md:to-transparent" />
       </div>
 
       {/* Content */}
