@@ -1,15 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import { Heart, User, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.png";
 
+// Check if we're in development mode
+const isDevelopment = import.meta.env.DEV;
+
 const Header = () => {
   const location = useLocation();
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, login, isDemoMode, toggleDemoMode } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   
   const isActive = (path: string) => location.pathname === path;
@@ -35,6 +39,20 @@ const Header = () => {
 
           {/* Navigation */}
           <nav className="flex items-center gap-1 md:gap-2">
+            {/* Demo Mode Toggle - Development only */}
+            {isDevelopment && (
+              <div className="flex items-center gap-2 px-2 py-1 mr-2 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-md">
+                <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
+                  Demo
+                </span>
+                <Switch
+                  checked={isDemoMode}
+                  onCheckedChange={toggleDemoMode}
+                  className="scale-75 data-[state=checked]:bg-amber-500"
+                />
+              </div>
+            )}
+
             {isLoggedIn ? (
               <>
                 {/* My Places link - logged in only */}
