@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
+import SocialProofBanner from "@/components/SocialProofBanner";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
+import { Filters } from "@/hooks/useActivityFilters";
 
 interface ActivityGridProps {
   activities: Activity[];
@@ -13,12 +15,26 @@ interface ActivityGridProps {
   isLoading?: boolean;
   hasError?: boolean;
   onRetry?: () => void;
+  filters?: Filters;
 }
 
 const ITEMS_PER_PAGE = 18;
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {} }: ActivityGridProps) => {
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+
+  // Determine if social proof should be shown
+  const showSocialProof = Boolean(filters.city && (filters.age || filters.type));
+
+  // Select which activities get badges (top rated ones when social proof is visible)
+  const badgeActivityIds = useMemo(() => {
+    if (!showSocialProof) return new Set<number>();
+    
+    // Give badges to top 30% of activities by rating (max 6)
+    const sorted = [...activities].sort((a, b) => b.rating - a.rating);
+    const badgeCount = Math.min(6, Math.ceil(activities.length * 0.3));
+    return new Set(sorted.slice(0, badgeCount).map(a => a.id));
+  }, [activities, showSocialProof]);
 
   // Reset visible count when activities change (filter applied)
   useEffect(() => {
@@ -83,9 +99,33 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     );
   }
 
+  // Generate badge text based on filters
+  const getBadgeText = (activityId: number): string | undefined => {
+    if (!badgeActivityIds.has(activityId)) return undefined;
+    
+    if (filters.age && filters.city) {
+      return "Popularne w tej grupie wiekowej";
+    }
+    if (filters.city) {
+      const cityNames: Record<string, string> = {
+        warszawa: "Warszawie",
+        krakow: "Krakowie", 
+        wroclaw: "Wrocławiu",
+        gdansk: "Gdańsku",
+        poznan: "Poznaniu",
+      };
+      const cityName = cityNames[filters.city] || filters.city;
+      return `Często wybierane w ${cityName}`;
+    }
+    return undefined;
+  };
+
   return (
     <section className="bg-background py-6 md:py-10">
       <div className="container">
+        {/* Social proof banner - only when filters match criteria */}
+        <SocialProofBanner filters={filters} resultCount={activities.length} />
+
         {/* Activity cards grid - 1 col on mobile, 2 on sm, 3 on md, 4 on lg */}
         <motion.div 
           layout
@@ -124,6 +164,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   imageUrl={activity.imageUrl}
                   tags={activity.tags}
                   type={activity.type}
+                  socialProofBadge={getBadgeText(activity.id)}
                 />
               </motion.div>
             ))}
