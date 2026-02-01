@@ -171,8 +171,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
         </div>
       </div>
 
-      {/* Thumbnail strip - desktop only */}
-      <div className="hidden md:block container py-3">
+      {/* Thumbnail strip - desktop only, positioned above content card */}
+      <div className="hidden md:block relative z-20 bg-background container py-3 pb-6">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
           {images.map((image, index) => (
             <button
