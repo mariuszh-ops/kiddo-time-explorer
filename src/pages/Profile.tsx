@@ -1,4 +1,4 @@
-import { LogOut, Heart, MapPin } from "lucide-react";
+import { LogOut, Heart, MapPin, Star } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
 
 const Profile = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
+  const { visitedCount } = useUserRatings();
 
   // Mock user data - in real app this would come from auth context
   const user = {
@@ -65,19 +67,19 @@ const Profile = () => {
               Twoje zapisane miejsca
             </h2>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-3">
               {/* Favorites stat - clickable */}
               <Link 
                 to="/my-places?tab=favorites"
-                className="text-center p-4 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
+                className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
               >
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <Heart className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
-                  <p className="text-3xl font-bold text-foreground">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Heart className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-2xl font-bold text-foreground">
                     {favoritesCount}
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                   Ulubione
                 </p>
               </Link>
@@ -85,16 +87,32 @@ const Profile = () => {
               {/* Want to visit stat - clickable */}
               <Link 
                 to="/my-places?tab=wantToVisit"
-                className="text-center p-4 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
+                className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
               >
-                <div className="flex items-center justify-center gap-2 mb-1">
-                  <MapPin className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
-                  <p className="text-3xl font-bold text-foreground">
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <MapPin className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-2xl font-bold text-foreground">
                     {wantToVisitCount}
                   </p>
                 </div>
-                <p className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                   Chcę odwiedzić
+                </p>
+              </Link>
+
+              {/* Visited stat - clickable */}
+              <Link 
+                to="/my-places?tab=visited"
+                className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer"
+              >
+                <div className="flex items-center justify-center gap-1.5 mb-1">
+                  <Star className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
+                  <p className="text-2xl font-bold text-foreground">
+                    {visitedCount}
+                  </p>
+                </div>
+                <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
+                  Odwiedzone
                 </p>
               </Link>
             </div>

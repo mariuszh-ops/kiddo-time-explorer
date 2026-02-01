@@ -25,8 +25,10 @@ import PageTransition from "@/components/PageTransition";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
+import UserRatingSection from "@/components/UserRatingSection";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -565,7 +567,17 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 5. Reviews section */}
+      {/* 5. User's own rating section - for logged in users */}
+      {isLoggedIn && (
+        <section className="container mt-5 md:mt-6">
+          <UserRatingSection 
+            activityId={activityId} 
+            onAuthRequired={() => setIsAuthModalOpen(true)}
+          />
+        </section>
+      )}
+
+      {/* 6. Reviews section */}
       <section className="container mt-5 md:mt-6">
         <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
           <div className="flex items-center justify-between mb-3 md:mb-4">
@@ -635,7 +647,10 @@ const ActivityDetail = () => {
                 Brak opinii
               </p>
               <p className="text-sm text-muted-foreground">
-                Bądź pierwszy, który oceni tę atrakcję
+                {isLoggedIn 
+                  ? "Bądź pierwszy, który oceni tę atrakcję — użyj formularza powyżej"
+                  : "Bądź pierwszy, który oceni tę atrakcję"
+                }
               </p>
             </div>
           )}
