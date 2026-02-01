@@ -260,8 +260,8 @@ const ActivityDetail = () => {
         />
         
         {/* Content overlay */}
-        <div className="container">
-          <div id="activity-title-card" className="relative -mt-8 md:-mt-16 bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
+        <div className="container relative z-10">
+          <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
             {/* Desktop: Contextual back navigation - above title */}
             <button
               onClick={handleBack}
