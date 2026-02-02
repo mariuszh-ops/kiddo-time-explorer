@@ -125,9 +125,6 @@ const FilterDropdown = ({
     </div>
   ) : null;
 
-  // Calculate the count to show when this filter is active
-  const activeFilterCount = selectedOption ? options.find(o => o.value === selectedValue)?.count : null;
-
   return (
     <>
       <button
@@ -142,12 +139,6 @@ const FilterDropdown = ({
         )}
       >
         <span className="max-w-[120px] truncate">{displayLabel}</span>
-        {/* Only show count when THIS filter is active */}
-        {selectedValue && activeFilterCount !== null && (
-          <span className="text-xs opacity-80">
-            ({activeFilterCount})
-          </span>
-        )}
         {selectedValue ? (
           <X
             className="w-3.5 h-3.5 ml-0.5 hover:scale-110 transition-transform"

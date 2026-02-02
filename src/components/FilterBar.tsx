@@ -44,7 +44,7 @@ const FilterBar = ({
       <>
         <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
           <div className="container py-3">
-            {/* Mobile: Single filter button */}
+            {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <button
                 onClick={() => setIsMobileFilterOpen(true)}
@@ -59,10 +59,12 @@ const FilterBar = ({
                 )}
               </button>
 
-              {/* Results count */}
-              <span className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground">{filterCounts.filtered}</span> wyników
-              </span>
+              {/* Results feedback - only when filters active */}
+              {hasActiveFilters && (
+                <span className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{filterCounts.filtered}</span> atrakcji
+                </span>
+              )}
             </div>
           </div>
         </section>
@@ -163,30 +165,24 @@ const FilterBar = ({
             )}
           </div>
 
-          {/* Clear all button */}
+          {/* Clear all button - only when filters active */}
           {hasActiveFilters && (
             <button
               onClick={onClearAll}
               className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap"
             >
               <X className="w-3.5 h-3.5" />
-              Wyczyść
+              Wyczyść filtry
             </button>
           )}
         </div>
 
-        {/* Results count - subtle indicator */}
-        <div className="mt-2 text-sm text-muted-foreground">
-          {hasActiveFilters ? (
-            <span>
-              Znaleziono <span className="font-medium text-foreground">{filterCounts.filtered}</span> aktywności
-            </span>
-          ) : (
-            <span>
-              <span className="font-medium text-foreground">{filterCounts.total}</span> aktywności w Twojej okolicy
-            </span>
-          )}
-        </div>
+        {/* Results feedback - only when filters active */}
+        {hasActiveFilters && (
+          <div className="mt-2 text-sm text-muted-foreground">
+            <span className="font-medium text-foreground">{filterCounts.filtered}</span> atrakcji spełnia wybrane filtry
+          </div>
+        )}
       </div>
     </section>
   );
