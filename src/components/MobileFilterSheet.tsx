@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Search } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { X, Search, MapPin } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -29,7 +30,7 @@ interface MobileFilterSheetProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
   onClearAll: () => void;
 }
 
@@ -82,17 +83,29 @@ const MobileFilterSheet = ({
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [localDistance, setLocalDistance] = useState(filters.distance ?? 25);
   const hasActiveFilters = Object.values(filters).some(Boolean) || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
+  // Sync local distance when filters change
+  useEffect(() => {
+    if (filters.distance !== undefined) {
+      setLocalDistance(filters.distance);
+    }
+  }, [filters.distance]);
+
   const handleApply = () => {
     onSearchChange(localSearch);
+    if (hasCitySelected) {
+      onUpdateFilter("distance", localDistance);
+    }
     onClose();
   };
 
   const handleClearAll = () => {
     onClearAll();
     setLocalSearch("");
+    setLocalDistance(25);
   };
 
   return (
@@ -140,29 +153,34 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("city", value)}
           />
           
-          {/* Distance filter - shown as sub-section when city selected */}
+          {/* Distance slider - shown when city selected */}
           {hasCitySelected && (
-            <div className="py-4 border-b border-border pl-4 bg-muted/30 -mx-4 px-4">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
-                <span className="text-primary">↳</span> W pobliżu wybranego miasta
-              </h3>
-              <div className="space-y-1">
-                {filterCounts.distance.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => onUpdateFilter("distance", filters.distance === option.value ? undefined : option.value)}
-                    className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Checkbox
-                        checked={filters.distance === option.value}
-                        className="pointer-events-none"
-                      />
-                      <span className="text-sm text-foreground">{option.label}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">({option.count})</span>
-                  </button>
-                ))}
+            <div className="py-4 border-b border-border bg-muted/30 -mx-4 px-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-primary" />
+                  Atrakcje w pobliżu
+                </h3>
+                <span className="text-base font-semibold text-primary">
+                  {localDistance} km
+                </span>
+              </div>
+              
+              <div className="px-1">
+                <Slider
+                  value={[localDistance]}
+                  onValueChange={(values) => setLocalDistance(values[0])}
+                  min={0}
+                  max={100}
+                  step={5}
+                  className="w-full touch-pan-y"
+                />
+              </div>
+              
+              <div className="flex justify-between mt-2 text-xs text-muted-foreground px-1">
+                <span>0 km</span>
+                <span>50 km</span>
+                <span>100 km</span>
               </div>
             </div>
           )}

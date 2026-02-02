@@ -22,7 +22,7 @@ interface FilterBarProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
   onClearAll: () => void;
 }
 
@@ -38,15 +38,16 @@ const getCityNameLocative = (cityValue: string): string => {
   return cityNames[cityValue] || cityValue;
 };
 
-// Helper to get distance label for feedback
-const getDistanceLabel = (distanceValue: string): string => {
-  const labels: Record<string, string> = {
-    center: "w centrum",
-    "25km": "w promieniu 25 km od",
-    "50km": "w promieniu 50 km od",
-    "100km": "w promieniu 100 km od",
+// Helper to get city name in genitive case (Polish grammar)
+const getCityNameGenitive = (cityValue: string): string => {
+  const cityNames: Record<string, string> = {
+    warszawa: "Warszawy",
+    krakow: "Krakowa",
+    wroclaw: "Wrocławia",
+    gdansk: "Gdańska",
+    poznan: "Poznania",
   };
-  return labels[distanceValue] || "";
+  return cityNames[cityValue] || cityValue;
 };
 
 const FilterBar = ({
@@ -66,13 +67,9 @@ const FilterBar = ({
 
   // Generate dynamic feedback text
   const getFeedbackText = () => {
-    if (filters.distance && filters.city) {
-      const distanceLabel = getDistanceLabel(filters.distance);
-      const cityName = getCityNameLocative(filters.city);
-      if (filters.distance === "center") {
-        return `${filterCounts.filtered} atrakcji ${distanceLabel} ${cityName}`;
-      }
-      return `${filterCounts.filtered} atrakcji ${distanceLabel} ${cityName}`;
+    if (filters.distance !== undefined && filters.city) {
+      const cityName = getCityNameGenitive(filters.city);
+      return `${filterCounts.filtered} atrakcji w promieniu ${filters.distance} km od ${cityName}`;
     }
     return `${filterCounts.filtered} atrakcji spełnia wybrane filtry`;
   };
@@ -132,12 +129,12 @@ const FilterBar = ({
           {/* Combined City + Distance filter */}
           <CityFilterDropdown
             cityOptions={filterCounts.city}
-            distanceOptions={filterCounts.distance}
             selectedCity={filters.city}
             selectedDistance={filters.distance}
             hasAnyFilter={filterCounts.hasAnyFilter}
+            filteredCount={filterCounts.filtered}
             onCitySelect={(value) => onUpdateFilter("city", value)}
-            onDistanceSelect={(value) => onUpdateFilter("distance", value)}
+            onDistanceChange={(value) => onUpdateFilter("distance", value)}
           />
           
           <FilterDropdown

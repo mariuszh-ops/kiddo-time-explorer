@@ -7,7 +7,7 @@ export interface Filters {
   type?: string;
   indoor?: string;
   activityKind?: string; // "place" | "event"
-  distance?: string; // "center" | "25km" | "50km" | "100km"
+  distance?: number; // 0-100 km (numeric slider value)
   search?: string;
 }
 
@@ -29,17 +29,22 @@ export function useActivityFilters() {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
 
-  const updateFilter = useCallback((key: keyof Filters, value: string | undefined) => {
+  const updateFilter = useCallback((key: keyof Filters, value: string | number | undefined) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
       if (value === undefined) {
         delete newFilters[key];
       } else {
+        // @ts-ignore - we handle both string and number values
         newFilters[key] = value;
       }
       // Clear distance filter when city is cleared
       if (key === "city" && value === undefined) {
         delete newFilters.distance;
+      }
+      // Set default distance when city is first selected
+      if (key === "city" && value !== undefined && prev.distance === undefined) {
+        newFilters.distance = 25; // Default 25 km
       }
       return newFilters;
     });
@@ -210,11 +215,9 @@ export function useActivityFilters() {
         ...o,
         count: getCountForFilter("activityKind", o.value, filters),
       })),
-      // Distance counts show filtered results (since it's UX-only, show same count as current filtered)
-      distance: filterOptions.distance.map((o) => ({
-        ...o,
-        count: filters.city ? filteredActivities.length : 0,
-      })),
+      // Distance is now a numeric slider, no options needed
+      // Keep for backward compatibility but won't be used for dropdown
+      distance: [],
       total: mockActivities.length,
       filtered: filteredActivities.length,
       hasAnyFilter,

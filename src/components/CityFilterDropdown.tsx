@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
 
 interface FilterOption {
   value: string;
@@ -11,46 +12,43 @@ interface FilterOption {
 
 interface CityFilterDropdownProps {
   cityOptions: FilterOption[];
-  distanceOptions: FilterOption[];
   selectedCity?: string;
-  selectedDistance?: string;
+  selectedDistance?: number;
   hasAnyFilter: boolean;
+  filteredCount: number;
   onCitySelect: (value: string | undefined) => void;
-  onDistanceSelect: (value: string | undefined) => void;
+  onDistanceChange: (value: number) => void;
 }
-
-// Helper to get short distance label
-const getShortDistanceLabel = (distanceValue: string): string => {
-  const labels: Record<string, string> = {
-    center: "centrum",
-    "25km": "+25 km",
-    "50km": "+50 km",
-    "100km": "+100 km",
-  };
-  return labels[distanceValue] || "";
-};
 
 const CityFilterDropdown = ({
   cityOptions,
-  distanceOptions,
   selectedCity,
   selectedDistance,
   hasAnyFilter,
+  filteredCount,
   onCitySelect,
-  onDistanceSelect,
+  onDistanceChange,
 }: CityFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
+  const [localDistance, setLocalDistance] = useState(selectedDistance ?? 25);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const selectedCityOption = cityOptions.find((o) => o.value === selectedCity);
   
+  // Sync local distance with prop when it changes externally
+  useEffect(() => {
+    if (selectedDistance !== undefined) {
+      setLocalDistance(selectedDistance);
+    }
+  }, [selectedDistance]);
+
   // Build combined display label
   const getDisplayLabel = () => {
     if (!selectedCityOption) return "Miasto";
-    if (selectedDistance) {
-      return `${selectedCityOption.label} ${getShortDistanceLabel(selectedDistance)}`;
+    if (selectedDistance !== undefined && selectedDistance > 0) {
+      return `${selectedCityOption.label} +${selectedDistance} km`;
     }
     return selectedCityOption.label;
   };
@@ -62,7 +60,7 @@ const CityFilterDropdown = ({
     if (!buttonRef.current) return;
     
     const rect = buttonRef.current.getBoundingClientRect();
-    const dropdownHeight = 400; // Estimated max height for combined dropdown
+    const dropdownHeight = 420;
     const spaceBelow = window.innerHeight - rect.bottom;
     const spaceAbove = rect.top;
     
@@ -111,15 +109,20 @@ const CityFilterDropdown = ({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCitySelect(undefined);
-    onDistanceSelect(undefined);
     setIsOpen(false);
+  };
+
+  const handleSliderChange = (values: number[]) => {
+    const newValue = values[0];
+    setLocalDistance(newValue);
+    onDistanceChange(newValue);
   };
 
   const dropdownMenu = isOpen ? (
     <div
       ref={dropdownRef}
       className={cn(
-        "fixed min-w-[220px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
+        "fixed min-w-[280px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
       )}
       style={{
@@ -129,7 +132,7 @@ const CityFilterDropdown = ({
         zIndex: 9999,
       }}
     >
-      <div className="max-h-[400px] overflow-y-auto">
+      <div className="max-h-[420px] overflow-y-auto">
         {/* City section */}
         <div className="py-2">
           <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -140,7 +143,6 @@ const CityFilterDropdown = ({
               key={option.value}
               onClick={() => {
                 onCitySelect(option.value);
-                // Don't close if selecting city - allow distance selection
               }}
               className={cn(
                 "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
@@ -160,38 +162,41 @@ const CityFilterDropdown = ({
           ))}
         </div>
         
-        {/* Distance section - only when city is selected */}
+        {/* Distance slider - only when city is selected */}
         {selectedCity && (
           <>
             <div className="border-t border-border" />
-            <div className="py-2">
-              <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide flex items-center gap-1.5">
-                <MapPin className="w-3 h-3" />
-                W pobliżu
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  <MapPin className="w-3 h-3" />
+                  Atrakcje w pobliżu
+                </div>
+                <span className="text-sm font-semibold text-primary">
+                  {localDistance} km
+                </span>
               </div>
-              {distanceOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => {
-                    onDistanceSelect(selectedDistance === option.value ? undefined : option.value);
-                    setIsOpen(false);
-                  }}
-                  className={cn(
-                    "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
-                    option.value === selectedDistance
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-muted"
-                  )}
-                >
-                  <span>{option.label}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">({option.count})</span>
-                    {option.value === selectedDistance && (
-                      <Check className="w-4 h-4 text-primary" />
-                    )}
-                  </div>
-                </button>
-              ))}
+              
+              <Slider
+                value={[localDistance]}
+                onValueChange={handleSliderChange}
+                min={0}
+                max={100}
+                step={5}
+                className="w-full"
+              />
+              
+              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+                <span>0 km</span>
+                <span>100 km</span>
+              </div>
+              
+              {/* Results preview */}
+              <div className="mt-4 pt-3 border-t border-border/50 text-center">
+                <span className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">{filteredCount}</span> atrakcji
+                </span>
+              </div>
             </div>
           </>
         )}
