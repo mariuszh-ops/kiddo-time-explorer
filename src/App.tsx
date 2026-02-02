@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const AnimatedRoutes = () => {
         <Route path="/activity/:id" element={<ActivityDetail />} />
         <Route path="/my-places" element={<MyPlaces />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/admin" element={<Admin />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
