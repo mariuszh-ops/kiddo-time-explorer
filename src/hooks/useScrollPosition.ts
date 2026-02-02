@@ -1,34 +1,37 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 
-// Store scroll positions by pathname
+// Store scroll positions by pathname - outside component to persist across mounts
 const scrollPositions = new Map<string, number>();
 
 export function useScrollPosition() {
   const location = useLocation();
-  const isRestoring = useRef(false);
-  const previousPathname = useRef<string | null>(null);
+  const previousPathnameRef = useRef(location.pathname);
 
-  // Save scroll position before navigating away
+  // Save current scroll position for the current path
+  const savePosition = useCallback(() => {
+    scrollPositions.set(location.pathname, window.scrollY);
+  }, [location.pathname]);
+
+  // Clear stored position
+  const clearPosition = useCallback((pathname?: string) => {
+    scrollPositions.delete(pathname || location.pathname);
+  }, [location.pathname]);
+
+  // Handle scroll position save on route change
   useEffect(() => {
-    // On mount, track the current path
-    if (previousPathname.current === null) {
-      previousPathname.current = location.pathname;
-      return;
-    }
-
-    // When pathname changes, save the scroll position for the PREVIOUS path
-    if (previousPathname.current !== location.pathname) {
-      if (!isRestoring.current) {
-        scrollPositions.set(previousPathname.current, window.scrollY);
-      }
-      previousPathname.current = location.pathname;
+    const previousPathname = previousPathnameRef.current;
+    
+    // If we navigated to a new route, save the scroll position for the previous route
+    if (previousPathname !== location.pathname) {
+      scrollPositions.set(previousPathname, window.scrollY);
+      previousPathnameRef.current = location.pathname;
     }
   }, [location.pathname]);
 
-  // Restore scroll position when returning to a page
+  // Restore scroll position when arriving at a page
   useEffect(() => {
-    // Don't restore scroll for these pages - they should always start at top
+    // Skip restoration for detail pages and my-places - they handle their own scroll
     if (location.pathname.startsWith('/activity/') || location.pathname === '/my-places') {
       window.scrollTo(0, 0);
       return;
@@ -37,37 +40,13 @@ export function useScrollPosition() {
     const savedPosition = scrollPositions.get(location.pathname);
     
     if (savedPosition !== undefined && savedPosition > 0) {
-      isRestoring.current = true;
-      
-      // Use multiple attempts to ensure scroll restoration after animations/rendering
-      const restoreScroll = () => {
+      // Schedule restoration after React finishes rendering
+      const timeoutId = setTimeout(() => {
         window.scrollTo(0, savedPosition);
-      };
+      }, 50);
 
-      // Attempt 1: Immediate RAF for fast renders
-      requestAnimationFrame(() => {
-        restoreScroll();
-        
-        // Attempt 2: After a short delay for animation completion
-        setTimeout(() => {
-          restoreScroll();
-          
-          // Attempt 3: Final attempt after animations fully settle
-          setTimeout(() => {
-            restoreScroll();
-            isRestoring.current = false;
-          }, 100);
-        }, 50);
-      });
+      return () => clearTimeout(timeoutId);
     }
-  }, [location.pathname]);
-
-  const savePosition = useCallback(() => {
-    scrollPositions.set(location.pathname, window.scrollY);
-  }, [location.pathname]);
-
-  const clearPosition = useCallback((pathname?: string) => {
-    scrollPositions.delete(pathname || location.pathname);
   }, [location.pathname]);
 
   return { savePosition, clearPosition };
