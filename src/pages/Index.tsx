@@ -12,8 +12,8 @@ const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
   const { detectCity } = useGeolocationCity();
   
-  // Scroll position restoration
-  useScrollPosition();
+  // Scroll position restoration - isScrollRestored ensures content only shows after scroll is set
+  const { isScrollRestored } = useScrollPosition();
   
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
@@ -41,7 +41,13 @@ const Index = () => {
 
   return (
     <PageTransition>
-      <main className="min-h-screen bg-background">
+      <main 
+        className="min-h-screen bg-background"
+        style={{ 
+          // Hide content until scroll is restored to prevent flash at top
+          visibility: isScrollRestored ? 'visible' : 'hidden' 
+        }}
+      >
       {/* Global header with navigation */}
       <Header />
 
