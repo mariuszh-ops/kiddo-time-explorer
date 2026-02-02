@@ -83,7 +83,7 @@ const MobileFilterSheet = ({
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
-  const [localDistance, setLocalDistance] = useState(filters.distance ?? 25);
+  const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
   const hasActiveFilters = Object.values(filters).some(Boolean) || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
@@ -105,7 +105,7 @@ const MobileFilterSheet = ({
   const handleClearAll = () => {
     onClearAll();
     setLocalSearch("");
-    setLocalDistance(25);
+    setLocalDistance(5);
   };
 
   return (

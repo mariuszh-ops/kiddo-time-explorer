@@ -31,7 +31,7 @@ const CityFilterDropdown = ({
 }: CityFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
-  const [localDistance, setLocalDistance] = useState(selectedDistance ?? 25);
+  const [localDistance, setLocalDistance] = useState(selectedDistance ?? 5);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
