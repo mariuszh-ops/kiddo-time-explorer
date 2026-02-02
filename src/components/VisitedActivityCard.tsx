@@ -74,21 +74,23 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
         </div>
       </div>
       
-      {/* Review preview (if exists) */}
-      {userRating.review && (
-        <div className="px-3 md:px-4 pb-3 md:pb-4 -mt-1">
+      {/* Review section */}
+      <div className="px-3 md:px-4 pb-3 md:pb-4 -mt-1">
+        {userRating.review ? (
           <div className="bg-accent/50 rounded-lg p-3">
             <p className="text-sm text-foreground leading-relaxed line-clamp-2">
               "{reviewPreview}"
             </p>
-            {userRating.review.length > 100 && (
-              <span className="text-xs text-primary mt-1 inline-block">
-                Zobacz pełną opinię
-              </span>
-            )}
+            <span className="text-xs text-primary mt-1.5 inline-block font-medium">
+              Zobacz pełną opinię →
+            </span>
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-xs text-muted-foreground italic">
+            Brak opinii
+          </p>
+        )}
+      </div>
     </Link>
   );
 };

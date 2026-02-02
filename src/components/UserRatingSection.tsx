@@ -75,23 +75,17 @@ const UserRatingSection = ({ activityId, onAuthRequired }: UserRatingSectionProp
 
   // Render existing rating (read-only view)
   if (existingRating && !isEditing) {
+    const hasReview = Boolean(existingRating.review);
+    
     return (
       <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 md:p-5">
+        {/* Header with label */}
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-foreground">Twoja opinia</h3>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleEditClick}
-            className="text-muted-foreground hover:text-foreground -mr-2"
-          >
-            <Edit2 className="w-4 h-4 mr-1" />
-            Edytuj
-          </Button>
+          <h3 className="text-sm font-semibold text-foreground">Twoja ocena</h3>
         </div>
         
-        {/* User's rating */}
-        <div className="flex items-center gap-2 mb-2">
+        {/* User's rating stars */}
+        <div className="flex items-center gap-2 mb-3">
           <div className="flex items-center gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
@@ -109,11 +103,32 @@ const UserRatingSection = ({ activityId, onAuthRequired }: UserRatingSectionProp
           </span>
         </div>
         
-        {/* User's review */}
-        {existingRating.review && (
-          <p className="text-foreground text-sm leading-relaxed">
-            {existingRating.review}
-          </p>
+        {/* User's review or prompt to add one */}
+        {hasReview ? (
+          <div className="space-y-2">
+            <p className="text-foreground text-sm leading-relaxed">
+              {existingRating.review}
+            </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleEditClick}
+              className="text-primary hover:text-primary/80 -ml-2 h-auto py-1"
+            >
+              <Edit2 className="w-3.5 h-3.5 mr-1.5" />
+              Zobacz / edytuj opinię
+            </Button>
+          </div>
+        ) : (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleEditClick}
+            className="text-primary hover:text-primary/80 -ml-2 h-auto py-1"
+          >
+            <Edit2 className="w-3.5 h-3.5 mr-1.5" />
+            Dodaj opinię
+          </Button>
         )}
       </div>
     );
