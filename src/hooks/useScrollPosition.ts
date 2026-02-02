@@ -4,6 +4,11 @@ import { useLocation } from "react-router-dom";
 // Store scroll positions by pathname - outside component to persist across mounts
 const scrollPositions = new Map<string, number>();
 
+// Export function to save scroll position imperatively (before navigation)
+export function saveScrollPositionForPath(pathname: string) {
+  scrollPositions.set(pathname, window.scrollY);
+}
+
 export function useScrollPosition() {
   const location = useLocation();
   const previousPathnameRef = useRef(location.pathname);
@@ -18,15 +23,9 @@ export function useScrollPosition() {
     scrollPositions.delete(pathname || location.pathname);
   }, [location.pathname]);
 
-  // Handle scroll position save on route change
+  // Update previous pathname ref on route change (no longer saving scroll here)
   useEffect(() => {
-    const previousPathname = previousPathnameRef.current;
-    
-    // If we navigated to a new route, save the scroll position for the previous route
-    if (previousPathname !== location.pathname) {
-      scrollPositions.set(previousPathname, window.scrollY);
-      previousPathnameRef.current = location.pathname;
-    }
+    previousPathnameRef.current = location.pathname;
   }, [location.pathname]);
 
   // Restore scroll position when arriving at a page
