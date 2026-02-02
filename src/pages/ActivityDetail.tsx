@@ -410,9 +410,36 @@ const ActivityDetail = () => {
               </AnimatePresence>
               
               {!saveError && (
-                <p className="text-xs text-muted-foreground text-center md:text-left">
-                  Zapisz, żeby wrócić do tego miejsca później
-                </p>
+                <AnimatePresence mode="wait">
+                  {(isFavorite || wantToVisit) ? (
+                    <motion.div
+                      key="saved-link"
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="text-center md:text-left"
+                    >
+                      <Link 
+                        to={`/my-places?tab=${isFavorite ? 'favorites' : 'wantToVisit'}`}
+                        className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors"
+                      >
+                        <span>Zobacz moje miejsca</span>
+                        <Heart className="w-3.5 h-3.5" />
+                      </Link>
+                    </motion.div>
+                  ) : (
+                    <motion.p
+                      key="hint"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="text-xs text-muted-foreground text-center md:text-left"
+                    >
+                      Zapisz, żeby wrócić do tego miejsca później
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               )}
 
               {/* Rating action - directly below CTA buttons */}
