@@ -6,6 +6,7 @@ export interface Filters {
   age?: string;
   type?: string;
   indoor?: string;
+  activityKind?: string; // "place" | "event"
   search?: string;
 }
 
@@ -87,6 +88,12 @@ export function useActivityFilters() {
       result = result.filter((a) => a.isIndoor === isIndoor);
     }
 
+    // Filter by activity kind (place/event)
+    if (filters.activityKind) {
+      const isEvent = filters.activityKind === "event";
+      result = result.filter((a) => (a.isEvent ?? false) === isEvent);
+    }
+
     // Sort: rating > reviewCount > matchPercentage
     result.sort((a, b) => {
       if (b.rating !== a.rating) return b.rating - a.rating;
@@ -144,6 +151,11 @@ export function useActivityFilters() {
         result = result.filter((a) => a.isIndoor === isIndoor);
       }
 
+      if (key !== "activityKind" && otherFilters.activityKind) {
+        const isEvent = otherFilters.activityKind === "event";
+        result = result.filter((a) => (a.isEvent ?? false) === isEvent);
+      }
+
       // Now count how many of these remaining activities match the target value
       if (key === "city") {
         return result.filter((a) => a.city === value).length;
@@ -161,6 +173,9 @@ export function useActivityFilters() {
       } else if (key === "indoor") {
         const isIndoor = value === "indoor";
         return result.filter((a) => a.isIndoor === isIndoor).length;
+      } else if (key === "activityKind") {
+        const isEvent = value === "event";
+        return result.filter((a) => (a.isEvent ?? false) === isEvent).length;
       }
 
       return 0;
@@ -182,6 +197,10 @@ export function useActivityFilters() {
       indoor: filterOptions.indoor.map((o) => ({
         ...o,
         count: getCountForFilter("indoor", o.value, filters),
+      })),
+      activityKind: filterOptions.activityKind.map((o) => ({
+        ...o,
+        count: getCountForFilter("activityKind", o.value, filters),
       })),
       total: mockActivities.length,
       filtered: filteredActivities.length,

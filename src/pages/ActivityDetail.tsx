@@ -14,7 +14,9 @@ import {
   Zap,
   ArrowLeft,
   Check,
-  MessageSquarePlus
+  MessageSquarePlus,
+  Calendar,
+  MapPinned
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -273,9 +275,36 @@ const ActivityDetail = () => {
             </button>
             
             {/* Activity title */}
-            <h1 className="text-xl md:text-3xl font-serif text-foreground mb-1 md:mb-2 leading-tight">
-              {activity.title}
-            </h1>
+            <div className="flex items-center gap-2 mb-1 md:mb-2">
+              <h1 className="text-xl md:text-3xl font-serif text-foreground leading-tight">
+                {activity.title}
+              </h1>
+            </div>
+            
+            {/* Type indicator - subtle badge next to location */}
+            <div className="flex items-center gap-2 mb-3">
+              <Badge 
+                variant="outline" 
+                className={`text-xs font-medium ${
+                  activity.isEvent 
+                    ? "border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30" 
+                    : "border-primary/30 text-primary"
+                }`}
+              >
+                {activity.isEvent ? (
+                  <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
+                ) : (
+                  <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
+                )}
+              </Badge>
+              
+              {/* Event date or "Wydarzenie czasowe" for events */}
+              {activity.isEvent && (
+                <span className="text-sm text-muted-foreground">
+                  {activity.eventDate || "Wydarzenie czasowe"}
+                </span>
+              )}
+            </div>
             
             {/* Location */}
             <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">

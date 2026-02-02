@@ -165,6 +165,8 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   tags={activity.tags}
                   type={activity.type}
                   socialProofBadge={getBadgeText(activity.id)}
+                  isEvent={activity.isEvent}
+                  eventDate={activity.eventDate}
                 />
               </motion.div>
             ))}

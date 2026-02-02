@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { X, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { X, MapPin, Send, CheckCircle2, Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +22,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 
 const ageGroups = [
@@ -41,6 +42,7 @@ const formSchema = z.object({
   ageGroups: z.array(z.string()).min(1, "Wybierz przynajmniej jedną grupę wiekową"),
   description: z.string().max(500, "Opis może mieć maksymalnie 500 znaków").optional(),
   link: z.string().url("Podaj prawidłowy adres URL").optional().or(z.literal("")),
+  eventDate: z.string().max(50, "Data jest za długa").optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -62,8 +64,12 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       ageGroups: [],
       description: "",
       link: "",
+      eventDate: "",
     },
   });
+
+  const selectedType = useWatch({ control: form.control, name: "type" });
+  const isEvent = selectedType === "event";
 
   const descriptionLength = form.watch("description")?.length || 0;
 
@@ -179,6 +185,32 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                     </FormItem>
                   )}
                 />
+
+                {/* Event date - only shown when type is "event" */}
+                {isEvent && (
+                  <FormField
+                    control={form.control}
+                    name="eventDate"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-amber-500" />
+                          Data wydarzenia
+                        </FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="np. 15-17 marca 2026 lub 'Co weekend'" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormDescription className="text-xs">
+                          Jeśli nie znasz dokładnej daty, zostaw puste
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
                 {/* Age Groups */}
                 <FormField

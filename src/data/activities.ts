@@ -15,9 +15,84 @@ export interface Activity {
   tags: string[];
   isIndoor: boolean;
   type: string;
+  isEvent?: boolean; // true = wydarzenie, false/undefined = miejsce
+  eventDate?: string; // Optional date or date range for events (e.g., "15-17 marca 2024")
 }
 
 export const mockActivities: Activity[] = [
+  // ===== SAMPLE EVENTS (wydarzenia) =====
+  {
+    id: 101,
+    title: "Festiwal Bajek – spektakle plenerowe",
+    location: "Warszawa, Park Skaryszewski",
+    city: "warszawa",
+    rating: 4.8,
+    reviewCount: 45,
+    ageRange: "3–10 lat",
+    ageMin: 3,
+    ageMax: 10,
+    matchPercentage: 91,
+    imageUrl: "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&auto=format&fit=crop",
+    tags: ["Na zewnątrz", "Kreatywne"],
+    isIndoor: false,
+    type: "inne",
+    isEvent: true,
+    eventDate: "15-17 marca 2026",
+  },
+  {
+    id: 102,
+    title: "Warsztaty wielkanocne dla dzieci",
+    location: "Kraków, Sukiennice",
+    city: "krakow",
+    rating: 4.6,
+    reviewCount: 23,
+    ageRange: "4–12 lat",
+    ageMin: 4,
+    ageMax: 12,
+    matchPercentage: 85,
+    imageUrl: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format&fit=crop",
+    tags: ["W pomieszczeniu", "Kreatywne"],
+    isIndoor: true,
+    type: "warsztaty",
+    isEvent: true,
+    eventDate: "5 kwietnia 2026",
+  },
+  {
+    id: 103,
+    title: "Nocne zwiedzanie ZOO z latarkami",
+    location: "Wrocław, Zoo Wrocław",
+    city: "wroclaw",
+    rating: 4.9,
+    reviewCount: 67,
+    ageRange: "6–14 lat",
+    ageMin: 6,
+    ageMax: 14,
+    matchPercentage: 88,
+    imageUrl: "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=800&auto=format&fit=crop",
+    tags: ["Na zewnątrz", "Edukacyjne"],
+    isIndoor: false,
+    type: "zoo",
+    isEvent: true,
+    // No date - will show "Wydarzenie czasowe"
+  },
+  {
+    id: 104,
+    title: "Piknik naukowy – eksperymenty dla dzieci",
+    location: "Gdańsk, Park Oliwski",
+    city: "gdansk",
+    rating: 0,
+    reviewCount: 0,
+    ageRange: "5–12 lat",
+    ageMin: 5,
+    ageMax: 12,
+    matchPercentage: 82,
+    imageUrl: "https://images.unsplash.com/photo-1567593810070-7a3d471af022?w=800&auto=format&fit=crop",
+    tags: ["Na zewnątrz", "Edukacyjne"],
+    isIndoor: false,
+    type: "warsztaty",
+    isEvent: true,
+    eventDate: "22-23 maja 2026",
+  },
   // ===== NEW ACTIVITY WITHOUT REVIEWS (for edge case demo) =====
   {
     id: 100,
@@ -1520,5 +1595,9 @@ export const filterOptions = {
   indoor: [
     { value: "indoor", label: "W pomieszczeniu" },
     { value: "outdoor", label: "Na zewnątrz" },
+  ],
+  activityKind: [
+    { value: "place", label: "Miejsca" },
+    { value: "event", label: "Wydarzenia" },
   ],
 };

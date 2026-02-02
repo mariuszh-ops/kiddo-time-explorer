@@ -15,6 +15,7 @@ interface FilterBarProps {
     age: { value: string; label: string; count: number }[];
     type: { value: string; label: string; count: number }[];
     indoor: { value: string; label: string; count: number }[];
+    activityKind: { value: string; label: string; count: number }[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -120,6 +121,14 @@ const FilterBar = ({
             selectedValue={filters.indoor}
             hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("indoor", value)}
+          />
+          
+          <FilterDropdown
+            label="Typ atrakcji"
+            options={filterCounts.activityKind}
+            selectedValue={filters.activityKind}
+            hasAnyFilter={filterCounts.hasAnyFilter}
+            onSelect={(value) => onUpdateFilter("activityKind", value)}
           />
 
           {/* Search input */}
