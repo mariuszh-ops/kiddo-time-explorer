@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Star, Sparkles } from "lucide-react";
+import { Star, Sparkles, Calendar, MapPinned } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -18,6 +18,8 @@ interface ActivityCardProps {
   tags: string[];
   type?: string;
   socialProofBadge?: string;
+  isEvent?: boolean;
+  eventDate?: string;
 }
 
 const ActivityCard = ({
@@ -32,6 +34,8 @@ const ActivityCard = ({
   tags,
   type = "inne",
   socialProofBadge,
+  isEvent = false,
+  eventDate,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
@@ -61,6 +65,24 @@ const ActivityCard = ({
           className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
           onError={handleImageError}
         />
+        
+        {/* Type badge - Miejsce or Wydarzenie */}
+        <div className="absolute top-2 left-2">
+          <Badge 
+            variant="secondary" 
+            className={`text-[10px] font-medium backdrop-blur-sm ${
+              isEvent 
+                ? "bg-amber-500/90 text-white border-0" 
+                : "bg-background/90 text-foreground"
+            }`}
+          >
+            {isEvent ? (
+              <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
+            ) : (
+              <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
+            )}
+          </Badge>
+        </div>
         
         {/* Match percentage badge - only visible for logged-in users */}
         {isLoggedIn && (

@@ -23,6 +23,7 @@ interface MobileFilterSheetProps {
     age: FilterOption[];
     type: FilterOption[];
     indoor: FilterOption[];
+    activityKind: FilterOption[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -154,6 +155,13 @@ const MobileFilterSheet = ({
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
             onSelect={(value) => onUpdateFilter("indoor", value)}
+          />
+          
+          <FilterSection
+            title="Typ atrakcji"
+            options={filterCounts.activityKind}
+            selectedValue={filters.activityKind}
+            onSelect={(value) => onUpdateFilter("activityKind", value)}
           />
         </ScrollArea>
 
