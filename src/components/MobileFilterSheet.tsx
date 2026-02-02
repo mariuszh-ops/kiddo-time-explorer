@@ -24,6 +24,7 @@ interface MobileFilterSheetProps {
     type: FilterOption[];
     indoor: FilterOption[];
     activityKind: FilterOption[];
+    distance: FilterOption[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -31,6 +32,22 @@ interface MobileFilterSheetProps {
   onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
   onClearAll: () => void;
 }
+
+// Disabled filter section with helper text
+const DisabledFilterSection = ({
+  title,
+  helperText,
+}: {
+  title: string;
+  helperText: string;
+}) => {
+  return (
+    <div className="py-4 border-b border-border last:border-b-0 opacity-60">
+      <h3 className="text-base font-semibold text-muted-foreground mb-2">{title}</h3>
+      <p className="text-sm text-muted-foreground italic">{helperText}</p>
+    </div>
+  );
+};
 
 const FilterSection = ({
   title,
@@ -80,6 +97,7 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const hasActiveFilters = Object.values(filters).some(Boolean) || searchQuery.trim().length > 0;
+  const hasCitySelected = Boolean(filters.city);
 
   const handleApply = () => {
     onSearchChange(localSearch);
@@ -128,13 +146,28 @@ const MobileFilterSheet = ({
             </div>
           </div>
 
-          {/* Filter sections */}
+          {/* City filter */}
           <FilterSection
             title="Miasto"
             options={filterCounts.city}
             selectedValue={filters.city}
             onSelect={(value) => onUpdateFilter("city", value)}
           />
+          
+          {/* Distance filter - conditionally enabled */}
+          {hasCitySelected ? (
+            <FilterSection
+              title="W pobliżu"
+              options={filterCounts.distance}
+              selectedValue={filters.distance}
+              onSelect={(value) => onUpdateFilter("distance", value)}
+            />
+          ) : (
+            <DisabledFilterSection
+              title="W pobliżu"
+              helperText="Wybierz miasto, aby zobaczyć atrakcje w pobliżu"
+            />
+          )}
           
           <FilterSection
             title="Wiek dziecka"

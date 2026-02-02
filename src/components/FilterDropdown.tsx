@@ -15,6 +15,7 @@ interface FilterDropdownProps {
   selectedValue?: string;
   hasAnyFilter: boolean; // Whether any filter is currently active
   onSelect: (value: string | undefined) => void;
+  disabled?: boolean;
 }
 
 const FilterDropdown = ({
@@ -23,6 +24,7 @@ const FilterDropdown = ({
   selectedValue,
   hasAnyFilter,
   onSelect,
+  disabled = false,
 }: FilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
@@ -129,13 +131,16 @@ const FilterDropdown = ({
     <>
       <button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
           "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
-          selectedValue
-            ? "bg-primary text-primary-foreground border-primary"
-            : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
+          disabled
+            ? "bg-muted text-muted-foreground border-border cursor-not-allowed opacity-60"
+            : selectedValue
+              ? "bg-primary text-primary-foreground border-primary"
+              : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
         )}
       >
         <span className="max-w-[120px] truncate">{displayLabel}</span>

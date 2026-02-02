@@ -16,6 +16,7 @@ interface FilterBarProps {
     type: { value: string; label: string; count: number }[];
     indoor: { value: string; label: string; count: number }[];
     activityKind: { value: string; label: string; count: number }[];
+    distance: { value: string; label: string; count: number }[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -23,6 +24,29 @@ interface FilterBarProps {
   onUpdateFilter: (key: keyof Filters, value: string | undefined) => void;
   onClearAll: () => void;
 }
+
+// Helper to get city name in locative case (Polish grammar)
+const getCityNameLocative = (cityValue: string): string => {
+  const cityNames: Record<string, string> = {
+    warszawa: "Warszawy",
+    krakow: "Krakowa",
+    wroclaw: "Wrocławia",
+    gdansk: "Gdańska",
+    poznan: "Poznania",
+  };
+  return cityNames[cityValue] || cityValue;
+};
+
+// Helper to get distance label for feedback
+const getDistanceLabel = (distanceValue: string): string => {
+  const labels: Record<string, string> = {
+    center: "w centrum",
+    "25km": "w promieniu 25 km od",
+    "50km": "w promieniu 50 km od",
+    "100km": "w promieniu 100 km od",
+  };
+  return labels[distanceValue] || "";
+};
 
 const FilterBar = ({
   filters,
@@ -35,9 +59,23 @@ const FilterBar = ({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
+  const hasCitySelected = Boolean(filters.city);
   
   const activeFilterCount = Object.values(filters).filter(Boolean).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
+
+  // Generate dynamic feedback text
+  const getFeedbackText = () => {
+    if (filters.distance && filters.city) {
+      const distanceLabel = getDistanceLabel(filters.distance);
+      const cityName = getCityNameLocative(filters.city);
+      if (filters.distance === "center") {
+        return `${filterCounts.filtered} atrakcji ${distanceLabel} ${cityName}`;
+      }
+      return `${filterCounts.filtered} atrakcji ${distanceLabel} ${cityName}`;
+    }
+    return `${filterCounts.filtered} atrakcji spełnia wybrane filtry`;
+  };
 
   // Mobile layout
   if (isMobile) {
@@ -98,6 +136,24 @@ const FilterBar = ({
             hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("city", value)}
           />
+          
+          {/* Distance filter - only enabled when city is selected */}
+          <div className="relative group">
+            <FilterDropdown
+              label="W pobliżu"
+              options={filterCounts.distance}
+              selectedValue={filters.distance}
+              hasAnyFilter={filterCounts.hasAnyFilter}
+              onSelect={(value) => onUpdateFilter("distance", value)}
+              disabled={!hasCitySelected}
+            />
+            {/* Tooltip for disabled state */}
+            {!hasCitySelected && (
+              <div className="absolute left-0 top-full mt-2 px-3 py-2 bg-popover border border-border rounded-lg shadow-lg text-xs text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                Wybierz miasto, aby zobaczyć atrakcje w pobliżu
+              </div>
+            )}
+          </div>
           
           <FilterDropdown
             label="Wiek dziecka"
@@ -189,7 +245,7 @@ const FilterBar = ({
         {/* Results feedback - only when filters active */}
         {hasActiveFilters && (
           <div className="mt-2 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{filterCounts.filtered}</span> atrakcji spełnia wybrane filtry
+            <span className="font-medium text-foreground">{getFeedbackText()}</span>
           </div>
         )}
       </div>
