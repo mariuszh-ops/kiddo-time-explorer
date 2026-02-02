@@ -55,8 +55,23 @@ const Header = () => {
 
             {isLoggedIn ? (
               <>
-                {/* My Places link - logged in only */}
-                <Link to="/my-places">
+                {/* Mobile: Single icon for My Places - one-tap access */}
+                <Link to="/my-places" className="sm:hidden">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      "text-muted-foreground hover:text-foreground",
+                      isActive("/my-places") && "text-foreground bg-accent"
+                    )}
+                  >
+                    <Heart className="w-5 h-5" />
+                    <span className="sr-only">Moje miejsca</span>
+                  </Button>
+                </Link>
+
+                {/* Desktop: My Places link with label */}
+                <Link to="/my-places" className="hidden sm:block">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -66,12 +81,12 @@ const Header = () => {
                     )}
                   >
                     <Heart className="w-4 h-4" />
-                    <span className="hidden sm:inline">Moje miejsca</span>
+                    <span>Moje miejsca</span>
                   </Button>
                 </Link>
 
-                {/* Profile button - logged in only */}
-                <Link to="/profile">
+                {/* Desktop: Profile button - hidden on mobile */}
+                <Link to="/profile" className="hidden sm:block">
                   <Button
                     variant="ghost"
                     size="icon"
