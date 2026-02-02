@@ -4,6 +4,7 @@ import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
 import PageTransition from "@/components/PageTransition";
+import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
@@ -73,6 +74,11 @@ const Index = () => {
         onClearFilters={clearAllFilters}
         filters={filters}
       />
+
+      {/* Submit activity CTA */}
+      <div className="container py-8 md:py-12">
+        <SubmitActivityCTA variant="card" />
+      </div>
 
       {/* Footer */}
       <footer className="bg-card border-t border-border py-8">

@@ -7,6 +7,7 @@ import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import VisitedActivityCard from "@/components/VisitedActivityCard";
 import PageTransition from "@/components/PageTransition";
+import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 
@@ -45,12 +46,17 @@ const MyPlaces = () => {
       {/* Page title */}
       <div className="border-b border-border/50">
         <div className="container py-6 md:py-8">
-          <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
-            Moje miejsca
-          </h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Twoje zapisane atrakcje w jednym miejscu
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
+                Moje miejsca
+              </h1>
+              <p className="text-muted-foreground mt-1 text-sm">
+                Twoje zapisane atrakcje w jednym miejscu
+              </p>
+            </div>
+            <SubmitActivityCTA className="self-start" />
+          </div>
         </div>
       </div>
 
