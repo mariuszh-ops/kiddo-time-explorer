@@ -7,6 +7,7 @@ export interface Filters {
   type?: string;
   indoor?: string;
   activityKind?: string; // "place" | "event"
+  distance?: string; // "center" | "25km" | "50km" | "100km"
   search?: string;
 }
 
@@ -35,6 +36,10 @@ export function useActivityFilters() {
         delete newFilters[key];
       } else {
         newFilters[key] = value;
+      }
+      // Clear distance filter when city is cleared
+      if (key === "city" && value === undefined) {
+        delete newFilters.distance;
       }
       return newFilters;
     });
@@ -93,6 +98,9 @@ export function useActivityFilters() {
       const isEvent = filters.activityKind === "event";
       result = result.filter((a) => (a.isEvent ?? false) === isEvent);
     }
+
+    // Note: Distance filter is UX-only, no real filtering applied
+    // In future, this would filter by actual distance calculations
 
     // Sort: rating > reviewCount > matchPercentage
     result.sort((a, b) => {
@@ -201,6 +209,11 @@ export function useActivityFilters() {
       activityKind: filterOptions.activityKind.map((o) => ({
         ...o,
         count: getCountForFilter("activityKind", o.value, filters),
+      })),
+      // Distance counts show filtered results (since it's UX-only, show same count as current filtered)
+      distance: filterOptions.distance.map((o) => ({
+        ...o,
+        count: filters.city ? filteredActivities.length : 0,
       })),
       total: mockActivities.length,
       filtered: filteredActivities.length,

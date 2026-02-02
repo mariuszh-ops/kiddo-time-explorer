@@ -1600,4 +1600,10 @@ export const filterOptions = {
     { value: "place", label: "Miejsca" },
     { value: "event", label: "Wydarzenia" },
   ],
+  distance: [
+    { value: "center", label: "Centrum miasta" },
+    { value: "25km", label: "Do 25 km" },
+    { value: "50km", label: "Do 50 km" },
+    { value: "100km", label: "Do 100 km" },
+  ],
 };
