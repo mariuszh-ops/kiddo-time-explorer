@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { mockActivities, filterOptions, Activity } from "@/data/activities";
 
 export interface Filters {
@@ -9,10 +9,23 @@ export interface Filters {
   search?: string;
 }
 
+// Persist filter state outside component to survive navigation
+let persistedFilters: Filters = {};
+let persistedSearchQuery: string = "";
+
 export function useActivityFilters() {
-  // Single source of truth for all filter state
-  const [filters, setFilters] = useState<Filters>({});
-  const [searchQuery, setSearchQuery] = useState("");
+  // Initialize from persisted state
+  const [filters, setFilters] = useState<Filters>(persistedFilters);
+  const [searchQuery, setSearchQuery] = useState(persistedSearchQuery);
+
+  // Sync to persisted state whenever filters change
+  useEffect(() => {
+    persistedFilters = filters;
+  }, [filters]);
+
+  useEffect(() => {
+    persistedSearchQuery = searchQuery;
+  }, [searchQuery]);
 
   const updateFilter = useCallback((key: keyof Filters, value: string | undefined) => {
     setFilters((prev) => {
@@ -27,9 +40,11 @@ export function useActivityFilters() {
   }, []);
 
   const clearAllFilters = useCallback(() => {
-    // Complete reset - create new empty object to ensure React detects the change
+    // Complete reset - clear both local and persisted state
     setFilters({});
     setSearchQuery("");
+    persistedFilters = {};
+    persistedSearchQuery = "";
   }, []);
 
   const filteredActivities = useMemo(() => {
