@@ -281,7 +281,8 @@ const ActivityDetail = () => {
               </h1>
             </div>
             
-            {/* Type indicator - subtle badge next to location */}
+            {/* Type indicator - hidden in MVP, structure preserved */}
+            {/* 
             <div className="flex items-center gap-2 mb-3">
               <Badge 
                 variant="outline" 
@@ -298,13 +299,13 @@ const ActivityDetail = () => {
                 )}
               </Badge>
               
-              {/* Event date or "Wydarzenie czasowe" for events */}
               {activity.isEvent && (
                 <span className="text-sm text-muted-foreground">
                   {activity.eventDate || "Wydarzenie czasowe"}
                 </span>
               )}
             </div>
+            */}
             
             {/* Location */}
             <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">

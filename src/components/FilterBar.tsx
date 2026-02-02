@@ -179,6 +179,8 @@ const FilterBar = ({
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
           
+          {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
+          {/* 
           <FilterDropdown
             label="Typ atrakcji"
             options={filterCounts.activityKind}
@@ -186,6 +188,7 @@ const FilterBar = ({
             hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("activityKind", value)}
           />
+          */}
 
           {/* Search input */}
           <div className="relative flex items-center">

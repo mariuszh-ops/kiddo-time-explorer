@@ -190,12 +190,15 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
           
+          {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
+          {/* 
           <FilterSection
             title="Typ atrakcji"
             options={filterCounts.activityKind}
             selectedValue={filters.activityKind}
             onSelect={(value) => onUpdateFilter("activityKind", value)}
           />
+          */}
         </ScrollArea>
 
         {/* Footer with actions */}
