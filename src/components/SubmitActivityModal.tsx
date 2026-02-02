@@ -60,7 +60,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     defaultValues: {
       name: "",
       city: "",
-      type: undefined,
+      type: "place", // Default to "place" in MVP - type selection hidden from UI
       ageGroups: [],
       description: "",
       link: "",
@@ -154,7 +154,8 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   )}
                 />
 
-                {/* Type */}
+                {/* Type selection - hidden in MVP, defaults to "place", structure preserved */}
+                {/* 
                 <FormField
                   control={form.control}
                   name="type"
@@ -186,7 +187,6 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   )}
                 />
 
-                {/* Event date - only shown when type is "event" */}
                 {isEvent && (
                   <FormField
                     control={form.control}
@@ -211,6 +211,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                     )}
                   />
                 )}
+                */}
 
                 {/* Age Groups */}
                 <FormField
