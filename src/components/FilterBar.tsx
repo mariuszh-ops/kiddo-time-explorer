@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FilterDropdown from "@/components/FilterDropdown";
+import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import { Filters } from "@/hooks/useActivityFilters";
 import { X, Search, SlidersHorizontal } from "lucide-react";
@@ -59,7 +60,6 @@ const FilterBar = ({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
-  const hasCitySelected = Boolean(filters.city);
   
   const activeFilterCount = Object.values(filters).filter(Boolean).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
@@ -129,31 +129,16 @@ const FilterBar = ({
       <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
-          <FilterDropdown
-            label="Miasto"
-            options={filterCounts.city}
-            selectedValue={filters.city}
+          {/* Combined City + Distance filter */}
+          <CityFilterDropdown
+            cityOptions={filterCounts.city}
+            distanceOptions={filterCounts.distance}
+            selectedCity={filters.city}
+            selectedDistance={filters.distance}
             hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("city", value)}
+            onCitySelect={(value) => onUpdateFilter("city", value)}
+            onDistanceSelect={(value) => onUpdateFilter("distance", value)}
           />
-          
-          {/* Distance filter - only enabled when city is selected */}
-          <div className="relative group">
-            <FilterDropdown
-              label="W pobliżu"
-              options={filterCounts.distance}
-              selectedValue={filters.distance}
-              hasAnyFilter={filterCounts.hasAnyFilter}
-              onSelect={(value) => onUpdateFilter("distance", value)}
-              disabled={!hasCitySelected}
-            />
-            {/* Tooltip for disabled state */}
-            {!hasCitySelected && (
-              <div className="absolute left-0 top-full mt-2 px-3 py-2 bg-popover border border-border rounded-lg shadow-lg text-xs text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                Wybierz miasto, aby zobaczyć atrakcje w pobliżu
-              </div>
-            )}
-          </div>
           
           <FilterDropdown
             label="Wiek dziecka"

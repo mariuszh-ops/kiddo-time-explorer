@@ -33,21 +33,7 @@ interface MobileFilterSheetProps {
   onClearAll: () => void;
 }
 
-// Disabled filter section with helper text
-const DisabledFilterSection = ({
-  title,
-  helperText,
-}: {
-  title: string;
-  helperText: string;
-}) => {
-  return (
-    <div className="py-4 border-b border-border last:border-b-0 opacity-60">
-      <h3 className="text-base font-semibold text-muted-foreground mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground italic">{helperText}</p>
-    </div>
-  );
-};
+// DisabledFilterSection removed - distance is now integrated with city filter
 
 const FilterSection = ({
   title,
@@ -146,7 +132,7 @@ const MobileFilterSheet = ({
             </div>
           </div>
 
-          {/* City filter */}
+          {/* City filter with integrated distance options */}
           <FilterSection
             title="Miasto"
             options={filterCounts.city}
@@ -154,19 +140,31 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("city", value)}
           />
           
-          {/* Distance filter - conditionally enabled */}
-          {hasCitySelected ? (
-            <FilterSection
-              title="W pobliżu"
-              options={filterCounts.distance}
-              selectedValue={filters.distance}
-              onSelect={(value) => onUpdateFilter("distance", value)}
-            />
-          ) : (
-            <DisabledFilterSection
-              title="W pobliżu"
-              helperText="Wybierz miasto, aby zobaczyć atrakcje w pobliżu"
-            />
+          {/* Distance filter - shown as sub-section when city selected */}
+          {hasCitySelected && (
+            <div className="py-4 border-b border-border pl-4 bg-muted/30 -mx-4 px-4">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-1.5">
+                <span className="text-primary">↳</span> W pobliżu wybranego miasta
+              </h3>
+              <div className="space-y-1">
+                {filterCounts.distance.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => onUpdateFilter("distance", filters.distance === option.value ? undefined : option.value)}
+                    className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={filters.distance === option.value}
+                        className="pointer-events-none"
+                      />
+                      <span className="text-sm text-foreground">{option.label}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">({option.count})</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           )}
           
           <FilterSection
