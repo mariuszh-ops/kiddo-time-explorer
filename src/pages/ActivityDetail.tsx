@@ -410,9 +410,21 @@ const ActivityDetail = () => {
               </AnimatePresence>
               
               {!saveError && (
-                <p className="text-xs text-muted-foreground text-center md:text-left">
-                  Zapisz, żeby wrócić do tego miejsca później
-                </p>
+                <div className="text-center md:text-left">
+                  {isFavorite ? (
+                    <Link 
+                      to="/my-places?tab=favorites"
+                      className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors"
+                    >
+                      <span>Zobacz moje miejsca</span>
+                      <Heart className="w-3.5 h-3.5" />
+                    </Link>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Zapisz, żeby wrócić do tego miejsca później
+                    </p>
+                  )}
+                </div>
               )}
 
               {/* Rating action - directly below CTA buttons */}
