@@ -9,7 +9,7 @@ import VisitedActivityCard from "@/components/VisitedActivityCard";
 import PageTransition from "@/components/PageTransition";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
-import { Star } from "lucide-react";
+
 
 const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -172,17 +172,7 @@ const MyPlaces = () => {
           {/* Visited tab */}
           <TabsContent value="visited">
             {visitedActivities.length === 0 ? (
-              <div className="text-center py-12 md:py-16">
-                <div className="w-16 h-16 mx-auto mb-4 bg-accent rounded-full flex items-center justify-center">
-                  <Star className="w-8 h-8 text-accent-foreground" />
-                </div>
-                <h3 className="text-lg font-medium text-foreground mb-2">
-                  Brak ocenionych miejsc
-                </h3>
-                <p className="text-muted-foreground max-w-sm mx-auto">
-                  Kiedy ocenisz odwiedzone atrakcje, pojawią się tutaj wraz z Twoimi opiniami.
-                </p>
-              </div>
+              <SavedActivitiesEmptyState type="visited" />
             ) : (
               <motion.div 
                 initial={{ opacity: 0 }}
