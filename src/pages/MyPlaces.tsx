@@ -169,6 +169,7 @@ const MyPlaces = () => {
                         listType="wantToVisit"
                         onRemove={removeFromWantToVisit}
                         type={activity.type}
+                        slug={activity.slug}
                       />
                     </motion.div>
                   ))}
