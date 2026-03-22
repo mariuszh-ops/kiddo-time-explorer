@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { mockActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -77,6 +78,11 @@ export function useActivityFilters() {
   const filteredActivities = useMemo(() => {
     let result = [...mockActivities];
 
+    // Hide events when feature flag is off
+    if (!FEATURES.EVENTS) {
+      result = result.filter(a => !a.isEvent);
+    }
+
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
@@ -114,8 +120,8 @@ export function useActivityFilters() {
       result = result.filter((a) => a.isIndoor === isIndoor);
     }
 
-    // Filter by activity kind (place/event)
-    if (filters.activityKind) {
+    // Filter by activity kind (place/event) — only when EVENTS feature enabled
+    if (FEATURES.EVENTS && filters.activityKind) {
       const isEvent = filters.activityKind === "event";
       result = result.filter((a) => (a.isEvent ?? false) === isEvent);
     }
@@ -154,7 +160,11 @@ export function useActivityFilters() {
     ) => {
       // Start with activities matching the search query (if any)
       let result = [...mockActivities];
-      
+
+      // Hide events when feature flag is off
+      if (!FEATURES.EVENTS) {
+        result = result.filter(a => !a.isEvent);
+      }
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         result = result.filter(

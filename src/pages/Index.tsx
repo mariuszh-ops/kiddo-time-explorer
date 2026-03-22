@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
+import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
@@ -68,13 +69,27 @@ const Index = () => {
         />
       </div>
 
-      {/* Activity cards grid */}
-      <ActivityGrid 
-        activities={filteredActivities} 
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={clearAllFilters}
-        filters={filters}
-      />
+      {/* Activity cards grid or curated sections */}
+      {hasActiveFilters ? (
+        <ActivityGrid 
+          activities={filteredActivities} 
+          hasActiveFilters={hasActiveFilters}
+          onClearFilters={clearAllFilters}
+          filters={filters}
+        />
+      ) : (
+        <DiscoverSections 
+          activities={filteredActivities}
+          onSelectCity={(city) => {
+            updateFilter("city", city);
+            if (listingRef.current) {
+              const headerHeight = 56;
+              const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+            }
+          }}
+        />
+      )}
 
       {/* Submit activity CTA */}
       <div className="container py-8 md:py-12">
