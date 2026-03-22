@@ -47,6 +47,7 @@ const ActivityCard = ({
   distanceKm,
   slug,
   amenities,
+  priceLevel,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
