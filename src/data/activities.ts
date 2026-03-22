@@ -28,6 +28,7 @@ export interface Activity {
   latitude: number;
   longitude: number;
   slug: string;
+  amenities?: string[];
 }
 export const mockActivities: Activity[] = [
   // ===== SAMPLE EVENTS (wydarzenia) =====
