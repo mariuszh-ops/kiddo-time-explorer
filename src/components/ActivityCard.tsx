@@ -8,6 +8,7 @@ import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
+import { PRICE_LEVELS } from "@/data/activities";
 
 interface ActivityCardProps {
   id: number;
@@ -26,6 +27,7 @@ interface ActivityCardProps {
   distanceKm?: number | null;
   slug: string;
   amenities?: string[];
+  priceLevel?: 0 | 1 | 2 | 3;
 }
 
 const ActivityCard = ({
