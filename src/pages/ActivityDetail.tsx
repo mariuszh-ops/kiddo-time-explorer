@@ -35,6 +35,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { useShare } from "@/hooks/useShare";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Default fallback values for activities without specific data
