@@ -29,7 +29,16 @@ export interface Activity {
   longitude: number;
   slug: string;
   amenities?: string[];
+  priceLevel?: 0 | 1 | 2 | 3;
+  priceNote?: string;
 }
+
+export const PRICE_LEVELS = {
+  0: { label: "Bezpłatne", badge: "Bezpłatne", color: "text-green-600 bg-green-50 border-green-200 dark:text-green-400 dark:bg-green-950/30 dark:border-green-800" },
+  1: { label: "Niedrogie", badge: "$", color: "text-blue-600 bg-blue-50 border-blue-200 dark:text-blue-400 dark:bg-blue-950/30 dark:border-blue-800" },
+  2: { label: "Umiarkowane", badge: "$$", color: "text-amber-600 bg-amber-50 border-amber-200 dark:text-amber-400 dark:bg-amber-950/30 dark:border-amber-800" },
+  3: { label: "Drogie", badge: "$$$", color: "text-red-600 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-950/30 dark:border-red-800" },
+} as const;
 export const mockActivities: Activity[] = [
   // ===== SAMPLE EVENTS (wydarzenia) =====
   {
