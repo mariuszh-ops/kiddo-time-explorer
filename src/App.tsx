@@ -4,12 +4,14 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
+import ActivityDetailRedirect from "./pages/ActivityDetailRedirect";
 import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
@@ -29,7 +31,8 @@ const AnimatedRoutes = () => {
     <AnimatePresence mode="wait" initial={false}>
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Index />} />
-        <Route path="/activity/:id" element={<ActivityDetail />} />
+        <Route path="/atrakcje/:slug" element={<ActivityDetail />} />
+        <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
         <Route path="/my-places" element={<MyPlaces />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
@@ -44,23 +47,25 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <SavedActivitiesProvider>
-        <UserRatingsProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <OfflineIndicator />
-            <BrowserRouter>
-              <AnimatedRoutes />
-              <BottomNav />
-            </BrowserRouter>
-          </TooltipProvider>
-        </UserRatingsProvider>
-      </SavedActivitiesProvider>
-    </AuthProvider>
-  </QueryClientProvider>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <SavedActivitiesProvider>
+          <UserRatingsProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <OfflineIndicator />
+              <BrowserRouter>
+                <AnimatedRoutes />
+                <BottomNav />
+              </BrowserRouter>
+            </TooltipProvider>
+          </UserRatingsProvider>
+        </SavedActivitiesProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
 );
 
 export default App;
