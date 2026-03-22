@@ -5,4 +5,5 @@ export const FEATURES = {
   MATCH_PERCENTAGE: false,    // Procent dopasowania na kartach — wymaga profilu rodziny
   BLOG: false,                // Sekcja Blog/Inspiracje — ukryta w MVP
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
+  SEARCH_AUTOCOMPLETE: false,  // Dropdown z podpowiedziami w wyszukiwarce — wyłączony w MVP
 } as const;

@@ -125,6 +125,9 @@ const MobileFilterSheet = ({
         {/* Scrollable content */}
         <ScrollArea className="flex-1 px-4">
           {/* Search input */}
+          {/* TODO: Gdy FEATURES.SEARCH_AUTOCOMPLETE === true, zamień na SearchAutocomplete komponent
+              z dropdownem matchujących atrakcji. Dane lokalne, filtrowanie instant.
+              Kliknięcie wyniku → nawigacja do /atrakcje/:slug */}
           <div className="py-4 border-b border-border">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
