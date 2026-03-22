@@ -69,6 +69,7 @@ const ActivityDetail = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isProcessing, setIsProcessing] = useState<'favorite' | 'visit' | null>(null);
   const [saveError, setSaveError] = useState<'favorite' | 'visit' | null>(null);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
   const isMobile = useIsMobile();
   
   // Use auth context
