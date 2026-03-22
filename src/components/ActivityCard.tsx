@@ -60,7 +60,7 @@ const ActivityCard = ({
   };
 
   return (
-    <Link to={`/activity/${id}`} onClick={handleClick}>
+    <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
       <article className="group cursor-pointer transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl active:scale-[0.98] active:opacity-90">
       {/* Image - 16:10 aspect ratio (rectangular, not square) */}
       <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">

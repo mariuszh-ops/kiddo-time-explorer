@@ -182,7 +182,7 @@ const ActivityDetail = () => {
   };
 
 
-  const activity = mockActivities.find((a) => a.id === Number(id));
+  // activity lookup moved above
   
   if (!activity) {
     return (
