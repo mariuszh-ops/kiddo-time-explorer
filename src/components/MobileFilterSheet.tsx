@@ -26,6 +26,7 @@ interface MobileFilterSheetProps {
     indoor: FilterOption[];
     activityKind: FilterOption[];
     distance: FilterOption[];
+    price: FilterOption[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
