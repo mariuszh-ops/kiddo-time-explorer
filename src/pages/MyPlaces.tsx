@@ -123,6 +123,7 @@ const MyPlaces = () => {
                         listType="favorites"
                         onRemove={removeFromFavorites}
                         type={activity.type}
+                        slug={activity.slug}
                       />
                     </motion.div>
                   ))}
