@@ -97,6 +97,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 isEvent={FEATURES.EVENTS ? activity.isEvent : false}
                 eventDate={activity.eventDate}
                 slug={activity.slug}
+                amenities={activity.amenities}
               />
             ))}
           </div>
