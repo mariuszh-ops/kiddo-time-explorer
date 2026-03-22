@@ -16,6 +16,7 @@ import {
   Check,
   MessageSquarePlus,
   Calendar,
+  Camera,
   MapPinned,
   Info,
   Share2,
