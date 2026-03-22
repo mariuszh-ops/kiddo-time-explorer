@@ -37,6 +37,7 @@ const ActivityCard = ({
   socialProofBadge,
   isEvent = false,
   eventDate,
+  distanceKm,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
