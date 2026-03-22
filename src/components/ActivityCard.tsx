@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface ActivityCardProps {
   id: number;
