@@ -36,59 +36,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Extended activity data for detail page
-const activityDetails: Record<number, {
-  estimatedTime: string;
-  priceRange: string;
-  activityTypes: string[];
-  experiencePoints: string[];
-  openingHours: string;
-  address: string;
-  ticketSources: { name: string; url: string }[];
-  reviews: { author: string; rating: number; text: string; date: string }[];
-}> = {
-  1: {
-    estimatedTime: "2–3 godziny",
-    priceRange: "$$",
-    activityTypes: ["Edukacyjne", "Na zewnątrz"],
-    experiencePoints: [
-      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
-      "Rodzice mogą skorzystać z interaktywnych tablic edukacyjnych przy każdym wybiegu",
-      "Dostępna jest strefa malucha z łagodnymi zwierzętami do głaskania",
-      "Na terenie znajdują się place zabaw i strefy piknikowe",
-    ],
-    openingHours: "Pon–Nd: 9:00–18:00",
-    address: "ul. Ratuszowa 1/3, 03-461 Warszawa",
-    ticketSources: [
-      { name: "Strona organizatora", url: "https://zoo.waw.pl/bilety" },
-      { name: "Bilety24", url: "" },
-    ],
-    reviews: [
-      { author: "Anna M.", rating: 5, text: "Świetne miejsce dla całej rodziny. Dzieci były zachwycone wybiegiem słoni.", date: "2 tygodnie temu" },
-      { author: "Tomek K.", rating: 5, text: "Dużo cienia, ławki do odpoczynku. Można spędzić cały dzień.", date: "1 miesiąc temu" },
-      { author: "Ewa S.", rating: 4, text: "Fajnie, choć w weekendy bardzo tłoczno. Polecam przyjść w tygodniu.", date: "2 miesiące temu" },
-    ],
-  },
-};
+// Default fallback values for activities without specific data
+const defaultExperiencePoints = [
+  "Aktywność dostosowana do różnych grup wiekowych",
+  "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+  "Możliwość wspólnej zabawy całą rodziną",
+];
 
-// Default details for activities without specific data
-const defaultDetails = {
-  estimatedTime: "1–2 godziny",
-  priceRange: "$",
-  activityTypes: ["Rodzinne"],
-  experiencePoints: [
-    "Aktywność dostosowana do różnych grup wiekowych",
-    "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
-    "Możliwość wspólnej zabawy całą rodziną",
-  ],
-  openingHours: "Sprawdź na stronie organizatora",
-  address: "Sprawdź dokładny adres na stronie organizatora",
-  ticketSources: [
-    { name: "Strona organizatora", url: "#" },
-  ],
-  reviews: [
-    { author: "Rodzic", rating: 4, text: "Polecam rodzinom z dziećmi. Spędziliśmy miło czas.", date: "Niedawno" },
-  ],
 };
 
 const getActivityTypeIcon = (type: string) => {
