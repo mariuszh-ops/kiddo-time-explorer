@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Star, Sparkles, Calendar, MapPinned } from "lucide-react";
+import { Star, Sparkles, Calendar, MapPinned, Navigation } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
@@ -20,6 +20,7 @@ interface ActivityCardProps {
   socialProofBadge?: string;
   isEvent?: boolean;
   eventDate?: string;
+  distanceKm?: number | null;
 }
 
 const ActivityCard = ({
