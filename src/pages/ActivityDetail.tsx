@@ -680,6 +680,18 @@ const ActivityDetail = () => {
                 )}
               </div>
             </div>
+
+            {/* Price details */}
+            {activity.priceNote && (
+              <div className="flex items-start gap-3">
+                <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
+                  <p className="text-sm text-foreground">{activity.priceNote}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Ceny mogą ulec zmianie — sprawdź aktualny cennik na stronie organizatora</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>
