@@ -41,6 +41,7 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { useShare } from "@/hooks/useShare";
+import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Default fallback values for activities without specific data
