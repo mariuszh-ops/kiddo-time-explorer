@@ -280,6 +280,62 @@ const ActivityDetail = () => {
         <Header />
       </div>
 
+      {/* Sticky header on scroll */}
+      <AnimatePresence>
+        {showStickyHeader && (
+          <motion.div
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border"
+          >
+            <div className="container flex items-center justify-between h-14 gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <button
+                  onClick={handleBack}
+                  className="shrink-0 w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                  aria-label="Wróć"
+                >
+                  <ArrowLeft className="w-4 h-4 text-foreground" />
+                </button>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {activity.title}
+                  </p>
+                  {hasReviews && (
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3 h-3 fill-primary text-primary" />
+                      <span className="text-xs font-medium text-foreground">{activity.rating.toFixed(1)}</span>
+                      <span className="text-xs text-muted-foreground">({activity.reviewCount})</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  onClick={handleFavoriteClick}
+                  className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                  aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+                >
+                  <Heart className={cn(
+                    "w-5 h-5 transition-colors",
+                    isFavorite ? "fill-red-500 text-red-500" : "text-foreground"
+                  )} />
+                </button>
+                <button
+                  onClick={handleShare}
+                  className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+                  aria-label="Udostępnij"
+                >
+                  <Share2 className="w-5 h-5 text-foreground" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Mobile: Back & Share button overlay on gallery */}
       <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4 flex justify-between">
         <button
