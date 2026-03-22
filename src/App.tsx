@@ -14,6 +14,9 @@ import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Regulamin from "./pages/Regulamin";
+import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
+import Kontakt from "./pages/Kontakt";
 import BottomNav from "./components/BottomNav";
 
 const queryClient = new QueryClient();
