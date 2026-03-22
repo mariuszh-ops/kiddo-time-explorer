@@ -52,6 +52,22 @@ const defaultExperiencePoints = [
   "Możliwość wspólnej zabawy całą rodziną",
 ];
 
+  // Sticky header on scroll past title card
+  useEffect(() => {
+    const titleCard = document.getElementById('activity-title-card');
+    if (!titleCard) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShowStickyHeader(!entry.isIntersecting);
+      },
+      { threshold: 0, rootMargin: '-56px 0px 0px 0px' }
+    );
+
+    observer.observe(titleCard);
+    return () => observer.disconnect();
+  }, [slug]);
+
 
 const getActivityTypeIcon = (type: string) => {
   switch (type.toLowerCase()) {
