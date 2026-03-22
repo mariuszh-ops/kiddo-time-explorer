@@ -1,5 +1,6 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { mockActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
