@@ -47,6 +47,7 @@ const SavedActivityCard = ({
   listType,
   onRemove,
   type = "inne",
+  slug,
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
