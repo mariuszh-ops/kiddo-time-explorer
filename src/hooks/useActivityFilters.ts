@@ -275,6 +275,10 @@ export function useActivityFilters() {
       // Distance is now a numeric slider, no options needed
       // Keep for backward compatibility but won't be used for dropdown
       distance: [],
+      price: filterOptions.price.map((o) => ({
+        ...o,
+        count: getCountForFilter("price", o.value, filters),
+      })),
       total: mockActivities.length,
       filtered: filteredActivities.length,
       hasAnyFilter,
