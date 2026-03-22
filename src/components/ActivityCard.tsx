@@ -25,6 +25,7 @@ interface ActivityCardProps {
   eventDate?: string;
   distanceKm?: number | null;
   slug: string;
+  amenities?: string[];
 }
 
 const ActivityCard = ({
