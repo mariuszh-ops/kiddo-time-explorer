@@ -120,8 +120,16 @@ export function useActivityFilters() {
       result = result.filter((a) => (a.isEvent ?? false) === isEvent);
     }
 
-    // Note: Distance filter is UX-only, no real filtering applied
-    // In future, this would filter by actual distance calculations
+    // Distance filter — active only when city selected and distance > 0
+    if (filters.city && filters.distance !== undefined && filters.distance > 0) {
+      const center = cityCenters[filters.city];
+      if (center) {
+        result = result.filter((a) => {
+          const dist = getDistanceKm(center.lat, center.lng, a.latitude, a.longitude);
+          return dist <= filters.distance!;
+        });
+      }
+    }
 
     // Sort: rating > reviewCount > matchPercentage
     result.sort((a, b) => {
