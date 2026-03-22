@@ -168,6 +168,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   isEvent={activity.isEvent}
                   eventDate={activity.eventDate}
                   distanceKm={filters.city ? getActivityDistance(activity, filters.city) : null}
+                  slug={activity.slug}
                 />
               </motion.div>
             ))}
