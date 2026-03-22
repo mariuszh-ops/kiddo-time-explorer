@@ -183,6 +183,24 @@ const ActivityCard = ({
           ))}
         </div>
 
+        {/* Amenities preview - max 3 icons */}
+        {amenities && amenities.length > 0 && (
+          <div className="flex items-center gap-1.5 mt-1.5">
+            {amenities.slice(0, 3).map((id) => {
+              const amenity = getAmenityById(id);
+              if (!amenity) return null;
+              return (
+                <div key={id} className="text-muted-foreground" title={amenity.label}>
+                  <AmenityIcon name={amenity.icon} className="w-3.5 h-3.5" />
+                </div>
+              );
+            })}
+            {amenities.length > 3 && (
+              <span className="text-xs text-muted-foreground">+{amenities.length - 3}</span>
+            )}
+          </div>
+        )}
+
         {/* Social proof badge - subtle, only when context allows */}
         {socialProofBadge && (
           <p className="text-xs text-muted-foreground/80 mt-1.5 italic">
