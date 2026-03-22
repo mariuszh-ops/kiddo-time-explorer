@@ -213,13 +213,20 @@ export function useActivityFilters() {
         result = result.filter((a) => (a.isEvent ?? false) === isEvent);
       }
 
+      if (key !== "price" && otherFilters.price) {
+        if (otherFilters.price === "free") {
+          result = result.filter(a => a.priceLevel === 0);
+        } else {
+          result = result.filter(a => a.priceLevel !== undefined && a.priceLevel > 0);
+        }
+      }
+
       // Now count how many of these remaining activities match the target value
       if (key === "city") {
         return result.filter((a) => a.city === value).length;
       } else if (key === "age") {
         const ageOption = filterOptions.age.find((o) => o.value === value);
         if (ageOption) {
-          // Count unique activities matching this age range
           return result.filter(
             (a) => a.ageMin <= ageOption.max && a.ageMax >= ageOption.min
           ).length;
@@ -233,6 +240,12 @@ export function useActivityFilters() {
       } else if (key === "activityKind") {
         const isEvent = value === "event";
         return result.filter((a) => (a.isEvent ?? false) === isEvent).length;
+      } else if (key === "price") {
+        if (value === "free") {
+          return result.filter(a => a.priceLevel === 0).length;
+        } else {
+          return result.filter(a => a.priceLevel !== undefined && a.priceLevel > 0).length;
+        }
       }
 
       return 0;
