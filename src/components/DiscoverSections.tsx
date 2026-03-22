@@ -1,7 +1,10 @@
 import { useMemo } from "react";
-import { Star, Sparkles, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Star, Sparkles, MapPin, Clock } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
+import BlogCard from "@/components/BlogCard";
 import { Activity } from "@/data/activities";
+import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface DiscoverSectionsProps {
@@ -99,6 +102,18 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 slug={activity.slug}
                 amenities={activity.amenities}
               />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Blog section - only when BLOG feature enabled */}
+      {FEATURES.BLOG && blogPosts.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+            {blogPosts.slice(0, 3).map((post) => (
+              <BlogCard key={post.id} post={post} />
             ))}
           </div>
         </section>
