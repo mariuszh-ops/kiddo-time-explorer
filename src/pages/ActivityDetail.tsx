@@ -167,7 +167,20 @@ const ActivityDetail = () => {
   const handleBack = () => {
     navigate(-1);
   };
-  
+
+  const handleShare = async () => {
+    if (!activity) return;
+    const result = await share({
+      title: activity.title,
+      text: `Sprawdź "${activity.title}" na FamilyFun — ${activity.location}`,
+      url: window.location.href,
+    });
+    if (result === 'clipboard') {
+      toast.success("Link skopiowany do schowka", { duration: 2000 });
+    }
+  };
+
+
   const activity = mockActivities.find((a) => a.id === Number(id));
   
   if (!activity) {
