@@ -22,6 +22,7 @@ interface ActivityCardProps {
   isEvent?: boolean;
   eventDate?: string;
   distanceKm?: number | null;
+  slug: string;
 }
 
 const ActivityCard = ({
