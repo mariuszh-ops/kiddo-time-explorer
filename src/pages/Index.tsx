@@ -69,13 +69,27 @@ const Index = () => {
         />
       </div>
 
-      {/* Activity cards grid */}
-      <ActivityGrid 
-        activities={filteredActivities} 
-        hasActiveFilters={hasActiveFilters}
-        onClearFilters={clearAllFilters}
-        filters={filters}
-      />
+      {/* Activity cards grid or curated sections */}
+      {hasActiveFilters ? (
+        <ActivityGrid 
+          activities={filteredActivities} 
+          hasActiveFilters={hasActiveFilters}
+          onClearFilters={clearAllFilters}
+          filters={filters}
+        />
+      ) : (
+        <DiscoverSections 
+          activities={filteredActivities}
+          onSelectCity={(city) => {
+            updateFilter("city", city);
+            if (listingRef.current) {
+              const headerHeight = 56;
+              const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+            }
+          }}
+        />
+      )}
 
       {/* Submit activity CTA */}
       <div className="container py-8 md:py-12">

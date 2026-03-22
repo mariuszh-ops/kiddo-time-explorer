@@ -147,8 +147,8 @@ const ActivityCard = ({
           )}
         </div>
 
-        {/* Event date */}
-        {isEvent && eventDate && (
+        {/* Event date — only when EVENTS feature enabled */}
+        {FEATURES.EVENTS && isEvent && eventDate && (
           <p className="flex items-center gap-1 text-xs text-amber-600">
             <Calendar className="w-3 h-3" />
             {eventDate}

@@ -120,8 +120,8 @@ export function useActivityFilters() {
       result = result.filter((a) => a.isIndoor === isIndoor);
     }
 
-    // Filter by activity kind (place/event)
-    if (filters.activityKind) {
+    // Filter by activity kind (place/event) — only when EVENTS feature enabled
+    if (FEATURES.EVENTS && filters.activityKind) {
       const isEvent = filters.activityKind === "event";
       result = result.filter((a) => (a.isEvent ?? false) === isEvent);
     }

@@ -1,0 +1,129 @@
+import { useMemo } from "react";
+import { Star, Sparkles, MapPin } from "lucide-react";
+import ActivityCard from "@/components/ActivityCard";
+import { Activity } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
+
+interface DiscoverSectionsProps {
+  activities: Activity[];
+  onSelectCity: (city: string) => void;
+}
+
+const cityMeta: { value: string; label: string; gradient: string }[] = [
+  { value: "warszawa", label: "Warszawa", gradient: "from-rose-500/10 to-orange-500/10" },
+  { value: "krakow", label: "Kraków", gradient: "from-blue-500/10 to-indigo-500/10" },
+  { value: "wroclaw", label: "Wrocław", gradient: "from-emerald-500/10 to-teal-500/10" },
+  { value: "gdansk", label: "Gdańsk", gradient: "from-cyan-500/10 to-sky-500/10" },
+  { value: "poznan", label: "Poznań", gradient: "from-amber-500/10 to-yellow-500/10" },
+];
+
+const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
+  <div className="mb-5">
+    <h2 className="text-xl font-serif text-foreground flex items-center gap-2">
+      <span>{emoji}</span> {title}
+    </h2>
+    <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+  </div>
+);
+
+const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) => {
+  const topRated = useMemo(() => {
+    return activities
+      .filter((a) => a.rating >= 4.7 && a.reviewCount >= 100)
+      .sort((a, b) => b.rating - a.rating)
+      .slice(0, 6);
+  }, [activities]);
+
+  const newlyAdded = useMemo(() => {
+    return activities.filter((a) => a.reviewCount === 0).slice(0, 4);
+  }, [activities]);
+
+  const cityCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const a of activities) {
+      counts[a.city] = (counts[a.city] || 0) + 1;
+    }
+    return counts;
+  }, [activities]);
+
+  return (
+    <div className="bg-background">
+      {/* Section 1: Top Rated */}
+      {topRated.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="⭐" title="Najlepiej oceniane" subtitle="Sprawdzone przez rodziców" />
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+            {topRated.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                id={activity.id}
+                title={activity.title}
+                location={activity.location}
+                rating={activity.rating}
+                reviewCount={activity.reviewCount}
+                ageRange={activity.ageRange}
+                matchPercentage={activity.matchPercentage}
+                imageUrl={activity.imageUrl}
+                tags={activity.tags}
+                type={activity.type}
+                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
+                eventDate={activity.eventDate}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Section 2: Newly Added */}
+      {newlyAdded.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="✨" title="Nowo dodane" subtitle="Bądź pierwszy, który oceni" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {newlyAdded.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                id={activity.id}
+                title={activity.title}
+                location={activity.location}
+                rating={activity.rating}
+                reviewCount={activity.reviewCount}
+                ageRange={activity.ageRange}
+                matchPercentage={activity.matchPercentage}
+                imageUrl={activity.imageUrl}
+                tags={activity.tags}
+                type={activity.type}
+                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
+                eventDate={activity.eventDate}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Section 3: Discover by City */}
+      <section className="container py-6 md:py-8">
+        <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+          {cityMeta.map((city) => {
+            const count = cityCounts[city.value] || 0;
+            return (
+              <button
+                key={city.value}
+                onClick={() => onSelectCity(city.value)}
+                className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+              >
+                <MapPin className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+                <h3 className="font-semibold text-foreground">{city.label}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default DiscoverSections;
