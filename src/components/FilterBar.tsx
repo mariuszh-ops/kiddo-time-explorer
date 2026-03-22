@@ -182,6 +182,9 @@ const FilterBar = ({
           */}
 
           {/* Search input */}
+          {/* TODO: Gdy FEATURES.SEARCH_AUTOCOMPLETE === true, zamień na SearchAutocomplete komponent
+              z dropdownem matchujących atrakcji. Dane lokalne, filtrowanie instant.
+              Kliknięcie wyniku → nawigacja do /atrakcje/:slug */}
           <div className="relative flex items-center">
             {isSearchExpanded ? (
               <div className="flex items-center gap-1">
