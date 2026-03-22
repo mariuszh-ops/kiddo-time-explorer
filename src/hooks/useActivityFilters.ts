@@ -138,6 +138,15 @@ export function useActivityFilters() {
       }
     }
 
+    // Price filter
+    if (filters.price) {
+      if (filters.price === "free") {
+        result = result.filter(a => a.priceLevel === 0);
+      } else {
+        result = result.filter(a => a.priceLevel !== undefined && a.priceLevel > 0);
+      }
+    }
+
     // Sort: rating > reviewCount > matchPercentage
     result.sort((a, b) => {
       if (b.rating !== a.rating) return b.rating - a.rating;
