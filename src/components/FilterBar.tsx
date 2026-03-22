@@ -18,6 +18,7 @@ interface FilterBarProps {
     indoor: { value: string; label: string; count: number }[];
     activityKind: { value: string; label: string; count: number }[];
     distance: { value: string; label: string; count: number }[];
+    price: { value: string; label: string; count: number }[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
