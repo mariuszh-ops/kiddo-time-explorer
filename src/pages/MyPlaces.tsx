@@ -41,6 +41,7 @@ const MyPlaces = () => {
 
   return (
     <PageTransition>
+      <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" />
       <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />
