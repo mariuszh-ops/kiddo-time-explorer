@@ -29,6 +29,7 @@ const Profile = () => {
 
   return (
     <PageTransition>
+      <SEOHead title="Profil" description="Zarządzaj swoim profilem FamilyFun." path="/profile" />
       <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />
