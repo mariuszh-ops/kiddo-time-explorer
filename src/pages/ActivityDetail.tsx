@@ -222,14 +222,21 @@ const ActivityDetail = () => {
         <Header />
       </div>
 
-      {/* Mobile: Back button overlay on gallery */}
-      <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4">
+      {/* Mobile: Back & Share button overlay on gallery */}
+      <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4 flex justify-between">
         <button
           onClick={handleBack}
           className="w-10 h-10 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
           aria-label="Wróć"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
+        </button>
+        <button
+          onClick={handleShare}
+          className="w-10 h-10 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+          aria-label="Udostępnij"
+        >
+          <Share2 className="w-5 h-5 text-foreground" />
         </button>
       </div>
 
