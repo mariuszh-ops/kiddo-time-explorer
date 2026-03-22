@@ -562,14 +562,16 @@ const ActivityDetail = () => {
               </div>
             </div>
 
-            {/* Price range - hidden on mobile, shown in full grid on tablet+ */}
-            <div className="hidden md:flex items-center gap-2.5">
+            {/* Price range - visible on all sizes */}
+            <div className="flex items-center gap-2.5">
               <div className="p-2 bg-accent rounded-lg shrink-0">
-                <Ticket className="w-5 h-5 text-accent-foreground" />
+                <Ticket className={`w-4 h-4 md:w-5 md:h-5 ${activity.priceLevel === 0 ? 'text-green-600 dark:text-green-400' : 'text-accent-foreground'}`} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Cena</p>
-                <p className="text-sm font-medium text-foreground">{details.priceRange}</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground">Cena</p>
+                <p className="text-xs md:text-sm font-medium text-foreground">
+                  {activity.priceLevel !== undefined ? PRICE_LEVELS[activity.priceLevel].label : details.priceRange}
+                </p>
               </div>
             </div>
           </div>
