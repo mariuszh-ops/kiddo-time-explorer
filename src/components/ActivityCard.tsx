@@ -40,6 +40,7 @@ const ActivityCard = ({
   isEvent = false,
   eventDate,
   distanceKm,
+  slug,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
