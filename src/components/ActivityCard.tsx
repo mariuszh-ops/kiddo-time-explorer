@@ -95,8 +95,8 @@ const ActivityCard = ({
           </div>
         )}
         
-        {/* Match percentage badge - only visible for logged-in users */}
-        {isLoggedIn && (
+        {/* Match percentage badge - only visible when feature enabled */}
+        {FEATURES.MATCH_PERCENTAGE && isLoggedIn && (
           <div className="absolute top-2 right-2">
             <Badge 
               variant="secondary" 
