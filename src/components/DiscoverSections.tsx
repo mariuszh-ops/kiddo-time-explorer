@@ -1,7 +1,10 @@
 import { useMemo } from "react";
-import { Star, Sparkles, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Star, Sparkles, MapPin, Clock } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
+import BlogCard from "@/components/BlogCard";
 import { Activity } from "@/data/activities";
+import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface DiscoverSectionsProps {
