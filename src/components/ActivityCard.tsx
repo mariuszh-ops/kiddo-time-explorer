@@ -66,8 +66,7 @@ const ActivityCard = ({
           onError={handleImageError}
         />
         
-        {/* Type badge - Miejsce or Wydarzenie (hidden in MVP, structure preserved) */}
-        {/* 
+        {/* Type badge - Miejsce or Wydarzenie */}
         <div className="absolute top-2 left-2">
           <Badge 
             variant="secondary" 
@@ -84,7 +83,6 @@ const ActivityCard = ({
             )}
           </Badge>
         </div>
-        */}
         
         {/* Match percentage badge - only visible for logged-in users */}
         {isLoggedIn && (
