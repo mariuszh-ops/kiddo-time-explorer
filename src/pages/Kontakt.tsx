@@ -30,6 +30,7 @@ const Kontakt = () => {
 
   return (
     <PageTransition>
+      <SEOHead title="Kontakt" description="Skontaktuj się z zespołem FamilyFun." path="/kontakt" />
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container py-8 pb-20 sm:pb-8">
