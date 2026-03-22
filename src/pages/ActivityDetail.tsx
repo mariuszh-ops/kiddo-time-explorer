@@ -59,8 +59,8 @@ const activityDetails: Record<number, {
     openingHours: "Pon–Nd: 9:00–18:00",
     address: "ul. Ratuszowa 1/3, 03-461 Warszawa",
     ticketSources: [
-      { name: "Strona organizatora", url: "#" },
-      { name: "Bilety24", url: "#" },
+      { name: "Strona organizatora", url: "https://zoo.waw.pl/bilety" },
+      { name: "Bilety24", url: "" },
     ],
     reviews: [
       { author: "Anna M.", rating: 5, text: "Świetne miejsce dla całej rodziny. Dzieci były zachwycone wybiegiem słoni.", date: "2 tygodnie temu" },
