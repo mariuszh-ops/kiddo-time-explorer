@@ -25,6 +25,7 @@ import { mockActivities } from "@/data/activities";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
+import Footer from "@/components/Footer";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
