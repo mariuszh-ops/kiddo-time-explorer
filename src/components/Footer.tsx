@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FEATURES } from "@/lib/featureFlags";
 
 const Footer = () => {
   return (
