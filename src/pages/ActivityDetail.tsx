@@ -16,6 +16,7 @@ import {
   Check,
   MessageSquarePlus,
   Calendar,
+  Camera,
   MapPinned,
   Info,
   Share2,
@@ -40,6 +41,7 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { useShare } from "@/hooks/useShare";
+import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Default fallback values for activities without specific data
@@ -777,7 +779,31 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* Reviews Modal */}
+      {/* 7. User photos section — only when feature enabled */}
+      {FEATURES.UGC_PHOTOS && (
+        <section className="container mt-5 md:mt-6">
+          <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+            <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+              Zdjęcia rodziców
+            </h2>
+            <div className="text-center py-6">
+              <div className="w-12 h-12 mx-auto mb-3 bg-accent rounded-full flex items-center justify-center">
+                <Camera className="w-6 h-6 text-accent-foreground" />
+              </div>
+              <p className="text-foreground font-medium mb-1">
+                Byłeś tu z dzieckiem?
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Podziel się zdjęciem z wizyty — pomóż innym rodzicom!
+              </p>
+              <Button variant="outline" disabled className="gap-2">
+                <Camera className="w-4 h-4" />
+                Dodaj zdjęcie (wkrótce)
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
       <ReviewsModal 
         isOpen={isReviewsModalOpen}
         onClose={() => setIsReviewsModalOpen(false)}

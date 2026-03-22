@@ -12,6 +12,8 @@ export interface Activity {
   matchPercentage: number;
   imageUrl: string;
   imageUrls?: string[]; // Multiple images for gallery
+  // Przyszłe pola (UGC):
+  // userPhotos?: { url: string; author: string; date: string }[];
   tags: string[];
   isIndoor: boolean;
   type: string;
