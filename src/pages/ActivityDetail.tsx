@@ -737,6 +737,7 @@ const ActivityDetail = () => {
         onEmailClick={handleAuthAction}
         onLoginClick={handleAuthAction}
       />
+      <Footer />
     </main>
     </PageTransition>
   );

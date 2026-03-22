@@ -132,6 +132,7 @@ const Profile = () => {
           </section>
         </motion.div>
       </main>
+      <Footer />
     </div>
     </PageTransition>
   );

@@ -209,6 +209,7 @@ const MyPlaces = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <Footer />
     </div>
     </PageTransition>
   );
