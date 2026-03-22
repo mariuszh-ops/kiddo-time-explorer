@@ -69,23 +69,25 @@ const ActivityCard = ({
           onError={handleImageError}
         />
         
-        {/* Type badge - Miejsce or Wydarzenie */}
-        <div className="absolute top-2 left-2">
-          <Badge 
-            variant="secondary" 
-            className={`text-[10px] font-medium backdrop-blur-sm ${
-              isEvent 
-                ? "bg-amber-500/90 text-white border-0" 
-                : "bg-background/90 text-foreground"
-            }`}
-          >
-            {isEvent ? (
-              <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
-            ) : (
-              <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
-            )}
-          </Badge>
-        </div>
+        {/* Type badge - Miejsce or Wydarzenie — only when EVENTS feature enabled */}
+        {FEATURES.EVENTS && (
+          <div className="absolute top-2 left-2">
+            <Badge 
+              variant="secondary" 
+              className={`text-[10px] font-medium backdrop-blur-sm ${
+                isEvent 
+                  ? "bg-amber-500/90 text-white border-0" 
+                  : "bg-background/90 text-foreground"
+              }`}
+            >
+              {isEvent ? (
+                <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
+              ) : (
+                <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
+              )}
+            </Badge>
+          </div>
+        )}
         
         {/* Match percentage badge - only visible for logged-in users */}
         {isLoggedIn && (
