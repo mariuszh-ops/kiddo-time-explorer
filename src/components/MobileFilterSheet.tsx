@@ -207,6 +207,13 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
           
+          <FilterSection
+            title="Cena"
+            options={filterCounts.price}
+            selectedValue={filters.price}
+            onSelect={(value) => onUpdateFilter("price", value)}
+          />
+          
           {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
           {/* 
           <FilterSection
