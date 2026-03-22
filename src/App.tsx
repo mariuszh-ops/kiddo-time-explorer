@@ -42,6 +42,12 @@ const AnimatedRoutes = () => {
         <Route path="/regulamin" element={<Regulamin />} />
         <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
         <Route path="/kontakt" element={<Kontakt />} />
+        {FEATURES.BLOG && (
+          <>
+            <Route path="/inspiracje" element={<BlogListPage />} />
+            <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
+          </>
+        )}
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>

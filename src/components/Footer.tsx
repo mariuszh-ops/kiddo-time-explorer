@@ -19,6 +19,11 @@ const Footer = () => {
             <Link to="/kontakt" className="hover:text-foreground transition-colors">
               Kontakt
             </Link>
+            {FEATURES.BLOG && (
+              <Link to="/inspiracje" className="hover:text-foreground transition-colors">
+                Inspiracje
+              </Link>
+            )}
           </div>
         </div>
       </div>

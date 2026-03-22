@@ -107,6 +107,18 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
         </section>
       )}
 
+      {/* Blog section - only when BLOG feature enabled */}
+      {FEATURES.BLOG && blogPosts.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+            {blogPosts.slice(0, 3).map((post) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Section 3: Discover by City */}
       <section className="container py-6 md:py-8">
         <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
