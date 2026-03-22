@@ -3,10 +3,12 @@ import { ArrowLeft } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import SEOHead from "@/components/SEOHead";
 
 const Regulamin = () => {
   return (
     <PageTransition>
+      <SEOHead title="Regulamin serwisu" description="Regulamin korzystania z serwisu FamilyFun." path="/regulamin" />
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container py-8 pb-20 sm:pb-8">

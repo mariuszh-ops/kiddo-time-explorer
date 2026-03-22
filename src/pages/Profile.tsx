@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
+import SEOHead from "@/components/SEOHead";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 
@@ -28,6 +29,7 @@ const Profile = () => {
 
   return (
     <PageTransition>
+      <SEOHead title="Profil" description="Zarządzaj swoim profilem FamilyFun." path="/profile" />
       <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />

@@ -20,7 +20,7 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
 
   return (
     <Link
-      to={`/activity/${activity.id}`}
+      to={`/atrakcje/${activity.slug}`}
       className="block bg-card border border-border rounded-xl overflow-hidden hover:border-primary/30 hover:shadow-soft transition-all group"
     >
       <div className="flex gap-3 p-3 md:p-4">

@@ -31,6 +31,7 @@ interface SavedActivityCardProps {
   listType: "favorites" | "wantToVisit";
   onRemove: (id: number) => Promise<void> | void;
   type?: string;
+  slug: string;
 }
 
 const SavedActivityCard = ({
@@ -46,6 +47,7 @@ const SavedActivityCard = ({
   listType,
   onRemove,
   type = "inne",
+  slug,
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -189,7 +191,7 @@ const SavedActivityCard = ({
         )}
       </AnimatePresence>
 
-      <Link to={`/activity/${id}`}>
+      <Link to={`/atrakcje/${slug}`}>
         {/* Image - 16:10 aspect ratio */}
         <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
           <img

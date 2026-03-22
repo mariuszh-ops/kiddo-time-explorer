@@ -26,6 +26,7 @@ import { mockActivities } from "@/data/activities";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
+import SEOHead from "@/components/SEOHead";
 import Footer from "@/components/Footer";
 import ReviewsModal from "@/components/ReviewsModal";
 import ImageGallery from "@/components/ImageGallery";
@@ -56,7 +57,7 @@ const getActivityTypeIcon = (type: string) => {
 };
 
 const ActivityDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -77,7 +78,8 @@ const ActivityDetail = () => {
   
   const { share } = useShare();
 
-  const activityId = Number(id);
+  const activity = mockActivities.find((a) => a.slug === slug) || mockActivities.find((a) => a.id === Number(slug));
+  const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
@@ -96,7 +98,7 @@ const ActivityDetail = () => {
       }
     }, 50);
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [slug]);
 
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
@@ -181,7 +183,7 @@ const ActivityDetail = () => {
   };
 
 
-  const activity = mockActivities.find((a) => a.id === Number(id));
+  // activity lookup moved above
   
   if (!activity) {
     return (
@@ -216,6 +218,39 @@ const ActivityDetail = () => {
 
   return (
     <PageTransition>
+      <SEOHead
+        title={`${activity.title} — atrakcja dla dzieci`}
+        description={`${activity.title} w ${activity.location}. Ocena ${activity.rating}/5 na podstawie ${activity.reviewCount} opinii rodziców. Wiek: ${activity.ageRange}.`}
+        path={`/atrakcje/${activity.slug}`}
+        image={activity.imageUrl}
+        type="article"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "TouristAttraction",
+          "name": activity.title,
+          "description": activity.experiencePoints?.join(". ") || activity.title,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": activity.address || "",
+            "addressLocality": activity.city,
+            "addressCountry": "PL",
+          },
+          ...(activity.reviewCount > 0 ? {
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": activity.rating,
+              "reviewCount": activity.reviewCount,
+              "bestRating": "5",
+            },
+          } : {}),
+          "audience": {
+            "@type": "PeopleAudience",
+            "suggestedMinAge": activity.ageMin,
+            "suggestedMaxAge": activity.ageMax,
+          },
+          ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
+        }}
+      />
       <main className="min-h-screen bg-background pb-20 sm:pb-8">
       {/* Desktop: Global header */}
       <div className="hidden md:block">

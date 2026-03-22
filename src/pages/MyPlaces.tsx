@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import SEOHead from "@/components/SEOHead";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -40,6 +41,7 @@ const MyPlaces = () => {
 
   return (
     <PageTransition>
+      <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" />
       <div className="min-h-screen bg-background">
       {/* Global header */}
       <Header />
@@ -123,6 +125,7 @@ const MyPlaces = () => {
                         listType="favorites"
                         onRemove={removeFromFavorites}
                         type={activity.type}
+                        slug={activity.slug}
                       />
                     </motion.div>
                   ))}
@@ -168,6 +171,7 @@ const MyPlaces = () => {
                         listType="wantToVisit"
                         onRemove={removeFromWantToVisit}
                         type={activity.type}
+                        slug={activity.slug}
                       />
                     </motion.div>
                   ))}
