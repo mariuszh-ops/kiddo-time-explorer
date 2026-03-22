@@ -6,6 +6,8 @@ import { useState } from "react";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
+import { getAmenityById } from "@/data/amenities";
+import AmenityIcon from "@/components/AmenityIcon";
 
 interface ActivityCardProps {
   id: number;
@@ -23,6 +25,7 @@ interface ActivityCardProps {
   eventDate?: string;
   distanceKm?: number | null;
   slug: string;
+  amenities?: string[];
 }
 
 const ActivityCard = ({
@@ -41,6 +44,7 @@ const ActivityCard = ({
   eventDate,
   distanceKm,
   slug,
+  amenities,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
@@ -178,6 +182,24 @@ const ActivityCard = ({
             </Badge>
           ))}
         </div>
+
+        {/* Amenities preview - max 3 icons */}
+        {amenities && amenities.length > 0 && (
+          <div className="flex items-center gap-1.5 mt-1.5">
+            {amenities.slice(0, 3).map((id) => {
+              const amenity = getAmenityById(id);
+              if (!amenity) return null;
+              return (
+                <div key={id} className="text-muted-foreground" title={amenity.label}>
+                  <AmenityIcon name={amenity.icon} className="w-3.5 h-3.5" />
+                </div>
+              );
+            })}
+            {amenities.length > 3 && (
+              <span className="text-xs text-muted-foreground">+{amenities.length - 3}</span>
+            )}
+          </div>
+        )}
 
         {/* Social proof badge - subtle, only when context allows */}
         {socialProofBadge && (

@@ -28,6 +28,7 @@ export interface Activity {
   latitude: number;
   longitude: number;
   slug: string;
+  amenities?: string[];
 }
 export const mockActivities: Activity[] = [
   // ===== SAMPLE EVENTS (wydarzenia) =====
@@ -56,6 +57,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Kilka dni pełnych spektakli plenerowych w klimatycznym parku", "Warsztaty teatralne i animacje dla dzieci w przerwach", "Stoiska z rękodziełem i regionalnymi smakołykami"],
     reviews: [{ author: "Anna M.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 102,
@@ -82,6 +84,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Tworzenie tradycyjnych ozdób wielkanocnych pod okiem instruktorów", "Malowanie pisanek i dekorowanie mazurków", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 103,
@@ -108,6 +111,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Nocne zwiedzanie ZOO z profesjonalnym przewodnikiem", "Obserwacja nocnych zachowań zwierząt przy latarkach", "Niezapomniana przygoda dla starszych dzieci i młodzieży"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 104,
@@ -133,6 +137,7 @@ export const mockActivities: Activity[] = [
     openingHours: "Zgodnie z programem wydarzenia",
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Pokazy eksperymentów fizycznych i chemicznych na żywo", "Warsztaty 'zrób to sam' z prostymi doświadczeniami", "Stoiska organizacji naukowych i edukacyjnych"],
+    amenities: ["toilets", "food-onsite", "public-transport", "stroller"],
   },
   // ===== NEW ACTIVITY WITHOUT REVIEWS (for edge case demo) =====
   {
@@ -157,6 +162,7 @@ export const mockActivities: Activity[] = [
     openingHours: "Codziennie: 8:00–20:00",
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   // ===== WARSZAWA (18 activities) =====
   {
@@ -190,6 +196,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Rodzice mogą skorzystać z interaktywnych tablic edukacyjnych przy każdym wybiegu", "Dostępna jest strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     website: "https://zoo.waw.pl",
     reviews: [{ author: "Marta W.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 2,
@@ -215,6 +222,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Ponad 450 interaktywnych stanowisk doświadczalnych na dwóch piętrach", "Planetarium z projekcjami filmów edukacyjnych na kopule", "Warsztaty i pokazy naukowe prowadzone przez animatorów", "Strefa dla najmłodszych 'Bzzz!' z eksponatami sensorycznymi"],
     website: "https://www.kopernik.org.pl",
     reviews: [{ author: "Bartek N.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 7,
@@ -240,6 +248,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     website: "https://www.1944.pl",
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 10,
@@ -264,6 +273,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Kamil J.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 13,
@@ -288,6 +298,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["parking", "stroller", "shade", "picnic-area"],
   },
   {
     id: 18,
@@ -312,6 +323,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Anna M.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Tomek K.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Ewa S.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 19,
@@ -336,6 +348,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Marta W.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 20,
@@ -360,6 +373,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 21,
@@ -384,6 +398,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 22,
@@ -408,6 +423,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Kamil J.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 23,
@@ -432,6 +448,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 24,
@@ -456,6 +473,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Anna M.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 25,
@@ -480,6 +498,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "accessible", "fenced", "kids-menu"],
   },
   {
     id: 26,
@@ -504,6 +523,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Piotr L.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 27,
@@ -528,6 +548,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 28,
@@ -552,6 +573,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Paweł B.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "accessible", "toilets", "wifi", "stroller", "changing-table"],
   },
   {
     id: 29,
@@ -576,6 +598,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["toilets", "seating", "food-onsite", "shade"],
   },
   {
     id: 30,
@@ -600,6 +623,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
 
   // ===== KRAKÓW (18 activities) =====
@@ -626,6 +650,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 9,
@@ -650,6 +675,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["parking", "stroller", "toilets", "picnic-area", "fenced", "food-onsite", "shade"],
   },
   {
     id: 14,
@@ -674,6 +700,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 31,
@@ -699,6 +726,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Trasa turystyczna prowadzi przez zabytkowe komory solne i kaplice", "Podziemne jezioro i spektakularne rzeźby solne", "Specjalna trasa rodzinna z quizem i grą edukacyjną dla dzieci", "Stała temperatura 14°C — warto zabrać ciepłą bluzę"],
     website: "https://www.wieliczka.eu",
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "accessible", "food-onsite", "public-transport", "changing-table", "first-aid"],
   },
   {
     id: 32,
@@ -723,6 +751,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["toilets", "parking", "stroller", "seating"],
   },
   {
     id: 33,
@@ -748,6 +777,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     website: "https://www.parkwodny.pl",
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 34,
@@ -772,6 +802,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 35,
@@ -796,6 +827,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "30–45 minut",
     experiencePoints: ["Krótkie, ale ekscytujące wejście do legendarnej smoczej jamy", "Dzieci poznają legendę o Smoku Wawelskim", "Pomnik ziejącego ogniem smoka tuż przy wyjściu"],
     reviews: [{ author: "Ewa S.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "stroller"],
   },
   {
     id: 36,
@@ -820,6 +852,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 37,
@@ -844,6 +877,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Michał R.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 38,
@@ -868,6 +902,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 39,
@@ -892,6 +927,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 40,
@@ -916,6 +952,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 41,
@@ -940,6 +977,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 42,
@@ -964,6 +1002,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Marta W.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 43,
@@ -988,6 +1027,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 44,
@@ -1012,6 +1052,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Agnieszka Z.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "parking"],
   },
   {
     id: 45,
@@ -1036,6 +1077,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
 
   // ===== WROCŁAW (18 activities) =====
@@ -1062,6 +1104,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 8,
@@ -1086,6 +1129,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 15,
@@ -1110,6 +1154,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 46,
@@ -1135,6 +1180,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     website: "https://zoo.wroclaw.pl",
     reviews: [{ author: "Piotr L.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 47,
@@ -1160,6 +1206,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     website: "https://hydropolis.wroc.pl",
     reviews: [{ author: "Joanna P.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 48,
@@ -1184,6 +1231,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 49,
@@ -1208,6 +1256,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 50,
@@ -1232,6 +1281,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Łukasz C.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "accessible", "toilets", "parking"],
   },
   {
     id: 51,
@@ -1256,6 +1306,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 52,
@@ -1280,6 +1331,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Piotr L.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["parking", "public-transport", "toilets", "seating", "shade", "stroller"],
   },
   {
     id: 53,
@@ -1304,6 +1356,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 54,
@@ -1328,6 +1381,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Paweł B.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 55,
@@ -1352,6 +1406,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 56,
@@ -1376,6 +1431,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 57,
@@ -1400,6 +1456,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 58,
@@ -1424,6 +1481,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Ewa S.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 59,
@@ -1448,6 +1506,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 60,
@@ -1472,6 +1531,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
 
   // ===== GDAŃSK (18 activities) =====
@@ -1498,6 +1558,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 11,
@@ -1522,6 +1583,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 16,
@@ -1546,6 +1608,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 61,
@@ -1570,6 +1633,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 62,
@@ -1595,6 +1659,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     website: "https://muzeum1939.pl",
     reviews: [{ author: "Kasia D.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 63,
@@ -1619,6 +1684,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 64,
@@ -1643,6 +1709,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "food-onsite", "seating", "shade"],
   },
   {
     id: 65,
@@ -1667,6 +1734,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 66,
@@ -1691,6 +1759,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 67,
@@ -1715,6 +1784,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 68,
@@ -1739,6 +1809,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 69,
@@ -1763,6 +1834,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 70,
@@ -1787,6 +1859,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "food-onsite", "seating", "shade"],
   },
   {
     id: 71,
@@ -1811,6 +1884,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 72,
@@ -1835,6 +1909,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 73,
@@ -1859,6 +1934,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Anna M.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Tomek K.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Ewa S.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 74,
@@ -1883,6 +1959,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–1.5 godziny",
     experiencePoints: ["Rejs widokowy po historycznej Motławie", "Widok na Żuraw, Wyspę Spichrzów i Stare Miasto z wody", "Rejsy trwają ok. 45 minut z komentarzem przewodnika"],
     reviews: [{ author: "Marta W.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["toilets", "public-transport", "seating"],
   },
   {
     id: 75,
@@ -1907,6 +1984,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
 
   // ===== POZNAŃ (18 activities) =====
@@ -1933,6 +2011,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 12,
@@ -1957,6 +2036,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Kamil J.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["public-transport", "accessible", "toilets", "parking"],
   },
   {
     id: 17,
@@ -1981,6 +2061,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Aleksandra H.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "parking"],
   },
   {
     id: 76,
@@ -2005,6 +2086,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 77,
@@ -2030,6 +2112,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     website: "https://zoo.poznan.pl",
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
   },
   {
     id: 78,
@@ -2055,6 +2138,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     website: "https://www.termymaltanskie.com.pl",
     reviews: [{ author: "Piotr L.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "accessible", "fenced", "kids-menu"],
   },
   {
     id: 79,
@@ -2080,6 +2164,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     website: "https://rogalowemuzeum.pl",
     reviews: [{ author: "Joanna P.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 80,
@@ -2104,6 +2189,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 81,
@@ -2128,6 +2214,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Natalia F.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
   },
   {
     id: 82,
@@ -2152,6 +2239,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Łukasz C.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 83,
@@ -2176,6 +2264,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 84,
@@ -2200,6 +2289,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–3 godziny",
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Piotr L.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
   {
     id: 85,
@@ -2224,6 +2314,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 86,
@@ -2248,6 +2339,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
+    amenities: ["public-transport", "toilets", "accessible", "wifi"],
   },
   {
     id: 87,
@@ -2272,6 +2364,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
   },
   {
     id: 88,
@@ -2296,6 +2389,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1.5–2.5 godziny",
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
+    amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
   },
   {
     id: 89,
@@ -2320,6 +2414,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Monika O.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
   },
   {
     id: 90,
@@ -2344,6 +2439,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–3 godziny",
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
+    amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
   },
 ];
 
