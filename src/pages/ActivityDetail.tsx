@@ -43,7 +43,6 @@ const defaultExperiencePoints = [
   "Możliwość wspólnej zabawy całą rodziną",
 ];
 
-};
 
 const getActivityTypeIcon = (type: string) => {
   switch (type.toLowerCase()) {
