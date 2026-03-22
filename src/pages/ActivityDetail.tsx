@@ -23,6 +23,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockActivities } from "@/data/activities";
+import { getAmenityById } from "@/data/amenities";
+import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
