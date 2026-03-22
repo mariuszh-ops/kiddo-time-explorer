@@ -582,13 +582,17 @@ const ActivityDetail = () => {
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
                 <p className="text-sm text-foreground">{details.address}</p>
-                <a 
-                  href="#" 
-                  className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1"
-                >
-                  Otwórz w Mapach
-                  <ExternalLink className="w-3 h-3" />
-                </a>
+                {details.address !== "Sprawdź dokładny adres na stronie organizatora" && (
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.address)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1"
+                  >
+                    Otwórz w Mapach
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
               </div>
             </div>
 
@@ -597,18 +601,37 @@ const ActivityDetail = () => {
               <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
               <div className="min-w-0 flex-1">
                 <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
-                <div className="flex flex-wrap gap-2">
-                  {details.ticketSources.map((source, index) => (
-                    <a
-                      key={index}
-                      href={source.url}
-                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
-                    >
-                      {source.name}
-                      <ExternalLink className="w-3 h-3" />
-                    </a>
-                  ))}
-                </div>
+                {details.ticketSources.some(s => s.url && s.url !== "#") ? (
+                  <div className="flex flex-wrap gap-2">
+                    {details.ticketSources.map((source, index) => (
+                      source.url && source.url !== "#" ? (
+                        <a
+                          key={index}
+                          href={source.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
+                        >
+                          {source.name}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      ) : (
+                        <span
+                          key={index}
+                          className="inline-flex items-center gap-1.5 px-3 py-2 bg-muted text-muted-foreground text-sm rounded-full cursor-default"
+                          title="Link w przygotowaniu"
+                        >
+                          {source.name}
+                        </span>
+                      )
+                    ))}
+                  </div>
+                ) : (
+                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <Info className="w-4 h-4" />
+                    Informacje o biletach wkrótce
+                  </p>
+                )}
               </div>
             </div>
           </div>
