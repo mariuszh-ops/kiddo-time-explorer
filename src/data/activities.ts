@@ -2661,6 +2661,10 @@ export const filterOptions = {
     { value: "50km", label: "Do 50 km" },
     { value: "100km", label: "Do 100 km" },
   ],
+  price: [
+    { value: "free", label: "Bezpłatne" },
+    { value: "paid", label: "Płatne" },
+  ],
 };
 
 // City center coordinates for distance calculations
