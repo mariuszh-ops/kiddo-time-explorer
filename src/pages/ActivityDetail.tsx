@@ -77,7 +77,8 @@ const ActivityDetail = () => {
   
   const { share } = useShare();
 
-  const activityId = Number(id);
+  const activity = mockActivities.find((a) => a.slug === slug) || mockActivities.find((a) => a.id === Number(slug));
+  const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
