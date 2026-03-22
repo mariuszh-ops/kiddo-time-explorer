@@ -134,6 +134,14 @@ const ActivityCard = ({
           {location}
         </p>
 
+        {/* Event date */}
+        {isEvent && eventDate && (
+          <p className="flex items-center gap-1 text-xs text-amber-600">
+            <Calendar className="w-3 h-3" />
+            {eventDate}
+          </p>
+        )}
+
         {/* Tags row */}
         <div className="flex items-center gap-1.5 flex-wrap">
           {/* Age range - always first */}
