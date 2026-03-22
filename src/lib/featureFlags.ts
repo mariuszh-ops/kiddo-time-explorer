@@ -1,0 +1,4 @@
+export const FEATURES = {
+  MAP_VIEW: false,       // Widok mapy z pinami — wyłączony w MVP
+  DISTANCE_FILTER: true, // Filtr dystansu — aktywny
+} as const;

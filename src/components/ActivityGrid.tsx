@@ -6,7 +6,7 @@ import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
-import { Filters } from "@/hooks/useActivityFilters";
+import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
 interface ActivityGridProps {
   activities: Activity[];
@@ -167,6 +167,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   socialProofBadge={getBadgeText(activity.id)}
                   isEvent={activity.isEvent}
                   eventDate={activity.eventDate}
+                  distanceKm={filters.city ? getActivityDistance(activity, filters.city) : null}
                 />
               </motion.div>
             ))}
