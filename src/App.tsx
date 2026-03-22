@@ -14,6 +14,7 @@ import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import BottomNav from "./components/BottomNav";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
             <OfflineIndicator />
             <BrowserRouter>
               <AnimatedRoutes />
+              <BottomNav />
             </BrowserRouter>
           </TooltipProvider>
         </UserRatingsProvider>

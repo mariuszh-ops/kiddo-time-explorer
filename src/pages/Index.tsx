@@ -43,7 +43,7 @@ const Index = () => {
   return (
     <PageTransition>
       <main 
-        className="min-h-screen bg-background"
+        className="min-h-screen bg-background pb-20 sm:pb-0"
         style={{ 
           // Hide content until scroll is restored to prevent flash at top
           visibility: isScrollRestored ? 'visible' : 'hidden' 

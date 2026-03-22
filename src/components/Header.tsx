@@ -55,31 +55,13 @@ const Header = () => {
 
             {isLoggedIn ? (
               <>
-                {/* My Places link - logged in only */}
-                {/* Mobile: subtle icon button | Desktop: full button with text */}
-                <Link to="/my-places">
-                  {/* Mobile view - clean icon only */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      "sm:hidden text-muted-foreground hover:text-foreground",
-                      isActive("/my-places") && "text-primary bg-primary/10"
-                    )}
-                  >
-                    <Heart className={cn(
-                      "w-5 h-5 transition-colors",
-                      isActive("/my-places") && "fill-primary text-primary"
-                    )} />
-                    <span className="sr-only">Moje miejsca</span>
-                  </Button>
-                  
-                  {/* Desktop view - button with text */}
+                {/* My Places link - desktop only (mobile uses bottom nav) */}
+                <Link to="/my-places" className="hidden sm:block">
                   <Button
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "hidden sm:flex gap-2 text-muted-foreground hover:text-foreground",
+                      "gap-2 text-muted-foreground hover:text-foreground",
                       isActive("/my-places") && "text-foreground bg-accent"
                     )}
                   >
@@ -88,7 +70,7 @@ const Header = () => {
                   </Button>
                 </Link>
 
-                {/* Profile button - logged in only (desktop only) */}
+                {/* Profile button - desktop only (mobile uses bottom nav) */}
                 <Link to="/profile" className="hidden sm:block">
                   <Button
                     variant="ghost"
@@ -104,15 +86,15 @@ const Header = () => {
                 </Link>
               </>
             ) : (
-              /* Login button - logged out only */
+              /* Login button - logged out, desktop only (mobile uses bottom nav) */
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="gap-2 text-muted-foreground hover:text-foreground"
+                className="hidden sm:flex gap-2 text-muted-foreground hover:text-foreground"
               >
                 <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Zaloguj się</span>
+                <span>Zaloguj się</span>
               </Button>
             )}
           </nav>
