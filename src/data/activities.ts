@@ -58,6 +58,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Kilka dni pełnych spektakli plenerowych w klimatycznym parku", "Warsztaty teatralne i animacje dla dzieci w przerwach", "Stoiska z rękodziełem i regionalnymi smakołykami"],
     reviews: [{ author: "Anna M.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 15–25 zł/os., dzieci do 3 lat gratis",
   },
   {
     id: 102,
@@ -85,6 +87,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Tworzenie tradycyjnych ozdób wielkanocnych pod okiem instruktorów", "Malowanie pisanek i dekorowanie mazurków", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Udział: 30 zł/dziecko, rodzic gratis",
   },
   {
     id: 103,
@@ -112,6 +116,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Nocne zwiedzanie ZOO z profesjonalnym przewodnikiem", "Obserwacja nocnych zachowań zwierząt przy latarkach", "Niezapomniana przygoda dla starszych dzieci i młodzieży"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet: 60 zł/os., dzieci 6-14: 40 zł",
   },
   {
     id: 104,
@@ -138,6 +144,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "2–4 godziny",
     experiencePoints: ["Pokazy eksperymentów fizycznych i chemicznych na żywo", "Warsztaty 'zrób to sam' z prostymi doświadczeniami", "Stoiska organizacji naukowych i edukacyjnych"],
     amenities: ["toilets", "food-onsite", "public-transport", "stroller"],
+    priceLevel: 0 as const,
   },
   // ===== NEW ACTIVITY WITHOUT REVIEWS (for edge case demo) =====
   {
@@ -163,6 +170,7 @@ export const mockActivities: Activity[] = [
     estimatedTime: "1–2 godziny",
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
   // ===== WARSZAWA (18 activities) =====
   {
@@ -197,6 +205,8 @@ export const mockActivities: Activity[] = [
     website: "https://zoo.waw.pl",
     reviews: [{ author: "Marta W.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 2 as const,
+    priceNote: "Dorośli: 40 zł, Dzieci 3-12: 20 zł, do 3 lat gratis",
   },
   {
     id: 2,
@@ -223,6 +233,8 @@ export const mockActivities: Activity[] = [
     website: "https://www.kopernik.org.pl",
     reviews: [{ author: "Bartek N.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet normalny: 33 zł, Ulgowy: 22 zł, Rodzinny: 90 zł",
   },
   {
     id: 7,
@@ -249,6 +261,8 @@ export const mockActivities: Activity[] = [
     website: "https://www.1944.pl",
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 25 zł, Ulgowy: 18 zł, Pon: wstęp wolny",
   },
   {
     id: 10,
@@ -274,6 +288,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Kamil J.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 15–25 zł w zależności od seansu",
   },
   {
     id: 13,
@@ -299,6 +315,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["parking", "stroller", "shade", "picnic-area"],
+    priceLevel: 0 as const,
   },
   {
     id: 18,
@@ -324,6 +341,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Anna M.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Tomek K.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Ewa S.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Warsztaty: 80–120 zł/dziecko (2h z produktami)",
   },
   {
     id: 19,
@@ -349,6 +368,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Marta W.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 45–65 zł/os., Skarpetki antypoślizgowe: 5 zł",
   },
   {
     id: 20,
@@ -374,6 +395,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
   {
     id: 21,
@@ -399,6 +421,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 25 zł, Ulgowy: 15 zł, Śr: wstęp wolny",
   },
   {
     id: 22,
@@ -424,6 +448,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Kamil J.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 23,
@@ -449,6 +474,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 45–65 zł/os., Wypożyczenie sprzętu: 15 zł",
   },
   {
     id: 24,
@@ -474,6 +501,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Anna M.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty: 40–60 zł/dziecko (1.5h z materiałami)",
   },
   {
     id: 25,
@@ -499,6 +528,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "accessible", "fenced", "kids-menu"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 20–35 zł/os. w zależności od strefy",
   },
   {
     id: 26,
@@ -524,6 +555,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Piotr L.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilety: 20–40 zł w zależności od spektaklu",
   },
   {
     id: 27,
@@ -549,6 +582,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Przejazd: 50–80 zł/os. (10-15 min)",
   },
   {
     id: 28,
@@ -574,6 +609,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Paweł B.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "accessible", "toilets", "wifi", "stroller", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 29,
@@ -599,6 +635,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["toilets", "seating", "food-onsite", "shade"],
+    priceLevel: 1 as const,
+    priceNote: "Gra: 15–25 zł/os.",
   },
   {
     id: 30,
@@ -624,6 +662,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Kurs: 60–100 zł/dziecko za zajęcia",
   },
 
   // ===== KRAKÓW (18 activities) =====
@@ -651,6 +691,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 15 zł, Ulgowy: 8 zł, do 4 lat gratis",
   },
   {
     id: 9,
@@ -676,6 +718,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["parking", "stroller", "toilets", "picnic-area", "fenced", "food-onsite", "shade"],
+    priceLevel: 1 as const,
+    priceNote: "Wstęp: 20 zł/os., Dzieci do 3 lat: gratis, Karmienie zwierząt: 10 zł",
   },
   {
     id: 14,
@@ -701,6 +745,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Warsztaty: 70–90 zł/dziecko (2h ze słodkościami)",
   },
   {
     id: 31,
@@ -727,6 +773,8 @@ export const mockActivities: Activity[] = [
     website: "https://www.wieliczka.eu",
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "accessible", "food-onsite", "public-transport", "changing-table", "first-aid"],
+    priceLevel: 2 as const,
+    priceNote: "Trasa rodzinna: Dorośli 89 zł, Dzieci 4-14: 69 zł",
   },
   {
     id: 32,
@@ -752,6 +800,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["toilets", "parking", "stroller", "seating"],
+    priceLevel: 0 as const,
   },
   {
     id: 33,
@@ -778,6 +827,8 @@ export const mockActivities: Activity[] = [
     website: "https://www.parkwodny.pl",
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet: 45–75 zł/os. w zależności od strefy i czasu",
   },
   {
     id: 34,
@@ -803,6 +854,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 17 zł, Ulgowy: 9 zł, Wt: wstęp wolny",
   },
   {
     id: 35,
@@ -828,6 +881,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Krótkie, ale ekscytujące wejście do legendarnej smoczej jamy", "Dzieci poznają legendę o Smoku Wawelskim", "Pomnik ziejącego ogniem smoka tuż przy wyjściu"],
     reviews: [{ author: "Ewa S.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "stroller"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 5 zł/os.",
   },
   {
     id: 36,
@@ -853,6 +908,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–70 zł/os. w zależności od trasy",
   },
   {
     id: 37,
@@ -878,6 +935,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Michał R.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilety: 25–40 zł w zależności od spektaklu",
   },
   {
     id: 38,
@@ -903,6 +962,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Dorośli: 25 zł, Dzieci 3-14: 15 zł, do 3 lat gratis",
   },
   {
     id: 39,
@@ -928,6 +989,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 35–55 zł/dziecko (2h), Dorosły opiekun: gratis",
   },
   {
     id: 40,
@@ -953,6 +1016,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 12 zł, Ulgowy: 8 zł",
   },
   {
     id: 41,
@@ -978,6 +1043,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty: 50–70 zł/os. (1.5h z materiałami)",
   },
   {
     id: 42,
@@ -1003,6 +1070,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Marta W.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 43,
@@ -1028,6 +1096,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 1 as const,
+    priceNote: "Gra: 20–30 zł/os., Buty: 5 zł",
   },
   {
     id: 44,
@@ -1053,6 +1123,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Agnieszka Z.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "parking"],
+    priceLevel: 2 as const,
+    priceNote: "Pokój: 60–90 zł/os. (grupa 2-5 osób)",
   },
   {
     id: 45,
@@ -1078,6 +1150,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
 
   // ===== WROCŁAW (18 activities) =====
@@ -1105,6 +1178,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 35–50 zł/dziecko (2h), Dorosły opiekun: gratis",
   },
   {
     id: 8,
@@ -1130,6 +1205,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet: 45–75 zł/os. w zależności od strefy i czasu",
   },
   {
     id: 15,
@@ -1155,6 +1232,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 15 zł, Ulgowy: 10 zł",
   },
   {
     id: 46,
@@ -1181,6 +1260,8 @@ export const mockActivities: Activity[] = [
     website: "https://zoo.wroclaw.pl",
     reviews: [{ author: "Piotr L.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 2 as const,
+    priceNote: "Dorośli: 50 zł, Dzieci 3-14: 30 zł, do 3 lat gratis",
   },
   {
     id: 47,
@@ -1207,6 +1288,8 @@ export const mockActivities: Activity[] = [
     website: "https://hydropolis.wroc.pl",
     reviews: [{ author: "Joanna P.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 27 zł, Ulgowy: 18 zł, Rodzinny: 70 zł",
   },
   {
     id: 48,
@@ -1232,6 +1315,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 25 zł, Ulgowy: 18 zł, Rodzinny: 65 zł",
   },
   {
     id: 49,
@@ -1257,6 +1342,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
   {
     id: 50,
@@ -1282,6 +1368,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Łukasz C.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "accessible", "toilets", "parking"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 18 zł/os., Dzieci do 6 lat: gratis",
   },
   {
     id: 51,
@@ -1307,6 +1395,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–60 zł/os., Skarpetki: 5 zł",
   },
   {
     id: 52,
@@ -1332,6 +1422,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Piotr L.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["parking", "public-transport", "toilets", "seating", "shade", "stroller"],
+    priceLevel: 0 as const,
   },
   {
     id: 53,
@@ -1357,6 +1448,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty: 35–55 zł/dziecko (1.5h)",
   },
   {
     id: 54,
@@ -1382,6 +1475,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Paweł B.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 15–22 zł w zależności od seansu",
   },
   {
     id: 55,
@@ -1407,6 +1502,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Natalia F.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 56,
@@ -1432,6 +1528,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Warsztaty: 75–100 zł/dziecko (2h z produktami)",
   },
   {
     id: 57,
@@ -1457,6 +1555,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–60 zł/os., Wypożyczenie sprzętu: 15 zł",
   },
   {
     id: 58,
@@ -1482,6 +1582,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Ewa S.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilety: 30–60 zł w zależności od spektaklu",
   },
   {
     id: 59,
@@ -1507,6 +1609,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Wstęp: 12 zł/os., Dzieci do 3 lat: gratis",
   },
   {
     id: 60,
@@ -1532,6 +1636,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Gra: 30–45 zł/os. (30 min)",
   },
 
   // ===== GDAŃSK (18 activities) =====
@@ -1559,6 +1665,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty: 45–65 zł/dziecko (1.5h z materiałami)",
   },
   {
     id: 11,
@@ -1584,6 +1692,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–55 zł/os., Skarpetki: 5 zł",
   },
   {
     id: 16,
@@ -1609,6 +1719,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 61,
@@ -1634,6 +1745,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Dorośli: 20 zł, Dzieci 3-14: 12 zł, do 3 lat gratis",
   },
   {
     id: 62,
@@ -1660,6 +1773,8 @@ export const mockActivities: Activity[] = [
     website: "https://muzeum1939.pl",
     reviews: [{ author: "Kasia D.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 23 zł, Ulgowy: 14 zł, Wt: wstęp wolny",
   },
   {
     id: 63,
@@ -1685,6 +1800,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 20 zł, Ulgowy: 14 zł, Rodzinny: 50 zł",
   },
   {
     id: 64,
@@ -1710,6 +1827,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "food-onsite", "seating", "shade"],
+    priceLevel: 0 as const,
   },
   {
     id: 65,
@@ -1735,6 +1853,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 18 zł, Ulgowy: 12 zł",
   },
   {
     id: 66,
@@ -1760,6 +1880,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Monika O.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet: 50–80 zł/os. w zależności od strefy i czasu",
   },
   {
     id: 67,
@@ -1785,6 +1907,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
   {
     id: 68,
@@ -1810,6 +1933,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Kasia D.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Bartek N.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Joanna P.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 35–50 zł/dziecko (2h), Dorosły opiekun: gratis",
   },
   {
     id: 69,
@@ -1835,6 +1960,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Michał R.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Agnieszka Z.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Paweł B.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 15 zł, Ulgowy: 10 zł",
   },
   {
     id: 70,
@@ -1860,6 +1987,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "food-onsite", "seating", "shade"],
+    priceLevel: 0 as const,
   },
   {
     id: 71,
@@ -1885,6 +2013,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty: 40–60 zł/dziecko (1.5h z materiałami)",
   },
   {
     id: 72,
@@ -1910,6 +2040,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Aleksandra H.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Łukasz C.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Monika O.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 0 as const,
   },
   {
     id: 73,
@@ -1935,6 +2066,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Anna M.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Tomek K.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Ewa S.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilety: 20–35 zł w zależności od spektaklu",
   },
   {
     id: 74,
@@ -1960,6 +2093,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Rejs widokowy po historycznej Motławie", "Widok na Żuraw, Wyspę Spichrzów i Stare Miasto z wody", "Rejsy trwają ok. 45 minut z komentarzem przewodnika"],
     reviews: [{ author: "Marta W.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Piotr L.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Kasia D.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["toilets", "public-transport", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Rejs: 25–40 zł/os., Dzieci do 4 lat: gratis",
   },
   {
     id: 75,
@@ -1985,6 +2120,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Bartek N.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Joanna P.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Michał R.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 1 as const,
+    priceNote: "Gra: 15–25 zł/os.",
   },
 
   // ===== POZNAŃ (18 activities) =====
@@ -2012,6 +2149,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Agnieszka Z.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Paweł B.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Magda T.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–70 zł/os. w zależności od trasy",
   },
   {
     id: 12,
@@ -2037,6 +2176,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Kamil J.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Natalia F.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Robert G.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["public-transport", "accessible", "toilets", "parking"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 18 zł, Ulgowy: 12 zł",
   },
   {
     id: 17,
@@ -2062,6 +2203,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Aleksandra H.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "parking"],
+    priceLevel: 2 as const,
+    priceNote: "Pokój: 50–80 zł/os. (grupa 2-5 osób)",
   },
   {
     id: 76,
@@ -2087,6 +2230,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach", "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu", "Strefa malucha z łagodnymi zwierzętami do głaskania", "Na terenie znajdują się place zabaw i strefy piknikowe"],
     reviews: [{ author: "Łukasz C.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Dorośli: 15 zł, Dzieci 3-14: 10 zł, do 3 lat gratis",
   },
   {
     id: 77,
@@ -2113,6 +2258,8 @@ export const mockActivities: Activity[] = [
     website: "https://zoo.poznan.pl",
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 4, text: "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "parking", "toilets", "food-onsite", "shade", "playground", "fenced", "seating"],
+    priceLevel: 1 as const,
+    priceNote: "Dorośli: 30 zł, Dzieci 3-14: 18 zł, do 3 lat gratis",
   },
   {
     id: 78,
@@ -2139,6 +2286,8 @@ export const mockActivities: Activity[] = [
     website: "https://www.termymaltanskie.com.pl",
     reviews: [{ author: "Piotr L.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "accessible", "fenced", "kids-menu"],
+    priceLevel: 2 as const,
+    priceNote: "Bilet: 55–85 zł/os. w zależności od pakietu",
   },
   {
     id: 79,
@@ -2165,6 +2314,8 @@ export const mockActivities: Activity[] = [
     website: "https://rogalowemuzeum.pl",
     reviews: [{ author: "Joanna P.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 5, text: "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Warsztaty z wypiekiem rogala: 25 zł/os.",
   },
   {
     id: 80,
@@ -2190,6 +2341,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Magda T.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Kamil J.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 0 as const,
   },
   {
     id: 81,
@@ -2215,6 +2367,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Natalia F.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Robert G.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Aleksandra H.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["stroller", "seating", "shade", "picnic-area", "toilets", "public-transport"],
+    priceLevel: 1 as const,
+    priceNote: "Przejazd: 12 zł/os., Dzieci do 3 lat: gratis",
   },
   {
     id: 82,
@@ -2240,6 +2394,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Łukasz C.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Monika O.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Anna M.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet: 15–25 zł w zależności od seansu",
   },
   {
     id: 83,
@@ -2265,6 +2421,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Tomek K.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Ewa S.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Marta W.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 1 as const,
+    priceNote: "Wypożyczenie kajaka: 30–50 zł/h",
   },
   {
     id: 84,
@@ -2290,6 +2448,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Interaktywne wystawy angażujące wszystkie zmysły", "Warsztaty edukacyjne dostosowane do różnych grup wiekowych", "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi", "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"],
     reviews: [{ author: "Piotr L.", rating: 5, text: "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!", date: "2 tygodnie temu" }, { author: "Kasia D.", rating: 5, text: "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.", date: "1 miesiąc temu" }, { author: "Bartek N.", rating: 4, text: "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 15 zł, Ulgowy: 10 zł, Sob: wstęp wolny",
   },
   {
     id: 85,
@@ -2315,6 +2475,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Bezpieczna nawierzchnia amortyzująca upadki", "Oddzielne strefy dla maluchów i starszych dzieci", "Regularne kontrole bezpieczeństwa i czystości", "Ławki i zadaszenia dla opiekunów"],
     reviews: [{ author: "Joanna P.", rating: 5, text: "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.", date: "2 tygodnie temu" }, { author: "Michał R.", rating: 4, text: "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.", date: "1 miesiąc temu" }, { author: "Agnieszka Z.", rating: 4, text: "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 30–50 zł/dziecko (2h), Dorosły opiekun: gratis",
   },
   {
     id: 86,
@@ -2340,6 +2502,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Zajęcia prowadzone przez doświadczonych instruktorów", "Wszystkie materiały i narzędzia w cenie warsztatu", "Małe grupy zapewniające indywidualną uwagę", "Dzieci zabierają swoje prace do domu"],
     reviews: [{ author: "Paweł B.", rating: 5, text: "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!", date: "2 tygodnie temu" }],
     amenities: ["public-transport", "toilets", "accessible", "wifi"],
+    priceLevel: 2 as const,
+    priceNote: "Kurs: 60–100 zł/dziecko za zajęcia",
   },
   {
     id: 87,
@@ -2365,6 +2529,7 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Magda T.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Kamil J.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Natalia F.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["stroller", "fenced", "shade", "seating", "playground", "toilets", "changing-table"],
+    priceLevel: 0 as const,
   },
   {
     id: 88,
@@ -2390,6 +2555,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Profesjonalny sprzęt dostosowany do dzieci", "Wykwalifikowani instruktorzy dbający o bezpieczeństwo", "Zajęcia w grupach wiekowych dla optymalnej zabawy", "Szatnie i zaplecze sanitarne dla rodzin"],
     reviews: [{ author: "Robert G.", rating: 5, text: "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.", date: "2 tygodnie temu" }, { author: "Aleksandra H.", rating: 4, text: "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.", date: "1 miesiąc temu" }, { author: "Łukasz C.", rating: 5, text: "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.", date: "2 miesiące temu" }],
     amenities: ["parking", "toilets", "changing-table", "food-onsite", "fenced"],
+    priceLevel: 2 as const,
+    priceNote: "Wejście: 40–55 zł/os., Wypożyczenie sprzętu: 15 zł",
   },
   {
     id: 89,
@@ -2415,6 +2582,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Atrakcja dostosowana do różnych grup wiekowych", "Bezpieczna przestrzeń dla dzieci pod okiem rodziców", "Możliwość wspólnej zabawy całą rodziną"],
     reviews: [{ author: "Monika O.", rating: 4, text: "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.", date: "2 tygodnie temu" }, { author: "Anna M.", rating: 4, text: "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.", date: "1 miesiąc temu" }, { author: "Tomek K.", rating: 5, text: "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "public-transport", "changing-table", "food-onsite"],
+    priceLevel: 1 as const,
+    priceNote: "Bilety: 20–35 zł w zależności od spektaklu",
   },
   {
     id: 90,
@@ -2440,6 +2609,8 @@ export const mockActivities: Activity[] = [
     experiencePoints: ["Malownicze ścieżki spacerowe wśród zieleni", "Miejsca do odpoczynku z ławkami i altankami", "Możliwość obserwowania przyrody i ptaków", "Bezpieczne alejki do jazdy na rowerze i hulajnodze"],
     reviews: [{ author: "Ewa S.", rating: 5, text: "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.", date: "2 tygodnie temu" }, { author: "Marta W.", rating: 4, text: "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.", date: "1 miesiąc temu" }, { author: "Piotr L.", rating: 4, text: "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.", date: "2 miesiące temu" }],
     amenities: ["accessible", "toilets", "food-onsite", "changing-table", "public-transport", "wifi"],
+    priceLevel: 1 as const,
+    priceNote: "Bilet normalny: 12 zł, Ulgowy: 8 zł, Śr: wstęp wolny",
   },
 ];
 
