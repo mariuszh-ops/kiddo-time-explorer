@@ -78,6 +78,11 @@ export function useActivityFilters() {
   const filteredActivities = useMemo(() => {
     let result = [...mockActivities];
 
+    // Hide events when feature flag is off
+    if (!FEATURES.EVENTS) {
+      result = result.filter(a => !a.isEvent);
+    }
+
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
