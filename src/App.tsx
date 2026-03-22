@@ -48,6 +48,7 @@ const App = () => (
             <OfflineIndicator />
             <BrowserRouter>
               <AnimatedRoutes />
+              <BottomNav />
             </BrowserRouter>
           </TooltipProvider>
         </UserRatingsProvider>
