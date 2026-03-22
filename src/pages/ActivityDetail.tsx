@@ -18,11 +18,12 @@ import {
   Calendar,
   MapPinned,
   Info,
-  Share2
+  Share2,
+  Wallet
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockActivities } from "@/data/activities";
+import { mockActivities, PRICE_LEVELS } from "@/data/activities";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect } from "react";
@@ -561,14 +562,16 @@ const ActivityDetail = () => {
               </div>
             </div>
 
-            {/* Price range - hidden on mobile, shown in full grid on tablet+ */}
-            <div className="hidden md:flex items-center gap-2.5">
+            {/* Price range - visible on all sizes */}
+            <div className="flex items-center gap-2.5">
               <div className="p-2 bg-accent rounded-lg shrink-0">
-                <Ticket className="w-5 h-5 text-accent-foreground" />
+                <Ticket className={`w-4 h-4 md:w-5 md:h-5 ${activity.priceLevel === 0 ? 'text-green-600 dark:text-green-400' : 'text-accent-foreground'}`} />
               </div>
               <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Cena</p>
-                <p className="text-sm font-medium text-foreground">{details.priceRange}</p>
+                <p className="text-[10px] md:text-xs text-muted-foreground">Cena</p>
+                <p className="text-xs md:text-sm font-medium text-foreground">
+                  {activity.priceLevel !== undefined ? PRICE_LEVELS[activity.priceLevel].label : details.priceRange}
+                </p>
               </div>
             </div>
           </div>
@@ -677,6 +680,18 @@ const ActivityDetail = () => {
                 )}
               </div>
             </div>
+
+            {/* Price details */}
+            {activity.priceNote && (
+              <div className="flex items-start gap-3">
+                <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
+                  <p className="text-sm text-foreground">{activity.priceNote}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Ceny mogą ulec zmianie — sprawdź aktualny cennik na stronie organizatora</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -8,6 +8,7 @@ import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
+import { PRICE_LEVELS } from "@/data/activities";
 
 interface ActivityCardProps {
   id: number;
@@ -26,6 +27,7 @@ interface ActivityCardProps {
   distanceKm?: number | null;
   slug: string;
   amenities?: string[];
+  priceLevel?: 0 | 1 | 2 | 3;
 }
 
 const ActivityCard = ({
@@ -45,6 +47,7 @@ const ActivityCard = ({
   distanceKm,
   slug,
   amenities,
+  priceLevel,
 }: ActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const routeLocation = useLocation();
@@ -75,8 +78,28 @@ const ActivityCard = ({
           onError={handleImageError}
         />
         
-        {/* Type badge - Miejsce or Wydarzenie — only when EVENTS feature enabled */}
-        {FEATURES.EVENTS && (
+        {/* Price badge - left side */}
+        {priceLevel !== undefined && (
+          <div className="absolute top-2 left-2 flex items-center gap-1.5">
+            <Badge 
+              variant="outline"
+              className={`text-xs font-medium border ${PRICE_LEVELS[priceLevel].color}`}
+            >
+              {PRICE_LEVELS[priceLevel].badge}
+            </Badge>
+            {/* Type badge - only when EVENTS feature enabled */}
+            {FEATURES.EVENTS && isEvent && (
+              <Badge 
+                variant="secondary" 
+                className="text-[10px] font-medium backdrop-blur-sm bg-amber-500/90 text-white border-0"
+              >
+                <Calendar className="w-3 h-3 mr-1" />Wydarzenie
+              </Badge>
+            )}
+          </div>
+        )}
+        {/* Type badge without price - fallback when no price but events enabled */}
+        {priceLevel === undefined && FEATURES.EVENTS && (
           <div className="absolute top-2 left-2">
             <Badge 
               variant="secondary" 

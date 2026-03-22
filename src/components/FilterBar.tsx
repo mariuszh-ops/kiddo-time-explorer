@@ -18,6 +18,7 @@ interface FilterBarProps {
     indoor: { value: string; label: string; count: number }[];
     activityKind: { value: string; label: string; count: number }[];
     distance: { value: string; label: string; count: number }[];
+    price: { value: string; label: string; count: number }[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -159,6 +160,14 @@ const FilterBar = ({
             selectedValue={filters.indoor}
             hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("indoor", value)}
+          />
+          
+          <FilterDropdown
+            label="Cena"
+            options={filterCounts.price}
+            selectedValue={filters.price}
+            hasAnyFilter={filterCounts.hasAnyFilter}
+            onSelect={(value) => onUpdateFilter("price", value)}
           />
           
           {/* Typ atrakcji filter - hidden in MVP, structure preserved */}

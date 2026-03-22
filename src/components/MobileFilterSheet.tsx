@@ -26,6 +26,7 @@ interface MobileFilterSheetProps {
     indoor: FilterOption[];
     activityKind: FilterOption[];
     distance: FilterOption[];
+    price: FilterOption[];
     total: number;
     filtered: number;
     hasAnyFilter: boolean;
@@ -204,6 +205,13 @@ const MobileFilterSheet = ({
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
             onSelect={(value) => onUpdateFilter("indoor", value)}
+          />
+          
+          <FilterSection
+            title="Cena"
+            options={filterCounts.price}
+            selectedValue={filters.price}
+            onSelect={(value) => onUpdateFilter("price", value)}
           />
           
           {/* Typ atrakcji filter - hidden in MVP, structure preserved */}

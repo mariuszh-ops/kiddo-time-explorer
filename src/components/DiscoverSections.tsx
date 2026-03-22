@@ -73,6 +73,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 eventDate={activity.eventDate}
                 slug={activity.slug}
                 amenities={activity.amenities}
+                priceLevel={activity.priceLevel}
               />
             ))}
           </div>
@@ -101,6 +102,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 eventDate={activity.eventDate}
                 slug={activity.slug}
                 amenities={activity.amenities}
+                priceLevel={activity.priceLevel}
               />
             ))}
           </div>
