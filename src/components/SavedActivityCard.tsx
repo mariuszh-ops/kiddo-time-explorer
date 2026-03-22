@@ -31,6 +31,7 @@ interface SavedActivityCardProps {
   listType: "favorites" | "wantToVisit";
   onRemove: (id: number) => Promise<void> | void;
   type?: string;
+  slug: string;
 }
 
 const SavedActivityCard = ({
