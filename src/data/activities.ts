@@ -25,11 +25,15 @@ export interface Activity {
   experiencePoints?: string[];
   website?: string;
   reviews?: { author: string; rating: number; text: string; date: string }[];
+  latitude: number;
+  longitude: number;
 }
 export const mockActivities: Activity[] = [
   // ===== SAMPLE EVENTS (wydarzenia) =====
   {
     id: 101,
+    latitude: 52.2386,
+    longitude: 21.0531,
     title: "Festiwal Bajek – spektakle plenerowe",
     location: "Warszawa, Park Skaryszewski",
     city: "warszawa",
@@ -53,6 +57,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 102,
+    latitude: 50.0611,
+    longitude: 19.9364,
     title: "Warsztaty wielkanocne dla dzieci",
     location: "Kraków, Sukiennice",
     city: "krakow",
@@ -76,6 +82,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 103,
+    latitude: 51.1059,
+    longitude: 17.0777,
     title: "Nocne zwiedzanie ZOO z latarkami",
     location: "Wrocław, Zoo Wrocław",
     city: "wroclaw",
@@ -99,6 +107,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 104,
+    latitude: 54.4116,
+    longitude: 18.5563,
     title: "Piknik naukowy – eksperymenty dla dzieci",
     location: "Gdańsk, Park Oliwski",
     city: "gdansk",
@@ -122,6 +132,8 @@ export const mockActivities: Activity[] = [
   // ===== NEW ACTIVITY WITHOUT REVIEWS (for edge case demo) =====
   {
     id: 100,
+    latitude: 52.2888,
+    longitude: 20.9525,
     title: "Nowy Park Sensoryczny Kraina Zmysłów",
     location: "Warszawa, Bielany",
     city: "warszawa",
@@ -143,6 +155,8 @@ export const mockActivities: Activity[] = [
   // ===== WARSZAWA (18 activities) =====
   {
     id: 1,
+    latitude: 52.2305,
+    longitude: 21.0651,
     title: "Zoo Warszawa – spotkanie z egzotycznymi zwierzętami",
     location: "Warszawa, Praga-Południe",
     city: "warszawa",
@@ -172,6 +186,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 2,
+    latitude: 52.2224,
+    longitude: 21.0052,
     title: "Centrum Nauki Kopernik – interaktywne wystawy",
     location: "Warszawa, Śródmieście",
     city: "warszawa",
@@ -194,6 +210,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 7,
+    latitude: 52.2374,
+    longitude: 20.9707,
     title: "Muzeum Powstania Warszawskiego",
     location: "Warszawa, Wola",
     city: "warszawa",
@@ -216,6 +234,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 10,
+    latitude: 52.1905,
+    longitude: 21.0064,
     title: "Kino dla dzieci Cinema City Junior",
     location: "Warszawa, Mokotów",
     city: "warszawa",
@@ -237,6 +257,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 13,
+    latitude: 52.285,
+    longitude: 20.7921,
     title: "Ścieżka dydaktyczna w Puszczy Kampinoskiej",
     location: "Warszawa, okolice",
     city: "warszawa",
@@ -258,6 +280,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 18,
+    latitude: 52.2749,
+    longitude: 20.9832,
     title: "Lekcje gotowania Junior Chef",
     location: "Warszawa, Żoliborz",
     city: "warszawa",
@@ -279,6 +303,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 19,
+    latitude: 52.1924,
+    longitude: 20.8645,
     title: "Park Trampolin Hangar 646",
     location: "Warszawa, Ursus",
     city: "warszawa",
@@ -300,6 +326,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 20,
+    latitude: 52.2373,
+    longitude: 21.0074,
     title: "Łazienki Królewskie – spacer po parku",
     location: "Warszawa, Śródmieście",
     city: "warszawa",
@@ -321,6 +349,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 21,
+    latitude: 52.2235,
+    longitude: 21.0035,
     title: "Muzeum POLIN – Historia Żydów Polskich",
     location: "Warszawa, Muranów",
     city: "warszawa",
@@ -342,6 +372,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 22,
+    latitude: 52.3256,
+    longitude: 21.0017,
     title: "Plac zabaw Kolorowe Kredki",
     location: "Warszawa, Białołęka",
     city: "warszawa",
@@ -363,6 +395,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 23,
+    latitude: 52.2399,
+    longitude: 20.9737,
     title: "Ścianka wspinaczkowa Murall",
     location: "Warszawa, Wola",
     city: "warszawa",
@@ -384,6 +418,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 24,
+    latitude: 52.2106,
+    longitude: 20.9876,
     title: "Warsztaty plastyczne Kolorowy Świat",
     location: "Warszawa, Ochota",
     city: "warszawa",
@@ -405,6 +441,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 25,
+    latitude: 52.2331,
+    longitude: 20.9708,
     title: "Park Wodny Moczydło",
     location: "Warszawa, Wola",
     city: "warszawa",
@@ -426,6 +464,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 26,
+    latitude: 52.2353,
+    longitude: 21.0119,
     title: "Teatr Lalka – przedstawienia dla dzieci",
     location: "Warszawa, Śródmieście",
     city: "warszawa",
@@ -447,6 +487,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 27,
+    latitude: 52.2758,
+    longitude: 21.0512,
     title: "Tor kartingowy EF1 Racing",
     location: "Warszawa, Targówek",
     city: "warszawa",
@@ -468,6 +510,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 28,
+    latitude: 52.1983,
+    longitude: 20.9977,
     title: "Biblioteka dla Dzieci z kącikiem zabaw",
     location: "Warszawa, Mokotów",
     city: "warszawa",
@@ -489,6 +533,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 29,
+    latitude: 52.1906,
+    longitude: 21.0016,
     title: "Mini golf Pole Mokotowskie",
     location: "Warszawa, Mokotów",
     city: "warszawa",
@@ -510,6 +556,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 30,
+    latitude: 52.1533,
+    longitude: 21.0357,
     title: "Warsztaty robotyki dla dzieci RoboLab",
     location: "Warszawa, Ursynów",
     city: "warszawa",
@@ -533,6 +581,8 @@ export const mockActivities: Activity[] = [
   // ===== KRAKÓW (18 activities) =====
   {
     id: 3,
+    latitude: 50.0386,
+    longitude: 19.9464,
     title: "Ogród Botaniczny – spacer wśród natury",
     location: "Kraków, Podgórze",
     city: "krakow",
@@ -554,6 +604,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 9,
+    latitude: 50.0822,
+    longitude: 19.9178,
     title: "Farma edukacyjna Koziołek",
     location: "Kraków, okolice",
     city: "krakow",
@@ -575,6 +627,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 14,
+    latitude: 50.0479,
+    longitude: 19.9404,
     title: "Warsztaty cukiernicze Słodkie Marzenia",
     location: "Kraków, Kazimierz",
     city: "krakow",
@@ -596,6 +650,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 31,
+    latitude: 49.9856,
+    longitude: 20.0666,
     title: "Kopalnia Soli Wieliczka – trasa dla rodzin",
     location: "Wieliczka, okolice Krakowa",
     city: "krakow",
@@ -618,6 +674,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 32,
+    latitude: 50.0724,
+    longitude: 20.0417,
     title: "Ogród Doświadczeń im. Cystersów",
     location: "Kraków, Nowa Huta",
     city: "krakow",
@@ -639,6 +697,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 33,
+    latitude: 50.0697,
+    longitude: 20.0137,
     title: "Aquapark Kraków – wodna zabawa",
     location: "Kraków, Czyżyny",
     city: "krakow",
@@ -661,6 +721,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 34,
+    latitude: 50.0696,
+    longitude: 20.0081,
     title: "Muzeum Lotnictwa Polskiego",
     location: "Kraków, Czyżyny",
     city: "krakow",
@@ -682,6 +744,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 35,
+    latitude: 50.0693,
+    longitude: 19.9392,
     title: "Smocza Jama pod Wawelem",
     location: "Kraków, Stare Miasto",
     city: "krakow",
@@ -703,6 +767,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 36,
+    latitude: 50.0589,
+    longitude: 19.913,
     title: "Park linowy Kraków",
     location: "Kraków, Zwierzyniec",
     city: "krakow",
@@ -724,6 +790,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 37,
+    latitude: 50.067,
+    longitude: 19.9414,
     title: "Teatr Groteska – spektakle dla najmłodszych",
     location: "Kraków, Stare Miasto",
     city: "krakow",
@@ -745,6 +813,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 38,
+    latitude: 50.0257,
+    longitude: 19.9325,
     title: "Zoo Kraków – Ogród Zoologiczny",
     location: "Kraków, Łagiewniki",
     city: "krakow",
@@ -766,6 +836,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 39,
+    latitude: 50.042,
+    longitude: 19.9463,
     title: "Sala zabaw Bajkolandia",
     location: "Kraków, Podgórze",
     city: "krakow",
@@ -787,6 +859,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 40,
+    latitude: 50.0454,
+    longitude: 19.9521,
     title: "Muzeum Inżynierii Miejskiej",
     location: "Kraków, Kazimierz",
     city: "krakow",
@@ -808,6 +882,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 41,
+    latitude: 50.046,
+    longitude: 19.917,
     title: "Warsztaty garncarskie Glina",
     location: "Kraków, Dębniki",
     city: "krakow",
@@ -829,6 +905,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 42,
+    latitude: 50.0725,
+    longitude: 19.9283,
     title: "Park Jordana – historyczny plac zabaw",
     location: "Kraków, Krowodrza",
     city: "krakow",
@@ -850,6 +928,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 43,
+    latitude: 50.0866,
+    longitude: 19.9093,
     title: "Kręgielnia Family Bowl",
     location: "Kraków, Bronowice",
     city: "krakow",
@@ -871,6 +951,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 44,
+    latitude: 50.0577,
+    longitude: 19.9329,
     title: "Escape Room dla dzieci Enigma Kids",
     location: "Kraków, Stare Miasto",
     city: "krakow",
@@ -892,6 +974,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 45,
+    latitude: 50.0625,
+    longitude: 19.9332,
     title: "Planty Krakowskie – spacer z dziećmi",
     location: "Kraków, Stare Miasto",
     city: "krakow",
@@ -915,6 +999,8 @@ export const mockActivities: Activity[] = [
   // ===== WROCŁAW (18 activities) =====
   {
     id: 4,
+    latitude: 51.1114,
+    longitude: 17.0364,
     title: "Sala zabaw Kraina Malucha",
     location: "Wrocław, Stare Miasto",
     city: "wroclaw",
@@ -936,6 +1022,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 8,
+    latitude: 51.0934,
+    longitude: 16.9955,
     title: "Aquapark Wrocław – baseny i zjeżdżalnie",
     location: "Wrocław, Fabryczna",
     city: "wroclaw",
@@ -957,6 +1045,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 15,
+    latitude: 51.123,
+    longitude: 17.0452,
     title: "Muzeum Zabawek i Zabawy",
     location: "Wrocław, Ostrów Tumski",
     city: "wroclaw",
@@ -978,6 +1068,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 46,
+    latitude: 51.0985,
+    longitude: 17.0728,
     title: "Zoo Wrocław – największe w Polsce",
     location: "Wrocław, Biskupin",
     city: "wroclaw",
@@ -1000,6 +1092,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 47,
+    latitude: 51.1038,
+    longitude: 17.042,
     title: "Hydropolis – Centrum Wiedzy o Wodzie",
     location: "Wrocław, Śródmieście",
     city: "wroclaw",
@@ -1022,6 +1116,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 48,
+    latitude: 51.1147,
+    longitude: 17.0288,
     title: "Kolejkowo – makiety kolejowe",
     location: "Wrocław, Stare Miasto",
     city: "wroclaw",
@@ -1043,6 +1139,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 49,
+    latitude: 51.103,
+    longitude: 17.0381,
     title: "Park Szczytnicki – japoński ogród",
     location: "Wrocław, Śródmieście",
     city: "wroclaw",
@@ -1064,6 +1162,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 50,
+    latitude: 51.0929,
+    longitude: 17.0355,
     title: "Sky Tower – punkt widokowy",
     location: "Wrocław, Krzyki",
     city: "wroclaw",
@@ -1085,6 +1185,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 51,
+    latitude: 51.1025,
+    longitude: 17.0058,
     title: "Park trampolin Jump City",
     location: "Wrocław, Fabryczna",
     city: "wroclaw",
@@ -1106,6 +1208,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 52,
+    latitude: 51.1022,
+    longitude: 17.0435,
     title: "Hala Stulecia – spacer i fontanna",
     location: "Wrocław, Śródmieście",
     city: "wroclaw",
@@ -1127,6 +1231,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 53,
+    latitude: 51.0879,
+    longitude: 17.0356,
     title: "Warsztaty naukowe Eksperymentarium",
     location: "Wrocław, Krzyki",
     city: "wroclaw",
@@ -1148,6 +1254,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 54,
+    latitude: 51.1063,
+    longitude: 17.0323,
     title: "Kino Nowe Horyzonty dla dzieci",
     location: "Wrocław, Stare Miasto",
     city: "wroclaw",
@@ -1169,6 +1277,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 55,
+    latitude: 51.0988,
+    longitude: 17.079,
     title: "Plac zabaw Wzgórze Partyzantów",
     location: "Wrocław, Biskupin",
     city: "wroclaw",
@@ -1190,6 +1300,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 56,
+    latitude: 51.0843,
+    longitude: 17.0423,
     title: "Warsztaty kulinarne MiniChef",
     location: "Wrocław, Krzyki",
     city: "wroclaw",
@@ -1211,6 +1323,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 57,
+    latitude: 51.151,
+    longitude: 17.0612,
     title: "Ścianka wspinaczkowa Climb Up",
     location: "Wrocław, Psie Pole",
     city: "wroclaw",
@@ -1232,6 +1346,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 58,
+    latitude: 51.11,
+    longitude: 17.0249,
     title: "Teatr Capitol – musicale dla rodzin",
     location: "Wrocław, Stare Miasto",
     city: "wroclaw",
@@ -1253,6 +1369,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 59,
+    latitude: 51.0916,
+    longitude: 17.0409,
     title: "Mini Zoo w Parku Południowym",
     location: "Wrocław, Krzyki",
     city: "wroclaw",
@@ -1274,6 +1392,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 60,
+    latitude: 51.0918,
+    longitude: 17.0022,
     title: "Laser Tag Arena",
     location: "Wrocław, Fabryczna",
     city: "wroclaw",
@@ -1297,6 +1417,8 @@ export const mockActivities: Activity[] = [
   // ===== GDAŃSK (18 activities) =====
   {
     id: 5,
+    latitude: 54.4117,
+    longitude: 18.5544,
     title: "Warsztaty ceramiczne dla dzieci",
     location: "Gdańsk, Oliwa",
     city: "gdansk",
@@ -1318,6 +1440,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 11,
+    latitude: 54.3992,
+    longitude: 18.5906,
     title: "Trampoliny Jump World",
     location: "Gdańsk, Przymorze",
     city: "gdansk",
@@ -1339,6 +1463,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 16,
+    latitude: 54.4095,
+    longitude: 18.6005,
     title: "Plac zabaw wodny Fala",
     location: "Gdańsk, Brzeźno",
     city: "gdansk",
@@ -1360,6 +1486,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 61,
+    latitude: 54.402,
+    longitude: 18.5572,
     title: "Zoo Gdańsk Oliwa",
     location: "Gdańsk, Oliwa",
     city: "gdansk",
@@ -1381,6 +1509,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 62,
+    latitude: 54.3473,
+    longitude: 18.6569,
     title: "Muzeum II Wojny Światowej",
     location: "Gdańsk, Śródmieście",
     city: "gdansk",
@@ -1403,6 +1533,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 63,
+    latitude: 54.3641,
+    longitude: 18.6473,
     title: "Centrum Hewelianum – nauka przez zabawę",
     location: "Gdańsk, Góra Gradowa",
     city: "gdansk",
@@ -1424,6 +1556,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 64,
+    latitude: 54.3669,
+    longitude: 18.7029,
     title: "Plaża Stogi – zabawa na piasku",
     location: "Gdańsk, Stogi",
     city: "gdansk",
@@ -1445,6 +1579,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 65,
+    latitude: 54.354,
+    longitude: 18.6602,
     title: "Żuraw Gdański – Muzeum Morskie",
     location: "Gdańsk, Główne Miasto",
     city: "gdansk",
@@ -1466,6 +1602,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 66,
+    latitude: 54.4369,
+    longitude: 18.5599,
     title: "Aquapark Sopot",
     location: "Sopot, okolice Gdańska",
     city: "gdansk",
@@ -1487,6 +1625,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 67,
+    latitude: 54.4031,
+    longitude: 18.5642,
     title: "Park Oliwski – spacer i zabawa",
     location: "Gdańsk, Oliwa",
     city: "gdansk",
@@ -1508,6 +1648,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 68,
+    latitude: 54.3863,
+    longitude: 18.5891,
     title: "Sala zabaw Magiczny Zamek",
     location: "Gdańsk, Wrzeszcz",
     city: "gdansk",
@@ -1529,6 +1671,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 69,
+    latitude: 54.3476,
+    longitude: 18.6538,
     title: "Muzeum Bursztynu",
     location: "Gdańsk, Główne Miasto",
     city: "gdansk",
@@ -1550,6 +1694,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 70,
+    latitude: 54.4387,
+    longitude: 18.5637,
     title: "Molo w Sopocie – spacer nad morzem",
     location: "Sopot, okolice Gdańska",
     city: "gdansk",
@@ -1571,6 +1717,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 71,
+    latitude: 54.3808,
+    longitude: 18.5904,
     title: "Warsztaty malarskie Kolorowy Pędzel",
     location: "Gdańsk, Wrzeszcz",
     city: "gdansk",
@@ -1592,6 +1740,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 72,
+    latitude: 54.4106,
+    longitude: 18.5637,
     title: "Tor saneczkowy Góra Pachołek",
     location: "Gdańsk, Oliwa",
     city: "gdansk",
@@ -1613,6 +1763,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 73,
+    latitude: 54.3772,
+    longitude: 18.592,
     title: "Teatr Miniatura – bajki dla dzieci",
     location: "Gdańsk, Wrzeszcz",
     city: "gdansk",
@@ -1634,6 +1786,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 74,
+    latitude: 54.3559,
+    longitude: 18.6554,
     title: "Rejs statkiem po Motławie",
     location: "Gdańsk, Główne Miasto",
     city: "gdansk",
@@ -1655,6 +1809,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 75,
+    latitude: 54.394,
+    longitude: 18.5903,
     title: "Bowling City Family",
     location: "Gdańsk, Przymorze",
     city: "gdansk",
@@ -1678,6 +1834,8 @@ export const mockActivities: Activity[] = [
   // ===== POZNAŃ (18 activities) =====
   {
     id: 6,
+    latitude: 52.4139,
+    longitude: 16.8956,
     title: "Park linowy Adventure Park",
     location: "Poznań, Jeżyce",
     city: "poznan",
@@ -1699,6 +1857,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 12,
+    latitude: 52.4054,
+    longitude: 16.9264,
     title: "Planetarium i Obserwatorium",
     location: "Poznań, Śródmieście",
     city: "poznan",
@@ -1720,6 +1880,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 17,
+    latitude: 52.4017,
+    longitude: 16.9255,
     title: "Escape Room dla dzieci Mystery Kids",
     location: "Poznań, Centrum",
     city: "poznan",
@@ -1741,6 +1903,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 76,
+    latitude: 52.4131,
+    longitude: 16.9021,
     title: "Stare Zoo Poznań",
     location: "Poznań, Jeżyce",
     city: "poznan",
@@ -1762,6 +1926,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 77,
+    latitude: 52.3907,
+    longitude: 16.9665,
     title: "Nowe Zoo – Ogród Zoologiczny",
     location: "Poznań, Nowe Miasto",
     city: "poznan",
@@ -1784,6 +1950,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 78,
+    latitude: 52.4078,
+    longitude: 16.9631,
     title: "Termy Maltańskie",
     location: "Poznań, Malta",
     city: "poznan",
@@ -1806,6 +1974,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 79,
+    latitude: 52.4043,
+    longitude: 16.9367,
     title: "Muzeum Rogalowe – wypieki i zabawa",
     location: "Poznań, Stary Rynek",
     city: "poznan",
@@ -1828,6 +1998,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 80,
+    latitude: 52.4254,
+    longitude: 16.9191,
     title: "Park Cytadela – piknik i zabawa",
     location: "Poznań, Winogrady",
     city: "poznan",
@@ -1849,6 +2021,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 81,
+    latitude: 52.409,
+    longitude: 16.9711,
     title: "Kolejka Parkowa Maltanka",
     location: "Poznań, Malta",
     city: "poznan",
@@ -1870,6 +2044,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 82,
+    latitude: 52.4056,
+    longitude: 16.9346,
     title: "Stary Browar – kino familijne",
     location: "Poznań, Centrum",
     city: "poznan",
@@ -1891,6 +2067,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 83,
+    latitude: 52.4069,
+    longitude: 16.965,
     title: "Tor kajakowy Malta",
     location: "Poznań, Malta",
     city: "poznan",
@@ -1912,6 +2090,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 84,
+    latitude: 52.3996,
+    longitude: 16.9289,
     title: "Muzeum Narodowe – warsztaty dla dzieci",
     location: "Poznań, Centrum",
     city: "poznan",
@@ -1933,6 +2113,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 85,
+    latitude: 52.3938,
+    longitude: 16.8895,
     title: "Sala zabaw Fikoland",
     location: "Poznań, Grunwald",
     city: "poznan",
@@ -1954,6 +2136,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 86,
+    latitude: 52.3937,
+    longitude: 16.9328,
     title: "Warsztaty programowania CodeKids",
     location: "Poznań, Wilda",
     city: "poznan",
@@ -1975,6 +2159,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 87,
+    latitude: 52.4427,
+    longitude: 16.8986,
     title: "Park Sołacki – spacer i plac zabaw",
     location: "Poznań, Sołacz",
     city: "poznan",
@@ -1996,6 +2182,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 88,
+    latitude: 52.3884,
+    longitude: 16.9274,
     title: "Ścianka wspinaczkowa Rock Zone",
     location: "Poznań, Wilda",
     city: "poznan",
@@ -2017,6 +2205,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 89,
+    latitude: 52.4118,
+    longitude: 16.926,
     title: "Teatr Animacji – spektakle lalkowe",
     location: "Poznań, Centrum",
     city: "poznan",
@@ -2038,6 +2228,8 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 90,
+    latitude: 52.415,
+    longitude: 16.8992,
     title: "Palmiarnia Poznańska",
     location: "Poznań, Jeżyce",
     city: "poznan",
