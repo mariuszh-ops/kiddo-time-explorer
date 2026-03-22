@@ -167,6 +167,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   socialProofBadge={getBadgeText(activity.id)}
                   isEvent={activity.isEvent}
                   eventDate={activity.eventDate}
+                  distanceKm={filters.city ? getActivityDistance(activity, filters.city) : null}
                 />
               </motion.div>
             ))}
