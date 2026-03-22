@@ -6,6 +6,8 @@ import { useState } from "react";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
+import { getAmenityById } from "@/data/amenities";
+import AmenityIcon from "@/components/AmenityIcon";
 
 interface ActivityCardProps {
   id: number;
