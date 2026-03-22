@@ -1,5 +1,6 @@
 import { useRef, useCallback } from "react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
@@ -80,27 +81,7 @@ const Index = () => {
         <SubmitActivityCTA variant="card" />
       </div>
 
-      {/* Footer */}
-      <footer className="bg-card border-t border-border py-8">
-        <div className="container">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
-            </p>
-            <div className="flex gap-6 text-sm text-muted-foreground">
-              <a href="#" className="hover:text-foreground transition-colors">
-                Regulamin
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Polityka prywatności
-              </a>
-              <a href="#" className="hover:text-foreground transition-colors">
-                Kontakt
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </main>
     </PageTransition>
   );

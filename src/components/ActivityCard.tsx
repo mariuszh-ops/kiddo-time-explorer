@@ -66,8 +66,7 @@ const ActivityCard = ({
           onError={handleImageError}
         />
         
-        {/* Type badge - Miejsce or Wydarzenie (hidden in MVP, structure preserved) */}
-        {/* 
+        {/* Type badge - Miejsce or Wydarzenie */}
         <div className="absolute top-2 left-2">
           <Badge 
             variant="secondary" 
@@ -84,7 +83,6 @@ const ActivityCard = ({
             )}
           </Badge>
         </div>
-        */}
         
         {/* Match percentage badge - only visible for logged-in users */}
         {isLoggedIn && (
@@ -135,6 +133,14 @@ const ActivityCard = ({
         <p className="text-sm text-muted-foreground line-clamp-1">
           {location}
         </p>
+
+        {/* Event date */}
+        {isEvent && eventDate && (
+          <p className="flex items-center gap-1 text-xs text-amber-600">
+            <Calendar className="w-3 h-3" />
+            {eventDate}
+          </p>
+        )}
 
         {/* Tags row */}
         <div className="flex items-center gap-1.5 flex-wrap">

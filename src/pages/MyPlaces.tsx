@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import VisitedActivityCard from "@/components/VisitedActivityCard";
@@ -208,6 +209,7 @@ const MyPlaces = () => {
           </TabsContent>
         </Tabs>
       </main>
+      <Footer />
     </div>
     </PageTransition>
   );

@@ -14,6 +14,9 @@ import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import Regulamin from "./pages/Regulamin";
+import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
+import Kontakt from "./pages/Kontakt";
 import BottomNav from "./components/BottomNav";
 
 const queryClient = new QueryClient();
@@ -30,6 +33,9 @@ const AnimatedRoutes = () => {
         <Route path="/my-places" element={<MyPlaces />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/regulamin" element={<Regulamin />} />
+        <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
+        <Route path="/kontakt" element={<Kontakt />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
