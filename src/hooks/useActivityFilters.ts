@@ -160,7 +160,11 @@ export function useActivityFilters() {
     ) => {
       // Start with activities matching the search query (if any)
       let result = [...mockActivities];
-      
+
+      // Hide events when feature flag is off
+      if (!FEATURES.EVENTS) {
+        result = result.filter(a => !a.isEvent);
+      }
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         result = result.filter(
