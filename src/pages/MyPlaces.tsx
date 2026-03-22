@@ -61,7 +61,7 @@ const MyPlaces = () => {
       </div>
 
       {/* Main content */}
-      <main className="container py-6 md:py-8">
+      <main className="container py-6 md:py-8 pb-20 sm:pb-8">
         <Tabs value={defaultTab} onValueChange={handleTabChange} className="w-full">
           {/* Segmented control with dynamic counts */}
           <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 md:mb-8">

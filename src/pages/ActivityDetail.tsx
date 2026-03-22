@@ -235,7 +235,7 @@ const ActivityDetail = () => {
 
   return (
     <PageTransition>
-      <main className="min-h-screen bg-background pb-8">
+      <main className="min-h-screen bg-background pb-20 sm:pb-8">
       {/* Desktop: Global header */}
       <div className="hidden md:block">
         <Header />
