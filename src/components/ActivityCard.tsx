@@ -132,9 +132,17 @@ const ActivityCard = ({
         </h3>
 
         {/* Location */}
-        <p className="text-sm text-muted-foreground line-clamp-1">
-          {location}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-muted-foreground line-clamp-1 flex-1">
+            {location}
+          </p>
+          {distanceKm != null && (
+            <span className="flex items-center gap-0.5 text-xs text-muted-foreground/70 whitespace-nowrap">
+              <Navigation className="w-3 h-3" />
+              ~{distanceKm.toFixed(1)} km
+            </span>
+          )}
+        </div>
 
         {/* Event date */}
         {isEvent && eventDate && (
