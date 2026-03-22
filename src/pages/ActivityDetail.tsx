@@ -97,7 +97,7 @@ const ActivityDetail = () => {
       }
     }, 50);
     return () => clearTimeout(timer);
-  }, [id]);
+  }, [slug]);
 
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
