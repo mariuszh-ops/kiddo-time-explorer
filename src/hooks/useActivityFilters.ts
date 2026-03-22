@@ -26,6 +26,7 @@ export interface Filters {
   activityKind?: string; // "place" | "event"
   distance?: number; // 0-100 km (numeric slider value)
   search?: string;
+  price?: string; // "free" | "paid"
 }
 
 // Persist filter state outside component to survive navigation
