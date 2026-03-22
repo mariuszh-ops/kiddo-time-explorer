@@ -402,6 +402,15 @@ const ActivityDetail = () => {
                     </motion.span>
                   </AnimatePresence>
                 </Button>
+                <Button
+                  onClick={handleShare}
+                  variant="outline"
+                  size={isMobile ? "lg" : "default"}
+                  className="hidden sm:flex"
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Udostępnij
+                </Button>
               </div>
               
               {/* Inline error message */}
