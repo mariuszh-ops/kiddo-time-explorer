@@ -74,6 +74,8 @@ const ActivityDetail = () => {
     toggleFavorite,
     toggleWantToVisit 
   } = useSavedActivities();
+  
+  const { share } = useShare();
 
   const activityId = Number(id);
   const isFavorite = checkIsFavorite(activityId);
