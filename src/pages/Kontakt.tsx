@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
+import SEOHead from "@/components/SEOHead";
 import { useToast } from "@/hooks/use-toast";
 
 const Kontakt = () => {

@@ -45,7 +45,12 @@ const Index = () => {
 
   return (
     <PageTransition>
-      <main 
+      <SEOHead
+        title="Atrakcje dla dzieci — sprawdzone przez rodziców"
+        description="Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
+        path="/"
+      />
+      <main
         className="min-h-screen bg-background pb-20 sm:pb-0"
         style={{ 
           // Hide content until scroll is restored to prevent flash at top
