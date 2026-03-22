@@ -179,7 +179,16 @@ const ActivityDetail = () => {
     );
   }
 
-  const details = activityDetails[activity.id] || defaultDetails;
+  const details = {
+    estimatedTime: activity.estimatedTime || "1–2 godziny",
+    priceRange: activity.priceRange || "$",
+    activityTypes: activity.tags.length > 0 ? activity.tags : ["Rodzinne"],
+    experiencePoints: activity.experiencePoints || defaultExperiencePoints,
+    openingHours: activity.openingHours || "Sprawdź godziny na stronie organizatora",
+    address: activity.address || "Sprawdź dokładny adres na stronie organizatora",
+    website: activity.website,
+    reviews: activity.reviews || [],
+  };
   const hasReviews = activity.reviewCount > 0;
   const averageRating = details.reviews.length > 0 
     ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
