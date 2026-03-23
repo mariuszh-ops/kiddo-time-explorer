@@ -1,4 +1,5 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -12,6 +13,7 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
+import OnboardingModal from "@/components/OnboardingModal";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -25,6 +27,18 @@ const Index = () => {
 
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
+
+  // Onboarding
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    if (FEATURES.ONBOARDING && !localStorage.getItem('ff_onboarding_seen')) {
+      setShowOnboarding(true);
+    }
+  }, []);
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('ff_onboarding_seen', 'true');
+    setShowOnboarding(false);
+  };
 
   const handleExplore = useCallback(async () => {
     if (FEATURES.MULTI_CITY) {
@@ -110,6 +124,9 @@ const Index = () => {
 
       <Footer />
     </main>
+      <AnimatePresence>
+        {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}
+      </AnimatePresence>
     </PageTransition>
   );
 };
