@@ -4,6 +4,7 @@ export const FEATURES = {
   EVENTS: false,              // Wydarzenia (isEvent) — wyłączone w MVP
   MATCH_PERCENTAGE: false,    // Procent dopasowania na kartach — wymaga profilu rodziny
   RATING_HISTOGRAM: false,    // Rozkład ocen (histogram gwiazdek) — wyłączony w MVP (wymaga prawdziwych recenzji)
+  RECOMMENDED_BADGE: false,   // Badge "Polecane" na kartach i szczegółach — wyłączony w MVP
   BLOG: false,                // Sekcja Blog/Inspiracje — ukryta w MVP
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
   SEARCH_AUTOCOMPLETE: false, // Dropdown z podpowiedziami w wyszukiwarce — wyłączony w MVP

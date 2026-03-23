@@ -171,6 +171,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   slug={activity.slug}
                   amenities={activity.amenities}
                   priceLevel={activity.priceLevel}
+                  isRecommended={activity.isRecommended}
                 />
               </motion.div>
             ))}

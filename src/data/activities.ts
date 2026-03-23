@@ -33,6 +33,7 @@ export interface Activity {
   amenities?: string[];
   priceLevel?: 0 | 1 | 2 | 3;
   priceNote?: string;
+  isRecommended?: boolean;  // Ręczna kuracja — "Polecane przez FamilyFun"
 }
 
 export const PRICE_LEVELS = {
@@ -186,6 +187,7 @@ export const mockActivities: Activity[] = [
   // ===== WARSZAWA (18 activities) =====
   {
     id: 1,
+    isRecommended: true,
     latitude: 52.2305,
     longitude: 21.0651,
     title: "Zoo Warszawa – spotkanie z egzotycznymi zwierzętami",
@@ -221,6 +223,7 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 2,
+    isRecommended: true,
     latitude: 52.2224,
     longitude: 21.0052,
     title: "Centrum Nauki Kopernik – interaktywne wystawy",
@@ -384,6 +387,7 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 20,
+    isRecommended: true,
     latitude: 52.2373,
     longitude: 21.0074,
     title: "Łazienki Królewskie – spacer po parku",
