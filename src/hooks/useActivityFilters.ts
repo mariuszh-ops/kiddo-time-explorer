@@ -27,6 +27,7 @@ export interface Filters {
   distance?: number; // 0-100 km (numeric slider value)
   search?: string;
   price?: string; // "free" | "paid"
+  sort?: string; // "rating" | "cheapest" | "newest" | "name"
 }
 
 // Persist filter state outside component to survive navigation
