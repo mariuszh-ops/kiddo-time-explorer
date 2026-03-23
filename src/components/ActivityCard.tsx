@@ -52,6 +52,7 @@ const ActivityCard = ({
   slug,
   amenities,
   priceLevel,
+  isRecommended,
 }: ActivityCardProps) => {
   const { isLoggedIn, login } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
