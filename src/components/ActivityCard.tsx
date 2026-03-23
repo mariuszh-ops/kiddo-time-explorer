@@ -187,6 +187,11 @@ const ActivityCard = ({
                   <span className="text-sm text-muted-foreground">
                     ({reviewCount} opinii)
                   </span>
+                  {FEATURES.RECOMMENDED_BADGE && isRecommended && (
+                    <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] font-medium">
+                      ✓ Polecane
+                    </Badge>
+                  )}
                 </>
               ) : (
                 <>

@@ -387,6 +387,7 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 20,
+    isRecommended: true,
     latitude: 52.2373,
     longitude: 21.0074,
     title: "Łazienki Królewskie – spacer po parku",
