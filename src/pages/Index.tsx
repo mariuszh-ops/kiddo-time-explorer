@@ -28,20 +28,19 @@ const Index = () => {
   const hasActiveFilters = filterCounts.hasAnyFilter;
 
   const handleExplore = useCallback(async () => {
-    // Detect city from geolocation (or use default)
-    const city = await detectCity();
+    if (FEATURES.MULTI_CITY) {
+      // Detect city from geolocation
+      const city = await detectCity();
+      updateFilter("city", city);
+    } else {
+      // Single-city mode: just scroll to results, no geolocation needed
+      updateFilter("city", "warszawa");
+    }
     
-    // Update the city filter directly - no separate state needed
-    updateFilter("city", city);
-    
-    // Scroll to the listing
     if (listingRef.current) {
-      const headerHeight = 56; // Account for sticky header
+      const headerHeight = 56;
       const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - headerHeight,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
     }
   }, [detectCity, updateFilter]);
 
