@@ -124,6 +124,9 @@ const Index = () => {
 
       <Footer />
     </main>
+      <AnimatePresence>
+        {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}
+      </AnimatePresence>
     </PageTransition>
   );
 };
