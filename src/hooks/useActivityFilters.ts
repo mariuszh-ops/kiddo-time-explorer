@@ -27,6 +27,7 @@ export interface Filters {
   distance?: number; // 0-100 km (numeric slider value)
   search?: string;
   price?: string; // "free" | "paid"
+  sort?: string; // "rating" | "cheapest" | "newest" | "name"
 }
 
 // Persist filter state outside component to survive navigation
@@ -152,12 +153,37 @@ export function useActivityFilters() {
       }
     }
 
-    // Sort: rating > reviewCount > matchPercentage
-    result.sort((a, b) => {
-      if (b.rating !== a.rating) return b.rating - a.rating;
-      if (b.reviewCount !== a.reviewCount) return b.reviewCount - a.reviewCount;
-      return b.matchPercentage - a.matchPercentage;
-    });
+    // Dynamic sorting
+    const sortKey = filters.sort || "rating";
+
+    switch (sortKey) {
+      case "rating":
+        result.sort((a, b) => {
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          if (b.reviewCount !== a.reviewCount) return b.reviewCount - a.reviewCount;
+          return b.matchPercentage - a.matchPercentage;
+        });
+        break;
+      case "cheapest":
+        result.sort((a, b) => {
+          const priceA = a.priceLevel ?? 99;
+          const priceB = b.priceLevel ?? 99;
+          if (priceA !== priceB) return priceA - priceB;
+          return b.rating - a.rating;
+        });
+        break;
+      case "newest":
+        result.sort((a, b) => {
+          const isNewA = a.reviewCount === 0 ? 1 : 0;
+          const isNewB = b.reviewCount === 0 ? 1 : 0;
+          if (isNewB !== isNewA) return isNewB - isNewA;
+          return b.id - a.id;
+        });
+        break;
+      case "name":
+        result.sort((a, b) => a.title.localeCompare(b.title, "pl"));
+        break;
+    }
 
     return result;
   }, [filters, searchQuery]);

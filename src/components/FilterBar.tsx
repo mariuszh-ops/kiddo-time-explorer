@@ -64,7 +64,8 @@ const FilterBar = ({
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
   
-  const activeFilterCount = Object.values(filters).filter(Boolean).length + (searchQuery.trim() ? 1 : 0);
+  // Sort is not counted as an active filter
+  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && Boolean(v)).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
 
   // Generate dynamic feedback text
@@ -229,6 +230,23 @@ const FilterBar = ({
               </button>
             )}
           </div>
+
+          {/* Sort dropdown - visible when filters active */}
+          {hasActiveFilters && (
+            <div className="flex items-center gap-1.5 ml-auto whitespace-nowrap">
+              <span className="text-xs text-muted-foreground">Sortuj:</span>
+              <select
+                value={filters.sort || "rating"}
+                onChange={(e) => onUpdateFilter("sort", e.target.value)}
+                className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"
+              >
+                <option value="rating">Najlepiej oceniane</option>
+                <option value="cheapest">Najtańsze</option>
+                <option value="newest">Najnowsze</option>
+                <option value="name">Nazwa A–Z</option>
+              </select>
+            </div>
+          )}
 
           {/* Clear all button - only when filters active */}
           {hasActiveFilters && (
