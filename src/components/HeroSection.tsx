@@ -28,7 +28,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         <div className="max-w-xl md:max-w-lg lg:max-w-xl">
           {/* Headline */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
-            {FEATURES.MULTI_CITY
+            {FEATURES.ENABLED_CITIES.length > 1
               ? "Sprawdzone pomysły na wspólny czas z dzieckiem"
               : "Sprawdzone pomysły na wspólny czas z dzieckiem w Warszawie"
             }
