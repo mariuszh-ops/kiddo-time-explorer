@@ -24,6 +24,7 @@ import ONas from "./pages/ONas";
 import BlogListPage from "./pages/BlogListPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
+import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
               <BrowserRouter>
                 <AnimatedRoutes />
                 <BottomNav />
+                <CookieConsent />
               </BrowserRouter>
             </TooltipProvider>
           </UserRatingsProvider>
