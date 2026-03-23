@@ -895,8 +895,6 @@ const ActivityDetail = () => {
 
         if (similarActivities.length === 0) return null;
 
-        const ActivityCard = require("@/components/ActivityCard").default;
-
         return (
           <section className="container mt-8 md:mt-10 mb-2">
             <h2 className="text-lg md:text-xl font-serif font-semibold text-foreground mb-4">
