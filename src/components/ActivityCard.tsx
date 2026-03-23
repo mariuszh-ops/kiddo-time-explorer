@@ -31,6 +31,7 @@ interface ActivityCardProps {
   slug: string;
   amenities?: string[];
   priceLevel?: 0 | 1 | 2 | 3;
+  isRecommended?: boolean;
 }
 
 const ActivityCard = ({
