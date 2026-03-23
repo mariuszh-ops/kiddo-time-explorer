@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { X, Search, MapPin } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface FilterOption {
   value: string;
