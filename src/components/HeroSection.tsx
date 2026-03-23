@@ -15,6 +15,8 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         <img
           src={heroImage}
           alt="Rodzic z dzieckiem odkrywają świat razem"
+          decoding="async"
+          fetchPriority="high"
           className="w-full h-full object-cover object-[75%_25%] md:object-[center_15%]"
         />
         {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}

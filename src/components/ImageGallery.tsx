@@ -81,6 +81,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
           <img
             src={getImageSrc(images[0], 0)}
             alt={activityTitle}
+            decoding="async"
+            fetchPriority="high"
             className="w-full h-full object-cover object-top"
             onError={() => handleImageError(0)}
           />
@@ -114,6 +116,9 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
                 <img
                   src={getImageSrc(image, index)}
                   alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={index === 0 ? "high" : undefined}
                   className="w-full h-full object-cover object-top"
                   draggable={false}
                   onError={() => handleImageError(index)}
@@ -188,6 +193,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
               <img
                 src={getImageSrc(image, index)}
                 alt={`Miniatura ${index + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
                 onError={() => handleImageError(index)}
               />
