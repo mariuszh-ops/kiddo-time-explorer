@@ -150,44 +150,48 @@ const MobileFilterSheet = ({
             </div>
           </div>
 
-          {/* City filter with integrated distance options */}
-          <FilterSection
-            title="Miasto"
-            options={filterCounts.city}
-            selectedValue={filters.city}
-            onSelect={(value) => onUpdateFilter("city", value)}
-          />
-          
-          {/* Distance slider - shown when city selected */}
-          {hasCitySelected && (
-            <div className="py-4 border-b border-border bg-muted/30 -mx-4 px-4">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  <MapPin className="w-4 h-4 text-primary" />
-                  Atrakcje w pobliżu
-                </h3>
-                <span className="text-base font-semibold text-primary">
-                  {localDistance} km
-                </span>
-              </div>
+          {/* City filter — hidden in single-city MVP */}
+          {FEATURES.MULTI_CITY && (
+            <>
+              <FilterSection
+                title="Miasto"
+                options={filterCounts.city}
+                selectedValue={filters.city}
+                onSelect={(value) => onUpdateFilter("city", value)}
+              />
               
-              <div className="px-1">
-                <Slider
-                  value={[localDistance]}
-                  onValueChange={(values) => setLocalDistance(values[0])}
-                  min={0}
-                  max={100}
-                  step={5}
-                  className="w-full touch-pan-y"
-                />
-              </div>
-              
-              <div className="flex justify-between mt-2 text-xs text-muted-foreground px-1">
-                <span>0 km</span>
-                <span>50 km</span>
-                <span>100 km</span>
-              </div>
-            </div>
+              {/* Distance slider - shown when city selected */}
+              {hasCitySelected && (
+                <div className="py-4 border-b border-border bg-muted/30 -mx-4 px-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-primary" />
+                      Atrakcje w pobliżu
+                    </h3>
+                    <span className="text-base font-semibold text-primary">
+                      {localDistance} km
+                    </span>
+                  </div>
+                  
+                  <div className="px-1">
+                    <Slider
+                      value={[localDistance]}
+                      onValueChange={(values) => setLocalDistance(values[0])}
+                      min={0}
+                      max={100}
+                      step={5}
+                      className="w-full touch-pan-y"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between mt-2 text-xs text-muted-foreground px-1">
+                    <span>0 km</span>
+                    <span>50 km</span>
+                    <span>100 km</span>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           
           <FilterSection

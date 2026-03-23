@@ -47,8 +47,14 @@ const Index = () => {
   return (
     <PageTransition>
       <SEOHead
-        title="Atrakcje dla dzieci — sprawdzone przez rodziców"
-        description="Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
+        title={FEATURES.MULTI_CITY
+          ? "Atrakcje dla dzieci — sprawdzone przez rodziców"
+          : "Atrakcje dla dzieci w Warszawie — sprawdzone przez rodziców"
+        }
+        description={FEATURES.MULTI_CITY
+          ? "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
+          : "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie. Opinie i oceny od rodziców. Place zabaw, muzea, parki i więcej."
+        }
         path="/"
       />
       <main

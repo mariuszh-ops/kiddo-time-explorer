@@ -180,6 +180,11 @@ export function useActivityFilters() {
       if (!FEATURES.EVENTS) {
         result = result.filter(a => !a.isEvent);
       }
+
+      // Single-city mode
+      if (!FEATURES.MULTI_CITY) {
+        result = result.filter(a => a.city === "warszawa");
+      }
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         result = result.filter(
