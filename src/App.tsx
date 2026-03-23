@@ -71,6 +71,7 @@ const App = () => (
               <BrowserRouter>
                 <AnimatedRoutes />
                 <BottomNav />
+                <CookieConsent />
               </BrowserRouter>
             </TooltipProvider>
           </UserRatingsProvider>
