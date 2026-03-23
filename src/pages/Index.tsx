@@ -11,6 +11,8 @@ import SEOHead from "@/components/SEOHead";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { FEATURES } from "@/lib/featureFlags";
+import { useScrollPosition } from "@/hooks/useScrollPosition";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
