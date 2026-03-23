@@ -6,6 +6,7 @@ import { Filters } from "@/hooks/useActivityFilters";
 import { X, Search, SlidersHorizontal } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface FilterBarProps {
   filters: Filters;
