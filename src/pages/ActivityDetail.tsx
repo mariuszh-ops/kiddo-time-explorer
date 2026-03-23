@@ -36,6 +36,7 @@ import SEOHead from "@/components/SEOHead";
 import Footer from "@/components/Footer";
 import ReviewsModal from "@/components/ReviewsModal";
 import ActivityCard from "@/components/ActivityCard";
+import RatingHistogram from "@/components/RatingHistogram";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import InlineRatingAction from "@/components/InlineRatingAction";
