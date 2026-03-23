@@ -43,6 +43,7 @@ const AnimatedRoutes = () => {
         <Route path="/regulamin" element={<Regulamin />} />
         <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
         <Route path="/kontakt" element={<Kontakt />} />
+        <Route path="/o-nas" element={<ONas />} />
         {FEATURES.BLOG && (
           <>
             <Route path="/inspiracje" element={<BlogListPage />} />
