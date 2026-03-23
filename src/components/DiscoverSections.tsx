@@ -104,6 +104,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 slug={activity.slug}
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
+                isRecommended={activity.isRecommended}
               />
             ))}
           </div>
