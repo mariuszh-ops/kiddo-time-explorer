@@ -81,6 +81,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
           <img
             src={getImageSrc(images[0], 0)}
             alt={activityTitle}
+            decoding="async"
+            fetchPriority="high"
             className="w-full h-full object-cover object-top"
             onError={() => handleImageError(0)}
           />
