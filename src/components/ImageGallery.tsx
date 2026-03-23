@@ -193,6 +193,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
               <img
                 src={getImageSrc(image, index)}
                 alt={`Miniatura ${index + 1}`}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
                 onError={() => handleImageError(index)}
               />
