@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { Instagram, Facebook } from "lucide-react";
 import { FEATURES } from "@/lib/featureFlags";
 
 const Footer = () => {
@@ -28,6 +29,18 @@ const Footer = () => {
               </Link>
             )}
           </div>
+          {FEATURES.SOCIAL_LINKS && (
+            <div className="flex items-center gap-4">
+              <a href="https://instagram.com/familyfun.pl" target="_blank" rel="noopener noreferrer"
+                 className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Instagram">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="https://facebook.com/familyfunpl" target="_blank" rel="noopener noreferrer"
+                 className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Facebook">
+                <Facebook className="w-5 h-5" />
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </footer>
