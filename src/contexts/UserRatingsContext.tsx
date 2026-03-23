@@ -27,13 +27,7 @@ const UserRatingsContext = createContext<UserRatingsContextType | undefined>(und
 
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
   // Initialize with some mock data for demo purposes
-  const [ratings, setRatings] = useState<Map<number, UserRating>>(
-    new Map([
-      [1, { activityId: 1, rating: 5, review: "Fantastyczne miejsce! Dzieci były zachwycone słoniami i żyrafami. Na pewno wrócimy.", ratedAt: new Date(2025, 0, 15) }],
-      [3, { activityId: 3, rating: 4, review: "Piękny spacer, ale trochę za mało atrakcji dla młodszych dzieci.", ratedAt: new Date(2025, 0, 20) }],
-      [19, { activityId: 19, rating: 5, ratedAt: new Date(2025, 1, 2) }],
-    ])
-  );
+  const [ratings, setRatings] = useState<Map<number, UserRating>>(new Map());
 
   const getUserRating = useCallback((activityId: number): UserRating | undefined => {
     return ratings.get(activityId);

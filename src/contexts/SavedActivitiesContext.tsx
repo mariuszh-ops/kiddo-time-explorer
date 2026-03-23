@@ -20,8 +20,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   // Initialize with mock data for demo purposes
   // 4 favorites: IDs 1, 5, 8, 12
   // 7 want to visit: IDs 2, 3, 6, 10, 14, 17, 20
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set([1, 5, 8, 12]));
-  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(new Set([2, 3, 6, 10, 14, 17, 20]));
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
+  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(new Set());
 
   // Get full activity objects for saved items
   const favorites = mockActivities.filter(a => favoriteIds.has(a.id));
