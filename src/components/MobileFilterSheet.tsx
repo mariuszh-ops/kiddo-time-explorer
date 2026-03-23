@@ -232,6 +232,32 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("activityKind", value)}
           />
           */}
+
+          {/* Sorting section */}
+          <div className="py-4 border-b border-border last:border-b-0">
+            <h3 className="text-base font-semibold text-foreground mb-3">Sortowanie</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                { value: "rating", label: "Najlepiej oceniane" },
+                { value: "cheapest", label: "Najtańsze" },
+                { value: "newest", label: "Najnowsze" },
+                { value: "name", label: "Nazwa A–Z" },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => onUpdateFilter("sort", option.value)}
+                  className={cn(
+                    "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    (filters.sort || "rating") === option.value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground"
+                  )}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </ScrollArea>
 
         {/* Footer with actions */}

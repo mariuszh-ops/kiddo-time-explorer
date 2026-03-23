@@ -231,6 +231,23 @@ const FilterBar = ({
             )}
           </div>
 
+          {/* Sort dropdown - visible when filters active */}
+          {hasActiveFilters && (
+            <div className="flex items-center gap-1.5 ml-auto whitespace-nowrap">
+              <span className="text-xs text-muted-foreground">Sortuj:</span>
+              <select
+                value={filters.sort || "rating"}
+                onChange={(e) => onUpdateFilter("sort", e.target.value)}
+                className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"
+              >
+                <option value="rating">Najlepiej oceniane</option>
+                <option value="cheapest">Najtańsze</option>
+                <option value="newest">Najnowsze</option>
+                <option value="name">Nazwa A–Z</option>
+              </select>
+            </div>
+          )}
+
           {/* Clear all button - only when filters active */}
           {hasActiveFilters && (
             <button
