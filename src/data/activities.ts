@@ -187,6 +187,7 @@ export const mockActivities: Activity[] = [
   // ===== WARSZAWA (18 activities) =====
   {
     id: 1,
+    isRecommended: true,
     latitude: 52.2305,
     longitude: 21.0651,
     title: "Zoo Warszawa – spotkanie z egzotycznymi zwierzętami",
