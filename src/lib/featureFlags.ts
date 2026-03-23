@@ -8,4 +8,5 @@ export const FEATURES = {
   SEARCH_AUTOCOMPLETE: false, // Dropdown z podpowiedziami w wyszukiwarce — wyłączony w MVP
   MULTI_CITY: false,          // Wiele miast — wyłączone w MVP (tylko Warszawa)
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
+  ONBOARDING: false,          // Welcome screen dla nowych użytkowników — wyłączony w MVP
 } as const;
