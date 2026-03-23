@@ -116,6 +116,9 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
                 <img
                   src={getImageSrc(image, index)}
                   alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={index === 0 ? "high" : undefined}
                   className="w-full h-full object-cover object-top"
                   draggable={false}
                   onError={() => handleImageError(index)}
