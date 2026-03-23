@@ -28,6 +28,18 @@ const Index = () => {
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
 
+  // Onboarding
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  useEffect(() => {
+    if (FEATURES.ONBOARDING && !localStorage.getItem('ff_onboarding_seen')) {
+      setShowOnboarding(true);
+    }
+  }, []);
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('ff_onboarding_seen', 'true');
+    setShowOnboarding(false);
+  };
+
   const handleExplore = useCallback(async () => {
     if (FEATURES.MULTI_CITY) {
       // Detect city from geolocation
