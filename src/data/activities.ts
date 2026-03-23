@@ -223,6 +223,7 @@ export const mockActivities: Activity[] = [
   },
   {
     id: 2,
+    isRecommended: true,
     latitude: 52.2224,
     longitude: 21.0052,
     title: "Centrum Nauki Kopernik – interaktywne wystawy",
