@@ -151,8 +151,8 @@ const MobileFilterSheet = ({
             </div>
           </div>
 
-          {/* City filter — hidden in single-city MVP */}
-          {FEATURES.MULTI_CITY && (
+          {/* City filter — shown only when multiple cities enabled */}
+          {FEATURES.ENABLED_CITIES.length > 1 && (
             <>
               <FilterSection
                 title="Miasto"

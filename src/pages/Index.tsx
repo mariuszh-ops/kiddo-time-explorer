@@ -41,13 +41,13 @@ const Index = () => {
   };
 
   const handleExplore = useCallback(async () => {
-    if (FEATURES.MULTI_CITY) {
+    if (FEATURES.ENABLED_CITIES.length > 1) {
       // Detect city from geolocation
       const city = await detectCity();
       updateFilter("city", city);
     } else {
       // Single-city mode: just scroll to results, no geolocation needed
-      updateFilter("city", "warszawa");
+      updateFilter("city", FEATURES.ENABLED_CITIES[0] || "warszawa");
     }
     
     if (listingRef.current) {
@@ -60,11 +60,11 @@ const Index = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={FEATURES.MULTI_CITY
+        title={FEATURES.ENABLED_CITIES.length > 1
           ? "Atrakcje dla dzieci — sprawdzone przez rodziców"
           : "Atrakcje dla dzieci w Warszawie — sprawdzone przez rodziców"
         }
-        description={FEATURES.MULTI_CITY
+        description={FEATURES.ENABLED_CITIES.length > 1
           ? "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
           : "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie. Opinie i oceny od rodziców. Place zabaw, muzea, parki i więcej."
         }
