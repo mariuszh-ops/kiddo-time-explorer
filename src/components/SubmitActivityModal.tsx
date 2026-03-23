@@ -194,45 +194,53 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   )}
                 />
 
-                {/* City - Select */}
-                <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Miasto *</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Wybierz miasto" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {cityOptions.map((c) => (
-                            <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Custom city input */}
-                {selectedCity === "inne" && (
-                  <FormField
-                    control={form.control}
-                    name="customCity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nazwa miasta</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Wpisz nazwę miasta" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
+                {/* City */}
+                {FEATURES.MULTI_CITY ? (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Miasto *</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Wybierz miasto" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {cityOptions.map((c) => (
+                                <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    {selectedCity === "inne" && (
+                      <FormField
+                        control={form.control}
+                        name="customCity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nazwa miasta</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Wpisz nazwę miasta" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     )}
-                  />
+                  </>
+                ) : (
+                  <div className="rounded-lg bg-accent/50 p-3">
+                    <p className="text-sm text-muted-foreground">
+                      📍 Aktualnie zbieramy atrakcje z <span className="font-medium text-foreground">Warszawy</span>
+                    </p>
+                  </div>
                 )}
 
                 {/* Address */}
