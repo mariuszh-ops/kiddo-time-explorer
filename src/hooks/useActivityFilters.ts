@@ -205,10 +205,8 @@ export function useActivityFilters() {
         result = result.filter(a => !a.isEvent);
       }
 
-      // Single-city mode
-      if (!FEATURES.MULTI_CITY) {
-        result = result.filter(a => a.city === "warszawa");
-      }
+      // Filter to enabled cities only
+      result = result.filter(a => FEATURES.ENABLED_CITIES.includes(a.city));
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         result = result.filter(

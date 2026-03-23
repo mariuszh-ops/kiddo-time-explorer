@@ -123,30 +123,34 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
         </section>
       )}
 
-      {/* Section 3: Discover by City — only in multi-city mode */}
-      {FEATURES.MULTI_CITY && (
-        <section className="container py-6 md:py-8">
-          <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
-            {cityMeta.map((city) => {
-              const count = cityCounts[city.value] || 0;
-              return (
-                <button
-                  key={city.value}
-                  onClick={() => onSelectCity(city.value)}
-                  className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
-                >
-                  <MapPin className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
-                  <h3 className="font-semibold text-foreground">{city.label}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-      )}
+      {/* Section 3: Discover by City — only when multiple cities enabled */}
+      {(() => {
+        const visibleCities = cityMeta.filter(c => FEATURES.ENABLED_CITIES.includes(c.value));
+        if (visibleCities.length <= 1) return null;
+        return (
+          <section className="container py-6 md:py-8">
+            <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+              {visibleCities.map((city) => {
+                const count = cityCounts[city.value] || 0;
+                return (
+                  <button
+                    key={city.value}
+                    onClick={() => onSelectCity(city.value)}
+                    className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                  >
+                    <MapPin className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+                    <h3 className="font-semibold text-foreground">{city.label}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        );
+      })()}
     </div>
   );
 };

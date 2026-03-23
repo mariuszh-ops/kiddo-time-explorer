@@ -195,7 +195,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                 />
 
                 {/* City */}
-                {FEATURES.MULTI_CITY ? (
+                {FEATURES.ENABLED_CITIES.length > 1 ? (
                   <>
                     <FormField
                       control={form.control}

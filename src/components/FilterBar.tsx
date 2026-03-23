@@ -129,10 +129,10 @@ const FilterBar = ({
       <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
-          {/* Combined City + Distance filter — hidden in single-city MVP */}
-          {FEATURES.MULTI_CITY && (
+          {/* Combined City + Distance filter — shown only when multiple cities enabled */}
+          {FEATURES.ENABLED_CITIES.length > 1 && (
             <CityFilterDropdown
-              cityOptions={filterCounts.city}
+              cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
               selectedCity={filters.city}
               selectedDistance={filters.distance}
               hasAnyFilter={filterCounts.hasAnyFilter}

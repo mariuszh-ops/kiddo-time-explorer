@@ -54,7 +54,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               onClick={onExplore}
             >
               <MapPin className="w-5 h-5" />
-              {FEATURES.MULTI_CITY ? "Sprawdź atrakcje w pobliżu" : "Sprawdź atrakcje"}
+              {FEATURES.ENABLED_CITIES.length > 1 ? "Sprawdź atrakcje w pobliżu" : "Sprawdź atrakcje"}
             </Button>
           </div>
 

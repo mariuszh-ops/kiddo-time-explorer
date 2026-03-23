@@ -12,7 +12,7 @@ const steps = [
   {
     id: "welcome",
     title: "Witaj w FamilyFun!",
-    subtitle: FEATURES.MULTI_CITY
+    subtitle: FEATURES.ENABLED_CITIES.length > 1
       ? "Sprawdzone atrakcje dla rodzin z dziećmi w Polsce"
       : "Sprawdzone atrakcje dla rodzin z dziećmi w Warszawie",
     icon: Compass,
