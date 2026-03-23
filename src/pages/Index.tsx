@@ -41,13 +41,13 @@ const Index = () => {
   };
 
   const handleExplore = useCallback(async () => {
-    if (FEATURES.MULTI_CITY) {
+    if (FEATURES.ENABLED_CITIES.length > 1) {
       // Detect city from geolocation
       const city = await detectCity();
       updateFilter("city", city);
     } else {
       // Single-city mode: just scroll to results, no geolocation needed
-      updateFilter("city", "warszawa");
+      updateFilter("city", FEATURES.ENABLED_CITIES[0] || "warszawa");
     }
     
     if (listingRef.current) {
