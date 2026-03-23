@@ -6,6 +6,7 @@ import { Filters } from "@/hooks/useActivityFilters";
 import { X, Search, SlidersHorizontal } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface FilterBarProps {
   filters: Filters;
@@ -127,16 +128,18 @@ const FilterBar = ({
       <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
-          {/* Combined City + Distance filter */}
-          <CityFilterDropdown
-            cityOptions={filterCounts.city}
-            selectedCity={filters.city}
-            selectedDistance={filters.distance}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            filteredCount={filterCounts.filtered}
-            onCitySelect={(value) => onUpdateFilter("city", value)}
-            onDistanceChange={(value) => onUpdateFilter("distance", value)}
-          />
+          {/* Combined City + Distance filter — hidden in single-city MVP */}
+          {FEATURES.MULTI_CITY && (
+            <CityFilterDropdown
+              cityOptions={filterCounts.city}
+              selectedCity={filters.city}
+              selectedDistance={filters.distance}
+              hasAnyFilter={filterCounts.hasAnyFilter}
+              filteredCount={filterCounts.filtered}
+              onCitySelect={(value) => onUpdateFilter("city", value)}
+              onDistanceChange={(value) => onUpdateFilter("distance", value)}
+            />
+          )}
           
           <FilterDropdown
             label="Wiek dziecka"

@@ -84,6 +84,11 @@ export function useActivityFilters() {
       result = result.filter(a => !a.isEvent);
     }
 
+    // Single-city mode: show only Warsaw
+    if (!FEATURES.MULTI_CITY) {
+      result = result.filter(a => a.city === "warszawa");
+    }
+
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
@@ -174,6 +179,11 @@ export function useActivityFilters() {
       // Hide events when feature flag is off
       if (!FEATURES.EVENTS) {
         result = result.filter(a => !a.isEvent);
+      }
+
+      // Single-city mode
+      if (!FEATURES.MULTI_CITY) {
+        result = result.filter(a => a.city === "warszawa");
       }
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();

@@ -11,6 +11,7 @@ import SEOHead from "@/components/SEOHead";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { FEATURES } from "@/lib/featureFlags";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -26,28 +27,33 @@ const Index = () => {
   const hasActiveFilters = filterCounts.hasAnyFilter;
 
   const handleExplore = useCallback(async () => {
-    // Detect city from geolocation (or use default)
-    const city = await detectCity();
+    if (FEATURES.MULTI_CITY) {
+      // Detect city from geolocation
+      const city = await detectCity();
+      updateFilter("city", city);
+    } else {
+      // Single-city mode: just scroll to results, no geolocation needed
+      updateFilter("city", "warszawa");
+    }
     
-    // Update the city filter directly - no separate state needed
-    updateFilter("city", city);
-    
-    // Scroll to the listing
     if (listingRef.current) {
-      const headerHeight = 56; // Account for sticky header
+      const headerHeight = 56;
       const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({
-        top: elementPosition - headerHeight,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
     }
   }, [detectCity, updateFilter]);
 
   return (
     <PageTransition>
       <SEOHead
-        title="Atrakcje dla dzieci — sprawdzone przez rodziców"
-        description="Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
+        title={FEATURES.MULTI_CITY
+          ? "Atrakcje dla dzieci — sprawdzone przez rodziców"
+          : "Atrakcje dla dzieci w Warszawie — sprawdzone przez rodziców"
+        }
+        description={FEATURES.MULTI_CITY
+          ? "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
+          : "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie. Opinie i oceny od rodziców. Place zabaw, muzea, parki i więcej."
+        }
         path="/"
       />
       <main

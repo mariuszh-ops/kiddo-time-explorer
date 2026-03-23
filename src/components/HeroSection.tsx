@@ -1,6 +1,7 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-parent-child.jpg";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface HeroSectionProps {
   onExplore: () => void;
@@ -25,7 +26,10 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         <div className="max-w-xl md:max-w-lg lg:max-w-xl">
           {/* Headline */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
-            Sprawdzone pomysły na wspólny czas z dzieckiem
+            {FEATURES.MULTI_CITY
+              ? "Sprawdzone pomysły na wspólny czas z dzieckiem"
+              : "Sprawdzone pomysły na wspólny czas z dzieckiem w Warszawie"
+            }
           </h1>
 
           {/* Subheadline */}
@@ -48,7 +52,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               onClick={onExplore}
             >
               <MapPin className="w-5 h-5" />
-              Sprawdź atrakcje w pobliżu
+              {FEATURES.MULTI_CITY ? "Sprawdź atrakcje w pobliżu" : "Sprawdź atrakcje"}
             </Button>
           </div>
 
