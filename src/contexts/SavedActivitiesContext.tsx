@@ -1,6 +1,26 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { Activity, mockActivities } from "@/data/activities";
 
+// Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
+// interface Collection {
+//   id: string;
+//   name: string;           // np. "Weekendowe pomysły", "Na deszcz"
+//   activityIds: number[];
+//   createdAt: Date;
+//   color?: string;         // opcjonalny kolor kolekcji
+//   icon?: string;          // opcjonalna ikona
+// }
+//
+// Domyślne kolekcje (predefiniowane, nieusuwalne):
+// - "Ulubione" (zastępuje obecne favorites)
+// - "Chcę odwiedzić" (zastępuje obecne wantToVisit)
+//
+// Użytkownik może tworzyć własne: "Na deszcz", "Wakacje", "Z dziadkami"
+//
+// UI: Na stronie "Zapisane" — lista kolekcji jako karty.
+//     Przy zapisywaniu (serce) — modal "Zapisz do:" z checkboxami kolekcji.
+//     Wzorzec: Airbnb "Save to list"
+
 interface SavedActivitiesContextType {
   favorites: Activity[];
   wantToVisit: Activity[];

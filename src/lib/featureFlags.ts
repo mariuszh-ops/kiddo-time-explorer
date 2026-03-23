@@ -11,4 +11,5 @@ export const FEATURES = {
   MULTI_CITY: false,          // Wiele miast — wyłączone w MVP (tylko Warszawa)
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
   ONBOARDING: false,          // Welcome screen dla nowych użytkowników — wyłączony w MVP
+  COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
 } as const;
