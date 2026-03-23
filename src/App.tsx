@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Regulamin from "./pages/Regulamin";
 import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
 import Kontakt from "./pages/Kontakt";
+import ONas from "./pages/ONas";
 import BlogListPage from "./pages/BlogListPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
