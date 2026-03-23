@@ -1,6 +1,7 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-parent-child.jpg";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface HeroSectionProps {
   onExplore: () => void;
