@@ -113,7 +113,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      city: "",
+      city: FEATURES.MULTI_CITY ? "" : "warszawa",
       customCity: "",
       address: "",
       activityType: "",
