@@ -33,6 +33,7 @@ export interface Activity {
   amenities?: string[];
   priceLevel?: 0 | 1 | 2 | 3;
   priceNote?: string;
+  isRecommended?: boolean;  // Ręczna kuracja — "Polecane przez FamilyFun"
 }
 
 export const PRICE_LEVELS = {
