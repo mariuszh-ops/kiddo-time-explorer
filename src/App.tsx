@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import Regulamin from "./pages/Regulamin";
 import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
 import Kontakt from "./pages/Kontakt";
+import ONas from "./pages/ONas";
 import BlogListPage from "./pages/BlogListPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
@@ -42,6 +43,7 @@ const AnimatedRoutes = () => {
         <Route path="/regulamin" element={<Regulamin />} />
         <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
         <Route path="/kontakt" element={<Kontakt />} />
+        <Route path="/o-nas" element={<ONas />} />
         {FEATURES.BLOG && (
           <>
             <Route path="/inspiracje" element={<BlogListPage />} />
