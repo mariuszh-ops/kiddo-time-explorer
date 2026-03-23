@@ -62,7 +62,7 @@ export function useActivityFilters() {
       }
       // Set default distance when city is first selected
       if (key === "city" && value !== undefined && prev.distance === undefined) {
-        newFilters.distance = 5; // Default 5 km
+        newFilters.distance = 15; // Default 15 km
       }
       return newFilters;
     });
