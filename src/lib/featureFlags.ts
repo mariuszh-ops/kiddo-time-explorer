@@ -3,6 +3,7 @@ export const FEATURES = {
   DISTANCE_FILTER: true,      // Filtr dystansu — aktywny
   EVENTS: false,              // Wydarzenia (isEvent) — wyłączone w MVP
   MATCH_PERCENTAGE: false,    // Procent dopasowania na kartach — wymaga profilu rodziny
+  RATING_HISTOGRAM: false,    // Rozkład ocen (histogram gwiazdek) — wyłączony w MVP (wymaga prawdziwych recenzji)
   BLOG: false,                // Sekcja Blog/Inspiracje — ukryta w MVP
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
   SEARCH_AUTOCOMPLETE: false, // Dropdown z podpowiedziami w wyszukiwarce — wyłączony w MVP

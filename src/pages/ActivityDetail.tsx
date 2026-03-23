@@ -793,6 +793,9 @@ const ActivityDetail = () => {
 
           {hasReviews ? (
             <>
+              {FEATURES.RATING_HISTOGRAM && details.reviews.length >= 5 && (
+                <RatingHistogram reviews={details.reviews} />
+              )}
               {/* Review cards - limited on mobile */}
               <div className="space-y-3 md:space-y-4 mb-4">
                 {details.reviews.slice(0, initialReviewCount).map((review, index) => (
