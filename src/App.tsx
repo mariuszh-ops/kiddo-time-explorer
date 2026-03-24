@@ -73,27 +73,29 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SavedActivitiesProvider>
-          <UserRatingsProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <OfflineIndicator />
-              <BrowserRouter>
-                <AnalyticsTracker />
-                <AnimatedRoutes />
-                <BottomNav />
-                <CookieConsent />
-              </BrowserRouter>
-            </TooltipProvider>
-          </UserRatingsProvider>
-        </SavedActivitiesProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
+  <ErrorBoundary fallbackLevel="page">
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <SavedActivitiesProvider>
+            <UserRatingsProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <OfflineIndicator />
+                <BrowserRouter>
+                  <AnalyticsTracker />
+                  <AnimatedRoutes />
+                  <BottomNav />
+                  <CookieConsent />
+                </BrowserRouter>
+              </TooltipProvider>
+            </UserRatingsProvider>
+          </SavedActivitiesProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  </ErrorBoundary>
 );
 
 export default App;
