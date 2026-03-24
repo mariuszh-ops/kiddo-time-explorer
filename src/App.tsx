@@ -27,6 +27,7 @@ import BlogListPage from "./pages/BlogListPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
@@ -44,53 +45,57 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Index />} />
-        <Route path="/atrakcje/:slug" element={<ActivityDetail />} />
-        <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
-        <Route path="/my-places" element={<MyPlaces />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/regulamin" element={<Regulamin />} />
-        <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
-        <Route path="/kontakt" element={<Kontakt />} />
-        <Route path="/o-nas" element={<ONas />} />
-        {FEATURES.BLOG && (
-          <>
-            <Route path="/inspiracje" element={<BlogListPage />} />
-            <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
-          </>
-        )}
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnimatePresence>
+    <ErrorBoundary fallbackLevel="page" key={location.pathname}>
+      <AnimatePresence mode="wait" initial={false}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<Index />} />
+          <Route path="/atrakcje/:slug" element={<ActivityDetail />} />
+          <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
+          <Route path="/my-places" element={<MyPlaces />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/regulamin" element={<Regulamin />} />
+          <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
+          <Route path="/kontakt" element={<Kontakt />} />
+          <Route path="/o-nas" element={<ONas />} />
+          {FEATURES.BLOG && (
+            <>
+              <Route path="/inspiracje" element={<BlogListPage />} />
+              <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
+            </>
+          )}
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </AnimatePresence>
+    </ErrorBoundary>
   );
 };
 
 const App = () => (
-  <HelmetProvider>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SavedActivitiesProvider>
-          <UserRatingsProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <OfflineIndicator />
-              <BrowserRouter>
-                <AnalyticsTracker />
-                <AnimatedRoutes />
-                <BottomNav />
-                <CookieConsent />
-              </BrowserRouter>
-            </TooltipProvider>
-          </UserRatingsProvider>
-        </SavedActivitiesProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </HelmetProvider>
+  <ErrorBoundary fallbackLevel="page">
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <SavedActivitiesProvider>
+            <UserRatingsProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <OfflineIndicator />
+                <BrowserRouter>
+                  <AnalyticsTracker />
+                  <AnimatedRoutes />
+                  <BottomNav />
+                  <CookieConsent />
+                </BrowserRouter>
+              </TooltipProvider>
+            </UserRatingsProvider>
+          </SavedActivitiesProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </HelmetProvider>
+  </ErrorBoundary>
 );
 
 export default App;
