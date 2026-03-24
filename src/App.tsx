@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { useEffect } from "react";
+import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
@@ -27,6 +29,15 @@ import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
+
+// SPA pageview tracking
+const AnalyticsTracker = () => {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  return null;
+};
 
 // Animated routes component to access location for AnimatePresence
 const AnimatedRoutes = () => {
@@ -69,6 +80,7 @@ const App = () => (
               <Sonner />
               <OfflineIndicator />
               <BrowserRouter>
+                <AnalyticsTracker />
                 <AnimatedRoutes />
                 <BottomNav />
                 <CookieConsent />
