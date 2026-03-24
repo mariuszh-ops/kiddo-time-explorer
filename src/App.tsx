@@ -80,6 +80,7 @@ const App = () => (
               <Sonner />
               <OfflineIndicator />
               <BrowserRouter>
+                <AnalyticsTracker />
                 <AnimatedRoutes />
                 <BottomNav />
                 <CookieConsent />
