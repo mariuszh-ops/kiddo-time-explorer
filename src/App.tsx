@@ -27,6 +27,7 @@ import BlogListPage from "./pages/BlogListPage";
 import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const queryClient = new QueryClient();
 
