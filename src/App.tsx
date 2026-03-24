@@ -30,6 +30,15 @@ import CookieConsent from "./components/CookieConsent";
 
 const queryClient = new QueryClient();
 
+// SPA pageview tracking
+const AnalyticsTracker = () => {
+  const location = useLocation();
+  useEffect(() => {
+    trackPageView(location.pathname);
+  }, [location.pathname]);
+  return null;
+};
+
 // Animated routes component to access location for AnimatePresence
 const AnimatedRoutes = () => {
   const location = useLocation();
