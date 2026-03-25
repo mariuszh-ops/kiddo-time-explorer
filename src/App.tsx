@@ -18,6 +18,7 @@ import ActivityDetailRedirect from "./pages/ActivityDetailRedirect";
 import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
+import CategoryPage from "./pages/CategoryPage";
 import NotFound from "./pages/NotFound";
 import Regulamin from "./pages/Regulamin";
 import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
@@ -49,6 +50,8 @@ const AnimatedRoutes = () => {
       <AnimatePresence mode="wait" initial={false}>
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
+          <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
+          <Route path="/atrakcje/:citySlug" element={<CategoryPage />} />
           <Route path="/atrakcje/:slug" element={<ActivityDetail />} />
           <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
           <Route path="/my-places" element={<MyPlaces />} />

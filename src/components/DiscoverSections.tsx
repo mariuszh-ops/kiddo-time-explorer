@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { Star, Sparkles, MapPin, Clock } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
-import { Activity } from "@/data/activities";
+import { Activity, mockActivities } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
+import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
 
 interface DiscoverSectionsProps {
   activities: Activity[];
@@ -122,6 +123,32 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
           </div>
         </section>
       )}
+
+      {/* Section: Category tiles — "Szukasz czegoś konkretnego?" */}
+      <section className="container py-6 md:py-8 border-b border-border/30">
+        <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+          {categoryConfigs
+            .filter(c => c.slug !== "") // skip the city main page
+            .map((cat) => {
+              const primaryCity = FEATURES.ENABLED_CITIES[0] || "warszawa";
+              const allEnabled = mockActivities.filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
+              const count = getCategoryCount(allEnabled, primaryCity, cat);
+              const href = `/atrakcje/${primaryCity}/${cat.slug}`;
+              return (
+                <Link
+                  key={cat.slug}
+                  to={href}
+                  className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <span className="text-xl mb-2 block">{cat.emoji}</span>
+                  <h3 className="font-semibold text-foreground text-sm">{cat.label}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+                </Link>
+              );
+            })}
+        </div>
+      </section>
 
       {/* Section 3: Discover by City — only when multiple cities enabled */}
       {(() => {
