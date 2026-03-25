@@ -18,7 +18,7 @@ import ActivityDetailRedirect from "./pages/ActivityDetailRedirect";
 import MyPlaces from "./pages/MyPlaces";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
-import CategoryPage from "./pages/CategoryPage";
+import ActivityOrCategoryResolver from "./components/ActivityOrCategoryResolver";
 import NotFound from "./pages/NotFound";
 import Regulamin from "./pages/Regulamin";
 import PolitykaPrywatnosci from "./pages/PolitykaPrywatnosci";
