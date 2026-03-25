@@ -51,8 +51,7 @@ const AnimatedRoutes = () => {
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Index />} />
           <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
-          <Route path="/atrakcje/:citySlug" element={<CategoryPage />} />
-          <Route path="/atrakcje/:slug" element={<ActivityDetail />} />
+          <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
           <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
           <Route path="/my-places" element={<MyPlaces />} />
           <Route path="/profile" element={<Profile />} />

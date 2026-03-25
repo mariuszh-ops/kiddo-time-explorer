@@ -25,7 +25,10 @@ import {
 const BASE_URL = "https://familyfun.pl";
 
 const CategoryPage = () => {
-  const { citySlug, categorySlug } = useParams<{ citySlug: string; categorySlug?: string }>();
+  const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string }>();
+  // Support both /atrakcje/:citySlug/:categorySlug and /atrakcje/:slug (where slug is a city)
+  const citySlug = params.citySlug || params.slug;
+  const categorySlug = params.categorySlug;
 
   // Validate that citySlug is an enabled city — if not, this isn't a category page
   const isValidCity = citySlug ? FEATURES.ENABLED_CITIES.includes(citySlug) : false;
