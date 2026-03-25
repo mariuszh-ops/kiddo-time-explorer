@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook } from "lucide-react";
 import { FEATURES } from "@/lib/featureFlags";
+import { categoryConfigs } from "@/data/categoryPages";
 
 const Footer = () => {
   return (
@@ -41,6 +42,26 @@ const Footer = () => {
               </a>
             </div>
           )}
+        </div>
+        {/* Popular categories */}
+        <div className="mt-4 pt-4 border-t border-border/50">
+          <p className="text-xs text-muted-foreground mb-2">Popularne kategorie</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+            {categoryConfigs
+              .filter(c => c.slug !== "")
+              .map((cat) => {
+                const city = FEATURES.ENABLED_CITIES[0] || "warszawa";
+                return (
+                  <Link
+                    key={cat.slug}
+                    to={`/atrakcje/${city}/${cat.slug}`}
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {cat.label}
+                  </Link>
+                );
+              })}
+          </div>
         </div>
       </div>
     </footer>

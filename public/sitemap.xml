@@ -5,101 +5,142 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Category landing pages: Warszawa -->
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/indoor</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/dla-maluchow</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/na-weekend</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/place-zabaw</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/za-darmo</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/warszawa/atrakcje-rodzinne</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Activity detail pages -->
   <url>
     <loc>https://familyfun.pl/atrakcje/zoo-warszawa-spotkanie-z-egzotycznymi-zwierzetami</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/centrum-nauki-kopernik-interaktywne-wystawy</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/muzeum-powstania-warszawskiego</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kino-dla-dzieci-cinema-city-junior</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/sciezka-dydaktyczna-w-puszczy-kampinoskiej</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/lekcje-gotowania-junior-chef</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/park-trampolin-hangar-646</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/lazienki-krolewskie-spacer-po-parku</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/muzeum-polin-historia-zydow-polskich</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/plac-zabaw-kolorowe-kredki</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/scianka-wspinaczkowa-murall</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/warsztaty-plastyczne-kolorowy-swiat</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/park-wodny-moczydlo</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/teatr-lalka-przedstawienia-dla-dzieci</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/tor-kartingowy-ef1-racing</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/biblioteka-dla-dzieci-z-kacikiem-zabaw</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/mini-golf-pole-mokotowskie</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/warsztaty-robotyki-dla-dzieci-robolab</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/nowy-park-sensoryczny-kraina-zmyslow</loc>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
+
+  <!-- Static pages -->
   <url>
     <loc>https://familyfun.pl/regulamin</loc>
     <changefreq>yearly</changefreq>
