@@ -9,7 +9,7 @@ interface SEOHeadProps {
   path: string;
   image?: string;
   type?: "website" | "article";
-  jsonLd?: Record<string, unknown>;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const SEOHead = ({ title, description, path, image, type = "website", jsonLd }: SEOHeadProps) => {
@@ -31,9 +31,13 @@ const SEOHead = ({ title, description, path, image, type = "website", jsonLd }: 
       {image && <meta property="og:image" content={image} />}
 
       {jsonLd && (
-        <script type="application/ld+json">
-          {JSON.stringify(jsonLd)}
-        </script>
+        Array.isArray(jsonLd)
+          ? jsonLd.map((ld, i) => (
+              <script key={i} type="application/ld+json">
+                {JSON.stringify(ld)}
+              </script>
+            ))
+          : <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       )}
     </Helmet>
   );
