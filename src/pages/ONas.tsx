@@ -35,7 +35,7 @@ const faqItems = [
   },
   {
     question: "Jak mogę dodać nową atrakcję?",
-    answer: "Kliknij „Zgłoś atrakcję" w profilu lub na stronie głównej i wypełnij formularz.",
+    answer: 'Kliknij "Zgłoś atrakcję" w profilu lub na stronie głównej i wypełnij formularz.',
   },
   {
     question: "W jakich miastach działa FamilyFun?",
