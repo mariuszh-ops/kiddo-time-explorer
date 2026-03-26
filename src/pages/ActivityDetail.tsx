@@ -15,6 +15,7 @@ import {
   Brain,
   Zap,
   ArrowLeft,
+  ChevronRight,
   Check,
   MessageSquarePlus,
   Calendar,
