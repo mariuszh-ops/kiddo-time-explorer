@@ -140,6 +140,63 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Blog / Inspiracje -->
+  <url>
+    <loc>https://familyfun.pl/inspiracje</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/top-10-placow-zabaw-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/co-robic-z-dzieckiem-w-deszczu-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/jak-przygotowac-sie-do-wizyty-w-zoo</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/atrakcje-dla-maluchow-0-3-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/weekend-z-dzieckiem-warszawa-plan</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/darmowe-atrakcje-dla-dzieci-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/parki-trampolin-warszawa-porownianie</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/jak-przezyc-deszczowy-tydzien-z-dzieckiem</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/place-zabaw-warszawa-ranking-rodzicow</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/inspiracje/muzea-interaktywne-dzieci-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
   <!-- Static pages -->
   <url>
     <loc>https://familyfun.pl/regulamin</loc>

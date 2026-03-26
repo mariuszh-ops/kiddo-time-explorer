@@ -5,7 +5,7 @@ export const FEATURES = {
   MATCH_PERCENTAGE: false,    // Procent dopasowania na kartach — wymaga profilu rodziny
   RATING_HISTOGRAM: false,    // Rozkład ocen (histogram gwiazdek) — wyłączony w MVP (wymaga prawdziwych recenzji)
   RECOMMENDED_BADGE: false,   // Badge "Polecane" na kartach i szczegółach — wyłączony w MVP
-  BLOG: false,                // Sekcja Blog/Inspiracje — ukryta w MVP
+  BLOG: true,                 // Sekcja Blog/Inspiracje — aktywna
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
   SEARCH_AUTOCOMPLETE: false, // Dropdown z podpowiedziami w wyszukiwarce — wyłączony w MVP
   ENABLED_CITIES: ["warszawa"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
