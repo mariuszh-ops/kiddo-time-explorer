@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { ArrowLeft, Clock, Tag } from "lucide-react";
+import { ArrowLeft, Clock, Tag, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
@@ -80,9 +80,19 @@ const BlogPostPage = () => {
         <Header />
         <main className="container py-6 md:py-10">
           <div className="max-w-2xl mx-auto">
+            {/* Breadcrumbs - desktop */}
+            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-6" aria-label="breadcrumb">
+              <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <Link to="/inspiracje" className="text-muted-foreground hover:text-foreground transition-colors">Inspiracje</Link>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <span className="text-foreground font-medium truncate max-w-[400px]">{post.title}</span>
+            </nav>
+
+            {/* Mobile: back link */}
             <Link
               to="/inspiracje"
-              className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+              className="md:hidden inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
             >
               <ArrowLeft className="w-4 h-4" />
               Wróć do Inspiracji
