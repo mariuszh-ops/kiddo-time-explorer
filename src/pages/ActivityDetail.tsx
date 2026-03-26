@@ -1,5 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
+import { cityLabels } from "@/data/categoryPages";
 import { 
   Heart, 
   Star, 
@@ -14,6 +15,7 @@ import {
   Brain,
   Zap,
   ArrowLeft,
+  ChevronRight,
   Check,
   MessageSquarePlus,
   Calendar,
@@ -250,32 +252,43 @@ const ActivityDetail = () => {
         path={`/atrakcje/${activity.slug}`}
         image={activity.imageUrl}
         type="article"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "TouristAttraction",
-          "name": activity.title,
-          "description": activity.experiencePoints?.join(". ") || activity.title,
-          "address": {
-            "@type": "PostalAddress",
-            "streetAddress": activity.address || "",
-            "addressLocality": activity.city,
-            "addressCountry": "PL",
-          },
-          ...(activity.reviewCount > 0 ? {
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": activity.rating,
-              "reviewCount": activity.reviewCount,
-              "bestRating": "5",
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "TouristAttraction",
+            "name": activity.title,
+            "description": activity.experiencePoints?.join(". ") || activity.title,
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": activity.address || "",
+              "addressLocality": activity.city,
+              "addressCountry": "PL",
             },
-          } : {}),
-          "audience": {
-            "@type": "PeopleAudience",
-            "suggestedMinAge": activity.ageMin,
-            "suggestedMaxAge": activity.ageMax,
+            ...(activity.reviewCount > 0 ? {
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": activity.rating,
+                "reviewCount": activity.reviewCount,
+                "bestRating": "5",
+              },
+            } : {}),
+            "audience": {
+              "@type": "PeopleAudience",
+              "suggestedMinAge": activity.ageMin,
+              "suggestedMaxAge": activity.ageMax,
+            },
+            ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
           },
-          ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://familyfun.pl/" },
+              { "@type": "ListItem", "position": 2, "name": cityLabels[activity.city]?.nominative || activity.city, "item": `https://familyfun.pl/atrakcje/${activity.city}` },
+              { "@type": "ListItem", "position": 3, "name": activity.title },
+            ],
+          },
+        ] as unknown as Record<string, unknown>}
       />
       <main className="min-h-screen bg-background pb-20 sm:pb-8">
       {/* Desktop: Global header */}
@@ -370,14 +383,16 @@ const ActivityDetail = () => {
         {/* Content overlay */}
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
-            {/* Desktop: Contextual back navigation - above title */}
-            <button
-              onClick={handleBack}
-              className="hidden md:flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group mb-4"
-            >
-              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-              <span className="text-sm">Wróć do listy wydarzeń</span>
-            </button>
+            {/* Desktop: Breadcrumbs */}
+            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-4" aria-label="breadcrumb">
+              <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <Link to={`/atrakcje/${activity.city}`} className="text-muted-foreground hover:text-foreground transition-colors">
+                {cityLabels[activity.city]?.nominative || activity.city}
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <span className="text-foreground font-medium truncate max-w-[300px]">{activity.title}</span>
+            </nav>
             
             {/* Activity title */}
             <div className="flex items-center gap-2 mb-1 md:mb-2">
