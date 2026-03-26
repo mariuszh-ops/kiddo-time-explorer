@@ -24,6 +24,38 @@ const steps = [
   },
 ];
 
+const faqItems = [
+  {
+    question: "Czym jest FamilyFun?",
+    answer: "FamilyFun to katalog atrakcji dla rodzin z dziećmi, ocenianych przez rodziców. Znajdziesz tu sprawdzone miejsca na wspólny czas z dzieckiem.",
+  },
+  {
+    question: "Czy korzystanie z FamilyFun jest bezpłatne?",
+    answer: "Tak, przeglądanie atrakcji i czytanie opinii jest całkowicie bezpłatne.",
+  },
+  {
+    question: "Jak mogę dodać nową atrakcję?",
+    answer: "Kliknij „Zgłoś atrakcję" w profilu lub na stronie głównej i wypełnij formularz.",
+  },
+  {
+    question: "W jakich miastach działa FamilyFun?",
+    answer: "Obecnie FamilyFun obejmuje Warszawę. Planujemy rozszerzenie na Kraków, Wrocław, Gdańsk i Poznań.",
+  },
+];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 const ONas = () => {
   return (
     <PageTransition>
@@ -31,6 +63,7 @@ const ONas = () => {
         title="O nas"
         description="FamilyFun to platforma dla rodziców szukających sprawdzonych atrakcji dla dzieci. Odkryj naszą misję i dołącz do społeczności."
         path="/o-nas"
+        jsonLd={faqJsonLd as unknown as Record<string, unknown>}
       />
       <div className="min-h-screen bg-background">
         <Header />
@@ -65,13 +98,26 @@ const ONas = () => {
             <section>
               <h2 className="text-lg font-serif font-semibold text-foreground mb-6">Jak to działa</h2>
               <div className="grid gap-6 sm:grid-cols-3">
-                {steps.map((step, i) => (
+                {steps.map((step) => (
                   <div key={step.title} className="flex flex-col items-center text-center sm:items-start sm:text-left">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
                       <step.icon className="w-6 h-6 text-primary" />
                     </div>
                     <h3 className="font-medium text-foreground mb-1">{step.title}</h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">{step.description}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* FAQ */}
+            <section>
+              <h2 className="text-lg font-serif font-semibold text-foreground mb-6">Najczęściej zadawane pytania</h2>
+              <div className="space-y-4">
+                {faqItems.map((item) => (
+                  <div key={item.question} className="border border-border rounded-lg p-4">
+                    <h3 className="font-medium text-foreground mb-1">{item.question}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.answer}</p>
                   </div>
                 ))}
               </div>

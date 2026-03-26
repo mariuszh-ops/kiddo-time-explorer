@@ -69,6 +69,18 @@ const Index = () => {
           : "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie. Opinie i oceny od rodziców. Place zabaw, muzea, parki i więcej."
         }
         path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "FamilyFun",
+          "url": "https://familyfun.pl",
+          "description": "Sprawdzone atrakcje dla rodzin z dziećmi w Warszawie",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://familyfun.pl/?search={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        }}
       />
       <main
         className="min-h-screen bg-background pb-20 sm:pb-0"
