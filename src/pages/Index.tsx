@@ -35,9 +35,31 @@ const Index = () => {
       setShowOnboarding(true);
     }
   }, []);
-  const handleOnboardingComplete = () => {
+
+  // Auto-restore saved city on first load
+  useEffect(() => {
+    const savedCity = localStorage.getItem('ff_user_city');
+    if (savedCity && FEATURES.ENABLED_CITIES.includes(savedCity) && !filters.city) {
+      updateFilter("city", savedCity);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleOnboardingComplete = (selectedCity?: string) => {
     localStorage.setItem('ff_onboarding_seen', 'true');
     setShowOnboarding(false);
+    if (selectedCity) {
+      localStorage.setItem('ff_user_city', selectedCity);
+      updateFilter("city", selectedCity);
+      // Scroll to listing
+      setTimeout(() => {
+        if (listingRef.current) {
+          const headerHeight = 56;
+          const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+          window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+        }
+      }, 100);
+    }
   };
 
   const handleExplore = useCallback(async () => {
