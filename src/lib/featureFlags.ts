@@ -10,6 +10,6 @@ export const FEATURES = {
   SEARCH_AUTOCOMPLETE: true,  // Dropdown z podpowiedziami w wyszukiwarce — aktywny
   ENABLED_CITIES: ["warszawa"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
-  ONBOARDING: false,          // Welcome screen dla nowych użytkowników — wyłączony w MVP
+  ONBOARDING: true,          // Welcome screen dla nowych użytkowników — aktywny
   COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
 } as const;
