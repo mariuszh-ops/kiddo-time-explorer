@@ -2,11 +2,13 @@ import { useState } from "react";
 import FilterDropdown from "@/components/FilterDropdown";
 import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { Filters } from "@/hooks/useActivityFilters";
 import { X, Search, SlidersHorizontal } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
+import { mockActivities } from "@/data/activities";
 
 interface FilterBarProps {
   filters: Filters;
