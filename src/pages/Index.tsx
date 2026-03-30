@@ -15,6 +15,7 @@ import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import OnboardingModal from "@/components/OnboardingModal";
 import MapView from "@/components/MapView";
+import DecisionChips from "@/components/DecisionChips";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -134,6 +135,9 @@ const Index = () => {
           onViewModeChange={setViewMode}
         />
       </div>
+
+      {/* Decision shortcut chips */}
+      <DecisionChips filters={filters} onUpdateFilter={updateFilter} />
 
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (

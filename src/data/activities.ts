@@ -104,7 +104,7 @@ export const filterOptions = {
     { value: "inne", label: "Inne" },
   ],
   indoor: [
-    { value: "indoor", label: "W pomieszczeniu" },
+    { value: "indoor", label: "Pod dachem" },
     { value: "outdoor", label: "Na zewnątrz" },
   ],
   activityKind: [
