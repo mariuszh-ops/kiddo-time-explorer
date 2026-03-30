@@ -58,6 +58,11 @@ const defaultExperiencePoints = [
   "Możliwość wspólnej zabawy całą rodziną",
 ];
 
+const anonymizeAuthor = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+};
 
 const getActivityTypeIcon = (type: string) => {
   switch (type.toLowerCase()) {
@@ -830,7 +835,7 @@ const ActivityDetail = () => {
                             {review.author.charAt(0)}
                           </span>
                         </div>
-                        <span className="text-sm font-medium text-foreground">{review.author}</span>
+                        <span className="text-sm font-medium text-foreground">{anonymizeAuthor(review.author)}</span>
                       </div>
                       <div className="flex items-center gap-0.5">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -846,7 +851,10 @@ const ActivityDetail = () => {
                       </div>
                     </div>
                     <p className="text-sm text-foreground leading-relaxed line-clamp-3">{review.text}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{review.date}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-xs text-muted-foreground">{review.date}</p>
+                      <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Google</span>
+                    </div>
                   </div>
                 ))}
               </div>
