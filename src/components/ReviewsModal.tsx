@@ -63,8 +63,11 @@ const ReviewsModal = ({
                       </span>
                     </div>
                     <div>
-                      <p className="font-medium text-foreground">{review.author}</p>
-                      <p className="text-xs text-muted-foreground">{review.date}</p>
+                      <p className="font-medium text-foreground">{anonymizeAuthor(review.author)}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs text-muted-foreground">{review.date}</p>
+                        <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Google</span>
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-0.5">
