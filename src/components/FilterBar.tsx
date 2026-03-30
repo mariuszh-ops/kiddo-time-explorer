@@ -4,7 +4,7 @@ import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { Filters } from "@/hooks/useActivityFilters";
-import { X, Search, SlidersHorizontal } from "lucide-react";
+import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
@@ -28,6 +28,8 @@ interface FilterBarProps {
   };
   onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
   onClearAll: () => void;
+  viewMode?: "grid" | "map";
+  onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
 // Helper to get city name in locative case (Polish grammar)
@@ -61,6 +63,8 @@ const FilterBar = ({
   filterCounts,
   onUpdateFilter,
   onClearAll,
+  viewMode,
+  onViewModeChange,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
