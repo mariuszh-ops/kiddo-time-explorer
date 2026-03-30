@@ -41,7 +41,7 @@ const CategoryPage = () => {
   const activities = useMemo(() => {
     if (!citySlug || !config) return [];
     // Filter out events when feature is off
-    const base = mockActivities.filter(a => FEATURES.EVENTS || !a.isEvent);
+    const base = getActivities().filter(a => FEATURES.EVENTS || !a.isEvent);
     return getCategoryActivities(base, citySlug, categorySlug);
   }, [citySlug, categorySlug, config]);
 
