@@ -7,6 +7,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+const anonymizeAuthor = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+};
+
 interface Review {
   author: string;
   rating: number;
