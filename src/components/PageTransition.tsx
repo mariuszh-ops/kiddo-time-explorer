@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { isPrerendering } from "@/lib/utils";
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -30,12 +31,14 @@ const pageVariants = {
 };
 
 const PageTransition = ({ children, className }: PageTransitionProps) => {
+  const shouldAnimate = !isPrerendering();
+
   return (
     <motion.div
       variants={pageVariants}
-      initial="initial"
+      initial={shouldAnimate ? "initial" : false}
       animate="animate"
-      exit="exit"
+      exit={shouldAnimate ? "exit" : undefined}
       className={className}
     >
       {children}
