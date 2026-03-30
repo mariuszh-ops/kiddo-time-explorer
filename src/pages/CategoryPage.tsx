@@ -1,8 +1,9 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
+import MapView from "@/components/MapView";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { mockActivities } from "@/data/activities";
