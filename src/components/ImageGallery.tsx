@@ -74,18 +74,22 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
   if (images.length === 1) {
     return (
       <>
-        <div 
-          className="h-[30vh] md:h-auto md:aspect-video w-full overflow-hidden cursor-pointer"
-          onClick={() => openLightbox(0)}
-        >
-          <img
-            src={getImageSrc(images[0], 0)}
-            alt={activityTitle}
-            decoding="async"
-            fetchPriority="high"
-            className="w-full h-full object-cover object-center"
-            onError={() => handleImageError(0)}
-          />
+        <div className="md:container md:pt-6">
+          <div className="md:rounded-xl overflow-hidden">
+            <div 
+              className="h-[50vh] md:h-auto md:aspect-[3/2] w-full overflow-hidden cursor-pointer"
+              onClick={() => openLightbox(0)}
+            >
+              <img
+                src={getImageSrc(images[0], 0)}
+                alt={activityTitle}
+                decoding="async"
+                fetchPriority="high"
+                className="w-full h-full object-cover object-center"
+                onError={() => handleImageError(0)}
+              />
+            </div>
+          </div>
         </div>
         <ImageLightbox
           images={images}
@@ -100,7 +104,8 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
 
   return (
     <>
-      <div className="relative">
+      <div className="md:container md:pt-6">
+      <div className="md:rounded-xl overflow-hidden relative">
         {/* Main carousel - swipeable on mobile */}
         <div 
           className="overflow-hidden cursor-pointer touch-pan-y" 
@@ -110,7 +115,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full h-[30vh] md:h-auto md:aspect-video"
+                className="flex-none w-full h-[50vh] md:h-auto md:aspect-[3/2]"
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
