@@ -267,7 +267,7 @@ const FilterBar = ({
             </button>
           )}
           {hasActiveFilters && (
-            <div className="flex items-center gap-1.5 ml-auto whitespace-nowrap">
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-xs text-muted-foreground">Sortuj:</span>
               <select
                 value={filters.sort || "rating"}
