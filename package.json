@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "postbuild": "npx tsx scripts/generate-sitemap.js"
+    "postbuild": "npx tsx scripts/generate-sitemap.js && react-snap"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -92,5 +92,24 @@
     "typescript-eslint": "^8.38.0",
     "vite": "^5.4.19",
     "vitest": "^3.2.4"
+  },
+  "reactSnap": {
+    "source": "dist",
+    "minifyHtml": { "collapseWhitespace": false, "removeComments": false },
+    "puppeteerArgs": ["--no-sandbox", "--disable-setuid-sandbox"],
+    "skipThirdPartyRequests": true,
+    "waitFor": 500,
+    "crawl": true,
+    "include": [
+      "/",
+      "/atrakcje/warszawa",
+      "/atrakcje/warszawa/indoor",
+      "/atrakcje/warszawa/dla-maluchow",
+      "/atrakcje/warszawa/na-weekend",
+      "/atrakcje/warszawa/place-zabaw",
+      "/atrakcje/warszawa/za-darmo",
+      "/atrakcje/warszawa/atrakcje-rodzinne"
+    ],
+    "fixWebpackChunksIssue": false
   }
 }
