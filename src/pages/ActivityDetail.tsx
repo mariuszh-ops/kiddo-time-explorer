@@ -58,6 +58,11 @@ const defaultExperiencePoints = [
   "Możliwość wspólnej zabawy całą rodziną",
 ];
 
+const anonymizeAuthor = (name: string): string => {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0];
+  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+};
 
 const getActivityTypeIcon = (type: string) => {
   switch (type.toLowerCase()) {
