@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import ActivityCard from "@/components/ActivityCard";
 import { Badge } from "@/components/ui/badge";
 import { blogPosts } from "@/data/blogPosts";
-import { mockActivities } from "@/data/activities";
+import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 
 const BlogPostPage = () => {
@@ -31,7 +31,7 @@ const BlogPostPage = () => {
 
   // Related activities from same city
   const relatedActivities = post.city
-    ? mockActivities
+    ? getActivities()
         .filter((a) => a.city === post.city && (!a.isEvent || FEATURES.EVENTS))
         .slice(0, 3)
     : [];

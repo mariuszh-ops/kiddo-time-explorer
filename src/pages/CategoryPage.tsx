@@ -6,7 +6,7 @@ import ActivityGrid from "@/components/ActivityGrid";
 import MapView from "@/components/MapView";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
-import { mockActivities } from "@/data/activities";
+import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import {
   getCategoryConfig,
@@ -41,7 +41,7 @@ const CategoryPage = () => {
   const activities = useMemo(() => {
     if (!citySlug || !config) return [];
     // Filter out events when feature is off
-    const base = mockActivities.filter(a => FEATURES.EVENTS || !a.isEvent);
+    const base = getActivities().filter(a => FEATURES.EVENTS || !a.isEvent);
     return getCategoryActivities(base, citySlug, categorySlug);
   }, [citySlug, categorySlug, config]);
 

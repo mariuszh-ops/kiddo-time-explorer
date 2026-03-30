@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { mockActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
+import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -78,7 +78,7 @@ export function useActivityFilters() {
   }, []);
 
   const filteredActivities = useMemo(() => {
-    let result = [...mockActivities];
+    let result = [...getActivities()];
 
     // Hide events when feature flag is off
     if (!FEATURES.EVENTS) {
@@ -198,7 +198,7 @@ export function useActivityFilters() {
       otherFilters: Filters
     ) => {
       // Start with activities matching the search query (if any)
-      let result = [...mockActivities];
+      let result = [...getActivities()];
 
       // Hide events when feature flag is off
       if (!FEATURES.EVENTS) {
@@ -311,7 +311,7 @@ export function useActivityFilters() {
         ...o,
         count: getCountForFilter("price", o.value, filters),
       })),
-      total: mockActivities.length,
+      total: getActivities().length,
       filtered: filteredActivities.length,
       hasAnyFilter,
     };

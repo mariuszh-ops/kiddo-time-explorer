@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -12,6 +12,7 @@ import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { FEATURES } from "@/lib/featureFlags";
+import { loadActivities } from "@/data/activities";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import ActivityDetailRedirect from "./pages/ActivityDetailRedirect";
@@ -75,30 +76,49 @@ const AnimatedRoutes = () => {
   );
 };
 
-const App = () => (
-  <ErrorBoundary fallbackLevel="page">
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <SavedActivitiesProvider>
-            <UserRatingsProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <OfflineIndicator />
-                <BrowserRouter>
-                  <AnalyticsTracker />
-                  <AnimatedRoutes />
-                  <BottomNav />
-                  <CookieConsent />
-                </BrowserRouter>
-              </TooltipProvider>
-            </UserRatingsProvider>
-          </SavedActivitiesProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
-  </ErrorBoundary>
-);
+const App = () => {
+  const [dataLoaded, setDataLoaded] = useState(false);
+
+  useEffect(() => {
+    loadActivities().then(() => setDataLoaded(true));
+  }, []);
+
+  if (!dataLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm text-muted-foreground">Ładowanie atrakcji…</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <ErrorBoundary fallbackLevel="page">
+      <HelmetProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <SavedActivitiesProvider>
+              <UserRatingsProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <OfflineIndicator />
+                  <BrowserRouter>
+                    <AnalyticsTracker />
+                    <AnimatedRoutes />
+                    <BottomNav />
+                    <CookieConsent />
+                  </BrowserRouter>
+                </TooltipProvider>
+              </UserRatingsProvider>
+            </SavedActivitiesProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </HelmetProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
