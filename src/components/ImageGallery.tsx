@@ -181,7 +181,6 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
         </div>
       </div>
       </div>
-      </div>
 
       {/* Thumbnail strip - desktop only, positioned above content card */}
       <div className="hidden md:block relative z-20 bg-background container py-3 pb-6">
