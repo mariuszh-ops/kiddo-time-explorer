@@ -75,7 +75,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
     return (
       <>
         <div 
-          className="h-[30vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden cursor-pointer"
+          className="h-[30vh] md:h-auto md:aspect-video w-full overflow-hidden cursor-pointer"
           onClick={() => openLightbox(0)}
         >
           <img
@@ -110,7 +110,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full h-[30vh] md:h-auto md:aspect-[21/9]"
+                className="flex-none w-full h-[30vh] md:h-auto md:aspect-video"
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
