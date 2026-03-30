@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
-import { Star, ChevronUp, GripHorizontal } from "lucide-react";
+import { Star } from "lucide-react";
 import { Activity, cityCenters } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
