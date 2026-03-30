@@ -1,8 +1,9 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
+import MapView from "@/components/MapView";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { mockActivities } from "@/data/activities";
@@ -25,6 +26,7 @@ import {
 const BASE_URL = "https://familyfun.pl";
 
 const CategoryPage = () => {
+  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string }>();
   // Support both /atrakcje/:citySlug/:categorySlug and /atrakcje/:slug (where slug is a city)
   const citySlug = params.citySlug || params.slug;
@@ -145,11 +147,33 @@ const CategoryPage = () => {
             </p>
           </div>
 
-          {/* Activity Grid */}
-          <ActivityGrid
-            activities={activities}
-            hasActiveFilters={false}
-          />
+          {/* View toggle */}
+          {FEATURES.MAP_VIEW && (
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+              >
+                Lista
+              </button>
+              <button
+                onClick={() => setViewMode("map")}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+              >
+                Mapa
+              </button>
+            </div>
+          )}
+
+          {/* Activity Grid or Map */}
+          {FEATURES.MAP_VIEW && viewMode === "map" ? (
+            <MapView activities={activities} filters={{ city: citySlug }} />
+          ) : (
+            <ActivityGrid
+              activities={activities}
+              hasActiveFilters={false}
+            />
+          )}
         </div>
       </main>
       <Footer />

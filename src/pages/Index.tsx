@@ -14,6 +14,7 @@ import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import OnboardingModal from "@/components/OnboardingModal";
+import MapView from "@/components/MapView";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -24,6 +25,9 @@ const Index = () => {
   
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
+
+  // View mode: grid or map
+  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
@@ -126,11 +130,15 @@ const Index = () => {
           filterCounts={filterCounts}
           onUpdateFilter={updateFilter}
           onClearAll={clearAllFilters}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
         />
       </div>
 
       {/* Activity cards grid or curated sections */}
-      {hasActiveFilters ? (
+      {FEATURES.MAP_VIEW && viewMode === 'map' ? (
+        <MapView activities={filteredActivities} filters={filters} />
+      ) : hasActiveFilters ? (
         <ActivityGrid 
           activities={filteredActivities} 
           hasActiveFilters={hasActiveFilters}

@@ -4,7 +4,7 @@ import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { Filters } from "@/hooks/useActivityFilters";
-import { X, Search, SlidersHorizontal } from "lucide-react";
+import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
@@ -28,6 +28,8 @@ interface FilterBarProps {
   };
   onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
   onClearAll: () => void;
+  viewMode?: "grid" | "map";
+  onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
 // Helper to get city name in locative case (Polish grammar)
@@ -61,6 +63,8 @@ const FilterBar = ({
   filterCounts,
   onUpdateFilter,
   onClearAll,
+  viewMode,
+  onViewModeChange,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -87,18 +91,31 @@ const FilterBar = ({
           <div className="container py-3">
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
-              <button
-                onClick={() => setIsMobileFilterOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
-              >
-                <SlidersHorizontal className="w-4 h-4" />
-                <span>Filtry</span>
-                {activeFilterCount > 0 && (
-                  <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                    {activeFilterCount}
-                  </Badge>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setIsMobileFilterOpen(true)}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+                >
+                  <SlidersHorizontal className="w-4 h-4" />
+                  <span>Filtry</span>
+                  {activeFilterCount > 0 && (
+                    <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      {activeFilterCount}
+                    </Badge>
+                  )}
+                </button>
+
+                {/* Map/Grid toggle */}
+                {FEATURES.MAP_VIEW && onViewModeChange && (
+                  <button
+                    onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border active:bg-muted transition-colors"
+                    aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+                  >
+                    {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
+                  </button>
                 )}
-              </button>
+              </div>
 
               {/* Results feedback - only when filters active */}
               {hasActiveFilters && (
@@ -238,9 +255,19 @@ const FilterBar = ({
             </div>
           )}
 
-          {/* Sort dropdown - visible when filters active */}
+          {/* Map/Grid toggle - desktop */}
+          {FEATURES.MAP_VIEW && onViewModeChange && (
+            <button
+              onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors whitespace-nowrap ml-auto"
+              aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+            >
+              {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
+              {viewMode === "map" ? "Lista" : "Mapa"}
+            </button>
+          )}
           {hasActiveFilters && (
-            <div className="flex items-center gap-1.5 ml-auto whitespace-nowrap">
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
               <span className="text-xs text-muted-foreground">Sortuj:</span>
               <select
                 value={filters.sort || "rating"}
