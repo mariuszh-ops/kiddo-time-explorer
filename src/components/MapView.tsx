@@ -1,13 +1,13 @@
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
-import { Star, ChevronUp, GripHorizontal } from "lucide-react";
+import { Star } from "lucide-react";
 import { Activity, cityCenters } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
+
 
 // Custom rating pin icon
 const createPinIcon = (rating: number) => {
@@ -94,11 +94,6 @@ function MapRecenter({ center, zoom }: { center: [number, number]; zoom: number 
   return null;
 }
 
-// Bottom sheet panel states
-type SheetState = "collapsed" | "half" | "full";
-
-const SHEET_COLLAPSED_HEIGHT = 120;
-
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
@@ -106,10 +101,8 @@ interface MapViewProps {
 
 const MapView = ({ activities, filters }: MapViewProps) => {
   const isMobile = useIsMobile();
-  const [sheetState, setSheetState] = useState<SheetState>("collapsed");
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
@@ -117,52 +110,15 @@ const MapView = ({ activities, filters }: MapViewProps) => {
 
   const handleMarkerClick = useCallback((id: number) => {
     setHighlightedId(id);
-    // Scroll to card
     const card = cardRefs.current[id];
     if (card) {
       card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
-    if (isMobile && sheetState === "collapsed") {
-      setSheetState("half");
-    }
-  }, [isMobile, sheetState]);
-
-  // Mobile bottom sheet drag
-  const sheetY = useMotionValue(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const getSheetHeight = useCallback((state: SheetState) => {
-    const vh = window.innerHeight;
-    switch (state) {
-      case "collapsed": return SHEET_COLLAPSED_HEIGHT;
-      case "half": return vh * 0.4;
-      case "full": return vh * 0.85;
-    }
-  }, []);
-
-  const handleDragEnd = useCallback((_: any, info: PanInfo) => {
-    const velocity = info.velocity.y;
-    const offset = info.offset.y;
-
-    if (velocity < -500 || offset < -80) {
-      // Swiped up
-      setSheetState((prev) =>
-        prev === "collapsed" ? "half" : prev === "half" ? "full" : "full"
-      );
-    } else if (velocity > 500 || offset > 80) {
-      // Swiped down
-      setSheetState((prev) =>
-        prev === "full" ? "half" : prev === "half" ? "collapsed" : "collapsed"
-      );
-    }
   }, []);
 
   if (isMobile) {
-    const sheetHeight = getSheetHeight(sheetState);
-
     return (
       <div className="relative" style={{ height: "calc(100vh - 56px - 64px)" }}>
-        {/* Map */}
         <MapContainer
           center={mapCenter}
           zoom={12}
@@ -178,51 +134,20 @@ const MapView = ({ activities, filters }: MapViewProps) => {
           <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
         </MapContainer>
 
-        {/* Bottom Sheet */}
-        <motion.div
-          className="absolute bottom-0 left-0 right-0 bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col"
-          animate={{ height: sheetHeight }}
-          transition={{ type: "spring", damping: 30, stiffness: 300 }}
-          style={{ touchAction: "none" }}
-        >
-          {/* Drag handle */}
-          <motion.div
-            className="flex flex-col items-center pt-3 pb-2 cursor-grab active:cursor-grabbing"
-            drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }}
-            dragElastic={0}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
+        {/* Static bottom card strip */}
+        <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
+          <div className="flex items-center pt-3 pb-2 px-3">
             <span className="text-xs text-muted-foreground font-medium">
               {activities.length} atrakcji
             </span>
-          </motion.div>
-
-          {/* Cards */}
-          <div
-            ref={scrollContainerRef}
-            className={cn(
-              "flex-1 overflow-auto px-3 pb-3",
-              sheetState === "collapsed"
-                ? "overflow-x-auto overflow-y-hidden"
-                : "overflow-y-auto"
-            )}
-          >
-            <div
-              className={cn(
-                sheetState === "collapsed"
-                  ? "flex gap-3"
-                  : "grid grid-cols-1 gap-3"
-              )}
-            >
+          </div>
+          <div className="flex-1 overflow-x-auto px-3 pb-3">
+            <div className="flex gap-3">
               {activities.map((activity) => (
                 <div
                   key={activity.id}
                   ref={(el) => { cardRefs.current[activity.id] = el; }}
-                  className={cn(
-                    sheetState === "collapsed" ? "min-w-[260px] flex-shrink-0" : "",
-                  )}
+                  className="min-w-[260px] flex-shrink-0"
                 >
                   <MiniActivityCard
                     activity={activity}
@@ -232,7 +157,7 @@ const MapView = ({ activities, filters }: MapViewProps) => {
               ))}
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     );
   }
