@@ -75,7 +75,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
     return (
       <>
         <div 
-          className="h-[30vh] md:h-auto md:aspect-[3/1] w-full overflow-hidden cursor-pointer"
+          className="h-[30vh] md:h-auto md:aspect-[21/9] w-full overflow-hidden cursor-pointer"
           onClick={() => openLightbox(0)}
         >
           <img
@@ -83,7 +83,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             alt={activityTitle}
             decoding="async"
             fetchPriority="high"
-            className="w-full h-full object-cover object-top"
+            className="w-full h-full object-cover object-center"
             onError={() => handleImageError(0)}
           />
         </div>
@@ -110,7 +110,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full h-[30vh] md:h-auto md:aspect-[3/1]"
+                className="flex-none w-full h-[30vh] md:h-auto md:aspect-[21/9]"
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
@@ -119,7 +119,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding="async"
                   fetchPriority={index === 0 ? "high" : undefined}
-                  className="w-full h-full object-cover object-top"
+                  className="w-full h-full object-cover object-center"
                   draggable={false}
                   onError={() => handleImageError(index)}
                 />
