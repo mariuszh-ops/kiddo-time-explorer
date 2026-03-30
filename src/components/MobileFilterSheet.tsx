@@ -203,14 +203,14 @@ const MobileFilterSheet = ({
           />
           
           <FilterSection
-            title="Typ aktywności"
+            title="Kategoria"
             options={filterCounts.type}
             selectedValue={filters.type}
             onSelect={(value) => onUpdateFilter("type", value)}
           />
           
           <FilterSection
-            title="W pomieszczeniu / Na zewnątrz"
+            title="Pod dachem / Na zewnątrz"
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
             onSelect={(value) => onUpdateFilter("indoor", value)}

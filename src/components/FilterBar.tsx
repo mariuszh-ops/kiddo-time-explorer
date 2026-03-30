@@ -170,7 +170,7 @@ const FilterBar = ({
           />
           
           <FilterDropdown
-            label="Typ aktywności"
+            label="Kategoria"
             options={filterCounts.type}
             selectedValue={filters.type}
             hasAnyFilter={filterCounts.hasAnyFilter}
@@ -178,7 +178,7 @@ const FilterBar = ({
           />
           
           <FilterDropdown
-            label="Lokalizacja"
+            label="Pod dachem?"
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
             hasAnyFilter={filterCounts.hasAnyFilter}
