@@ -255,7 +255,17 @@ const FilterBar = ({
             </div>
           )}
 
-          {/* Sort dropdown - visible when filters active */}
+          {/* Map/Grid toggle - desktop */}
+          {FEATURES.MAP_VIEW && onViewModeChange && (
+            <button
+              onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors whitespace-nowrap ml-auto"
+              aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+            >
+              {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
+              {viewMode === "map" ? "Lista" : "Mapa"}
+            </button>
+          )}
           {hasActiveFilters && (
             <div className="flex items-center gap-1.5 ml-auto whitespace-nowrap">
               <span className="text-xs text-muted-foreground">Sortuj:</span>
