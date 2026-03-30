@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState, useEffect } from "react";
+import { lazy, Suspense, useRef, useCallback, useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,7 +14,7 @@ import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import OnboardingModal from "@/components/OnboardingModal";
-import MapView from "@/components/MapView";
+const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
 
 const Index = () => {
@@ -141,7 +141,13 @@ const Index = () => {
 
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
-        <MapView activities={filteredActivities} filters={filters} />
+        <Suspense fallback={
+          <div className="flex items-center justify-center" style={{ height: "calc(100vh - 56px)" }}>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        }>
+          <MapView activities={filteredActivities} filters={filters} />
+        </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
           activities={filteredActivities} 
