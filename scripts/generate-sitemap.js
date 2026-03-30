@@ -24,7 +24,7 @@ async function main() {
 
   try {
     const actMod = await import(resolve(ROOT, 'src/data/activities.ts'));
-    activities = actMod.mockActivities;
+    activities = actMod.getActivities ? actMod.getActivities() : (actMod.mockActivities || []);
 
     const catMod = await import(resolve(ROOT, 'src/data/categoryPages.ts'));
     categoryConfigs = catMod.categoryConfigs;
