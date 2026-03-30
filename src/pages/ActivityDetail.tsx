@@ -42,6 +42,7 @@ import RatingHistogram from "@/components/RatingHistogram";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import InlineRatingAction from "@/components/InlineRatingAction";
+import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -732,7 +733,7 @@ const ActivityDetail = () => {
               <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
-                <p className="text-sm text-foreground">{details.openingHours}</p>
+                <OpeningHoursDisplay hours={details.openingHours} />
               </div>
             </div>
 
