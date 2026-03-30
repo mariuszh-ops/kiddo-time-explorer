@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
-import { Activity, mockActivities } from "@/data/activities";
+import { Activity, getActivities } from "@/data/activities";
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
@@ -44,8 +44,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(new Set());
 
   // Get full activity objects for saved items
-  const favorites = mockActivities.filter(a => favoriteIds.has(a.id));
-  const wantToVisit = mockActivities.filter(a => wantToVisitIds.has(a.id));
+  const favorites = getActivities().filter(a => favoriteIds.has(a.id));
+  const wantToVisit = getActivities().filter(a => wantToVisitIds.has(a.id));
 
   const isFavorite = useCallback((id: number) => favoriteIds.has(id), [favoriteIds]);
   const isWantToVisit = useCallback((id: number) => wantToVisitIds.has(id), [wantToVisitIds]);

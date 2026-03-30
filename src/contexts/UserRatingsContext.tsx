@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode } from "react";
-import { Activity, mockActivities } from "@/data/activities";
+import { Activity, getActivities } from "@/data/activities";
 
 export interface UserRating {
   activityId: number;
@@ -71,7 +71,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   // Get all visited activities with their ratings
-  const visitedActivities = mockActivities
+  const visitedActivities = getActivities()
     .filter(activity => ratings.has(activity.id))
     .map(activity => ({
       ...activity,

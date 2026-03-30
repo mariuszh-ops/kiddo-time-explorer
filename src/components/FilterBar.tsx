@@ -8,7 +8,7 @@ import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
-import { mockActivities } from "@/data/activities";
+import { getActivities } from "@/data/activities";
 
 interface FilterBarProps {
   filters: Filters;
@@ -207,7 +207,7 @@ const FilterBar = ({
           {/* Search input */}
           {FEATURES.SEARCH_AUTOCOMPLETE ? (
             <SearchAutocomplete
-              activities={mockActivities}
+              activities={getActivities()}
               searchQuery={searchQuery}
               onSearchChange={onSearchChange}
             />

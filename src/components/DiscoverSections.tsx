@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Star, Sparkles, MapPin, Clock } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
-import { Activity, mockActivities } from "@/data/activities";
+import { Activity, getActivities } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
@@ -132,7 +132,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
             .filter(c => c.slug !== "") // skip the city main page
             .map((cat) => {
               const primaryCity = FEATURES.ENABLED_CITIES[0] || "warszawa";
-              const allEnabled = mockActivities.filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
+              const allEnabled = getActivities().filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
               const count = getCategoryCount(allEnabled, primaryCity, cat);
               const href = `/atrakcje/${primaryCity}/${cat.slug}`;
               return (

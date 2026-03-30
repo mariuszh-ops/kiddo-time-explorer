@@ -27,7 +27,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockActivities, PRICE_LEVELS } from "@/data/activities";
+import { getActivities, PRICE_LEVELS } from "@/data/activities";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect, useRef } from "react";
@@ -90,7 +90,7 @@ const ActivityDetail = () => {
   
   const { share } = useShare();
 
-  const activity = mockActivities.find((a) => a.slug === slug) || mockActivities.find((a) => a.id === Number(slug));
+  const activity = getActivities().find((a) => a.slug === slug) || getActivities().find((a) => a.id === Number(slug));
   const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
@@ -909,7 +909,7 @@ const ActivityDetail = () => {
 
       {/* 8. Similar activities */}
       {(() => {
-        const similarActivities = mockActivities
+        const similarActivities = getActivities()
           .filter(a => a.id !== activity.id && !a.isEvent && a.city === activity.city)
           .sort((a, b) => {
             const sameTypeA = a.type === activity.type ? 1 : 0;
