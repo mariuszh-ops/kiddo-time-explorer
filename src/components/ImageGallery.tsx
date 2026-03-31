@@ -77,7 +77,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden">
             <div 
-              className="h-[50vh] md:h-auto md:aspect-[3/2] w-full overflow-hidden cursor-pointer"
+              className="aspect-[4/3] md:h-auto md:aspect-[3/2] w-full overflow-hidden cursor-pointer"
               onClick={() => openLightbox(0)}
             >
               <img
