@@ -8,7 +8,7 @@ export const FEATURES = {
   BLOG: true,                 // Sekcja Blog/Inspiracje — aktywna
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
   SEARCH_AUTOCOMPLETE: true,  // Dropdown z podpowiedziami w wyszukiwarce — aktywny
-  ENABLED_CITIES: ["warszawa"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
+  ENABLED_CITIES: ["warszawa", "krakow", "wroclaw", "trojmiasto", "poznan", "slask", "lodz"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
   ONBOARDING: false,          // Welcome screen dla nowych użytkowników — aktywny
   COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
