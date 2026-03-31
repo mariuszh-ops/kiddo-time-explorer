@@ -110,10 +110,9 @@ const Index = () => {
         }}
       />
       <main
-        className="min-h-screen bg-background pb-20 sm:pb-0"
+        className="min-h-screen bg-background pb-20 sm:pb-0 transition-opacity duration-150"
         style={{ 
-          // Hide content until scroll is restored to prevent flash at top
-          visibility: isScrollRestored ? 'visible' : 'hidden' 
+          opacity: isScrollRestored ? 1 : 0
         }}
       >
       {/* Global header with navigation */}

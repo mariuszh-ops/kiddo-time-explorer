@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, LocateFixed } from "lucide-react";
 import { Activity, cityCenters } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -85,6 +85,26 @@ function MapMarkers({
   return null;
 }
 
+// Fit map bounds to all activity pins
+function MapFitBounds({ activities }: { activities: Activity[] }) {
+  const map = useMap();
+  const prevCountRef = useRef(0);
+
+  useEffect(() => {
+    if (activities.length === 0) return;
+    // Only fit bounds when activities change
+    if (activities.length === prevCountRef.current) return;
+    prevCountRef.current = activities.length;
+
+    const bounds = L.latLngBounds(
+      activities.map((a) => [a.latitude, a.longitude] as [number, number])
+    );
+    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+  }, [activities, map]);
+
+  return null;
+}
+
 // Recenter map when city changes
 function MapRecenter({ center, zoom }: { center: [number, number]; zoom: number }) {
   const map = useMap();
@@ -92,6 +112,55 @@ function MapRecenter({ center, zoom }: { center: [number, number]; zoom: number 
     map.setView(center, zoom, { animate: true });
   }, [center, zoom, map]);
   return null;
+}
+
+// Geolocation button
+function LocateButton() {
+  const map = useMap();
+  const [locating, setLocating] = useState(false);
+  const [denied, setDenied] = useState(false);
+  const markerRef = useRef<L.CircleMarker | null>(null);
+
+  const handleLocate = useCallback(() => {
+    if (denied || locating) return;
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const { latitude, longitude } = pos.coords;
+        // Remove old marker
+        if (markerRef.current) markerRef.current.remove();
+        // Add pulsing blue dot
+        markerRef.current = L.circleMarker([latitude, longitude], {
+          radius: 8,
+          fillColor: "#3b82f6",
+          fillOpacity: 0.9,
+          color: "#fff",
+          weight: 3,
+        }).addTo(map);
+        map.setView([latitude, longitude], 13, { animate: true });
+        setLocating(false);
+      },
+      () => {
+        setDenied(true);
+        setLocating(false);
+      },
+      { enableHighAccuracy: false, timeout: 8000 }
+    );
+  }, [map, denied, locating]);
+
+  return (
+    <button
+      onClick={handleLocate}
+      disabled={denied}
+      className={cn(
+        "absolute z-[1000] bottom-4 right-4 md:top-4 md:bottom-auto w-10 h-10 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
+        denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+      )}
+      title="Moja lokalizacja"
+    >
+      <LocateFixed className={cn("w-5 h-5", locating ? "animate-pulse text-primary" : "text-foreground")} />
+    </button>
+  );
 }
 
 interface MapViewProps {
@@ -121,7 +190,7 @@ const MapView = ({ activities, filters }: MapViewProps) => {
       <div className="relative" style={{ height: "calc(100vh - 56px - 64px)" }}>
         <MapContainer
           center={mapCenter}
-          zoom={12}
+          zoom={11}
           className="w-full h-full z-0"
           zoomControl={false}
           attributionControl={true}
@@ -130,9 +199,15 @@ const MapView = ({ activities, filters }: MapViewProps) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapRecenter center={mapCenter} zoom={12} />
+          <MapFitBounds activities={activities} />
           <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
+          <LocateButton />
         </MapContainer>
+
+        {/* City label */}
+        <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
+          {cityKey.charAt(0).toUpperCase() + cityKey.slice(1)} — {activities.length} atrakcji
+        </div>
 
         {/* Static bottom card strip */}
         <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
@@ -188,10 +263,10 @@ const MapView = ({ activities, filters }: MapViewProps) => {
       </div>
 
       {/* Map */}
-      <div className="flex-1">
+      <div className="flex-1 relative">
         <MapContainer
           center={mapCenter}
-          zoom={12}
+          zoom={11}
           className="w-full h-full z-0"
           attributionControl={true}
         >
@@ -199,9 +274,15 @@ const MapView = ({ activities, filters }: MapViewProps) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapRecenter center={mapCenter} zoom={12} />
+          <MapFitBounds activities={activities} />
           <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
+          <LocateButton />
         </MapContainer>
+
+        {/* City label */}
+        <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
+          {cityKey.charAt(0).toUpperCase() + cityKey.slice(1)} — {activities.length} atrakcji
+        </div>
       </div>
     </div>
   );

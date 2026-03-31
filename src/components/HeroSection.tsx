@@ -1,6 +1,5 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroImage from "@/assets/hero-parent-child.jpg";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface HeroSectionProps {
@@ -13,10 +12,11 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
       {/* Background image */}
       <div className="absolute inset-0">
         <img
-          src={heroImage}
+          src="/images/hero-parent-child.jpg"
           alt="Rodzic z dzieckiem odkrywają świat razem"
           decoding="async"
           fetchPriority="high"
+          loading="eager"
           className="w-full h-full object-cover object-[75%_25%] md:object-[center_15%]"
         />
         {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}
@@ -37,7 +37,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
           {/* Subheadline */}
           <p 
             className="mt-5 md:mt-6 text-lg md:text-xl text-muted-foreground animate-fade-in"
-            style={{ animationDelay: "0.15s", opacity: 0 }}
+            style={{ animationDelay: "0.1s" }}
           >
             Opinie rodziców takich jak Ty
           </p>
@@ -45,7 +45,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
           {/* CTA Button */}
           <div 
             className="mt-8 md:mt-10 animate-fade-in"
-            style={{ animationDelay: "0.3s", opacity: 0 }}
+            style={{ animationDelay: "0.2s" }}
           >
             <Button 
               variant="hero" 
@@ -61,7 +61,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
           {/* Trust indicator */}
           <div 
             className="mt-8 flex items-center gap-3 animate-fade-in"
-            style={{ animationDelay: "0.45s", opacity: 0 }}
+            style={{ animationDelay: "0.3s" }}
           >
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((i) => (
