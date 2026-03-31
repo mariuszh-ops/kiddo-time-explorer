@@ -8,7 +8,7 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[auto] py-12 md:py-0 md:min-h-[80vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[auto] py-12 md:py-0 md:min-h-[50vh] lg:min-h-[55vh] flex items-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
