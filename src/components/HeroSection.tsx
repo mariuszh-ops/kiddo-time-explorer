@@ -8,7 +8,7 @@ interface HeroSectionProps {
 
 const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[auto] py-12 md:py-0 md:min-h-[80vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[auto] py-12 md:py-0 md:min-h-[50vh] lg:min-h-[55vh] flex items-center overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0">
         <img
@@ -17,15 +17,15 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
           decoding="async"
           fetchPriority="high"
           loading="eager"
-          className="w-full h-full object-cover object-[75%_25%] md:object-[center_15%]"
+          className="w-full h-full object-cover object-[75%_25%] md:object-[70%_30%]"
         />
         {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background/80 md:bg-gradient-to-r md:from-background/45 md:via-background/15 md:to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background/80 md:bg-gradient-to-r md:from-background/60 md:via-background/15 md:to-transparent" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container">
-        <div className="max-w-xl md:max-w-lg lg:max-w-xl">
+        <div className="max-w-xl md:max-w-[45%] lg:max-w-xl lg:!max-w-[45%]">
           {/* Headline */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
             {FEATURES.ENABLED_CITIES.length > 1
