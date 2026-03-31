@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
 import { Star, LocateFixed } from "lucide-react";
-import { Activity, cityCenters } from "@/data/activities";
+import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
