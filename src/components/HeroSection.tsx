@@ -25,7 +25,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
       {/* Content */}
       <div className="relative z-10 container">
-        <div className="max-w-xl md:max-w-lg lg:max-w-xl">
+        <div className="max-w-xl md:max-w-[45%] lg:max-w-xl lg:!max-w-[45%]">
           {/* Headline */}
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
             {FEATURES.ENABLED_CITIES.length > 1
