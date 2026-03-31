@@ -77,7 +77,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden">
             <div 
-              className="aspect-[4/3] md:h-auto md:aspect-[3/2] w-full overflow-hidden cursor-pointer"
+              className="aspect-[4/3] md:h-auto md:aspect-[3/2] md:max-h-[400px] w-full overflow-hidden cursor-pointer"
               onClick={() => openLightbox(0)}
             >
               <img
@@ -115,7 +115,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full aspect-[4/3] md:h-auto md:aspect-[3/2]"
+                className="flex-none w-full aspect-[4/3] md:h-auto md:aspect-[3/2] md:max-h-[400px]"
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
