@@ -111,42 +111,14 @@ const ActivityCard = ({
               onError={handleImageError}
             />
 
-            {/* Price badge - hidden until better data */}
-            {false && priceLevel !== undefined && (
+            {/* Price badge - hidden until better data; events badge preserved */}
+            {FEATURES.EVENTS && isEvent && (
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
                 <Badge
-                  variant="outline"
-                  className={`text-xs font-medium border ${PRICE_LEVELS[priceLevel].color}`}
-                >
-                  {PRICE_LEVELS[priceLevel].badge}
-                </Badge>
-              </div>
-            )}
-                {FEATURES.EVENTS && isEvent && (
-                  <Badge
-                    variant="secondary"
-                    className="text-[10px] font-medium backdrop-blur-sm bg-amber-500/90 text-white border-0"
-                  >
-                    <Calendar className="w-3 h-3 mr-1" />Wydarzenie
-                  </Badge>
-                )}
-              </div>
-            )}
-            {priceLevel === undefined && FEATURES.EVENTS && (
-              <div className="absolute top-2 left-2">
-                <Badge
                   variant="secondary"
-                  className={`text-[10px] font-medium backdrop-blur-sm ${
-                    isEvent
-                      ? "bg-amber-500/90 text-white border-0"
-                      : "bg-background/90 text-foreground"
-                  }`}
+                  className="text-[10px] font-medium backdrop-blur-sm bg-amber-500/90 text-white border-0"
                 >
-                  {isEvent ? (
-                    <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
-                  ) : (
-                    <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
-                  )}
+                  <Calendar className="w-3 h-3 mr-1" />Wydarzenie
                 </Badge>
               </div>
             )}
