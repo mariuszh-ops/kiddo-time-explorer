@@ -669,7 +669,8 @@ const ActivityDetail = () => {
               </div>
             </div>
 
-            {/* Price range - visible on all sizes */}
+            {/* Price range - hidden until better data */}
+            {false && (
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-accent rounded-lg shrink-0">
                 <Ticket className={`w-4 h-4 md:w-5 md:h-5 ${activity.priceLevel === 0 ? 'text-green-600 dark:text-green-400' : 'text-accent-foreground'}`} />
@@ -681,6 +682,7 @@ const ActivityDetail = () => {
                 </p>
               </div>
             </div>
+            )}
           </div>
         </div>
       </section>

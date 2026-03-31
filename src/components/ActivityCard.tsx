@@ -111,8 +111,8 @@ const ActivityCard = ({
               onError={handleImageError}
             />
 
-            {/* Price badge - left side */}
-            {priceLevel !== undefined && (
+            {/* Price badge - hidden until better data */}
+            {false && priceLevel !== undefined && (
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
                 <Badge
                   variant="outline"
@@ -120,6 +120,8 @@ const ActivityCard = ({
                 >
                   {PRICE_LEVELS[priceLevel].badge}
                 </Badge>
+              </div>
+            )}
                 {FEATURES.EVENTS && isEvent && (
                   <Badge
                     variant="secondary"

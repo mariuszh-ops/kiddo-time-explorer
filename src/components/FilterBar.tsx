@@ -175,6 +175,8 @@ const FilterBar = ({
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
           
+          {/* Price filter - hidden until better data */}
+          {/* 
           <FilterDropdown
             label="Cena"
             options={filterCounts.price}
@@ -182,6 +184,7 @@ const FilterBar = ({
             hasAnyFilter={filterCounts.hasAnyFilter}
             onSelect={(value) => onUpdateFilter("price", value)}
           />
+          */}
           
           {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
           {/* 
