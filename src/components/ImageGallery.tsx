@@ -115,7 +115,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             {images.map((image, index) => (
               <div
                 key={index}
-                className="flex-none w-full aspect-[4/3] md:h-auto md:aspect-[3/2] md:max-h-[400px]"
+                className="flex-none w-full aspect-[4/3] md:h-auto md:aspect-[21/9] md:max-h-[500px] lg:max-h-[560px]"
                 onClick={() => !isMobile && openLightbox(index)}
               >
                 <img
