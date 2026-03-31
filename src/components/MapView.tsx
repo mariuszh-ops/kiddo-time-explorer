@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
 import { Star, LocateFixed } from "lucide-react";
-import { Activity, cityCenters } from "@/data/activities";
+import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -206,7 +206,7 @@ const MapView = ({ activities, filters }: MapViewProps) => {
 
         {/* City label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
-          {cityKey.charAt(0).toUpperCase() + cityKey.slice(1)} — {activities.length} atrakcji
+          {filterOptions.city.find(c => c.value === cityKey)?.label || cityKey} — {activities.length} atrakcji
         </div>
 
         {/* Static bottom card strip */}
@@ -281,7 +281,7 @@ const MapView = ({ activities, filters }: MapViewProps) => {
 
         {/* City label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
-          {cityKey.charAt(0).toUpperCase() + cityKey.slice(1)} — {activities.length} atrakcji
+          {filterOptions.city.find(c => c.value === cityKey)?.label || cityKey} — {activities.length} atrakcji
         </div>
       </div>
     </div>

@@ -10,11 +10,13 @@ interface OnboardingModalProps {
 }
 
 const allCities = [
-  { value: "warszawa", label: "Warszawa", emoji: "📍" },
-  { value: "krakow", label: "Kraków", emoji: "📍" },
-  { value: "wroclaw", label: "Wrocław", emoji: "📍" },
-  { value: "gdansk", label: "Gdańsk", emoji: "📍" },
-  { value: "poznan", label: "Poznań", emoji: "📍" },
+  { value: "warszawa", label: "Warszawa i okolice", emoji: "📍" },
+  { value: "krakow", label: "Kraków i okolice", emoji: "📍" },
+  { value: "wroclaw", label: "Wrocław i okolice", emoji: "📍" },
+  { value: "trojmiasto", label: "Trójmiasto", emoji: "📍" },
+  { value: "poznan", label: "Poznań i okolice", emoji: "📍" },
+  { value: "slask", label: "Aglomeracja Śląska", emoji: "📍" },
+  { value: "lodz", label: "Łódź i okolice", emoji: "📍" },
 ];
 
 const OnboardingModal = ({ onComplete }: OnboardingModalProps) => {

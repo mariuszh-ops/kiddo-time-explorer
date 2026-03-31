@@ -1,11 +1,13 @@
 import { Activity } from "@/data/activities";
 
 export const cityLabels: Record<string, { nominative: string; locative: string }> = {
-  warszawa: { nominative: "Warszawa", locative: "Warszawie" },
-  krakow: { nominative: "Kraków", locative: "Krakowie" },
-  wroclaw: { nominative: "Wrocław", locative: "Wrocławiu" },
-  gdansk: { nominative: "Gdańsk", locative: "Gdańsku" },
-  poznan: { nominative: "Poznań", locative: "Poznaniu" },
+  warszawa: { nominative: "Warszawa i okolice", locative: "Warszawie i okolicach" },
+  krakow: { nominative: "Kraków i okolice", locative: "Krakowie i okolicach" },
+  wroclaw: { nominative: "Wrocław i okolice", locative: "Wrocławiu i okolicach" },
+  trojmiasto: { nominative: "Trójmiasto", locative: "Trójmieście" },
+  poznan: { nominative: "Poznań i okolice", locative: "Poznaniu i okolicach" },
+  slask: { nominative: "Aglomeracja Śląska", locative: "Aglomeracji Śląskiej" },
+  lodz: { nominative: "Łódź i okolice", locative: "Łodzi i okolicach" },
 };
 
 export interface CategoryConfig {

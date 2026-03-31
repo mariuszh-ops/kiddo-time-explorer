@@ -87,14 +87,8 @@ const Index = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={FEATURES.ENABLED_CITIES.length > 1
-          ? "Atrakcje dla dzieci — sprawdzone przez rodziców"
-          : "Atrakcje dla dzieci w Warszawie — sprawdzone przez rodziców"
-        }
-        description={FEATURES.ENABLED_CITIES.length > 1
-          ? "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Gdańsku i Poznaniu. Opinie i oceny od rodziców."
-          : "Odkryj najlepsze miejsca dla rodzin z dziećmi w Warszawie. Opinie i oceny od rodziców. Place zabaw, muzea, parki i więcej."
-        }
+        title="Atrakcje dla dzieci — sprawdzone przez rodziców"
+        description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Trójmieście, Poznaniu, Łodzi i na Śląsku. Opinie i oceny od rodziców."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
