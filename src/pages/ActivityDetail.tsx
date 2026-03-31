@@ -699,7 +699,7 @@ const ActivityDetail = () => {
                 return (
                   <div key={amenityId} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-accent/50">
                     <AmenityIcon name={amenity.icon} className="w-4 h-4 text-primary shrink-0" />
-                    <span className="text-sm text-foreground">{amenity.label}</span>
+                    <span className="text-sm text-foreground truncate">{amenity.label}</span>
                   </div>
                 );
               })}
