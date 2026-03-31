@@ -32,26 +32,16 @@ interface FilterBarProps {
   onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
-// Helper to get city name in locative case (Polish grammar)
-const getCityNameLocative = (cityValue: string): string => {
-  const cityNames: Record<string, string> = {
-    warszawa: "Warszawy",
-    krakow: "Krakowa",
-    wroclaw: "Wrocławia",
-    gdansk: "Gdańska",
-    poznan: "Poznania",
-  };
-  return cityNames[cityValue] || cityValue;
-};
-
 // Helper to get city name in genitive case (Polish grammar)
 const getCityNameGenitive = (cityValue: string): string => {
   const cityNames: Record<string, string> = {
     warszawa: "Warszawy",
     krakow: "Krakowa",
     wroclaw: "Wrocławia",
-    gdansk: "Gdańska",
+    trojmiasto: "Trójmiasta",
     poznan: "Poznania",
+    slask: "Śląska",
+    lodz: "Łodzi",
   };
   return cityNames[cityValue] || cityValue;
 };

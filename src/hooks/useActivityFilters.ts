@@ -311,7 +311,7 @@ export function useActivityFilters() {
         ...o,
         count: getCountForFilter("price", o.value, filters),
       })),
-      total: getActivities().length,
+      total: getActivities().filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (FEATURES.EVENTS || !a.isEvent)).length,
       filtered: filteredActivities.length,
       hasAnyFilter,
     };

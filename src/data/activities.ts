@@ -131,6 +131,8 @@ export const cityCenters: Record<string, { lat: number; lng: number }> = {
   warszawa: { lat: 52.2297, lng: 21.0122 },
   krakow: { lat: 50.0647, lng: 19.9450 },
   wroclaw: { lat: 51.1079, lng: 17.0385 },
-  gdansk: { lat: 54.3520, lng: 18.6466 },
+  trojmiasto: { lat: 54.3720, lng: 18.6382 },
   poznan: { lat: 52.4064, lng: 16.9252 },
+  slask: { lat: 50.2649, lng: 19.0238 },
+  lodz: { lat: 51.7592, lng: 19.4560 },
 };
