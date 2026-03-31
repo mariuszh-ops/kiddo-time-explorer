@@ -129,8 +129,8 @@ const Index = () => {
         />
       </div>
 
-      {/* Decision shortcut chips */}
-      <DecisionChips filters={filters} onUpdateFilter={updateFilter} />
+      {/* Decision shortcut chips — hidden to avoid duplication with filter bar */}
+      {false && <DecisionChips filters={filters} onUpdateFilter={updateFilter} />}
 
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
