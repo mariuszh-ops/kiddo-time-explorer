@@ -5,8 +5,10 @@ const CITY_COORDINATES: { city: string; lat: number; lon: number; radius: number
   { city: "warszawa", lat: 52.2297, lon: 21.0122, radius: 50 },
   { city: "krakow", lat: 50.0647, lon: 19.9450, radius: 40 },
   { city: "wroclaw", lat: 51.1079, lon: 17.0385, radius: 40 },
-  { city: "gdansk", lat: 54.3520, lon: 18.6466, radius: 40 },
+  { city: "trojmiasto", lat: 54.3720, lon: 18.6382, radius: 40 },
   { city: "poznan", lat: 52.4064, lon: 16.9252, radius: 40 },
+  { city: "slask", lat: 50.2649, lon: 19.0238, radius: 40 },
+  { city: "lodz", lat: 51.7592, lon: 19.4560, radius: 40 },
 ];
 
 const DEFAULT_CITY = "warszawa";
