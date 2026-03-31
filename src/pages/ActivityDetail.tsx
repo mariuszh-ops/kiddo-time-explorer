@@ -101,21 +101,9 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
 
-  // Scroll to position title at ~1/3 from top of viewport
+  // Scroll to top on mount; on mobile, position title card nicely
   useEffect(() => {
-    // Small delay to ensure layout is complete
-    const timer = setTimeout(() => {
-      const titleCard = document.getElementById('activity-title-card');
-      if (titleCard) {
-        const cardTop = titleCard.getBoundingClientRect().top + window.scrollY;
-        // Position title card at roughly 1/3 from top of viewport
-        const targetScroll = Math.max(0, cardTop - (window.innerHeight * 0.15));
-        window.scrollTo({ top: targetScroll, behavior: 'instant' });
-      } else {
-        window.scrollTo(0, 0);
-      }
-    }, 50);
-    return () => clearTimeout(timer);
+    window.scrollTo(0, 0);
   }, [slug]);
 
   // Sticky header on scroll past title card
