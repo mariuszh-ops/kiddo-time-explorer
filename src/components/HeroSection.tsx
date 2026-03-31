@@ -58,7 +58,8 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
             </Button>
           </div>
 
-          {/* Trust indicator */}
+          {/* Trust indicator - hidden for MVP */}
+          {false && (
           <div 
             className="mt-8 flex items-center gap-3 animate-fade-in"
             style={{ animationDelay: "0.3s" }}
@@ -77,6 +78,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               +2500 rodziców korzysta z FamilyFun
             </span>
           </div>
+          )}
         </div>
       </div>
     </section>
