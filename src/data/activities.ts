@@ -83,11 +83,13 @@ export { _activities as mockActivities };
 // Filter options with counts
 export const filterOptions = {
   city: [
-    { value: "warszawa", label: "Warszawa" },
-    { value: "krakow", label: "Kraków" },
-    { value: "wroclaw", label: "Wrocław" },
-    { value: "gdansk", label: "Gdańsk" },
-    { value: "poznan", label: "Poznań" },
+    { value: "warszawa", label: "Warszawa i okolice" },
+    { value: "krakow", label: "Kraków i okolice" },
+    { value: "wroclaw", label: "Wrocław i okolice" },
+    { value: "trojmiasto", label: "Trójmiasto" },
+    { value: "poznan", label: "Poznań i okolice" },
+    { value: "slask", label: "Aglomeracja Śląska" },
+    { value: "lodz", label: "Łódź i okolice" },
   ],
   age: [
     { value: "0-2", label: "0–2 lata", min: 0, max: 2 },
