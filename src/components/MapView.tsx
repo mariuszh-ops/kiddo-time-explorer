@@ -206,7 +206,7 @@ const MapView = ({ activities, filters }: MapViewProps) => {
 
         {/* City label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
-          {cityKey.charAt(0).toUpperCase() + cityKey.slice(1)} — {activities.length} atrakcji
+          {filterOptions.city.find(c => c.value === cityKey)?.label || cityKey} — {activities.length} atrakcji
         </div>
 
         {/* Static bottom card strip */}
