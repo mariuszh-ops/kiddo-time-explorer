@@ -242,8 +242,7 @@ const MobileFilterSheet = ({
             <div className="grid grid-cols-2 gap-2">
               {[
                 { value: "rating", label: "Najlepiej oceniane" },
-                { value: "cheapest", label: "Najtańsze" },
-                { value: "newest", label: "Najnowsze" },
+                { value: "most_reviewed", label: "Najwięcej ocen" },
                 { value: "name", label: "Nazwa A–Z" },
               ].map((option) => (
                 <button

@@ -27,7 +27,7 @@ export interface Filters {
   distance?: number; // 0-100 km (numeric slider value)
   search?: string;
   price?: string; // "free" | "paid"
-  sort?: string; // "rating" | "cheapest" | "newest" | "name"
+  sort?: string; // "rating" | "most_reviewed" | "name"
 }
 
 // Persist filter state outside component to survive navigation
@@ -162,20 +162,10 @@ export function useActivityFilters() {
           return b.matchPercentage - a.matchPercentage;
         });
         break;
-      case "cheapest":
+      case "most_reviewed":
         result.sort((a, b) => {
-          const priceA = a.priceLevel ?? 99;
-          const priceB = b.priceLevel ?? 99;
-          if (priceA !== priceB) return priceA - priceB;
+          if (b.reviewCount !== a.reviewCount) return b.reviewCount - a.reviewCount;
           return b.rating - a.rating;
-        });
-        break;
-      case "newest":
-        result.sort((a, b) => {
-          const isNewA = a.reviewCount === 0 ? 1 : 0;
-          const isNewB = b.reviewCount === 0 ? 1 : 0;
-          if (isNewB !== isNewA) return isNewB - isNewA;
-          return b.id - a.id;
         });
         break;
       case "name":
