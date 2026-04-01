@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid } from "lucide-react";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -166,9 +166,10 @@ function LocateButton() {
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
+  onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
-const MapView = ({ activities, filters }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -205,9 +206,18 @@ const MapView = ({ activities, filters }: MapViewProps) => {
         </MapContainer>
 
         {/* City label */}
-        <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
+        <div className="absolute top-3 left-14 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
           {filterOptions.city.find(c => c.value === cityKey)?.label || cityKey} — {activities.length} atrakcji
         </div>
+
+        {/* Back to list button (mobile) */}
+        <button
+          onClick={() => onViewModeChange?.("grid")}
+          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3 py-1.5 flex items-center gap-1.5 border border-border text-xs font-medium"
+        >
+          <LayoutGrid className="w-3.5 h-3.5" />
+          Lista
+        </button>
 
         {/* Static bottom card strip */}
         <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">

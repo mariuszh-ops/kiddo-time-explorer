@@ -115,7 +115,7 @@ const Index = () => {
       <HeroSection onExplore={handleExplore} />
 
       {/* Sticky filter bar - this is the scroll target */}
-      <div ref={listingRef}>
+      <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
         <FilterBar
           filters={filters}
           searchQuery={searchQuery}
@@ -138,7 +138,7 @@ const Index = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <MapView activities={filteredActivities} filters={filters} />
+          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
         </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
