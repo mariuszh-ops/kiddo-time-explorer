@@ -33,7 +33,7 @@ Duża przestrzeń, blisko stawów z kaczkami. Idealny na dłuższe wypady z pikn
 
 ## Podsumowanie
 Warszawa ma wiele świetnych placów zabaw — warto odwiedzić kilka i znaleźć ulubiony.`,
-    imageUrl: "https://images.unsplash.com/photo-1566454825481-f8b1cc0a5765?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1596997000103-e597b3ca50df?w=800&auto=format&fit=crop",
     category: "Top lista",
     city: "warszawa",
     tags: ["Warszawa", "place zabaw", "na zewnątrz"],
