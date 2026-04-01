@@ -68,21 +68,20 @@ const Index = () => {
   };
 
   const handleExplore = useCallback(async () => {
-    if (FEATURES.ENABLED_CITIES.length > 1) {
-      // Detect city from geolocation
-      const city = await detectCity();
-      updateFilter("city", city);
-    } else {
-      // Single-city mode: just scroll to results, no geolocation needed
-      updateFilter("city", FEATURES.ENABLED_CITIES[0] || "warszawa");
-    }
+    // Geolocation auto-detect disabled — just scroll to results
+    // if (FEATURES.ENABLED_CITIES.length > 1) {
+    //   const city = await detectCity();
+    //   updateFilter("city", city);
+    // } else {
+    //   updateFilter("city", FEATURES.ENABLED_CITIES[0] || "warszawa");
+    // }
     
     if (listingRef.current) {
       const headerHeight = 56;
       const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
     }
-  }, [detectCity, updateFilter]);
+  }, []);
 
   return (
     <PageTransition>
