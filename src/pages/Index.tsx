@@ -115,7 +115,7 @@ const Index = () => {
       <HeroSection onExplore={handleExplore} />
 
       {/* Sticky filter bar - this is the scroll target */}
-      <div ref={listingRef}>
+      <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
         <FilterBar
           filters={filters}
           searchQuery={searchQuery}
