@@ -61,7 +61,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
         return (
           <section className="container py-6 md:py-8 border-b border-border/30">
             <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {visibleCities.map((city) => {
                 const count = cityCounts[city.value] || 0;
                 return (
