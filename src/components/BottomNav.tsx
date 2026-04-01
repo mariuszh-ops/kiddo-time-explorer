@@ -28,7 +28,7 @@ const BottomNav = () => {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border h-16 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border pt-2 pb-[max(0.625rem,env(safe-area-inset-bottom))]" style={{ minHeight: 'calc(72px + env(safe-area-inset-bottom, 0px))' }}>
         {navItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
