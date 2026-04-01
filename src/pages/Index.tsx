@@ -138,7 +138,7 @@ const Index = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <MapView activities={filteredActivities} filters={filters} />
+          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
         </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
