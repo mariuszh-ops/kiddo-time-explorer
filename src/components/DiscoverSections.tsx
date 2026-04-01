@@ -56,7 +56,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
     <div className="bg-background">
       {/* Section 1: Discover by City */}
       {(() => {
-        const visibleCities = cityMeta.filter(c => ["warszawa", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
+        const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
         if (visibleCities.length <= 1) return null;
         return (
           <section className="container py-6 md:py-8 border-b border-border/30">
