@@ -268,8 +268,7 @@ const FilterBar = ({
                 className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"
               >
                 <option value="rating">Najlepiej oceniane</option>
-                <option value="cheapest">Najtańsze</option>
-                <option value="newest">Najnowsze</option>
+                <option value="most_reviewed">Najwięcej ocen</option>
                 <option value="name">Nazwa A–Z</option>
               </select>
             </div>
