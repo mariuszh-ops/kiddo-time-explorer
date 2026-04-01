@@ -166,9 +166,10 @@ function LocateButton() {
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
+  onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
-const MapView = ({ activities, filters }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
