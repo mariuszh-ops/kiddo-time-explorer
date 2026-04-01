@@ -41,14 +41,14 @@ const Index = () => {
     }
   }, []);
 
-  // Auto-restore saved city on first load
-  useEffect(() => {
-    const savedCity = localStorage.getItem('ff_user_city');
-    if (savedCity && FEATURES.ENABLED_CITIES.includes(savedCity) && !filters.city) {
-      updateFilter("city", savedCity);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Auto-restore saved city on first load — disabled for now (no auto-geonav)
+  // useEffect(() => {
+  //   const savedCity = localStorage.getItem('ff_user_city');
+  //   if (savedCity && FEATURES.ENABLED_CITIES.includes(savedCity) && !filters.city) {
+  //     updateFilter("city", savedCity);
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   const handleOnboardingComplete = (selectedCity?: string) => {
     localStorage.setItem('ff_onboarding_seen', 'true');
