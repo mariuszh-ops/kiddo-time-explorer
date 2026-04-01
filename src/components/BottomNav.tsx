@@ -28,10 +28,22 @@ const BottomNav = () => {
 
   return (
     <>
-      <nav className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border pt-2 pb-[max(0.625rem,env(safe-area-inset-bottom))]" style={{ minHeight: 'calc(72px + env(safe-area-inset-bottom, 0px))' }}>
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border/60 shadow-[0_-1px_6px_0_hsl(var(--foreground)/0.04)]"
+        style={{
+          paddingTop: '10px',
+          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+          minHeight: 'calc(78px + env(safe-area-inset-bottom, 0px))',
+        }}
+      >
         {navItems.map((item) => {
           const active = isActive(item.path);
           const Icon = item.icon;
+
+          const itemClasses = cn(
+            "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
+            active ? "text-primary" : "text-muted-foreground"
+          );
 
           // Profile tab: if not logged in, show auth modal instead of navigating
           if (item.path === "/profile" && !isLoggedIn) {
@@ -39,10 +51,10 @@ const BottomNav = () => {
               <button
                 key={item.label}
                 onClick={() => setIsAuthOpen(true)}
-                className="flex-1 flex flex-col items-center justify-center gap-0.5 text-muted-foreground active:scale-95 transition-all"
+                className={cn(itemClasses, "text-muted-foreground")}
               >
-                <Icon className="w-5 h-5" strokeWidth={1.5} />
-                <span className="text-[10px] leading-tight">{item.label}</span>
+                <Icon className="w-[22px] h-[22px]" strokeWidth={1.5} />
+                <span className="text-[10px] leading-none font-medium">{item.label}</span>
               </button>
             );
           }
@@ -51,13 +63,10 @@ const BottomNav = () => {
             <Link
               key={item.label}
               to={item.path}
-              className={cn(
-                "flex-1 flex flex-col items-center justify-center gap-0.5 transition-colors active:scale-95",
-                active ? "text-primary" : "text-muted-foreground"
-              )}
+              className={itemClasses}
             >
-              <Icon className="w-5 h-5" strokeWidth={active ? 2 : 1.5} />
-              <span className="text-[10px] leading-tight font-medium">{item.label}</span>
+              <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+              <span className="text-[10px] leading-none font-medium">{item.label}</span>
             </Link>
           );
         })}
