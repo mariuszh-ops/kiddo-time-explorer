@@ -70,7 +70,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                     onClick={() => onSelectCity(city.value)}
                     className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
                   >
-                    <MapPin className="w-5 h-5 text-muted-foreground mb-2 group-hover:text-primary transition-colors" />
+                    <span className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-foreground">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
