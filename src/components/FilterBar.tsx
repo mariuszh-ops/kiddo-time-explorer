@@ -216,7 +216,7 @@ const FilterBar = ({
                       onChange={(e) => onSearchChange(e.target.value)}
                       placeholder="Szukaj..."
                       autoFocus
-                      className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                      className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-[var(--radius-pill)] text-sm bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] focus:outline-none focus:ring-[3px] focus:ring-[var(--color-brand-primary-soft)] focus:border-[var(--color-brand-primary)] transition-all duration-200"
                       onBlur={() => {
                         if (!searchQuery.trim()) {
                           setIsSearchExpanded(false);
