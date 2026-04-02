@@ -13,14 +13,14 @@ interface DiscoverSectionsProps {
   onSelectCity: (city: string) => void;
 }
 
-const cityMeta: { value: string; label: string; gradient: string; emoji: string }[] = [
-  { value: "warszawa", label: "Warszawa i okolice", gradient: "from-rose-500/10 to-orange-500/10", emoji: "🧜‍♀️" },
-  { value: "krakow", label: "Kraków i okolice", gradient: "from-blue-500/10 to-indigo-500/10", emoji: "🐉" },
-  { value: "wroclaw", label: "Wrocław i okolice", gradient: "from-emerald-500/10 to-teal-500/10", emoji: "🤴" },
-  { value: "trojmiasto", label: "Trójmiasto", gradient: "from-cyan-500/10 to-sky-500/10", emoji: "⚓" },
-  { value: "poznan", label: "Poznań i okolice", gradient: "from-amber-500/10 to-yellow-500/10", emoji: "🐐" },
-  { value: "slask", label: "Aglomeracja Śląska", gradient: "from-violet-500/10 to-purple-500/10", emoji: "⛏️" },
-  { value: "lodz", label: "Łódź i okolice", gradient: "from-pink-500/10 to-rose-500/10", emoji: "🎬" },
+const cityMeta: { value: string; label: string; bg: string; emoji: string }[] = [
+  { value: "warszawa", label: "Warszawa i okolice", bg: "#E8F0E4", emoji: "🧜‍♀️" },
+  { value: "krakow", label: "Kraków i okolice", bg: "#DFF0EC", emoji: "🐉" },
+  { value: "wroclaw", label: "Wrocław i okolice", bg: "#E4EEF5", emoji: "🤴" },
+  { value: "trojmiasto", label: "Trójmiasto", bg: "#F2EBDD", emoji: "⚓" },
+  { value: "poznan", label: "Poznań i okolice", bg: "#E6EDDF", emoji: "🐐" },
+  { value: "slask", label: "Aglomeracja Śląska", bg: "#E8F0E4", emoji: "⛏️" },
+  { value: "lodz", label: "Łódź i okolice", bg: "#DFF0EC", emoji: "🎬" },
 ];
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
@@ -68,7 +68,8 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
-                    className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                    className="group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    style={{ backgroundColor: city.bg }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-foreground">{city.label}</h3>
