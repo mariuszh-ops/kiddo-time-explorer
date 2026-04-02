@@ -29,10 +29,12 @@ const BottomNav = () => {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border/60 shadow-[0_-1px_6px_0_hsl(var(--foreground)/0.04)]"
+        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden border-t border-[var(--color-border-soft)]"
         style={{
-          paddingTop: '10px',
-          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+          background: 'var(--color-bg-surface)',
+          boxShadow: '0 -4px 16px var(--color-shadow-soft)',
+          paddingTop: 'var(--space-2)',
+          paddingBottom: 'calc(var(--space-3) + env(safe-area-inset-bottom, 0px))',
           minHeight: 'calc(78px + env(safe-area-inset-bottom, 0px))',
         }}
       >
