@@ -1,14 +1,12 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
-import { getActivities } from "@/data/activities";
+import { getActivities, FILTER_OPTIONS } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface Props {
   citySlug: string;
   activeCategorySlug?: string;
-  /** Label to show for "all" when no category is selected */
   currentLabel: string;
 }
 
@@ -24,13 +22,14 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const allActivities = useMemo(() => {
-    return getActivities().filter(a => FEATURES.EVENTS || !a.isEvent);
-  }, []);
+  const cityActivities = useMemo(() => {
+    return getActivities()
+      .filter(a => FEATURES.EVENTS || !a.isEvent)
+      .filter(a => a.city === citySlug);
+  }, [citySlug]);
 
-  const allConfig = categoryConfigs[0];
-  const subCategories = categoryConfigs.filter(c => c.slug !== "");
-  const allCount = getCategoryCount(allActivities, citySlug, allConfig);
+  const typeOptions = FILTER_OPTIONS.type;
+  const allCount = cityActivities.length;
 
   return (
     <div ref={ref} className="relative inline-flex items-center">
@@ -44,7 +43,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
 
       {open && (
         <div
-          className="absolute top-full left-0 mt-2 z-50 min-w-[240px] bg-white py-1"
+          className="absolute top-full left-0 mt-2 z-50 min-w-[220px] bg-white py-1"
           style={{
             borderRadius: "12px",
             boxShadow: "0 8px 24px rgba(31,42,36,0.1)",
@@ -60,21 +59,21 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
               fontWeight: !activeCategorySlug ? 600 : 400,
             }}
           >
-            <span>📍 Wszystkie</span>
+            <span>Wszystkie</span>
             <span className="text-muted-foreground text-xs ml-3">({allCount})</span>
           </Link>
 
           {/* Separator */}
           <div className="mx-3 my-1" style={{ height: "1px", backgroundColor: "#DCE6DA" }} />
 
-          {subCategories.map(cat => {
-            const count = getCategoryCount(allActivities, citySlug, cat);
-            const isActive = activeCategorySlug === cat.slug;
+          {typeOptions.map(opt => {
+            const count = cityActivities.filter(a => a.type === opt.value).length;
+            const isActive = activeCategorySlug === opt.value;
 
             return (
               <Link
-                key={cat.slug}
-                to={`/atrakcje/${citySlug}/${cat.slug}`}
+                key={opt.value}
+                to={`/atrakcje/${citySlug}/${opt.value}`}
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-between px-4 py-2 text-sm transition-colors hover:bg-[#F3F7F2]"
                 style={{
@@ -83,9 +82,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
                   opacity: count === 0 ? 0.5 : 1,
                 }}
               >
-                <span>
-                  {cat.emoji} {cat.label}
-                </span>
+                <span>{opt.label}</span>
                 <span className="text-muted-foreground text-xs ml-3">({count})</span>
               </Link>
             );
