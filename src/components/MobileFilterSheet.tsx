@@ -84,6 +84,7 @@ const MobileFilterSheet = ({
   onSearchChange,
   filterCounts,
   onUpdateFilter,
+  onToggleTypeFilter,
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
