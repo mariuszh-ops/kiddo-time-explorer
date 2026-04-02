@@ -134,8 +134,8 @@ const FilterBar = ({
 
   // Desktop layout (unchanged)
   return (
-    <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
-      <div className="container py-3">
+    <section className="sticky top-0 z-40 border-b border-[var(--color-border-soft)]" style={{ background: 'var(--color-bg-surface)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: 'var(--shadow-sm)' }}>
+      <div className="container" style={{ padding: 'var(--space-3) var(--space-4)' }}>
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
           {/* Combined City + Distance filter — shown only when multiple cities enabled */}

@@ -91,7 +91,7 @@ const Header = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="hidden sm:flex gap-2 text-muted-foreground hover:text-foreground"
+                className="hidden sm:flex gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Zaloguj się</span>

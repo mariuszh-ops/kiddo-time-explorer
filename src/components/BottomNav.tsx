@@ -65,7 +65,7 @@ const BottomNav = () => {
             <Link
               key={item.label}
               to={item.path}
-              className={itemClasses}
+              className={cn(itemClasses, "relative")}
             >
               <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
               <span className="text-[10px] leading-none font-medium">{item.label}</span>

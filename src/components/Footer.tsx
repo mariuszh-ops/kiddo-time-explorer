@@ -55,7 +55,7 @@ const Footer = () => {
                   <Link
                     key={cat.slug}
                     to={`/atrakcje/${city}/${cat.slug}`}
-                    className="hover:text-foreground transition-colors"
+                    className="hover:text-[var(--color-brand-primary)] transition-colors duration-150"
                   >
                     {cat.label}
                   </Link>
