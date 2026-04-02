@@ -28,7 +28,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
       .filter(a => a.city === citySlug);
   }, [citySlug]);
 
-  const typeOptions = FILTER_OPTIONS.type;
+  const typeOptions = filterOptions.type;
   const allCount = cityActivities.length;
 
   return (
