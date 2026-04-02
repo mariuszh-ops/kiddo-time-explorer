@@ -99,9 +99,9 @@ const ActivityCard = ({
   return (
     <>
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
-        <article className="group cursor-pointer transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl active:scale-[0.98] active:opacity-90">
+        <article className="group cursor-pointer bg-[var(--color-bg-surface)] rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] overflow-hidden transition-all duration-200 ease-out hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 active:scale-[0.98]">
           {/* Image */}
-          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
+          <div className="relative aspect-[16/10] overflow-hidden transition-all duration-300 md:group-hover:brightness-105">
             <img
               src={imgSrc}
               alt={title}
