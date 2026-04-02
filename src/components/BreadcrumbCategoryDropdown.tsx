@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { getActivities, FILTER_OPTIONS } from "@/data/activities";
+import { getActivities, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface Props {
