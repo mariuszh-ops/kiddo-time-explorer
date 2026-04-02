@@ -10,7 +10,7 @@ interface BlogCardProps {
 const BlogCard = ({ post }: BlogCardProps) => {
   return (
     <Link to={`/inspiracje/${post.slug}`} className="group">
-      <article className="rounded-xl overflow-hidden border border-border bg-card transition-all hover:shadow-md hover:border-primary/20">
+      <article className="rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)] transition-all duration-200 ease-out hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5">
         <div className="aspect-[16/9] overflow-hidden">
           <img
             src={post.imageUrl}
