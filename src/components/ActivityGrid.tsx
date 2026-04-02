@@ -6,6 +6,7 @@ import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
 interface ActivityGridProps {
@@ -101,6 +102,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
 
   // Generate badge text based on filters
   const getBadgeText = (activityId: number): string | undefined => {
+    if (!FEATURES.SOCIAL_PROOF) return undefined;
     if (!badgeActivityIds.has(activityId)) return undefined;
     
     if (filters.age && filters.city) {
