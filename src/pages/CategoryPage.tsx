@@ -120,9 +120,7 @@ const CategoryPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to={`/atrakcje/${citySlug}`}>{cityLabel.nominative}</Link>
-                </BreadcrumbLink>
+                <BreadcrumbCityDropdown currentCitySlug={citySlug!} />
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
