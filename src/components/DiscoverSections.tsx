@@ -40,10 +40,6 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
       .slice(0, 6);
   }, [activities]);
 
-  const newlyAdded = useMemo(() => {
-    return activities.filter((a) => a.reviewCount === 0).slice(0, 4);
-  }, [activities]);
-
   const cityCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const a of activities) {
