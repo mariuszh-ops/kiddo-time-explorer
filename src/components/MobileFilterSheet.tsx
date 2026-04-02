@@ -138,7 +138,7 @@ const MobileFilterSheet = ({
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Szukaj aktywności..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-base bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-pill)] text-base bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] focus:outline-none focus:ring-[3px] focus:ring-[var(--color-brand-primary-soft)] focus:border-[var(--color-brand-primary)] transition-all duration-200"
               />
               {localSearch && (
                 <button
