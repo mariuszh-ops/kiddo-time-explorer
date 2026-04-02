@@ -64,7 +64,7 @@ const FilterBar = ({
   const isMobile = useIsMobile();
   
   // Sort is not counted as an active filter
-  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && Boolean(v)).length + (searchQuery.trim() ? 1 : 0);
+  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
 
   // Generate dynamic feedback text
