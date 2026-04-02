@@ -115,7 +115,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
       )}
 
       {/* Section 3: Category tiles */}
-      <section className="container py-6 md:py-8 border-b border-border/30">
+      <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
           {categoryConfigs
