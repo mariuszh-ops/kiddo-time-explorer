@@ -239,7 +239,7 @@ const FilterBar = ({
               ) : (
                 <button
                   onClick={() => setIsSearchExpanded(true)}
-                  className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)] transition-colors duration-150"
                   aria-label="Szukaj"
                 >
                   <Search className="w-4 h-4 text-muted-foreground" />
