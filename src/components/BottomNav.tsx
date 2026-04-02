@@ -43,8 +43,8 @@ const BottomNav = () => {
           const Icon = item.icon;
 
           const itemClasses = cn(
-            "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
-            active ? "text-primary" : "text-muted-foreground"
+            "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-150 ease-in-out active:scale-95",
+            active ? "text-[var(--color-brand-primary)]" : "text-[var(--color-text-muted)]"
           );
 
           // Profile tab: if not logged in, show auth modal instead of navigating
