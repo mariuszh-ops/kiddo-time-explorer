@@ -109,7 +109,7 @@ const CategoryPage = () => {
       <Header />
       <main className="pb-20 sm:pb-0">
         <div className="container py-6">
-          {/* Breadcrumbs */}
+          {/* Breadcrumbs: Strona główna > [City] > [Category ▾] */}
           <Breadcrumb className="mb-6">
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -119,20 +119,18 @@ const CategoryPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
+                <BreadcrumbLink asChild>
+                  <Link to={`/atrakcje/${citySlug}`}>{cityLabel.nominative}</Link>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
                 <BreadcrumbCategoryDropdown
                   citySlug={citySlug!}
-                  cityLabel={cityLabel.nominative}
                   activeCategorySlug={categorySlug}
+                  currentLabel={categorySlug ? config.label : "Wszystkie"}
                 />
               </BreadcrumbItem>
-              {categorySlug && (
-                <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>{config.label}</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </>
-              )}
             </BreadcrumbList>
           </Breadcrumb>
 
