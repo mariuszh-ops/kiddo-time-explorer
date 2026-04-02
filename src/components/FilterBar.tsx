@@ -77,8 +77,8 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
-          <div className="container py-3">
+        <section className="sticky top-0 z-40 border-b border-[var(--color-border-soft)]" style={{ background: 'var(--color-bg-surface)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
+          <div className="container" style={{ padding: 'var(--space-3) var(--space-4)' }}>
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
