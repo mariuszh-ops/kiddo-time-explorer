@@ -290,6 +290,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
               <MiniActivityCard
                 activity={activity}
                 isHighlighted={highlightedId === activity.id}
+                onCardClick={handleCardClick}
               />
             </div>
           ))}
