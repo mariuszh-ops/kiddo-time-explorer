@@ -8,20 +8,20 @@ const Footer = () => {
     <footer style={{ background: 'var(--color-bg-surface-muted)', padding: 'var(--space-12) 0' }} className="border-t border-[var(--color-border-soft)]">
       <div className="container" style={{ padding: '0 var(--space-6)' }}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
           </p>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link to="/regulamin" className="hover:text-foreground transition-colors">
+          <div className="flex gap-6 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
+            <Link to="/regulamin" className="hover:text-[var(--color-brand-primary)] transition-colors duration-150">
               Regulamin
             </Link>
-            <Link to="/polityka-prywatnosci" className="hover:text-foreground transition-colors">
+            <Link to="/polityka-prywatnosci" className="hover:text-[var(--color-brand-primary)] transition-colors duration-150">
               Polityka prywatności
             </Link>
-            <Link to="/kontakt" className="hover:text-foreground transition-colors">
+            <Link to="/kontakt" className="hover:text-[var(--color-brand-primary)] transition-colors duration-150">
               Kontakt
             </Link>
-            <Link to="/o-nas" className="hover:text-foreground transition-colors">
+            <Link to="/o-nas" className="hover:text-[var(--color-brand-primary)] transition-colors duration-150">
               O nas
             </Link>
             {FEATURES.BLOG && (
