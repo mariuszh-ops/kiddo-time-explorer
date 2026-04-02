@@ -250,10 +250,10 @@ const FilterBar = ({
 
           {/* Map/Grid toggle - desktop */}
           {FEATURES.MAP_VIEW && onViewModeChange && (
-            <button
-              onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors whitespace-nowrap ml-auto"
-              aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+              <button
+                onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+                className="inline-flex items-center gap-1.5 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface-muted)] transition-colors duration-150 whitespace-nowrap ml-auto"
+                aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
             >
               {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
               {viewMode === "map" ? "Lista" : "Mapa"}
