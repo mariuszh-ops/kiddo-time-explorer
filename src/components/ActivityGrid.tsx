@@ -21,8 +21,28 @@ interface ActivityGridProps {
 
 const ITEMS_PER_PAGE = 18;
 
+/** Return current grid column count based on Tailwind breakpoints */
+const useGridCols = () => {
+  const [cols, setCols] = useState(4);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setCols(w >= 1024 ? 4 : w >= 768 ? 3 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return cols;
+};
+
+/** Round n up to the nearest multiple of cols, clamped to max */
+const roundUp = (n: number, cols: number, max: number) =>
+  Math.min(Math.ceil(n / cols) * cols, max);
+
 const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {} }: ActivityGridProps) => {
-  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
+  const cols = useGridCols();
 
   // Determine if social proof should be shown
   const showSocialProof = Boolean(filters.city && (filters.age || (filters.type && filters.type.length > 0)));
@@ -39,12 +59,13 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
 
   // Reset visible count when activities change (filter applied)
   useEffect(() => {
-    setVisibleCount(ITEMS_PER_PAGE);
+    setRawVisibleCount(ITEMS_PER_PAGE);
   }, [activities]);
 
+  const visibleCount = roundUp(rawVisibleCount, cols, activities.length);
   const visibleActivities = activities.slice(0, visibleCount);
   const hasMore = visibleCount < activities.length;
-  const remainingCount = Math.min(ITEMS_PER_PAGE, activities.length - visibleCount);
+  const remainingCount = activities.length - visibleCount;
 
   // Show error state if there's an error
   if (hasError && onRetry) {
@@ -52,7 +73,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   }
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + ITEMS_PER_PAGE, activities.length));
+    setRawVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
 
   if (activities.length === 0) {
