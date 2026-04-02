@@ -25,10 +25,10 @@ const cityMeta: { value: string; label: string; bgColor: string; emoji: string }
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
   <div className="mb-5">
-    <h2 className="text-xl font-serif text-foreground flex items-center gap-2">
+    <h2 className="flex items-center gap-2" style={{ font: 'var(--text-heading-lg)', color: 'var(--color-text-primary)' }}>
       <span>{emoji}</span> {title}
     </h2>
-    <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+    <p className="mt-1" style={{ font: 'var(--text-body-sm)', color: 'var(--color-text-secondary)' }}>{subtitle}</p>
   </div>
 );
 

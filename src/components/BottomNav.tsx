@@ -67,8 +67,9 @@ const BottomNav = () => {
               to={item.path}
               className={cn(itemClasses, "relative")}
             >
+              {active && <span className="absolute -top-0.5 w-5 h-0.5 rounded-full bg-[var(--color-brand-primary)]" />}
               <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
-              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+              <span style={{ font: 'var(--text-caption)' }} className="leading-none">{item.label}</span>
             </Link>
           );
         })}
