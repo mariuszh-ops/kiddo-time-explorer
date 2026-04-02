@@ -76,8 +76,8 @@ const Header = () => {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground",
-                      isActive("/profile") && "text-foreground bg-accent"
+                      "text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150",
+                      isActive("/profile") && "text-[var(--color-brand-primary)] bg-[var(--color-brand-primary-soft)]"
                     )}
                   >
                     <User className="w-5 h-5" />
