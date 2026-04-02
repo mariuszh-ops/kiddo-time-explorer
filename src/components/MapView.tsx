@@ -49,17 +49,18 @@ const createPopupContent = (activity: Activity) => {
 function MapMarkers({
   activities,
   onMarkerClick,
+  markersRef,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
+  markersRef: React.MutableRefObject<Record<number, L.Marker>>;
 }) {
   const map = useMap();
-  const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     // Clear old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
+    Object.values(markersRef.current).forEach((m) => m.remove());
+    markersRef.current = {};
 
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
@@ -73,15 +74,29 @@ function MapMarkers({
         });
 
       marker.on("click", () => onMarkerClick(activity.id));
-      markersRef.current.push(marker);
+      markersRef.current[activity.id] = marker;
     });
 
     return () => {
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
+      Object.values(markersRef.current).forEach((m) => m.remove());
+      markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick]);
+  }, [activities, map, onMarkerClick, markersRef]);
 
+  return null;
+}
+
+// Imperatively fly to a location and open popup
+function FlyToHandler({ targetActivity, markersRef }: { targetActivity: Activity | null; markersRef: React.MutableRefObject<Record<number, L.Marker>> }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!targetActivity) return;
+    map.flyTo([targetActivity.latitude, targetActivity.longitude], 15, { duration: 0.8 });
+    const marker = markersRef.current[targetActivity.id];
+    if (marker) {
+      setTimeout(() => marker.openPopup(), 400);
+    }
+  }, [targetActivity, map, markersRef]);
   return null;
 }
 
