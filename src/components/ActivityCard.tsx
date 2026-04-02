@@ -156,9 +156,9 @@ const ActivityCard = ({
             <div className="flex items-center gap-2">
               {hasReviews ? (
                 <>
-                  <div className="flex items-center gap-1 bg-[var(--color-accent-warm-soft)] px-2 py-1 rounded-[var(--radius-sm)]">
-                    <Star className="w-4 h-4 fill-[#946B1D] text-[#946B1D]" />
-                    <span className="font-bold text-[#946B1D] text-xs">{rating.toFixed(1)}</span>
+                  <div className="flex items-center gap-1 bg-[var(--color-brand-primary-soft)] px-2 py-1 rounded-[var(--radius-sm)]">
+                    <Star className="w-4 h-4 fill-[var(--color-brand-primary)] text-[var(--color-brand-primary)]" />
+                    <span className="font-bold text-[var(--color-brand-primary)] text-xs">{rating.toFixed(1)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
                     ({reviewCount} opinii)
