@@ -151,36 +151,6 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
           </div>
         </section>
       )}
-
-      {/* Section 5: Newly Added */}
-      {newlyAdded.length > 0 && (
-        <section className="container py-6 md:py-8">
-          <SectionHeader emoji="✨" title="Nowo dodane" subtitle="Bądź pierwszy, który oceni" />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {newlyAdded.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                id={activity.id}
-                title={activity.title}
-                location={activity.location}
-                rating={activity.rating}
-                reviewCount={activity.reviewCount}
-                ageRange={activity.ageRange}
-                matchPercentage={activity.matchPercentage}
-                imageUrl={activity.imageUrl}
-                tags={activity.tags}
-                type={activity.type}
-                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
-                eventDate={activity.eventDate}
-                slug={activity.slug}
-                amenities={activity.amenities}
-                priceLevel={activity.priceLevel}
-                isRecommended={activity.isRecommended}
-              />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 };
