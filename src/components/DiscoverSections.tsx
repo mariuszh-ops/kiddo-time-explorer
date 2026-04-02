@@ -86,7 +86,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 2: Top Rated */}
       {topRated.length > 0 && (
-        <section className="container py-6 md:py-8 border-b border-border/30">
+        <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="⭐" title="Najlepiej oceniane" subtitle="Sprawdzone przez rodziców" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {topRated.map((activity) => (
