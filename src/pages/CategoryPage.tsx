@@ -23,6 +23,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
+import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 
 const BASE_URL = "https://familyfun.pl";
 
@@ -119,9 +120,7 @@ const CategoryPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link to={`/atrakcje/${citySlug}`}>{cityLabel.nominative}</Link>
-                </BreadcrumbLink>
+                <BreadcrumbCityDropdown currentCitySlug={citySlug!} />
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
