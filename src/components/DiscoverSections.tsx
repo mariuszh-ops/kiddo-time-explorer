@@ -53,7 +53,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
   }, [activities]);
 
   return (
-    <div className="bg-background">
+    <div style={{ background: 'var(--color-bg-app)' }}>
       {/* Section 1: Discover by City */}
       {(() => {
         const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
