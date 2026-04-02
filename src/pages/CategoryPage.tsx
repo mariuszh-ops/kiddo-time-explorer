@@ -22,6 +22,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
 
 const BASE_URL = "https://familyfun.pl";
 
@@ -117,22 +118,20 @@ const CategoryPage = () => {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-              {categorySlug ? (
+              <BreadcrumbItem>
+                <BreadcrumbCategoryDropdown
+                  citySlug={citySlug!}
+                  cityLabel={cityLabel.nominative}
+                  activeCategorySlug={categorySlug}
+                />
+              </BreadcrumbItem>
+              {categorySlug && (
                 <>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink asChild>
-                      <Link to={`/atrakcje/${citySlug}`}>{cityLabel.nominative}</Link>
-                    </BreadcrumbLink>
-                  </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
                     <BreadcrumbPage>{config.label}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
-              ) : (
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{cityLabel.nominative}</BreadcrumbPage>
-                </BreadcrumbItem>
               )}
             </BreadcrumbList>
           </Breadcrumb>
