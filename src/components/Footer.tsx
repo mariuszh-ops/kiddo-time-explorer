@@ -5,8 +5,8 @@ import { categoryConfigs } from "@/data/categoryPages";
 
 const Footer = () => {
   return (
-    <footer className="bg-card border-t border-border py-8">
-      <div className="container">
+    <footer style={{ background: 'var(--color-bg-surface-muted)', padding: 'var(--space-12) 0' }} className="border-t border-[var(--color-border-soft)]">
+      <div className="container" style={{ padding: '0 var(--space-6)' }}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <p className="text-sm text-muted-foreground">
             © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
