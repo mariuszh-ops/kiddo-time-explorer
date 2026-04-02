@@ -25,7 +25,7 @@ const Footer = () => {
               O nas
             </Link>
             {FEATURES.BLOG && (
-              <Link to="/inspiracje" className="hover:text-foreground transition-colors">
+              <Link to="/inspiracje" className="hover:text-[var(--color-brand-primary)] transition-colors duration-150">
                 Inspiracje
               </Link>
             )}
