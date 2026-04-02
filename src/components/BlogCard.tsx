@@ -18,7 +18,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
-        <div className="p-4 space-y-2.5">
+        <div className="p-[var(--space-4)] space-y-2.5">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-xs font-medium">
               {post.category}
