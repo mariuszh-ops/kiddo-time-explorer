@@ -217,7 +217,7 @@ const CityFilterDropdown = ({
             : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
         )}
       >
-        <span className="max-w-[160px] truncate">{displayLabel}</span>
+        <span className="max-w-[280px] truncate">{displayLabel}</span>
         {hasSelection ? (
           <X
             className="w-3.5 h-3.5 ml-0.5 hover:scale-110 transition-transform"

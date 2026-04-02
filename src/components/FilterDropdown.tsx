@@ -143,7 +143,7 @@ const FilterDropdown = ({
               : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
         )}
       >
-        <span className="max-w-[120px] truncate">{displayLabel}</span>
+        <span className="max-w-[280px] truncate">{displayLabel}</span>
         {selectedValue ? (
           <X
             className="w-3.5 h-3.5 ml-0.5 hover:scale-110 transition-transform"
