@@ -68,7 +68,8 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
-                    className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                    className="group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    style={{ backgroundColor: city.bg }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-foreground">{city.label}</h3>
