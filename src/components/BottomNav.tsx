@@ -56,7 +56,7 @@ const BottomNav = () => {
                 className={cn(itemClasses, "text-muted-foreground")}
               >
                 <Icon className="w-[22px] h-[22px]" strokeWidth={1.5} />
-                <span className="text-[10px] leading-none font-medium">{item.label}</span>
+                <span style={{ font: 'var(--text-caption)' }} className="leading-none">{item.label}</span>
               </button>
             );
           }
