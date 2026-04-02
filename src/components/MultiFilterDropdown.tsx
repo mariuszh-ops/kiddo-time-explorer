@@ -126,7 +126,7 @@ const MultiFilterDropdown = ({
           "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
           "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
           hasSelection
-            ? "bg-[#DCEEDB] text-[#2F6B4F] border-[#2F6B4F] font-semibold"
+            ? "bg-primary text-primary-foreground border-primary font-semibold"
             : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
         )}
       >

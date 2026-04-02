@@ -32,7 +32,7 @@ const DecisionChips = ({ filters, onUpdateFilter }: DecisionChipsProps) => {
                 "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm whitespace-nowrap shrink-0",
                 "transition-all duration-150 ease-in-out",
                 isActive
-                  ? "bg-[#DCEEDB] text-[#2F6B4F] border border-[#2F6B4F] font-semibold"
+                  ? "bg-primary text-primary-foreground border border-primary font-semibold"
                   : "bg-secondary text-foreground border border-border hover:bg-muted"
               )}
             >
