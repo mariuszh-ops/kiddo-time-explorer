@@ -17,6 +17,8 @@ const CITY_DISPLAY_NAMES: Record<string, string> = {
 };
 
 const SocialProofBanner = ({ filters, resultCount }: SocialProofBannerProps) => {
+  if (!FEATURES.SOCIAL_PROOF) return null;
+
   // Only show if city is selected AND (age OR type is selected)
   const hasCity = Boolean(filters.city);
   const hasAge = Boolean(filters.age);
