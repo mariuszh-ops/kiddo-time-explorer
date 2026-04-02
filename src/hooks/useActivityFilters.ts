@@ -48,13 +48,13 @@ export function useActivityFilters() {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
 
-  const updateFilter = useCallback((key: keyof Filters, value: string | number | undefined) => {
+  const updateFilter = useCallback((key: keyof Filters, value: string | string[] | number | undefined) => {
     setFilters((prev) => {
       const newFilters = { ...prev };
-      if (value === undefined) {
+      if (value === undefined || (Array.isArray(value) && value.length === 0)) {
         delete newFilters[key];
       } else {
-        // @ts-ignore - we handle both string and number values
+        // @ts-ignore - we handle string, string[], and number values
         newFilters[key] = value;
       }
       // Clear distance filter when city is cleared
@@ -64,6 +64,24 @@ export function useActivityFilters() {
       // Set default distance when city is first selected
       if (key === "city" && value !== undefined && prev.distance === undefined) {
         newFilters.distance = 15; // Default 15 km
+      }
+      return newFilters;
+    });
+  }, []);
+
+  // Toggle a single value in an array filter (for multi-select)
+  const toggleArrayFilter = useCallback((key: keyof Filters, value: string) => {
+    setFilters((prev) => {
+      const current = (prev[key] as string[] | undefined) || [];
+      const next = current.includes(value)
+        ? current.filter(v => v !== value)
+        : [...current, value];
+      const newFilters = { ...prev };
+      if (next.length === 0) {
+        delete newFilters[key];
+      } else {
+        // @ts-ignore
+        newFilters[key] = next;
       }
       return newFilters;
     });
