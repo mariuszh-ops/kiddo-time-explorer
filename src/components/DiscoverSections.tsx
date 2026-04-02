@@ -129,11 +129,12 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 <Link
                   key={cat.slug}
                   to={href}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                  className="group relative overflow-hidden rounded-[var(--radius-xl)] p-[var(--space-5)] text-left transition-all duration-200 ease-out hover:brightness-[0.97] hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ backgroundColor: ['#E8F0E4','#DFF0EC','#E4EEF5','#F2EBDD','#F5EFCF','#F0E6DA','#E6EDDF'][categoryConfigs.filter(c => c.slug !== "").indexOf(cat) % 7] }}
                 >
                   <span className="text-xl mb-2 block">{cat.emoji}</span>
-                  <h3 className="font-semibold text-foreground text-sm">{cat.label}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+                  <h3 className="text-[var(--color-text-primary)]" style={{ font: 'var(--text-heading-md)' }}>{cat.label}</h3>
+                  <p className="text-[var(--color-text-secondary)] mt-0.5" style={{ font: 'var(--text-caption)' }}>{count} atrakcji</p>
                 </Link>
               );
             })}

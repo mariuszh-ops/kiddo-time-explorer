@@ -28,13 +28,13 @@ const BlogCard = ({ post }: BlogCardProps) => {
               {post.readTimeMinutes} min
             </span>
           </div>
-          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="text-[var(--color-text-primary)] leading-snug line-clamp-2 group-hover:text-primary transition-colors" style={{ font: 'var(--text-heading-md)' }}>
             {post.title}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2">
+          <p className="text-[var(--color-text-secondary)] line-clamp-2" style={{ font: 'var(--text-body-sm)' }}>
             {post.excerpt}
           </p>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[var(--color-text-muted)]" style={{ font: 'var(--text-caption)' }}>
             {new Date(post.publishedAt).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>

@@ -182,12 +182,12 @@ const ActivityCard = ({
               )}
             </div>
 
-            <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="font-semibold text-[var(--color-text-primary)] leading-snug line-clamp-2 group-hover:text-primary transition-colors" style={{ font: 'var(--text-heading-md)' }}>
               {title}
             </h3>
 
             <div className="flex items-center gap-2">
-              <p className="text-sm text-muted-foreground line-clamp-1 flex-1">
+              <p className="line-clamp-1 flex-1 text-[var(--color-text-secondary)]" style={{ font: 'var(--text-body-sm)' }}>
                 {location}
               </p>
               {distanceKm != null && (
