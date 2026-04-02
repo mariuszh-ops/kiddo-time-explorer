@@ -6,6 +6,7 @@ import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
 interface ActivityGridProps {
