@@ -73,7 +73,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   }
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => Math.min(prev + ITEMS_PER_PAGE, activities.length));
+    setRawVisibleCount((prev) => prev + ITEMS_PER_PAGE);
   };
 
   if (activities.length === 0) {
