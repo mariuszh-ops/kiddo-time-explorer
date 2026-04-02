@@ -155,7 +155,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 5: Newly Added */}
       {newlyAdded.length > 0 && (
-        <section className="container py-6 md:py-8">
+        <section className="container" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="✨" title="Nowo dodane" subtitle="Bądź pierwszy, który oceni" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {newlyAdded.map((activity) => (
