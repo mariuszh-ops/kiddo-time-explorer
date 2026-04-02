@@ -249,10 +249,10 @@ const MobileFilterSheet = ({
                   key={option.value}
                   onClick={() => onUpdateFilter("sort", option.value)}
                   className={cn(
-                    "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-150",
                     (filters.sort || "rating") === option.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
+                      ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] border border-[var(--color-brand-primary-soft)] font-semibold"
+                      : "bg-[var(--color-bg-surface-soft)] text-[var(--color-text-secondary)] border border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)]"
                   )}
                 >
                   {option.label}
