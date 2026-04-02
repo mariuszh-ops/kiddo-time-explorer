@@ -33,7 +33,8 @@ interface MobileFilterSheetProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
+  onToggleTypeFilter: (value: string) => void;
   onClearAll: () => void;
 }
 
