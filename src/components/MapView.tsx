@@ -187,7 +187,9 @@ interface MapViewProps {
 const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
+  const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const markersRef = useRef<Record<number, L.Marker>>({});
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
@@ -199,6 +201,11 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     if (card) {
       card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
+  }, []);
+
+  const handleCardClick = useCallback((activity: Activity) => {
+    setHighlightedId(activity.id);
+    setFlyTarget(activity);
   }, []);
 
   if (isMobile) {
