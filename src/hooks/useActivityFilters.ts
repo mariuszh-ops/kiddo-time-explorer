@@ -132,9 +132,9 @@ export function useActivityFilters() {
       }
     }
 
-    // Filter by type
-    if (filters.type) {
-      result = result.filter((a) => a.type === filters.type);
+    // Filter by type (multi-select OR logic)
+    if (filters.type && filters.type.length > 0) {
+      result = result.filter((a) => filters.type!.includes(a.type));
     }
 
     // Filter by indoor/outdoor
