@@ -143,7 +143,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 4: Blog */}
       {FEATURES.BLOG && blogPosts.length > 0 && (
-        <section className="container py-6 md:py-8 border-b border-border/30">
+        <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {blogPosts.slice(0, 3).map((post) => (
