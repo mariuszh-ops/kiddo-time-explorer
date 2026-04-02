@@ -13,14 +13,14 @@ interface DiscoverSectionsProps {
   onSelectCity: (city: string) => void;
 }
 
-const cityMeta: { value: string; label: string; gradient: string; emoji: string }[] = [
-  { value: "warszawa", label: "Warszawa i okolice", gradient: "from-rose-500/10 to-orange-500/10", emoji: "🧜‍♀️" },
-  { value: "krakow", label: "Kraków i okolice", gradient: "from-blue-500/10 to-indigo-500/10", emoji: "🐉" },
-  { value: "wroclaw", label: "Wrocław i okolice", gradient: "from-emerald-500/10 to-teal-500/10", emoji: "🤴" },
-  { value: "trojmiasto", label: "Trójmiasto", gradient: "from-cyan-500/10 to-sky-500/10", emoji: "⚓" },
-  { value: "poznan", label: "Poznań i okolice", gradient: "from-amber-500/10 to-yellow-500/10", emoji: "🐐" },
-  { value: "slask", label: "Aglomeracja Śląska", gradient: "from-violet-500/10 to-purple-500/10", emoji: "⛏️" },
-  { value: "lodz", label: "Łódź i okolice", gradient: "from-pink-500/10 to-rose-500/10", emoji: "🎬" },
+const cityMeta: { value: string; label: string; bgColor: string; emoji: string }[] = [
+  { value: "warszawa", label: "Warszawa i okolice", bgColor: "#E8F0E4", emoji: "🧜‍♀️" },
+  { value: "krakow", label: "Kraków i okolice", bgColor: "#DFF0EC", emoji: "🐉" },
+  { value: "wroclaw", label: "Wrocław i okolice", bgColor: "#E4EEF5", emoji: "🤴" },
+  { value: "trojmiasto", label: "Trójmiasto", bgColor: "#F2EBDD", emoji: "⚓" },
+  { value: "poznan", label: "Poznań i okolice", bgColor: "#F5EFCF", emoji: "🐐" },
+  { value: "slask", label: "Aglomeracja Śląska", bgColor: "#F0E6DA", emoji: "⛏️" },
+  { value: "lodz", label: "Łódź i okolice", bgColor: "#E6EDDF", emoji: "🎬" },
 ];
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
@@ -68,11 +68,12 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
-                    className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                    className="group relative overflow-hidden rounded-[var(--radius-xl)] p-[var(--space-5)] text-left transition-all duration-200 ease-out hover:brightness-[0.97] hover:scale-[1.02] active:scale-[0.98]"
+                    style={{ backgroundColor: city.bgColor }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
-                    <h3 className="font-semibold text-foreground">{city.label}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <h3 className="text-[var(--color-text-primary)]" style={{ font: 'var(--text-heading-md)' }}>{city.label}</h3>
+                    <p className="text-[var(--color-text-secondary)] mt-0.5" style={{ font: 'var(--text-caption)' }}>
                       {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
                     </p>
                   </button>
@@ -128,11 +129,12 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                 <Link
                   key={cat.slug}
                   to={href}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                  className="group relative overflow-hidden rounded-[var(--radius-xl)] p-[var(--space-5)] text-left transition-all duration-200 ease-out hover:brightness-[0.97] hover:scale-[1.02] active:scale-[0.98]"
+                  style={{ backgroundColor: ['#E8F0E4','#DFF0EC','#E4EEF5','#F2EBDD','#F5EFCF','#F0E6DA','#E6EDDF'][categoryConfigs.filter(c => c.slug !== "").indexOf(cat) % 7] }}
                 >
                   <span className="text-xl mb-2 block">{cat.emoji}</span>
-                  <h3 className="font-semibold text-foreground text-sm">{cat.label}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+                  <h3 className="text-[var(--color-text-primary)]" style={{ font: 'var(--text-heading-md)' }}>{cat.label}</h3>
+                  <p className="text-[var(--color-text-secondary)] mt-0.5" style={{ font: 'var(--text-caption)' }}>{count} atrakcji</p>
                 </Link>
               );
             })}
