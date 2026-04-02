@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
 import { getActivities } from "@/data/activities";
@@ -7,14 +7,14 @@ import { FEATURES } from "@/lib/featureFlags";
 
 interface Props {
   citySlug: string;
-  cityLabel: string;
   activeCategorySlug?: string;
+  /** Label to show for "all" when no category is selected */
+  currentLabel: string;
 }
 
-const BreadcrumbCategoryDropdown = ({ citySlug, cityLabel, activeCategorySlug }: Props) => {
+const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -32,20 +32,13 @@ const BreadcrumbCategoryDropdown = ({ citySlug, cityLabel, activeCategorySlug }:
   const subCategories = categoryConfigs.filter(c => c.slug !== "");
   const allCount = getCategoryCount(allActivities, citySlug, allConfig);
 
-  const handleCityClick = () => {
-    if (activeCategorySlug) {
-      navigate(`/atrakcje/${citySlug}`);
-    }
-    setOpen(o => !o);
-  };
-
   return (
     <div ref={ref} className="relative inline-flex items-center">
       <button
-        onClick={handleCityClick}
-        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-sm transition-all duration-150 hover:bg-[#F3F7F2] hover:underline cursor-pointer"
+        onClick={() => setOpen(o => !o)}
+        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-normal text-foreground transition-all duration-150 hover:bg-[#F3F7F2] hover:underline cursor-pointer"
       >
-        {cityLabel}
+        {currentLabel}
         <ChevronDown className="h-3.5 w-3.5 shrink-0" />
       </button>
 
