@@ -197,7 +197,7 @@ export function useActivityFilters() {
   // Calculate counts for each filter option
   // Contextual: shows how many results will remain if you select this option
   const filterCounts = useMemo(() => {
-    const hasAnyFilter = Boolean(Object.values(filters).some(Boolean) || searchQuery.trim());
+    const hasAnyFilter = Boolean(Object.entries(filters).some(([_, v]) => Array.isArray(v) ? v.length > 0 : Boolean(v)) || searchQuery.trim());
     
     // Helper: Apply all filters except one, then count how many match a specific value
     const getCountForFilter = (
