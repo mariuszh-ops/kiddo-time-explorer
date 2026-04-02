@@ -129,6 +129,7 @@ const FilterBar = ({
           onSearchChange={onSearchChange}
           filterCounts={filterCounts}
           onUpdateFilter={onUpdateFilter}
+          onToggleTypeFilter={onToggleTypeFilter}
           onClearAll={onClearAll}
         />
       </>
