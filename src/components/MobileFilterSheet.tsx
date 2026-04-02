@@ -89,7 +89,7 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
-  const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && Boolean(v)).length > 0 || searchQuery.trim().length > 0;
+  const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
   // Sync local distance when filters change
