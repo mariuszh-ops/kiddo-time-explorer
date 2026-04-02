@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FilterDropdown from "@/components/FilterDropdown";
+import MultiFilterDropdown from "@/components/MultiFilterDropdown";
 import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
@@ -26,7 +27,8 @@ interface FilterBarProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
+  onToggleTypeFilter: (value: string) => void;
   onClearAll: () => void;
   viewMode?: "grid" | "map";
   onViewModeChange?: (mode: "grid" | "map") => void;
@@ -52,6 +54,7 @@ const FilterBar = ({
   onSearchChange,
   filterCounts,
   onUpdateFilter,
+  onToggleTypeFilter,
   onClearAll,
   viewMode,
   onViewModeChange,
@@ -61,7 +64,7 @@ const FilterBar = ({
   const isMobile = useIsMobile();
   
   // Sort is not counted as an active filter
-  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && Boolean(v)).length + (searchQuery.trim() ? 1 : 0);
+  const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
 
   // Generate dynamic feedback text
@@ -126,6 +129,7 @@ const FilterBar = ({
           onSearchChange={onSearchChange}
           filterCounts={filterCounts}
           onUpdateFilter={onUpdateFilter}
+          onToggleTypeFilter={onToggleTypeFilter}
           onClearAll={onClearAll}
         />
       </>
@@ -159,12 +163,13 @@ const FilterBar = ({
             onSelect={(value) => onUpdateFilter("age", value)}
           />
           
-          <FilterDropdown
+          <MultiFilterDropdown
             label="Kategoria"
             options={filterCounts.type}
-            selectedValue={filters.type}
+            selectedValues={filters.type || []}
             hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("type", value)}
+            onToggle={onToggleTypeFilter}
+            onClear={() => onUpdateFilter("type", undefined)}
           />
           
           <FilterDropdown

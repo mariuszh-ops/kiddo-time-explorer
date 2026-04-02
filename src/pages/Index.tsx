@@ -25,7 +25,7 @@ const Index = () => {
   const { isScrollRestored } = useScrollPosition();
   
   // Initialize filters without initial city - city is set explicitly on explore
-  const { filters, searchQuery, setSearchQuery, updateFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
+  const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
   // View mode: grid or map
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
@@ -122,6 +122,7 @@ const Index = () => {
           onSearchChange={setSearchQuery}
           filterCounts={filterCounts}
           onUpdateFilter={updateFilter}
+          onToggleTypeFilter={(value) => toggleArrayFilter("type", value)}
           onClearAll={clearAllFilters}
           viewMode={viewMode}
           onViewModeChange={setViewMode}

@@ -33,7 +33,8 @@ interface MobileFilterSheetProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
+  onToggleTypeFilter: (value: string) => void;
   onClearAll: () => void;
 }
 
@@ -75,6 +76,42 @@ const FilterSection = ({
   );
 };
 
+const MultiFilterSection = ({
+  title,
+  options,
+  selectedValues,
+  onToggle,
+}: {
+  title: string;
+  options: FilterOption[];
+  selectedValues: string[];
+  onToggle: (value: string) => void;
+}) => {
+  return (
+    <div className="py-4 border-b border-border last:border-b-0">
+      <h3 className="text-base font-semibold text-foreground mb-3">{title}</h3>
+      <div className="space-y-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => onToggle(option.value)}
+            className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={selectedValues.includes(option.value)}
+                className="pointer-events-none"
+              />
+              <span className="text-sm text-foreground">{option.label}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">({option.count})</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const MobileFilterSheet = ({
   isOpen,
   onClose,
@@ -83,11 +120,12 @@ const MobileFilterSheet = ({
   onSearchChange,
   filterCounts,
   onUpdateFilter,
+  onToggleTypeFilter,
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
-  const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && Boolean(v)).length > 0 || searchQuery.trim().length > 0;
+  const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
   // Sync local distance when filters change
@@ -202,11 +240,11 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("age", value)}
           />
           
-          <FilterSection
+          <MultiFilterSection
             title="Kategoria"
             options={filterCounts.type}
-            selectedValue={filters.type}
-            onSelect={(value) => onUpdateFilter("type", value)}
+            selectedValues={filters.type || []}
+            onToggle={onToggleTypeFilter}
           />
           
           <FilterSection

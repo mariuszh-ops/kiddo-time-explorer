@@ -19,7 +19,7 @@ const SocialProofBanner = ({ filters, resultCount }: SocialProofBannerProps) => 
   // Only show if city is selected AND (age OR type is selected)
   const hasCity = Boolean(filters.city);
   const hasAge = Boolean(filters.age);
-  const hasType = Boolean(filters.type);
+  const hasType = Boolean(filters.type && filters.type.length > 0);
   
   if (!hasCity || (!hasAge && !hasType)) {
     return null;
@@ -38,8 +38,8 @@ const SocialProofBanner = ({ filters, resultCount }: SocialProofBannerProps) => 
   const ageLabel = ageOption?.label || "";
 
   // Get type label
-  const typeOption = filters.type
-    ? filterOptions.type.find(o => o.value === filters.type)
+  const typeOption = filters.type?.length === 1
+    ? filterOptions.type.find(o => o.value === filters.type![0])
     : null;
   const typeLabel = typeOption?.label?.toLowerCase() || "";
 
