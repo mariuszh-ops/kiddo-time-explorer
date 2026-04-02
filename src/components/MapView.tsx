@@ -328,17 +328,19 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 function MiniActivityCard({
   activity,
   isHighlighted,
+  onCardClick,
 }: {
   activity: Activity;
   isHighlighted: boolean;
+  onCardClick: (activity: Activity) => void;
 }) {
   return (
-    <Link
-      to={`/atrakcje/${activity.slug}`}
+    <div
+      onClick={() => onCardClick(activity)}
       className={cn(
-        "flex gap-3 p-2 rounded-xl border bg-card transition-all hover:shadow-md",
+        "flex gap-3 p-2 rounded-xl border bg-card transition-all hover:shadow-md cursor-pointer",
         isHighlighted
-          ? "border-primary ring-2 ring-primary/20 shadow-md"
+          ? "border-l-[3px] border-l-[#2F6B4F] bg-[#DCEEDB]/40 border-t-border border-r-border border-b-border shadow-md"
           : "border-border"
       )}
     >
@@ -349,9 +351,13 @@ function MiniActivityCard({
         loading="lazy"
       />
       <div className="flex-1 min-w-0 py-0.5">
-        <h3 className="font-semibold text-sm text-foreground truncate">
+        <Link
+          to={`/atrakcje/${activity.slug}`}
+          onClick={(e) => e.stopPropagation()}
+          className="font-semibold text-sm text-foreground truncate block hover:underline"
+        >
           {activity.title}
-        </h3>
+        </Link>
         <p className="text-xs text-muted-foreground truncate mt-0.5">
           {activity.location}
         </p>
@@ -363,7 +369,7 @@ function MiniActivityCard({
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
