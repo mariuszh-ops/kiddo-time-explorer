@@ -59,7 +59,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
         const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
         if (visibleCities.length <= 1) return null;
         return (
-          <section className="container py-6 md:py-8 border-b border-border/30">
+          <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
             <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {visibleCities.map((city) => {
