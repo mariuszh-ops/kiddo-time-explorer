@@ -29,9 +29,10 @@ const DecisionChips = ({ filters, onUpdateFilter }: DecisionChipsProps) => {
                 onUpdateFilter(chip.filterKey, isActive ? undefined : chip.value)
               }
               className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors shrink-0",
+                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm whitespace-nowrap shrink-0",
+                "transition-all duration-150 ease-in-out",
                 isActive
-                  ? "bg-primary text-primary-foreground border border-primary"
+                  ? "bg-[#DCEEDB] text-[#2F6B4F] border border-[#2F6B4F] font-semibold"
                   : "bg-secondary text-foreground border border-border hover:bg-muted"
               )}
             >
