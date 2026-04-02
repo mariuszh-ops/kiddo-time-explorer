@@ -68,11 +68,12 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
-                    className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br ${city.gradient} p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                    className="group relative overflow-hidden rounded-[var(--radius-xl)] p-[var(--space-5)] text-left transition-all duration-200 ease-out hover:brightness-[0.97] hover:scale-[1.02] active:scale-[0.98]"
+                    style={{ backgroundColor: city.bgColor }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
-                    <h3 className="font-semibold text-foreground">{city.label}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">
+                    <h3 className="text-[var(--color-text-primary)]" style={{ font: 'var(--text-heading-md)' }}>{city.label}</h3>
+                    <p className="text-[var(--color-text-secondary)] mt-0.5" style={{ font: 'var(--text-caption)' }}>
                       {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
                     </p>
                   </button>
