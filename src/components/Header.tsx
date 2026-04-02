@@ -61,8 +61,8 @@ const Header = () => {
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "gap-2 text-muted-foreground hover:text-foreground",
-                      isActive("/my-places") && "text-foreground bg-accent"
+                      "group gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150",
+                      isActive("/my-places") && "text-[var(--color-brand-primary)] bg-[var(--color-brand-primary-soft)]"
                     )}
                   >
                     <Heart className="w-4 h-4" />
