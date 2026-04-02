@@ -26,8 +26,8 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container flex items-center justify-between h-14 md:h-16">
+      <header className="sticky top-0 z-50 border-b border-[var(--color-border-soft)]" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+        <div className="container flex items-center justify-between h-14 md:h-16" style={{ padding: '0 var(--space-4)' }}>
           {/* Logo */}
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px]">
             <img 
