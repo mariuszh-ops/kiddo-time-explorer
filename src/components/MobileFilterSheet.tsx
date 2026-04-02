@@ -138,7 +138,7 @@ const MobileFilterSheet = ({
                 value={localSearch}
                 onChange={(e) => setLocalSearch(e.target.value)}
                 placeholder="Szukaj aktywności..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-base bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-[var(--radius-pill)] text-base bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] focus:outline-none focus:ring-[3px] focus:ring-[var(--color-brand-primary-soft)] focus:border-[var(--color-brand-primary)] transition-all duration-200"
               />
               {localSearch && (
                 <button
@@ -249,10 +249,10 @@ const MobileFilterSheet = ({
                   key={option.value}
                   onClick={() => onUpdateFilter("sort", option.value)}
                   className={cn(
-                    "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                    "px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-150",
                     (filters.sort || "rating") === option.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
+                      ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] border border-[var(--color-brand-primary-soft)] font-semibold"
+                      : "bg-[var(--color-bg-surface-soft)] text-[var(--color-text-secondary)] border border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)]"
                   )}
                 >
                   {option.label}

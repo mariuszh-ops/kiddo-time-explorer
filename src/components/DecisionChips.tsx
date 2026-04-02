@@ -29,10 +29,11 @@ const DecisionChips = ({ filters, onUpdateFilter }: DecisionChipsProps) => {
                 onUpdateFilter(chip.filterKey, isActive ? undefined : chip.value)
               }
               className={cn(
-                "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors shrink-0",
+                "inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] text-sm whitespace-nowrap transition-all duration-150 shrink-0",
+                "px-[var(--space-4)] py-[var(--space-2)]",
                 isActive
-                  ? "bg-primary text-primary-foreground border border-primary"
-                  : "bg-secondary text-foreground border border-border hover:bg-muted"
+                  ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] border border-[var(--color-brand-primary-soft)] font-semibold"
+                  : "bg-[var(--color-bg-surface-soft)] text-[var(--color-text-secondary)] border border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)]"
               )}
             >
               <span>{chip.emoji}</span>

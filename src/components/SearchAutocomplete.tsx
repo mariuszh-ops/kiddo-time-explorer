@@ -192,7 +192,7 @@ const SearchAutocomplete = ({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="Szukaj atrakcji..."
-          className="pl-9 pr-8 py-2 w-48 md:w-56 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+          className="pl-9 pr-8 py-2 w-48 md:w-56 rounded-[var(--radius-pill)] text-sm bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] focus:outline-none focus:ring-[3px] focus:ring-[var(--color-brand-primary-soft)] focus:border-[var(--color-brand-primary)] transition-all duration-200"
           autoComplete="off"
         />
         {inputValue && (
@@ -207,7 +207,7 @@ const SearchAutocomplete = ({
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-md z-50 max-h-[400px] overflow-y-auto min-w-[280px]">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] z-50 max-h-[400px] overflow-y-auto min-w-[280px]">
           {totalResults === 0 ? (
             <div className="p-4 text-center">
               <p className="text-sm text-muted-foreground">Nie znaleziono atrakcji</p>

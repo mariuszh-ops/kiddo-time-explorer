@@ -89,7 +89,7 @@ const FilterDropdown = ({
     <div
       ref={dropdownRef}
       className={cn(
-        "fixed min-w-[180px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
+        "fixed min-w-[180px] bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
       )}
       style={{
@@ -108,17 +108,17 @@ const FilterDropdown = ({
               setIsOpen(false);
             }}
             className={cn(
-              "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
+              "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150",
               option.value === selectedValue
-                ? "bg-accent text-accent-foreground"
-                : "hover:bg-muted"
+                ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] font-semibold"
+                : "hover:bg-[var(--color-bg-surface-muted)]"
             )}
           >
             <span>{option.label}</span>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">({option.count})</span>
+              <span className="text-xs text-[var(--color-text-muted)]">({option.count})</span>
               {option.value === selectedValue && (
-                <Check className="w-4 h-4 text-primary" />
+                <Check className="w-4 h-4 text-[var(--color-brand-primary)]" />
               )}
             </div>
           </button>
@@ -134,13 +134,14 @@ const FilterDropdown = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
-          "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
+          "inline-flex items-center gap-1.5 rounded-[var(--radius-pill)] text-sm font-medium transition-all duration-200 whitespace-nowrap",
+          "px-[var(--space-4)] py-[var(--space-2)]",
+          "border focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary-soft)] focus:ring-offset-1",
           disabled
-            ? "bg-muted text-muted-foreground border-border cursor-not-allowed opacity-60"
+            ? "bg-[var(--color-bg-surface-muted)] text-[var(--color-text-muted)] border-[var(--color-border-soft)] cursor-not-allowed opacity-60"
             : selectedValue
-              ? "bg-primary text-primary-foreground border-primary"
-              : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
+              ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] border-[var(--color-brand-primary-soft)] font-semibold"
+              : "bg-[var(--color-bg-surface-soft)] text-[var(--color-text-secondary)] border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)]"
         )}
       >
         <span className="max-w-[120px] truncate">{displayLabel}</span>
