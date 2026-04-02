@@ -239,8 +239,8 @@ export function useActivityFilters() {
         }
       }
 
-      if (key !== "type" && otherFilters.type) {
-        result = result.filter((a) => a.type === otherFilters.type);
+      if (key !== "type" && otherFilters.type && otherFilters.type.length > 0) {
+        result = result.filter((a) => otherFilters.type!.includes(a.type));
       }
 
       if (key !== "indoor" && otherFilters.indoor) {
