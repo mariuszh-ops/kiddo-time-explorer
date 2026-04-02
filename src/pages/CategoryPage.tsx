@@ -110,7 +110,7 @@ const CategoryPage = () => {
       <main className="pb-20 sm:pb-0">
         <div className="container py-6">
           {/* Breadcrumbs */}
-          <Breadcrumb className="mb-3">
+          <Breadcrumb className="mb-6">
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
@@ -119,13 +119,11 @@ const CategoryPage = () => {
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                {categorySlug ? (
-                  <BreadcrumbLink asChild>
-                    <Link to={`/atrakcje/${citySlug}`}>{cityLabel.nominative}</Link>
-                  </BreadcrumbLink>
-                ) : (
-                  <BreadcrumbPage>{cityLabel.nominative}</BreadcrumbPage>
-                )}
+                <BreadcrumbCategoryDropdown
+                  citySlug={citySlug!}
+                  cityLabel={cityLabel.nominative}
+                  activeCategorySlug={categorySlug}
+                />
               </BreadcrumbItem>
               {categorySlug && (
                 <>
@@ -137,11 +135,6 @@ const CategoryPage = () => {
               )}
             </BreadcrumbList>
           </Breadcrumb>
-
-          {/* Category pills */}
-          <div className="mb-6">
-            <CategoryPills citySlug={citySlug!} activeCategorySlug={categorySlug} />
-          </div>
 
           {/* H1 + Description */}
           <div className="mb-8">
