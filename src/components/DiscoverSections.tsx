@@ -25,10 +25,10 @@ const cityMeta: { value: string; label: string; bgColor: string; emoji: string }
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
   <div className="mb-5">
-    <h2 className="text-xl font-serif text-foreground flex items-center gap-2">
+    <h2 className="flex items-center gap-2" style={{ font: 'var(--text-heading-lg)', color: 'var(--color-text-primary)' }}>
       <span>{emoji}</span> {title}
     </h2>
-    <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
+    <p className="mt-1" style={{ font: 'var(--text-body-sm)', color: 'var(--color-text-secondary)' }}>{subtitle}</p>
   </div>
 );
 
@@ -53,13 +53,13 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
   }, [activities]);
 
   return (
-    <div className="bg-background">
+    <div style={{ background: 'var(--color-bg-app)' }}>
       {/* Section 1: Discover by City */}
       {(() => {
         const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
         if (visibleCities.length <= 1) return null;
         return (
-          <section className="container py-6 md:py-8 border-b border-border/30">
+          <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
             <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {visibleCities.map((city) => {
@@ -86,7 +86,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 2: Top Rated */}
       {topRated.length > 0 && (
-        <section className="container py-6 md:py-8 border-b border-border/30">
+        <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="⭐" title="Najlepiej oceniane" subtitle="Sprawdzone przez rodziców" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
             {topRated.map((activity) => (
@@ -115,7 +115,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
       )}
 
       {/* Section 3: Category tiles */}
-      <section className="container py-6 md:py-8 border-b border-border/30">
+      <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
           {categoryConfigs
@@ -143,7 +143,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 4: Blog */}
       {FEATURES.BLOG && blogPosts.length > 0 && (
-        <section className="container py-6 md:py-8 border-b border-border/30">
+        <section className="container border-b border-[var(--color-border-soft)]" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
             {blogPosts.slice(0, 3).map((post) => (
@@ -155,7 +155,7 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
 
       {/* Section 5: Newly Added */}
       {newlyAdded.length > 0 && (
-        <section className="container py-6 md:py-8">
+        <section className="container" style={{ padding: 'var(--space-10) 0' }}>
           <SectionHeader emoji="✨" title="Nowo dodane" subtitle="Bądź pierwszy, który oceni" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {newlyAdded.map((activity) => (

@@ -26,8 +26,8 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container flex items-center justify-between h-14 md:h-16">
+      <header className="sticky top-0 z-50 border-b border-[var(--color-border-soft)]" style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
+        <div className="container flex items-center justify-between h-14 md:h-16" style={{ padding: '0 var(--space-4)' }}>
           {/* Logo */}
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px]">
             <img 
@@ -61,12 +61,12 @@ const Header = () => {
                     variant="ghost"
                     size="sm"
                     className={cn(
-                      "gap-2 text-muted-foreground hover:text-foreground",
-                      isActive("/my-places") && "text-foreground bg-accent"
+                      "group gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150",
+                      isActive("/my-places") && "text-[var(--color-brand-primary)] bg-[var(--color-brand-primary-soft)]"
                     )}
                   >
                     <Heart className="w-4 h-4" />
-                    <span>Moje miejsca</span>
+                    <span className="text-[var(--color-text-secondary)] group-hover:text-[var(--color-brand-primary)] transition-colors duration-150">Moje miejsca</span>
                   </Button>
                 </Link>
 
@@ -76,8 +76,8 @@ const Header = () => {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "text-muted-foreground hover:text-foreground",
-                      isActive("/profile") && "text-foreground bg-accent"
+                      "text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150",
+                      isActive("/profile") && "text-[var(--color-brand-primary)] bg-[var(--color-brand-primary-soft)]"
                     )}
                   >
                     <User className="w-5 h-5" />
@@ -91,7 +91,7 @@ const Header = () => {
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="hidden sm:flex gap-2 text-muted-foreground hover:text-foreground"
+                className="hidden sm:flex gap-2 text-[var(--color-text-secondary)] hover:text-[var(--color-brand-primary)] transition-colors duration-150"
               >
                 <LogIn className="w-4 h-4" />
                 <span>Zaloguj się</span>

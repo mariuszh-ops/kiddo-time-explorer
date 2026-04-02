@@ -29,10 +29,12 @@ const BottomNav = () => {
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border/60 shadow-[0_-1px_6px_0_hsl(var(--foreground)/0.04)]"
+        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden border-t border-[var(--color-border-soft)]"
         style={{
-          paddingTop: '10px',
-          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
+          background: 'var(--color-bg-surface)',
+          boxShadow: '0 -4px 16px var(--color-shadow-soft)',
+          paddingTop: 'var(--space-2)',
+          paddingBottom: 'calc(var(--space-3) + env(safe-area-inset-bottom, 0px))',
           minHeight: 'calc(78px + env(safe-area-inset-bottom, 0px))',
         }}
       >
@@ -41,8 +43,8 @@ const BottomNav = () => {
           const Icon = item.icon;
 
           const itemClasses = cn(
-            "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
-            active ? "text-primary" : "text-muted-foreground"
+            "flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-150 ease-in-out active:scale-95",
+            active ? "text-[var(--color-brand-primary)]" : "text-[var(--color-text-muted)]"
           );
 
           // Profile tab: if not logged in, show auth modal instead of navigating
@@ -54,7 +56,7 @@ const BottomNav = () => {
                 className={cn(itemClasses, "text-muted-foreground")}
               >
                 <Icon className="w-[22px] h-[22px]" strokeWidth={1.5} />
-                <span className="text-[10px] leading-none font-medium">{item.label}</span>
+                <span style={{ font: 'var(--text-caption)' }} className="leading-none">{item.label}</span>
               </button>
             );
           }
@@ -63,10 +65,11 @@ const BottomNav = () => {
             <Link
               key={item.label}
               to={item.path}
-              className={itemClasses}
+              className={cn(itemClasses, "relative")}
             >
+              {active && <span className="absolute -top-0.5 w-5 h-0.5 rounded-full bg-[var(--color-brand-primary)]" />}
               <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
-              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+              <span style={{ font: 'var(--text-caption)' }} className="leading-none">{item.label}</span>
             </Link>
           );
         })}
