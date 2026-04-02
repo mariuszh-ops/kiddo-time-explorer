@@ -13,14 +13,14 @@ interface DiscoverSectionsProps {
   onSelectCity: (city: string) => void;
 }
 
-const cityMeta: { value: string; label: string; gradient: string; emoji: string }[] = [
-  { value: "warszawa", label: "Warszawa i okolice", gradient: "from-rose-500/10 to-orange-500/10", emoji: "🧜‍♀️" },
-  { value: "krakow", label: "Kraków i okolice", gradient: "from-blue-500/10 to-indigo-500/10", emoji: "🐉" },
-  { value: "wroclaw", label: "Wrocław i okolice", gradient: "from-emerald-500/10 to-teal-500/10", emoji: "🤴" },
-  { value: "trojmiasto", label: "Trójmiasto", gradient: "from-cyan-500/10 to-sky-500/10", emoji: "⚓" },
-  { value: "poznan", label: "Poznań i okolice", gradient: "from-amber-500/10 to-yellow-500/10", emoji: "🐐" },
-  { value: "slask", label: "Aglomeracja Śląska", gradient: "from-violet-500/10 to-purple-500/10", emoji: "⛏️" },
-  { value: "lodz", label: "Łódź i okolice", gradient: "from-pink-500/10 to-rose-500/10", emoji: "🎬" },
+const cityMeta: { value: string; label: string; bgColor: string; emoji: string }[] = [
+  { value: "warszawa", label: "Warszawa i okolice", bgColor: "#E8F0E4", emoji: "🧜‍♀️" },
+  { value: "krakow", label: "Kraków i okolice", bgColor: "#DFF0EC", emoji: "🐉" },
+  { value: "wroclaw", label: "Wrocław i okolice", bgColor: "#E4EEF5", emoji: "🤴" },
+  { value: "trojmiasto", label: "Trójmiasto", bgColor: "#F2EBDD", emoji: "⚓" },
+  { value: "poznan", label: "Poznań i okolice", bgColor: "#F5EFCF", emoji: "🐐" },
+  { value: "slask", label: "Aglomeracja Śląska", bgColor: "#F0E6DA", emoji: "⛏️" },
+  { value: "lodz", label: "Łódź i okolice", bgColor: "#E6EDDF", emoji: "🎬" },
 ];
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
