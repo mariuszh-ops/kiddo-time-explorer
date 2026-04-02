@@ -27,7 +27,8 @@ interface FilterBarProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | number | undefined) => void;
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
+  onToggleTypeFilter: (value: string) => void;
   onClearAll: () => void;
   viewMode?: "grid" | "map";
   onViewModeChange?: (mode: "grid" | "map") => void;
