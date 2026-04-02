@@ -1,6 +1,7 @@
 import { Users } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters";
 import { filterOptions } from "@/data/activities";
+import { FEATURES } from "@/lib/featureFlags";
 
 interface SocialProofBannerProps {
   filters: Filters;
