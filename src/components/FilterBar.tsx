@@ -84,7 +84,7 @@ const FilterBar = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+                  className="inline-flex items-center gap-2 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] text-sm font-medium text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface-muted)] transition-colors duration-150"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   <span>Filtry</span>
