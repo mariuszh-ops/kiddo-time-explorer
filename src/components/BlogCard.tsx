@@ -10,7 +10,7 @@ interface BlogCardProps {
 const BlogCard = ({ post }: BlogCardProps) => {
   return (
     <Link to={`/inspiracje/${post.slug}`} className="group">
-      <article className="rounded-[var(--radius-lg)] overflow-hidden bg-[var(--color-bg-surface)] shadow-[var(--shadow-sm)] transition-all duration-200 ease-out hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5">
+      <article className="rounded-xl overflow-hidden border border-border bg-card transition-all hover:shadow-md hover:border-primary/20">
         <div className="aspect-[16/9] overflow-hidden">
           <img
             src={post.imageUrl}
@@ -18,7 +18,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
-        <div className="p-[var(--space-4)] space-y-2.5">
+        <div className="p-4 space-y-2.5">
           <div className="flex items-center gap-2">
             <Badge variant="secondary" className="text-xs font-medium">
               {post.category}
@@ -28,13 +28,13 @@ const BlogCard = ({ post }: BlogCardProps) => {
               {post.readTimeMinutes} min
             </span>
           </div>
-          <h3 className="text-[var(--color-text-primary)] leading-snug line-clamp-2 group-hover:text-primary transition-colors" style={{ font: 'var(--text-heading-md)' }}>
+          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h3>
-          <p className="text-[var(--color-text-secondary)] line-clamp-2" style={{ font: 'var(--text-body-sm)' }}>
+          <p className="text-sm text-muted-foreground line-clamp-2">
             {post.excerpt}
           </p>
-          <p className="text-[var(--color-text-muted)]" style={{ font: 'var(--text-caption)' }}>
+          <p className="text-xs text-muted-foreground">
             {new Date(post.publishedAt).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>

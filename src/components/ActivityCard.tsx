@@ -99,9 +99,9 @@ const ActivityCard = ({
   return (
     <>
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
-        <article className="group cursor-pointer bg-[var(--color-bg-surface)] rounded-[var(--radius-lg)] shadow-[var(--shadow-sm)] overflow-hidden transition-all duration-200 ease-out hover:shadow-[var(--shadow-md)] hover:-translate-y-0.5 active:scale-[0.98]">
+        <article className="group cursor-pointer transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl active:scale-[0.98] active:opacity-90">
           {/* Image */}
-          <div className="relative aspect-[16/10] overflow-hidden transition-all duration-300 md:group-hover:brightness-105">
+          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
             <img
               src={imgSrc}
               alt={title}
@@ -152,13 +152,13 @@ const ActivityCard = ({
           </div>
 
           {/* Content */}
-          <div className="space-y-2 p-[var(--space-4)]">
+          <div className="space-y-2">
             <div className="flex items-center gap-2">
               {hasReviews ? (
                 <>
-                  <div className="flex items-center gap-1 bg-[var(--color-brand-primary-soft)] px-2 py-1 rounded-[var(--radius-sm)]">
-                    <Star className="w-4 h-4 fill-[var(--color-brand-primary)] text-[var(--color-brand-primary)]" />
-                    <span className="font-bold text-[var(--color-brand-primary)] text-xs">{rating.toFixed(1)}</span>
+                  <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
                     ({reviewCount} opinii)
@@ -182,12 +182,12 @@ const ActivityCard = ({
               )}
             </div>
 
-            <h3 className="font-semibold text-[var(--color-text-primary)] leading-snug line-clamp-2 group-hover:text-primary transition-colors" style={{ font: 'var(--text-heading-md)' }}>
+            <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
               {title}
             </h3>
 
             <div className="flex items-center gap-2">
-              <p className="line-clamp-1 flex-1 text-[var(--color-text-secondary)]" style={{ font: 'var(--text-body-sm)' }}>
+              <p className="text-sm text-muted-foreground line-clamp-1 flex-1">
                 {location}
               </p>
               {distanceKm != null && (

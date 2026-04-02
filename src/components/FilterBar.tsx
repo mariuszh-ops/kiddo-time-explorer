@@ -77,14 +77,14 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="sticky top-0 z-40 border-b border-[var(--color-border-soft)]" style={{ background: 'var(--color-bg-surface)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
-          <div className="container" style={{ padding: 'var(--space-3) var(--space-4)' }}>
+        <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
+          <div className="container py-3">
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="inline-flex items-center gap-2 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] text-sm font-medium text-[var(--color-text-primary)] active:bg-[var(--color-bg-surface-muted)] transition-colors duration-150"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   <span>Filtry</span>
@@ -99,7 +99,7 @@ const FilterBar = ({
                 {FEATURES.MAP_VIEW && onViewModeChange && (
                   <button
                     onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
-                    className="inline-flex items-center justify-center w-10 h-10 rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] active:bg-[var(--color-bg-surface-muted)] transition-colors duration-150"
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border active:bg-muted transition-colors"
                     aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
                   >
                     {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
@@ -134,8 +134,8 @@ const FilterBar = ({
 
   // Desktop layout (unchanged)
   return (
-    <section className="sticky top-0 z-40 border-b border-[var(--color-border-soft)]" style={{ background: 'var(--color-bg-surface)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', boxShadow: 'var(--shadow-sm)' }}>
-      <div className="container" style={{ padding: 'var(--space-3) var(--space-4)' }}>
+    <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
+      <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
           {/* Combined City + Distance filter — shown only when multiple cities enabled */}
@@ -216,7 +216,7 @@ const FilterBar = ({
                       onChange={(e) => onSearchChange(e.target.value)}
                       placeholder="Szukaj..."
                       autoFocus
-                      className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-[var(--radius-pill)] text-sm bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] focus:outline-none focus:ring-[3px] focus:ring-[var(--color-brand-primary-soft)] focus:border-[var(--color-brand-primary)] transition-all duration-200"
+                      className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                       onBlur={() => {
                         if (!searchQuery.trim()) {
                           setIsSearchExpanded(false);
@@ -239,7 +239,7 @@ const FilterBar = ({
               ) : (
                 <button
                   onClick={() => setIsSearchExpanded(true)}
-                  className="inline-flex items-center justify-center w-10 h-10 rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] hover:bg-[var(--color-bg-surface-muted)] transition-colors duration-150"
+                  className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
                   aria-label="Szukaj"
                 >
                   <Search className="w-4 h-4 text-muted-foreground" />
@@ -250,10 +250,10 @@ const FilterBar = ({
 
           {/* Map/Grid toggle - desktop */}
           {FEATURES.MAP_VIEW && onViewModeChange && (
-              <button
-                onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
-                className="inline-flex items-center gap-1.5 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] bg-[var(--color-bg-surface-soft)] border border-[var(--color-border-soft)] text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface-muted)] transition-colors duration-150 whitespace-nowrap ml-auto"
-                aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+            <button
+              onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors whitespace-nowrap ml-auto"
+              aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
             >
               {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
               {viewMode === "map" ? "Lista" : "Mapa"}
@@ -278,7 +278,7 @@ const FilterBar = ({
           {hasActiveFilters && (
             <button
               onClick={onClearAll}
-              className="inline-flex items-center gap-1.5 px-[var(--space-4)] py-[var(--space-2)] rounded-[var(--radius-pill)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-surface-soft)] transition-colors duration-150 whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap"
             >
               <X className="w-3.5 h-3.5" />
               Wyczyść filtry
