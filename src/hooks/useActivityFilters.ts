@@ -330,6 +330,7 @@ export function useActivityFilters() {
     searchQuery,
     setSearchQuery,
     updateFilter,
+    toggleArrayFilter,
     clearAllFilters,
     filteredActivities,
     filterCounts,
