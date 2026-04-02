@@ -24,7 +24,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
   // Determine if social proof should be shown
-  const showSocialProof = Boolean(filters.city && (filters.age || filters.type));
+  const showSocialProof = Boolean(filters.city && (filters.age || (filters.type && filters.type.length > 0)));
 
   // Select which activities get badges (top rated ones when social proof is visible)
   const badgeActivityIds = useMemo(() => {

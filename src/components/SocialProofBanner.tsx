@@ -19,7 +19,7 @@ const SocialProofBanner = ({ filters, resultCount }: SocialProofBannerProps) => 
   // Only show if city is selected AND (age OR type is selected)
   const hasCity = Boolean(filters.city);
   const hasAge = Boolean(filters.age);
-  const hasType = Boolean(filters.type);
+  const hasType = Boolean(filters.type && filters.type.length > 0);
   
   if (!hasCity || (!hasAge && !hasType)) {
     return null;
