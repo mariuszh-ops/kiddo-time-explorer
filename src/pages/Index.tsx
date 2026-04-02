@@ -122,6 +122,7 @@ const Index = () => {
           onSearchChange={setSearchQuery}
           filterCounts={filterCounts}
           onUpdateFilter={updateFilter}
+          onToggleTypeFilter={(value) => toggleArrayFilter("type", value)}
           onClearAll={clearAllFilters}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
