@@ -310,7 +310,8 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={activities} />
-          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
+          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
 
