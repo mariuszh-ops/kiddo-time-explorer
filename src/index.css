@@ -182,6 +182,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', sans-serif;
+    background-color: var(--color-bg-app);
   }
 
   h1, h2, h3 {
