@@ -6,7 +6,7 @@ import ActivityGrid from "@/components/ActivityGrid";
 import MapView from "@/components/MapView";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
-import { getActivities } from "@/data/activities";
+import { getActivities, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import {
   getCategoryConfig,
@@ -128,7 +128,7 @@ const CategoryPage = () => {
                 <BreadcrumbCategoryDropdown
                   citySlug={citySlug!}
                   activeCategorySlug={categorySlug}
-                  currentLabel={categorySlug ? config.label : "Wszystkie"}
+                  currentLabel={categorySlug ? (filterOptions.type.find(t => t.value === categorySlug)?.label ?? config.label) : "Wszystkie"}
                 />
               </BreadcrumbItem>
             </BreadcrumbList>
