@@ -162,12 +162,13 @@ const FilterBar = ({
             onSelect={(value) => onUpdateFilter("age", value)}
           />
           
-          <FilterDropdown
+          <MultiFilterDropdown
             label="Kategoria"
             options={filterCounts.type}
-            selectedValue={filters.type}
+            selectedValues={filters.type || []}
             hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("type", value)}
+            onToggle={onToggleTypeFilter}
+            onClear={() => onUpdateFilter("type", undefined)}
           />
           
           <FilterDropdown
