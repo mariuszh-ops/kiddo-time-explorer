@@ -22,7 +22,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
+import CategoryPills from "@/components/CategoryPills";
 
 const BASE_URL = "https://familyfun.pl";
 
