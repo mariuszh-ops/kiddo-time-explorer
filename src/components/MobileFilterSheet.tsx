@@ -76,7 +76,43 @@ const FilterSection = ({
   );
 };
 
-const MobileFilterSheet = ({
+const MultiFilterSection = ({
+  title,
+  options,
+  selectedValues,
+  onToggle,
+}: {
+  title: string;
+  options: FilterOption[];
+  selectedValues: string[];
+  onToggle: (value: string) => void;
+}) => {
+  return (
+    <div className="py-4 border-b border-border last:border-b-0">
+      <h3 className="text-base font-semibold text-foreground mb-3">{title}</h3>
+      <div className="space-y-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            onClick={() => onToggle(option.value)}
+            className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Checkbox
+                checked={selectedValues.includes(option.value)}
+                className="pointer-events-none"
+              />
+              <span className="text-sm text-foreground">{option.label}</span>
+            </div>
+            <span className="text-xs text-muted-foreground">({option.count})</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+
   isOpen,
   onClose,
   filters,
