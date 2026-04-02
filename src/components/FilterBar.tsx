@@ -54,6 +54,7 @@ const FilterBar = ({
   onSearchChange,
   filterCounts,
   onUpdateFilter,
+  onToggleTypeFilter,
   onClearAll,
   viewMode,
   onViewModeChange,
