@@ -204,11 +204,11 @@ const MobileFilterSheet = ({
             onSelect={(value) => onUpdateFilter("age", value)}
           />
           
-          <FilterSection
+          <MultiFilterSection
             title="Kategoria"
             options={filterCounts.type}
-            selectedValue={filters.type}
-            onSelect={(value) => onUpdateFilter("type", value)}
+            selectedValues={filters.type || []}
+            onToggle={onToggleTypeFilter}
           />
           
           <FilterSection
