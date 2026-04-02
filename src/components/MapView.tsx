@@ -49,17 +49,18 @@ const createPopupContent = (activity: Activity) => {
 function MapMarkers({
   activities,
   onMarkerClick,
+  markersRef,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
+  markersRef: React.MutableRefObject<Record<number, L.Marker>>;
 }) {
   const map = useMap();
-  const markersRef = useRef<L.Marker[]>([]);
 
   useEffect(() => {
     // Clear old markers
-    markersRef.current.forEach((m) => m.remove());
-    markersRef.current = [];
+    Object.values(markersRef.current).forEach((m) => m.remove());
+    markersRef.current = {};
 
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
@@ -73,15 +74,29 @@ function MapMarkers({
         });
 
       marker.on("click", () => onMarkerClick(activity.id));
-      markersRef.current.push(marker);
+      markersRef.current[activity.id] = marker;
     });
 
     return () => {
-      markersRef.current.forEach((m) => m.remove());
-      markersRef.current = [];
+      Object.values(markersRef.current).forEach((m) => m.remove());
+      markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick]);
+  }, [activities, map, onMarkerClick, markersRef]);
 
+  return null;
+}
+
+// Imperatively fly to a location and open popup
+function FlyToHandler({ targetActivity, markersRef }: { targetActivity: Activity | null; markersRef: React.MutableRefObject<Record<number, L.Marker>> }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!targetActivity) return;
+    map.flyTo([targetActivity.latitude, targetActivity.longitude], 15, { duration: 0.8 });
+    const marker = markersRef.current[targetActivity.id];
+    if (marker) {
+      setTimeout(() => marker.openPopup(), 400);
+    }
+  }, [targetActivity, map, markersRef]);
   return null;
 }
 
@@ -172,7 +187,9 @@ interface MapViewProps {
 const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
+  const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
+  const markersRef = useRef<Record<number, L.Marker>>({});
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
@@ -184,6 +201,11 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     if (card) {
       card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
+  }, []);
+
+  const handleCardClick = useCallback((activity: Activity) => {
+    setHighlightedId(activity.id);
+    setFlyTarget(activity);
   }, []);
 
   if (isMobile) {
@@ -201,7 +223,8 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={activities} />
-          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
+          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
 
@@ -237,6 +260,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
                   <MiniActivityCard
                     activity={activity}
                     isHighlighted={highlightedId === activity.id}
+                    onCardClick={handleCardClick}
                   />
                 </div>
               ))}
@@ -266,6 +290,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
               <MiniActivityCard
                 activity={activity}
                 isHighlighted={highlightedId === activity.id}
+                onCardClick={handleCardClick}
               />
             </div>
           ))}
@@ -285,7 +310,8 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={activities} />
-          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} />
+          <MapMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
 
@@ -302,17 +328,19 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 function MiniActivityCard({
   activity,
   isHighlighted,
+  onCardClick,
 }: {
   activity: Activity;
   isHighlighted: boolean;
+  onCardClick: (activity: Activity) => void;
 }) {
   return (
-    <Link
-      to={`/atrakcje/${activity.slug}`}
+    <div
+      onClick={() => onCardClick(activity)}
       className={cn(
-        "flex gap-3 p-2 rounded-xl border bg-card transition-all hover:shadow-md",
+        "flex gap-3 p-2 rounded-xl border bg-card transition-all hover:shadow-md cursor-pointer",
         isHighlighted
-          ? "border-primary ring-2 ring-primary/20 shadow-md"
+          ? "border-l-[3px] border-l-[#2F6B4F] bg-[#DCEEDB]/40 border-t-border border-r-border border-b-border shadow-md"
           : "border-border"
       )}
     >
@@ -323,9 +351,13 @@ function MiniActivityCard({
         loading="lazy"
       />
       <div className="flex-1 min-w-0 py-0.5">
-        <h3 className="font-semibold text-sm text-foreground truncate">
+        <Link
+          to={`/atrakcje/${activity.slug}`}
+          onClick={(e) => e.stopPropagation()}
+          className="font-semibold text-sm text-foreground truncate block hover:underline"
+        >
           {activity.title}
-        </h3>
+        </Link>
         <p className="text-xs text-muted-foreground truncate mt-0.5">
           {activity.location}
         </p>
@@ -337,7 +369,7 @@ function MiniActivityCard({
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }
 
