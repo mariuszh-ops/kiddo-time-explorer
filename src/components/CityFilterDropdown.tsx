@@ -122,7 +122,7 @@ const CityFilterDropdown = ({
     <div
       ref={dropdownRef}
       className={cn(
-        "fixed min-w-[280px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
+        "fixed min-w-[280px] bg-[var(--color-bg-surface)] border border-[var(--color-border-soft)] rounded-[var(--radius-lg)] shadow-[var(--shadow-md)] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
       )}
       style={{
@@ -135,7 +135,7 @@ const CityFilterDropdown = ({
       <div className="max-h-[420px] overflow-y-auto">
         {/* City section */}
         <div className="py-2">
-          <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+          <div className="px-4 py-1.5 text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
             Miasto
           </div>
           {cityOptions.map((option) => (
@@ -145,17 +145,17 @@ const CityFilterDropdown = ({
                 onCitySelect(option.value);
               }}
               className={cn(
-                "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors duration-150",
                 option.value === selectedCity
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-muted"
+                  ? "bg-[var(--color-brand-primary-soft)] text-[var(--color-brand-primary)] font-semibold"
+                  : "hover:bg-[var(--color-bg-surface-muted)]"
               )}
             >
               <span>{option.label}</span>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">({option.count})</span>
+                <span className="text-xs text-[var(--color-text-muted)]">({option.count})</span>
                 {option.value === selectedCity && (
-                  <Check className="w-4 h-4 text-primary" />
+                  <Check className="w-4 h-4 text-[var(--color-brand-primary)]" />
                 )}
               </div>
             </button>
@@ -165,14 +165,14 @@ const CityFilterDropdown = ({
         {/* Distance slider - only when city is selected */}
         {selectedCity && (
           <>
-            <div className="border-t border-border" />
+            <div className="border-t border-[var(--color-border-soft)]" />
             <div className="p-4">
               <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-text-muted)] uppercase tracking-wide">
                   <MapPin className="w-3 h-3" />
                   Atrakcje w pobliżu
                 </div>
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-sm font-semibold text-[var(--color-brand-primary)]">
                   {localDistance} km
                 </span>
               </div>
@@ -186,15 +186,15 @@ const CityFilterDropdown = ({
                 className="w-full"
               />
               
-              <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+              <div className="flex justify-between mt-2 text-xs text-[var(--color-text-muted)]">
                 <span>0 km</span>
                 <span>100 km</span>
               </div>
               
               {/* Results preview */}
-              <div className="mt-4 pt-3 border-t border-border/50 text-center">
-                <span className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{filteredCount}</span> atrakcji
+              <div className="mt-4 pt-3 border-t border-[var(--color-border-soft)] text-center">
+                <span className="text-sm text-[var(--color-text-secondary)]">
+                  <span className="font-medium text-[var(--color-text-primary)]">{filteredCount}</span> atrakcji
                 </span>
               </div>
             </div>
