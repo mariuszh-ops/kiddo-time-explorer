@@ -152,13 +152,13 @@ const ActivityCard = ({
           </div>
 
           {/* Content */}
-          <div className="space-y-2">
+          <div className="space-y-2 p-[var(--space-4)]">
             <div className="flex items-center gap-2">
               {hasReviews ? (
                 <>
-                  <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
+                  <div className="flex items-center gap-1 bg-[var(--color-accent-warm-soft)] px-2 py-1 rounded-[var(--radius-sm)]">
+                    <Star className="w-4 h-4 fill-[#946B1D] text-[#946B1D]" />
+                    <span className="font-bold text-[#946B1D] text-xs">{rating.toFixed(1)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
                     ({reviewCount} opinii)
