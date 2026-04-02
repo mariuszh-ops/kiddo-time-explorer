@@ -44,9 +44,9 @@ const Footer = () => {
           )}
         </div>
         {/* Popular categories */}
-        <div className="mt-4 pt-4 border-t border-border/50">
-          <p className="text-xs text-muted-foreground mb-2">Popularne kategorie</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+        <div className="mt-4 pt-4 border-t border-[var(--color-border-soft)]">
+          <p className="mb-2 uppercase tracking-[0.05em]" style={{ font: 'var(--text-caption)', color: 'var(--color-text-muted)' }}>Popularne kategorie</p>
+          <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm" style={{ color: 'var(--color-text-secondary)' }}>
             {categoryConfigs
               .filter(c => c.slug !== "")
               .map((cat) => {
