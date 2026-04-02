@@ -21,7 +21,7 @@ export function getActivityDistance(activity: Activity, cityKey: string): number
 export interface Filters {
   city?: string;
   age?: string;
-  type?: string;
+  type?: string[]; // multi-select: array of category values
   indoor?: string;
   activityKind?: string; // "place" | "event"
   distance?: number; // 0-100 km (numeric slider value)
