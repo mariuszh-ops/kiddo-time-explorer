@@ -66,7 +66,7 @@ const Header = () => {
                     )}
                   >
                     <Heart className="w-4 h-4" />
-                    <span>Moje miejsca</span>
+                    <span className="text-[var(--color-text-secondary)] group-hover:text-[var(--color-brand-primary)] transition-colors duration-150">Moje miejsca</span>
                   </Button>
                 </Link>
 
