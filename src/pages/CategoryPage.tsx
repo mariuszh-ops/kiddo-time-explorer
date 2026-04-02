@@ -128,7 +128,7 @@ const CategoryPage = () => {
                 <BreadcrumbCategoryDropdown
                   citySlug={citySlug!}
                   activeCategorySlug={categorySlug}
-                  currentLabel={categorySlug ? config.label : "Wszystkie"}
+                  currentLabel={categorySlug ? (filterOptions.type.find(t => t.value === categorySlug)?.label ?? config.label) : "Wszystkie"}
                 />
               </BreadcrumbItem>
             </BreadcrumbList>
