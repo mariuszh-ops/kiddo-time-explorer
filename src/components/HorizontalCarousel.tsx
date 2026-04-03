@@ -1,9 +1,9 @@
-import { useRef, useState, useEffect, useCallback, ReactNode } from "react";
+import { useRef, useState, useEffect, useCallback, ReactNode, useId } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface HorizontalCarouselProps {
   children: ReactNode[];
-  /** Number of visible cards per breakpoint: [mobile, sm, lg] */
+  /** Number of visible cards per breakpoint: [mobile, sm, lg]. Supports decimals like 1.5 for peek. */
   visibleCards?: [number, number, number];
 }
 
@@ -14,6 +14,7 @@ const HorizontalCarousel = ({
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const uid = useId().replace(/:/g, "");
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
@@ -42,63 +43,51 @@ const HorizontalCarousel = ({
     el.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
   };
 
-  // Build responsive width classes from visibleCards
-  // gap is 1rem (16px). Formula: (100% - (n-1)*gap) / n
-  const [mobile, sm, lg] = visibleCards;
-  const gapCount = (n: number) => (n - 1).toFixed(1);
-  const mobileW = `calc((100% - ${gapCount(mobile)} * 1rem) / ${mobile})`;
-  const smW = `calc((100% - ${gapCount(sm)} * 1rem) / ${sm})`;
-  const lgW = `calc((100% - ${gapCount(lg)} * 1rem) / ${lg})`;
-
   if (children.length === 0) return null;
 
+  const [mobile, sm, lg] = visibleCards;
+  const calcW = (n: number) => `calc((100% - ${(n - 1).toFixed(1)} * 1rem) / ${n})`;
+
   return (
-    <div className="relative group">
-      {canScrollLeft && (
-        <button
-          onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-10 h-10 rounded-full bg-white border border-border shadow-md items-center justify-center hover:bg-muted transition-colors hidden md:flex"
-          aria-label="Przewiń w lewo"
-        >
-          <ChevronLeft className="w-5 h-5 text-foreground" />
-        </button>
-      )}
-
-      {canScrollRight && (
-        <button
-          onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-10 h-10 rounded-full bg-white border border-border shadow-md items-center justify-center hover:bg-muted transition-colors hidden md:flex"
-          aria-label="Przewiń w prawo"
-        >
-          <ChevronRight className="w-5 h-5 text-foreground" />
-        </button>
-      )}
-
-      <div
-        ref={scrollRef}
-        className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mb-2"
-      >
-        {children.map((child, i) => (
-          <div
-            key={i}
-            className="flex-shrink-0 snap-start"
-            style={{
-              width: mobileW,
-            }}
+    <>
+      <style>{`
+        .citem-${uid} { width: ${calcW(mobile)}; }
+        @media (min-width: 640px) { .citem-${uid} { width: ${calcW(sm)}; } }
+        @media (min-width: 1024px) { .citem-${uid} { width: ${calcW(lg)}; } }
+      `}</style>
+      <div className="relative group">
+        {canScrollLeft && (
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-10 h-10 rounded-full bg-white border border-border shadow-md items-center justify-center hover:bg-muted transition-colors hidden md:flex"
+            aria-label="Przewiń w lewo"
           >
-            {/* Responsive overrides via CSS custom properties won't work cleanly here,
-                so we use a style tag approach with media queries per instance.
-                Instead, use inline styles with a simpler approach: */}
-            <style>{`
-              .carousel-item-${i} { width: ${mobileW}; }
-              @media (min-width: 640px) { .carousel-item-${i} { width: ${smW}; } }
-              @media (min-width: 1024px) { .carousel-item-${i} { width: ${lgW}; } }
-            `}</style>
-            {child}
-          </div>
-        ))}
+            <ChevronLeft className="w-5 h-5 text-foreground" />
+          </button>
+        )}
+
+        {canScrollRight && (
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-10 h-10 rounded-full bg-white border border-border shadow-md items-center justify-center hover:bg-muted transition-colors hidden md:flex"
+            aria-label="Przewiń w prawo"
+          >
+            <ChevronRight className="w-5 h-5 text-foreground" />
+          </button>
+        )}
+
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2 -mb-2"
+        >
+          {children.map((child, i) => (
+            <div key={i} className={`flex-shrink-0 snap-start citem-${uid}`}>
+              {child}
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
