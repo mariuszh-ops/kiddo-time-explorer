@@ -67,13 +67,31 @@ const FilterBar = ({
   const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
 
+  // Polish grammar for "atrakcja/atrakcje/atrakcji"
+  const formatCount = (n: number): string => {
+    if (n === 0) return "Brak atrakcji";
+    if (n === 1) return "1 atrakcja";
+    const lastTwo = n % 100;
+    const lastOne = n % 10;
+    if (lastTwo >= 12 && lastTwo <= 14) return `${n} atrakcji`;
+    if (lastOne >= 2 && lastOne <= 4) return `${n} atrakcje`;
+    return `${n} atrakcji`;
+  };
+
+  // Check if any non-city/distance/sort filter is active
+  const hasExtraFilters = Boolean(
+    filters.age || (filters.type && filters.type.length > 0) || filters.indoor || filters.price || filters.activityKind || searchQuery.trim()
+  );
+
   // Generate dynamic feedback text
   const getFeedbackText = () => {
+    const count = formatCount(filterCounts.filtered);
     if (filters.distance !== undefined && filters.city) {
       const cityName = getCityNameGenitive(filters.city);
-      return `${filterCounts.filtered} atrakcji w promieniu ${filters.distance} km od ${cityName}`;
+      const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
+      return `${count} w promieniu ${filters.distance} km od ${cityName}${suffix}`;
     }
-    return `${filterCounts.filtered} atrakcji spełnia wybrane filtry`;
+    return `${count} spełnia wybrane filtry`;
   };
 
   // Mobile layout
