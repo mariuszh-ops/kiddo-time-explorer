@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook } from "lucide-react";
 import { FEATURES } from "@/lib/featureFlags";
-import { categoryConfigs } from "@/data/categoryPages";
 
 const Footer = () => {
   return (
@@ -12,17 +11,21 @@ const Footer = () => {
             © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
           </p>
           <div className="flex gap-6 text-sm text-muted-foreground">
+            <Link to="/o-nas" className="hover:text-foreground transition-colors">
+              O nas
+            </Link>
+            <Link to="/kontakt" className="hover:text-foreground transition-colors">
+              Kontakt
+            </Link>
             <Link to="/regulamin" className="hover:text-foreground transition-colors">
               Regulamin
             </Link>
             <Link to="/polityka-prywatnosci" className="hover:text-foreground transition-colors">
               Polityka prywatności
             </Link>
-            <Link to="/kontakt" className="hover:text-foreground transition-colors">
-              Kontakt
-            </Link>
-            <Link to="/o-nas" className="hover:text-foreground transition-colors">
-              O nas
+            {/* TODO: link to dedicated "Dodaj atrakcję" page when created */}
+            <Link to="#" className="hover:text-foreground transition-colors">
+              Dodaj atrakcję
             </Link>
             {FEATURES.BLOG && (
               <Link to="/inspiracje" className="hover:text-foreground transition-colors">
@@ -42,26 +45,6 @@ const Footer = () => {
               </a>
             </div>
           )}
-        </div>
-        {/* Popular categories */}
-        <div className="mt-4 pt-4 border-t border-border/50">
-          <p className="text-xs text-muted-foreground mb-2">Popularne kategorie</p>
-          <div className="flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
-            {categoryConfigs
-              .filter(c => c.slug !== "")
-              .map((cat) => {
-                const city = FEATURES.ENABLED_CITIES[0] || "warszawa";
-                return (
-                  <Link
-                    key={cat.slug}
-                    to={`/atrakcje/${city}/${cat.slug}`}
-                    className="hover:text-foreground transition-colors"
-                  >
-                    {cat.label}
-                  </Link>
-                );
-              })}
-          </div>
         </div>
       </div>
     </footer>
