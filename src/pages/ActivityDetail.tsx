@@ -28,6 +28,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getActivities, PRICE_LEVELS } from "@/data/activities";
+import SimilarAttractions from "@/components/SimilarAttractions";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect, useRef } from "react";
@@ -907,32 +908,7 @@ const ActivityDetail = () => {
       )}
 
       {/* 8. Similar activities */}
-      {(() => {
-        const similarActivities = getActivities()
-          .filter(a => a.id !== activity.id && !a.isEvent && a.city === activity.city)
-          .sort((a, b) => {
-            const sameTypeA = a.type === activity.type ? 1 : 0;
-            const sameTypeB = b.type === activity.type ? 1 : 0;
-            if (sameTypeB !== sameTypeA) return sameTypeB - sameTypeA;
-            return b.rating - a.rating;
-          })
-          .slice(0, 4);
-
-        if (similarActivities.length === 0) return null;
-
-        return (
-          <section className="container mt-8 md:mt-10 mb-2">
-            <h2 className="text-lg md:text-xl font-serif font-semibold text-foreground mb-4">
-              Podobne atrakcje w pobliżu
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {similarActivities.map(a => (
-                <ActivityCard key={a.id} {...a} />
-              ))}
-            </div>
-          </section>
-        );
-      })()}
+      <SimilarAttractions activity={activity} />
 
       <ReviewsModal 
         isOpen={isReviewsModalOpen}
