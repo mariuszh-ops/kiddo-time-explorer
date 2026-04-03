@@ -120,22 +120,17 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
           {items.map((a) => (
             <div
               key={a.id}
-              className="flex-shrink-0 snap-start"
-              style={{
-                width: "calc((100% - 3 * 1rem) / 4)", // desktop: 4 cards
-              }}
+              className="flex-shrink-0 snap-start w-[calc((100%-0.5*1rem)/1.5)] sm:w-[calc((100%-1.5*1rem)/2.5)] lg:w-[calc((100%-3*1rem)/4)]"
             >
-              <div className="w-full [--card-width:calc((100vw-2rem-0.5*1rem)/1.5)] sm:[--card-width:calc((100vw-3rem-1.5*1rem)/2.5)] lg:[--card-width:unset]">
-                <ActivityCard
-                  {...a}
-                  distanceKm={null}
-                  slug={a.slug}
-                  amenities={a.amenities}
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {a.distanceKm.toFixed(1)} km stąd
-                </p>
-              </div>
+              <ActivityCard
+                {...a}
+                distanceKm={null}
+                slug={a.slug}
+                amenities={a.amenities}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                {a.distanceKm.toFixed(1)} km stąd
+              </p>
             </div>
           ))}
         </div>
