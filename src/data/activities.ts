@@ -95,7 +95,8 @@ export const filterOptions = {
     { value: "0-2", label: "0–2 lata", min: 0, max: 2 },
     { value: "3-5", label: "3–5 lat", min: 3, max: 5 },
     { value: "6-9", label: "6–9 lat", min: 6, max: 9 },
-    { value: "10-14", label: "10–14 lat", min: 10, max: 14 },
+    { value: "10-13", label: "10–13 lat", min: 10, max: 13 },
+    { value: "14-16", label: "14–16 lat", min: 14, max: 16 },
   ],
   type: [
     { value: "zoo", label: "Zoo i zwierzęta" },
