@@ -141,11 +141,11 @@ const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) =
       {FEATURES.BLOG && blogPosts.length > 0 && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-            {blogPosts.slice(0, 3).map((post) => (
+          <HorizontalCarousel visibleCards={[1.5, 2.5, 3]}>
+            {blogPosts.map((post) => (
               <BlogCard key={post.id} post={post} />
             ))}
-          </div>
+          </HorizontalCarousel>
         </section>
       )}
     </div>
