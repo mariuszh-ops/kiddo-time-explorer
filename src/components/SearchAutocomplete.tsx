@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X, MapPin, Star, Home, TreePine, Send } from "lucide-react";
-import { Activity } from "@/data/activities";
+import { Search, X, Send } from "lucide-react";
+import { Activity, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
@@ -12,43 +12,34 @@ interface SearchAutocompleteProps {
   onSearchChange: (query: string) => void;
 }
 
-interface CategoryMatch {
-  slug: string;
-  emoji: string;
-  label: string;
-  city: string;
-  cityLabel: string;
-  path: string;
-}
-
 function fuzzyMatch(text: string, query: string): boolean {
-  const lower = text.toLowerCase();
-  const q = query.toLowerCase();
-  return lower.includes(q);
+  return text.toLowerCase().includes(query.toLowerCase());
 }
 
 function matchActivity(activity: Activity, query: string): boolean {
   return (
     fuzzyMatch(activity.title, query) ||
     fuzzyMatch(activity.location, query) ||
-    fuzzyMatch(activity.type, query) ||
     fuzzyMatch(activity.city, query) ||
     activity.tags.some((t) => fuzzyMatch(t, query))
   );
 }
 
-function matchCategories(query: string): CategoryMatch[] {
+// Get human-readable category label from type value
+function getCategoryLabel(typeValue: string): string {
+  const opt = filterOptions.type.find((o) => o.value === typeValue);
+  return opt?.label || typeValue;
+}
+
+function matchCategories(query: string) {
   const q = query.toLowerCase();
-  const matches: CategoryMatch[] = [];
+  const matches: { slug: string; emoji: string; label: string; city: string; cityLabel: string; path: string }[] = [];
 
   for (const city of FEATURES.ENABLED_CITIES) {
     const cityLabel = cityLabels[city]?.nominative || city;
     for (const cat of categoryConfigs) {
-      if (!cat.slug) continue; // skip "all"
-      if (
-        fuzzyMatch(cat.label, q) ||
-        fuzzyMatch(cat.slug, q)
-      ) {
+      if (!cat.slug) continue;
+      if (fuzzyMatch(cat.label, q) || fuzzyMatch(cat.slug, q)) {
         matches.push({
           slug: cat.slug,
           emoji: cat.emoji,
@@ -76,7 +67,6 @@ const SearchAutocomplete = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
 
-  // Debounced filtering
   const [debouncedQuery, setDebouncedQuery] = useState(inputValue);
 
   useEffect(() => {
@@ -89,14 +79,13 @@ const SearchAutocomplete = ({
     };
   }, [inputValue]);
 
-  // Sync external searchQuery changes
   useEffect(() => {
     setInputValue(searchQuery);
   }, [searchQuery]);
 
   const matchingActivities = useMemo(() => {
     if (debouncedQuery.length < 2) return [];
-    return activities.filter((a) => matchActivity(a, debouncedQuery)).slice(0, 6);
+    return activities.filter((a) => matchActivity(a, debouncedQuery)).slice(0, 5);
   }, [activities, debouncedQuery]);
 
   const matchingCategories = useMemo(() => {
@@ -107,7 +96,6 @@ const SearchAutocomplete = ({
   const totalResults = matchingActivities.length + matchingCategories.length;
   const showDropdown = isOpen && debouncedQuery.length >= 2;
 
-  // Click outside
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -155,7 +143,6 @@ const SearchAutocomplete = ({
       if (selectedIndex >= 0) {
         handleSelect(selectedIndex);
       } else {
-        // Standard grid filtering
         onSearchChange(inputValue);
         setIsOpen(false);
       }
@@ -166,7 +153,6 @@ const SearchAutocomplete = ({
     setInputValue(val);
     setSelectedIndex(-1);
     setIsOpen(true);
-    // If cleared, reset grid filter too
     if (!val.trim()) {
       onSearchChange("");
     }
@@ -207,14 +193,20 @@ const SearchAutocomplete = ({
 
       {/* Dropdown */}
       {showDropdown && (
-        <div className="absolute top-full left-0 right-0 mt-1 bg-popover border border-border rounded-xl shadow-md z-50 max-h-[400px] overflow-y-auto min-w-[280px]">
+        <div
+          className="absolute top-full left-0 mt-1 bg-white border border-border overflow-y-auto min-w-[320px] z-50"
+          style={{
+            borderRadius: "12px",
+            boxShadow: "0 8px 24px rgba(31,42,36,0.1)",
+            maxHeight: "400px",
+          }}
+        >
           {totalResults === 0 ? (
             <div className="p-4 text-center">
               <p className="text-sm text-muted-foreground">Nie znaleziono atrakcji</p>
               <button
                 onClick={() => {
                   setIsOpen(false);
-                  // Scroll to submit CTA or open modal
                   const cta = document.querySelector('[data-submit-cta]');
                   if (cta) cta.scrollIntoView({ behavior: 'smooth' });
                 }}
@@ -228,8 +220,8 @@ const SearchAutocomplete = ({
             <>
               {/* Activities section */}
               {matchingActivities.length > 0 && (
-                <div className="p-1">
-                  <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <div className="py-1">
+                  <p className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Atrakcje
                   </p>
                   {matchingActivities.map((activity, i) => (
@@ -238,30 +230,20 @@ const SearchAutocomplete = ({
                       onClick={() => handleSelect(i)}
                       onMouseEnter={() => setSelectedIndex(i)}
                       className={cn(
-                        "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors",
-                        selectedIndex === i
-                          ? "bg-accent text-accent-foreground"
-                          : "hover:bg-accent/50"
+                        "w-full flex flex-col text-left transition-colors",
+                        selectedIndex === i ? "" : ""
                       )}
+                      style={{
+                        padding: "10px 16px",
+                        backgroundColor: selectedIndex === i ? "#F3F7F2" : "transparent",
+                      }}
                     >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{activity.title}</p>
-                        <p className="text-xs text-muted-foreground truncate flex items-center gap-1">
-                          <MapPin className="w-3 h-3 flex-shrink-0" />
-                          {activity.location}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {activity.isIndoor ? (
-                          <Home className="w-3.5 h-3.5 text-muted-foreground" />
-                        ) : (
-                          <TreePine className="w-3.5 h-3.5 text-muted-foreground" />
-                        )}
-                        <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
-                          <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
-                          {activity.rating}
-                        </span>
-                      </div>
+                      <span className="text-sm font-medium text-foreground truncate">
+                        {activity.title}
+                      </span>
+                      <span className="text-xs text-muted-foreground truncate">
+                        {activity.location} · {getCategoryLabel(activity.type)}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -269,8 +251,8 @@ const SearchAutocomplete = ({
 
               {/* Categories section */}
               {matchingCategories.length > 0 && (
-                <div className="p-1 border-t border-border">
-                  <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                <div className="py-1 border-t border-border">
+                  <p className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                     Kategorie
                   </p>
                   {matchingCategories.map((cat, i) => {
@@ -280,12 +262,11 @@ const SearchAutocomplete = ({
                         key={cat.path}
                         onClick={() => handleSelect(globalIndex)}
                         onMouseEnter={() => setSelectedIndex(globalIndex)}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors",
-                          selectedIndex === globalIndex
-                            ? "bg-accent text-accent-foreground"
-                            : "hover:bg-accent/50"
-                        )}
+                        className="w-full flex items-center gap-3 text-left transition-colors"
+                        style={{
+                          padding: "10px 16px",
+                          backgroundColor: selectedIndex === globalIndex ? "#F3F7F2" : "transparent",
+                        }}
                       >
                         <span className="text-base">{cat.emoji}</span>
                         <div className="flex-1 min-w-0">
@@ -299,7 +280,7 @@ const SearchAutocomplete = ({
               )}
 
               {/* Enter hint */}
-              <div className="px-3 py-2 border-t border-border">
+              <div className="px-4 py-2 border-t border-border">
                 <p className="text-xs text-muted-foreground">
                   <kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">Enter</kbd>
                   {" "}szukaj w liście · <kbd className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono">↑↓</kbd>
