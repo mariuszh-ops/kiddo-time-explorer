@@ -173,22 +173,26 @@ const FilterBar = ({
             />
           )}
           
-          <FilterDropdown
-            label="Wiek dziecka"
-            options={filterCounts.age}
-            selectedValue={filters.age}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("age", value)}
-          />
+          <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+            <FilterDropdown
+              label="Wiek dziecka"
+              options={filterCounts.age}
+              selectedValue={filters.age}
+              hasAnyFilter={filterCounts.hasAnyFilter}
+              onSelect={(value) => onUpdateFilter("age", value)}
+            />
+          </div>
           
-          <MultiFilterDropdown
-            label="Kategoria"
-            options={filterCounts.type}
-            selectedValues={filters.type || []}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            onToggle={onToggleTypeFilter}
-            onClear={() => onUpdateFilter("type", undefined)}
-          />
+          <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+            <MultiFilterDropdown
+              label="Kategoria"
+              options={filterCounts.type}
+              selectedValues={filters.type || []}
+              hasAnyFilter={filterCounts.hasAnyFilter}
+              onToggle={onToggleTypeFilter}
+              onClear={() => onUpdateFilter("type", undefined)}
+            />
+          </div>
           
           <FilterDropdown
             label="Pod dachem?"
