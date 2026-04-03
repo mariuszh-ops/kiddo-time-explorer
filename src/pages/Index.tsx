@@ -162,10 +162,12 @@ const Index = () => {
         />
       )}
 
-      {/* Submit activity CTA */}
-      <div className="container py-8 md:py-12">
-        <SubmitActivityCTA variant="card" />
-      </div>
+      {/* Submit activity CTA — hidden in map view */}
+      {viewMode !== 'map' && (
+        <div className="container py-8 md:py-12">
+          <SubmitActivityCTA variant="card" />
+        </div>
+      )}
 
       <Footer />
     </main>
