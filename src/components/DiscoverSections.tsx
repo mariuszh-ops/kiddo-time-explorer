@@ -15,11 +15,11 @@ interface DiscoverSectionsProps {
 
 const cityMeta: { value: string; label: string; bg: string; emoji: string }[] = [
   { value: "warszawa", label: "Warszawa i okolice", bg: "#E8F0E4", emoji: "🧜‍♀️" },
+  { value: "slask", label: "Aglomeracja Śląska", bg: "#E8F0E4", emoji: "⛏️" },
   { value: "krakow", label: "Kraków i okolice", bg: "#DFF0EC", emoji: "🐉" },
   { value: "wroclaw", label: "Wrocław i okolice", bg: "#E4EEF5", emoji: "🤴" },
   { value: "trojmiasto", label: "Trójmiasto", bg: "#F2EBDD", emoji: "⚓" },
   { value: "poznan", label: "Poznań i okolice", bg: "#E6EDDF", emoji: "🐐" },
-  { value: "slask", label: "Aglomeracja Śląska", bg: "#E8F0E4", emoji: "⛏️" },
   { value: "lodz", label: "Łódź i okolice", bg: "#DFF0EC", emoji: "🎬" },
 ];
 
