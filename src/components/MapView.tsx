@@ -316,18 +316,13 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
         </MapContainer>
         <MapLegend />
 
-        {/* Count label */}
-        <div className="absolute top-3 left-14 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
-          {visibleActivities.length} atrakcji w widoku
-        </div>
-
-        {/* Back to list button (mobile) */}
+        {/* Back to list button + count (mobile) */}
         <button
           onClick={() => onViewModeChange?.("grid")}
-          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3 py-1.5 flex items-center gap-1.5 border border-border text-xs font-medium"
+          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium"
         >
-          <LayoutGrid className="w-3.5 h-3.5" />
-          Lista
+          <LayoutGrid className="w-4 h-4" />
+          Lista · {visibleActivities.length} atrakcji
         </button>
 
         {/* Static bottom card strip */}
