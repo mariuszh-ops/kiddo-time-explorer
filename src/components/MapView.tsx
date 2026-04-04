@@ -314,6 +314,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
+        <MapLegend />
 
         {/* Count label */}
         <div className="absolute top-3 left-14 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-xs font-medium text-foreground shadow-sm">
