@@ -33,7 +33,7 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
   </div>
 );
 
-const DiscoverSections = ({ activities, onSelectCity }: DiscoverSectionsProps) => {
+const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: DiscoverSectionsProps) => {
   const topRated = useMemo(() => {
     return activities
       .filter((a) => a.rating >= 4.7 && a.reviewCount >= 100)
