@@ -11,7 +11,7 @@ interface VisitedActivityCardProps {
 
 const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
   const { userRating } = activity;
-  const formattedDate = format(userRating.ratedAt, "MMMM yyyy", { locale: pl });
+  const formattedDate = format(userRating.ratedAt, "d MMMM yyyy", { locale: pl });
   
   // Truncate review for preview
   const reviewPreview = userRating.review && userRating.review.length > 100
@@ -65,7 +65,7 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
               ))}
             </div>
             <span className="text-xs text-muted-foreground">
-              Oceniono w {formattedDate}
+              Oceniono {formattedDate}
             </span>
           </div>
         </div>
