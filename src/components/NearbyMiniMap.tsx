@@ -1,8 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
-import { Link } from "react-router-dom";
-import { MapPinned, Plus, Minus } from "lucide-react";
+import { MapPinned, Plus, Minus, X, Maximize2 } from "lucide-react";
 import { Activity } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -47,7 +46,6 @@ function FitAndMarkers({
     const bounds = L.latLngBounds(points);
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
 
-    // Current activity marker
     const currentMarker = L.marker(
       [currentActivity.latitude, currentActivity.longitude],
       { icon: currentPinIcon }
@@ -57,7 +55,6 @@ function FitAndMarkers({
       { maxWidth: 200, closeButton: false }
     );
 
-    // Nearby markers
     const markers = nearbyItems.map((item) => {
       const marker = L.marker([item.latitude, item.longitude], {
         icon: createNearbyPinIcon(item.type),
@@ -104,13 +101,22 @@ function ZoomControls() {
   );
 }
 
+function InvalidateOnMount() {
+  const map = useMap();
+  useEffect(() => {
+    setTimeout(() => map.invalidateSize(), 100);
+  }, [map]);
+  return null;
+}
+
 const NearbyMiniMap = ({ currentActivity, nearbyItems }: NearbyMiniMapProps) => {
   const isMobile = useIsMobile();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   if (nearbyItems.length === 0) return null;
 
   const center: [number, number] = [currentActivity.latitude, currentActivity.longitude];
-  const height = isMobile ? 220 : 280;
+  const previewHeight = isMobile ? 220 : 280;
 
   return (
     <div>
@@ -118,9 +124,12 @@ const NearbyMiniMap = ({ currentActivity, nearbyItems }: NearbyMiniMapProps) => 
         <MapPinned className="w-5 h-5" />
         Na mapie
       </h3>
+
+      {/* Preview (clickable thumbnail) */}
       <div
-        className="rounded-xl border border-border overflow-hidden relative"
-        style={{ height }}
+        className="rounded-xl border border-border overflow-hidden relative cursor-pointer group"
+        style={{ height: previewHeight }}
+        onClick={() => setIsExpanded(true)}
       >
         <MapContainer
           center={center}
@@ -128,7 +137,7 @@ const NearbyMiniMap = ({ currentActivity, nearbyItems }: NearbyMiniMapProps) => 
           className="w-full h-full z-0"
           zoomControl={false}
           scrollWheelZoom={false}
-          dragging={!isMobile}
+          dragging={false}
           attributionControl={true}
         >
           <TileLayer
@@ -136,9 +145,50 @@ const NearbyMiniMap = ({ currentActivity, nearbyItems }: NearbyMiniMapProps) => 
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <FitAndMarkers currentActivity={currentActivity} nearbyItems={nearbyItems} />
-          <ZoomControls />
         </MapContainer>
+        {/* Expand overlay */}
+        <div className="absolute inset-0 z-[500] flex items-center justify-center bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none">
+          <div className="bg-background/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1.5 shadow-md opacity-0 group-hover:opacity-100 transition-opacity text-sm font-medium text-foreground">
+            <Maximize2 className="w-4 h-4" />
+            Powiększ mapę
+          </div>
+        </div>
       </div>
+
+      {/* Expanded fullscreen overlay */}
+      {isExpanded && (
+        <div
+          className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:p-8"
+          onClick={(e) => { if (e.target === e.currentTarget) setIsExpanded(false); }}
+        >
+          <div className="relative w-full max-w-4xl h-[80vh] md:h-[85vh] rounded-2xl overflow-hidden border border-border shadow-2xl bg-background">
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="absolute top-3 right-3 z-[10000] w-9 h-9 rounded-full bg-background/90 border border-border shadow-md flex items-center justify-center hover:bg-accent cursor-pointer"
+              aria-label="Zamknij mapę"
+            >
+              <X className="w-5 h-5 text-foreground" />
+            </button>
+            <MapContainer
+              center={center}
+              zoom={12}
+              className="w-full h-full z-0"
+              zoomControl={false}
+              scrollWheelZoom={true}
+              dragging={true}
+              attributionControl={true}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <FitAndMarkers currentActivity={currentActivity} nearbyItems={nearbyItems} />
+              <ZoomControls />
+              <InvalidateOnMount />
+            </MapContainer>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
