@@ -81,7 +81,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
       })()}
 
       {/* Section 2: Top Rated */}
-      {topRated.length > 0 && (
+      {FEATURES.TOP_RATED_SECTION && topRated.length > 0 && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="⭐" title="Najlepiej oceniane" subtitle="Sprawdzone przez rodziców" />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">

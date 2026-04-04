@@ -13,4 +13,5 @@ export const FEATURES = {
   ONBOARDING: false,          // Welcome screen dla nowych użytkowników — aktywny
   COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
   SOCIAL_PROOF: false,        // Social proof ("Często wybierane") — bannery i badge'e — wyłączone w MVP
+  TOP_RATED_SECTION: false,   // Sekcja "Najlepiej oceniane" na stronie głównej — ukryta
 } as const;
