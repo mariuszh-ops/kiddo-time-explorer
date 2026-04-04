@@ -105,6 +105,7 @@ export const filterOptions = {
     { value: "muzeum-teatr", label: "Muzea i teatry" },
     { value: "sport", label: "Sport i ruch" },
     { value: "zoo", label: "Zoo i zwierzęta" },
+    { value: "park", label: "Parki i natura" },
     { value: "inne", label: "Inne" },
   ],
   indoor: [
