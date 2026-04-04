@@ -438,15 +438,20 @@ function MiniActivityCard({
   isHighlighted: boolean;
   onCardClick: (activity: Activity) => void;
 }) {
+  const categoryColor = getCategoryColor(activity.type);
   return (
     <div
       onClick={() => onCardClick(activity)}
       className={cn(
         "flex gap-3 p-2 rounded-xl border bg-card transition-all hover:shadow-md cursor-pointer",
         isHighlighted
-          ? "border-l-[3px] border-l-[#2F6B4F] bg-[#DCEEDB]/40 border-t-border border-r-border border-b-border shadow-md"
+          ? "shadow-md"
           : "border-border"
       )}
+      style={{
+        borderLeft: `4px solid ${categoryColor}`,
+        background: isHighlighted ? `${categoryColor}12` : undefined,
+      }}
     >
       <img
         src={activity.imageUrl}
@@ -473,6 +478,50 @@ function MiniActivityCard({
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Collapsible map legend
+function MapLegend() {
+  const [open, setOpen] = useState(false);
+  const labels: Record<string, string> = {
+    "sala-zabaw": "Sale zabaw",
+    "plac-zabaw": "Place zabaw",
+    "sport": "Sport i ruch",
+    "zoo": "Zoo i zwierzęta",
+    "park-rozrywki": "Parki rozrywki",
+    "muzeum-teatr": "Muzea i teatry",
+    "park": "Parki i natura",
+    "inne": "Inne",
+  };
+
+  return (
+    <div className="absolute z-[1000] bottom-4 left-4 md:bottom-4 md:left-auto md:right-16">
+      {open ? (
+        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-xl shadow-lg p-3 min-w-[160px]">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-foreground">Legenda</span>
+            <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground text-xs cursor-pointer">✕</button>
+          </div>
+          <div className="space-y-1.5">
+            {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
+              <div key={key} className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
+                <span className="text-xs text-foreground">{labels[key] || key}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <button
+          onClick={() => setOpen(true)}
+          className="w-10 h-10 rounded-full bg-background border border-border shadow-md flex items-center justify-center hover:bg-accent cursor-pointer"
+          title="Legenda"
+        >
+          <span className="text-base">🗂</span>
+        </button>
+      )}
     </div>
   );
 }
