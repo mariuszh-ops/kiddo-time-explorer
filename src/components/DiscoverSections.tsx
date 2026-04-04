@@ -11,6 +11,7 @@ import { FEATURES } from "@/lib/featureFlags";
 interface DiscoverSectionsProps {
   activities: Activity[];
   onSelectCity: (city: string) => void;
+  onSelectCategory?: (type: string) => void;
 }
 
 const cityMeta: { value: string; label: string; bg: string; emoji: string }[] = [
