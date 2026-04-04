@@ -159,6 +159,14 @@ const Index = () => {
               window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
             }
           }}
+          onSelectCategory={(type) => {
+            toggleArrayFilter("type", type);
+            if (listingRef.current) {
+              const headerHeight = 56;
+              const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+              window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+            }
+          }}
         />
       )}
 

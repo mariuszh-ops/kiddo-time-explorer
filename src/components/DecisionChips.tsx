@@ -8,12 +8,11 @@ interface DecisionChipsProps {
 
 const CHIPS = [
   { label: "Na deszcz", emoji: "🌧️", filterKey: "indoor" as keyof Filters, value: "indoor" },
-  { label: "Za darmo", emoji: "💸", filterKey: "price" as keyof Filters, value: "free" },
   { label: "Na zewnątrz", emoji: "🌳", filterKey: "indoor" as keyof Filters, value: "outdoor" },
-  { label: "Dla maluchów", emoji: "👶", filterKey: "age" as keyof Filters, value: "0-2" },
+  { label: "Sale zabaw", emoji: "🏠", filterKey: "type" as keyof Filters, value: "sala-zabaw" },
   { label: "Place zabaw", emoji: "🎪", filterKey: "type" as keyof Filters, value: "plac-zabaw" },
-  { label: "Muzea", emoji: "🎨", filterKey: "type" as keyof Filters, value: "muzeum" },
   { label: "Sport i ruch", emoji: "⚽", filterKey: "type" as keyof Filters, value: "sport" },
+  { label: "Zoo i zwierzęta", emoji: "🦁", filterKey: "type" as keyof Filters, value: "zoo" },
 ] as const;
 
 const DecisionChips = ({ filters, onUpdateFilter }: DecisionChipsProps) => {
