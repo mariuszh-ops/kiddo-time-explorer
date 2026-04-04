@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Star, Sparkles, MapPin, Clock } from "lucide-react";
+import { } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
