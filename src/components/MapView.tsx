@@ -11,8 +11,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 // Custom rating pin icon
-const createPinIcon = (rating: number) => {
-  const color = rating >= 4.5 ? "#16a34a" : rating >= 4.0 ? "#2563eb" : "#6b7280";
+const createPinIcon = (rating: number, type?: string) => {
+  const color = getCategoryColor(type || "inne");
   return L.divIcon({
     className: "custom-rating-pin",
     html: `<div style="
