@@ -65,7 +65,7 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
               ))}
             </div>
             <span className="text-xs text-muted-foreground">
-              Oceniono w {formattedDate}
+              Oceniono {formattedDate}
             </span>
           </div>
         </div>
