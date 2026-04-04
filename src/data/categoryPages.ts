@@ -94,6 +94,16 @@ export const categoryConfigs: CategoryConfig[] = [
     filterFn: (a, citySlug) => a.city === citySlug && a.type === "zoo",
   },
   {
+    slug: "park",
+    emoji: "🌳",
+    label: "Parki i natura",
+    seoTitle: "Parki i tereny zielone dla dzieci {city} | FamilyFun",
+    seoDescription: "Najlepsze parki i tereny zielone {city} dla rodzin z dziećmi. Sprawdź opinie rodziców, udogodnienia i godziny otwarcia.",
+    h1: "Parki i natura {city}",
+    description: "Parki miejskie, tereny zielone i miejsca na świeżym powietrzu idealne na rodzinne spacery. Ocenione przez rodziców.",
+    filterFn: (a, citySlug) => a.city === citySlug && a.type === "park",
+  },
+  {
     slug: "inne",
     emoji: "✨",
     label: "Inne",
