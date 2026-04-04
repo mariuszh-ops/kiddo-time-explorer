@@ -67,6 +67,11 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
           </div>
         ))}
       </HorizontalCarousel>
+      <div className="mt-4">
+        <Suspense fallback={<div style={{ height: 280 }} className="rounded-xl border border-border bg-muted animate-pulse" />}>
+          <NearbyMiniMap currentActivity={activity} nearbyItems={items} />
+        </Suspense>
+      </div>
     </section>
   );
 };
