@@ -5,6 +5,7 @@ import "leaflet.markercluster";
 import { Link } from "react-router-dom";
 import { Star, LocateFixed, LayoutGrid } from "lucide-react";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
+import { getCategoryColor, CATEGORY_COLORS } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
