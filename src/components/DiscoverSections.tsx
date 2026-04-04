@@ -4,10 +4,9 @@ import { Star, Sparkles, MapPin, Clock } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
-import { Activity, getActivities } from "@/data/activities";
+import { Activity, getActivities, filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
-import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
 
 interface DiscoverSectionsProps {
   activities: Activity[];
