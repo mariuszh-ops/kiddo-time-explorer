@@ -114,26 +114,21 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
       {/* Section 3: Category tiles */}
       <section className="container py-6 md:py-8 border-b border-border/30">
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
-          {categoryConfigs
-            .filter(c => c.slug !== "")
-            .map((cat) => {
-              const primaryCity = FEATURES.ENABLED_CITIES[0] || "warszawa";
-              const allEnabled = getActivities().filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
-              const count = getCategoryCount(allEnabled, primaryCity, cat);
-              const href = `/atrakcje/${primaryCity}/${cat.slug}`;
-              return (
-                <Link
-                  key={cat.slug}
-                  to={href}
-                  className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span className="text-xl mb-2 block">{cat.emoji}</span>
-                  <h3 className="font-semibold text-foreground text-sm">{cat.label}</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
-                </Link>
-              );
-            })}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 md:gap-4">
+          {filterOptions.type.map((opt) => {
+            const allEnabled = getActivities().filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
+            const count = allEnabled.filter(a => a.type === opt.value).length;
+            return (
+              <button
+                key={opt.value}
+                onClick={() => onSelectCategory?.(opt.value)}
+                className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <h3 className="font-semibold text-foreground text-sm">{opt.label}</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+              </button>
+            );
+          })}
         </div>
       </section>
 

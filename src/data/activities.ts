@@ -99,12 +99,12 @@ export const filterOptions = {
     { value: "14-16", label: "14–16 lat", min: 14, max: 16 },
   ],
   type: [
-    { value: "zoo", label: "Zoo i zwierzęta" },
-    { value: "muzeum", label: "Muzea" },
+    { value: "sala-zabaw", label: "Sale zabaw" },
     { value: "plac-zabaw", label: "Place zabaw" },
-    { value: "park", label: "Parki" },
+    { value: "park-rozrywki", label: "Parki rozrywki" },
+    { value: "muzeum-teatr", label: "Muzea i teatry" },
     { value: "sport", label: "Sport i ruch" },
-    { value: "warsztaty", label: "Warsztaty" },
+    { value: "zoo", label: "Zoo i zwierzęta" },
     { value: "inne", label: "Inne" },
   ],
   indoor: [
