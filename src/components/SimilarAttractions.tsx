@@ -1,7 +1,9 @@
-import { useMemo } from "react";
+import { useMemo, lazy, Suspense } from "react";
 import { Activity, getActivities } from "@/data/activities";
 import ActivityCard from "@/components/ActivityCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
+
+const NearbyMiniMap = lazy(() => import("@/components/NearbyMiniMap"));
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
