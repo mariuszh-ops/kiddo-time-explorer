@@ -14,10 +14,24 @@ import {
   CheckCircle2,
   AlertTriangle,
   Download,
-  Trash2
+  Trash2,
+  MessageSquarePlus,
+  ChevronDown,
+  ClipboardCopy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -26,8 +40,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import PageTransition from "@/components/PageTransition";
-import { Activity, getActivities, setActivities } from "@/data/activities";
+import { Activity, getActivities, setActivities, filterOptions } from "@/data/activities";
+import { useSubmissions, ActivitySubmission } from "@/contexts/SubmissionsContext";
+import { AMENITIES } from "@/data/amenities";
+import { toast } from "sonner";
 
 // CSV Schema definition
 const csvSchema = {
@@ -103,12 +125,235 @@ function validateActivities(data: unknown): ValidationResult {
   };
 }
 
+// --- Submission Review Card ---
+
+const SubmissionCard = ({ submission }: { submission: ActivitySubmission }) => {
+  const { updateSubmission } = useSubmissions();
+  const [editState, setEditState] = useState<Partial<ActivitySubmission>>({});
+
+  const current = { ...submission, ...editState };
+
+  const handleField = (field: keyof ActivitySubmission, value: unknown) => {
+    setEditState((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleApprove = () => {
+    updateSubmission(submission.id, { ...editState, status: "approved" });
+    toast.success("Zgłoszenie zatwierdzone — pamiętaj o uzupełnieniu lat/lng i zdjęć w pipeline");
+  };
+
+  const handleReject = () => {
+    updateSubmission(submission.id, { status: "rejected" });
+    toast("Zgłoszenie odrzucone");
+  };
+
+  const handleCopyJSON = () => {
+    const slug = current.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    const json: Record<string, unknown> = {
+      id: 0,
+      title: current.title,
+      slug,
+      location: current.address || "",
+      city: current.city,
+      rating: 0,
+      reviewCount: 0,
+      ageRange: `${current.ageMin}-${current.ageMax}`,
+      ageMin: current.ageMin,
+      ageMax: current.ageMax,
+      matchPercentage: 0,
+      imageUrl: "",
+      imageUrls: [],
+      tags: [],
+      isIndoor: current.isIndoor,
+      type: current.type,
+      isEvent: current.isEvent,
+      eventDate: current.eventDate || undefined,
+      address: current.address,
+      priceLevel: current.priceLevel,
+      priceNote: current.priceNote,
+      website: current.website,
+      latitude: 0,
+      longitude: 0,
+      amenities: current.amenities,
+      reviews: [],
+    };
+    navigator.clipboard.writeText(JSON.stringify(json, null, 2));
+    toast.success("Skopiowano JSON — wklej do activities.json");
+  };
+
+  const dateStr = new Date(submission.submittedAt).toLocaleDateString("pl-PL", {
+    day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit",
+  });
+
+  return (
+    <div className="bg-card rounded-xl border border-border p-5 space-y-4">
+      {/* Header */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 space-y-1">
+          <Input
+            value={current.title}
+            onChange={(e) => handleField("title", e.target.value)}
+            className="font-semibold text-base"
+          />
+          <p className="text-xs text-muted-foreground">Zgłoszono: {dateStr}</p>
+        </div>
+        <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30 shrink-0">
+          Oczekujące
+        </Badge>
+      </div>
+
+      {/* Editable fields grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* City */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Miasto</Label>
+          <Select value={current.city} onValueChange={(v) => handleField("city", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {filterOptions.city.map((c) => (
+                <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Category */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Kategoria</Label>
+          <Select value={current.type} onValueChange={(v) => handleField("type", v)}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {filterOptions.type.map((t) => (
+                <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* Age */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Wiek (min – max)</Label>
+          <div className="flex gap-2 items-center">
+            <Input type="number" min={0} max={18} value={current.ageMin} onChange={(e) => handleField("ageMin", Number(e.target.value))} className="w-20" />
+            <span className="text-muted-foreground">–</span>
+            <Input type="number" min={0} max={18} value={current.ageMax} onChange={(e) => handleField("ageMax", Number(e.target.value))} className="w-20" />
+          </div>
+        </div>
+
+        {/* Indoor/Outdoor */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Indoor / outdoor</Label>
+          <RadioGroup value={current.isIndoor ? "indoor" : "outdoor"} onValueChange={(v) => handleField("isIndoor", v === "indoor")} className="flex gap-4">
+            <div className="flex items-center gap-1.5">
+              <RadioGroupItem value="indoor" id={`io-${submission.id}-i`} />
+              <Label htmlFor={`io-${submission.id}-i`} className="text-sm font-normal cursor-pointer">Indoor</Label>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <RadioGroupItem value="outdoor" id={`io-${submission.id}-o`} />
+              <Label htmlFor={`io-${submission.id}-o`} className="text-sm font-normal cursor-pointer">Outdoor</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        {/* Price */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Cena</Label>
+          <RadioGroup
+            value={current.priceLevel !== undefined ? String(current.priceLevel) : ""}
+            onValueChange={(v) => handleField("priceLevel", Number(v))}
+            className="flex gap-3"
+          >
+            {[0, 1, 2, 3].map((p) => (
+              <div key={p} className="flex items-center gap-1.5">
+                <RadioGroupItem value={String(p)} id={`price-${submission.id}-${p}`} />
+                <Label htmlFor={`price-${submission.id}-${p}`} className="text-sm font-normal cursor-pointer">
+                  {p === 0 ? "Bezpłatne" : "$".repeat(p)}
+                </Label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
+
+        {/* Price note */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Notatka cenowa</Label>
+          <Input value={current.priceNote || ""} onChange={(e) => handleField("priceNote", e.target.value)} placeholder="np. Dorośli: 40 zł" />
+        </div>
+
+        {/* Address */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Adres</Label>
+          <Input value={current.address} onChange={(e) => handleField("address", e.target.value)} />
+        </div>
+
+        {/* Website */}
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Strona www</Label>
+          <Input value={current.website} onChange={(e) => handleField("website", e.target.value)} />
+        </div>
+      </div>
+
+      {/* Amenities */}
+      <div className="space-y-1.5">
+        <Label className="text-xs text-muted-foreground">Udogodnienia</Label>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+          {AMENITIES.map((a) => (
+            <div key={a.id} className="flex items-center gap-2">
+              <Checkbox
+                checked={current.amenities.includes(a.id)}
+                onCheckedChange={(checked) => {
+                  const next = checked
+                    ? [...current.amenities, a.id]
+                    : current.amenities.filter((x) => x !== a.id);
+                  handleField("amenities", next);
+                }}
+              />
+              <Label className="text-sm font-normal cursor-pointer">{a.label}</Label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* User description */}
+      {current.description && (
+        <div className="space-y-1.5">
+          <Label className="text-xs text-muted-foreground">Opis od użytkownika</Label>
+          <div className="bg-muted rounded-lg p-3 text-sm text-foreground leading-relaxed">
+            {current.description}
+          </div>
+        </div>
+      )}
+
+      {/* Actions */}
+      <div className="flex flex-wrap gap-3 pt-2 border-t border-border">
+        <Button className="gap-2" onClick={handleApprove}>
+          <CheckCircle2 className="w-4 h-4" />
+          Zatwierdź
+        </Button>
+        <Button variant="outline" className="gap-2 text-destructive border-destructive/30 hover:bg-destructive/10" onClick={handleReject}>
+          <Trash2 className="w-4 h-4" />
+          Odrzuć
+        </Button>
+        <Button variant="outline" className="gap-2" onClick={handleCopyJSON}>
+          <ClipboardCopy className="w-4 h-4" />
+          Kopiuj jako JSON
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const Admin = () => {
   const [copiedCSV, setCopiedCSV] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importData, setImportData] = useState<Activity[] | null>(null);
   const [validation, setValidation] = useState<ValidationResult | null>(null);
   const [importApplied, setImportApplied] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+
+  const { submissions, removeSubmission, pendingCount } = useSubmissions();
+  const pendingSubmissions = submissions.filter((s) => s.status === "pending");
+  const historySubmissions = submissions.filter((s) => s.status !== "pending");
 
   const handleCopyCSV = () => {
     navigator.clipboard.writeText(sampleCSV);
@@ -163,6 +408,11 @@ const Admin = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleClearHistory = () => {
+    historySubmissions.forEach((s) => removeSubmission(s.id));
+    toast("Historia wyczyszczona");
+  };
+
   const currentActivities = getActivities();
 
   return (
@@ -185,15 +435,94 @@ const Admin = () => {
                   <p className="text-xs text-muted-foreground">Zarządzanie danymi aplikacji</p>
                 </div>
               </div>
-              <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30">
-                <AlertCircle className="w-3 h-3 mr-1" />
-                Tryb deweloperski
-              </Badge>
+              <div className="flex items-center gap-3">
+                {pendingCount > 0 && (
+                  <Badge className="bg-primary text-primary-foreground">
+                    {pendingCount} {pendingCount === 1 ? "zgłoszenie" : "zgłoszeń"}
+                  </Badge>
+                )}
+                <Badge variant="outline" className="text-amber-600 border-amber-300 bg-amber-50 dark:bg-amber-950/30">
+                  <AlertCircle className="w-3 h-3 mr-1" />
+                  Tryb deweloperski
+                </Badge>
+              </div>
             </div>
           </div>
         </header>
 
         <main className="container py-8 space-y-10">
+
+          {/* ===== SECTION 0: Submissions Review ===== */}
+          <section>
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="p-2 bg-primary/10 rounded-lg">
+                  <MessageSquarePlus className="w-5 h-5 text-primary" />
+                </div>
+                <h2 className="text-2xl font-serif text-foreground">Zgłoszenia od rodziców</h2>
+                {pendingCount > 0 && (
+                  <Badge variant="secondary">{pendingCount} oczekujących</Badge>
+                )}
+              </div>
+              <p className="text-muted-foreground max-w-2xl">
+                Miejsca zgłoszone przez użytkowników — sprawdź i zatwierdź.
+              </p>
+            </div>
+
+            {/* Pending submissions */}
+            {pendingSubmissions.length > 0 ? (
+              <div className="space-y-4">
+                {pendingSubmissions.map((sub) => (
+                  <SubmissionCard key={sub.id} submission={sub} />
+                ))}
+              </div>
+            ) : (
+              <div className="bg-card rounded-xl border border-border p-8 text-center">
+                <MessageSquarePlus className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">
+                  Brak nowych zgłoszeń. Miejsca dodane przez rodziców pojawią się tutaj.
+                </p>
+              </div>
+            )}
+
+            {/* History collapsible */}
+            {historySubmissions.length > 0 && (
+              <Collapsible open={historyOpen} onOpenChange={setHistoryOpen} className="mt-6">
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" className="gap-2 text-muted-foreground">
+                    <ChevronDown className={`w-4 h-4 transition-transform ${historyOpen ? "rotate-180" : ""}`} />
+                    Historia ({historySubmissions.length})
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="mt-3 space-y-2">
+                  {historySubmissions.map((sub) => (
+                    <div key={sub.id} className="flex items-center justify-between bg-card rounded-lg border border-border px-4 py-2.5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-medium">{sub.title}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(sub.submittedAt).toLocaleDateString("pl-PL")}
+                        </span>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className={sub.status === "approved"
+                          ? "text-green-600 border-green-300 bg-green-50 dark:bg-green-950/30"
+                          : "text-red-600 border-red-300 bg-red-50 dark:bg-red-950/30"
+                        }
+                      >
+                        {sub.status === "approved" ? "Zatwierdzone" : "Odrzucone"}
+                      </Badge>
+                    </div>
+                  ))}
+                  <Button variant="outline" size="sm" className="gap-2 mt-2" onClick={handleClearHistory}>
+                    <Trash2 className="w-3.5 h-3.5" />
+                    Wyczyść historię
+                  </Button>
+                </CollapsibleContent>
+              </Collapsible>
+            )}
+          </section>
+
           {/* ===== SECTION 1: JSON Import ===== */}
           <section>
             <div className="mb-6">
