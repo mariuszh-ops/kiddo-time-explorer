@@ -907,6 +907,11 @@ const ActivityDetail = () => {
         </section>
       )}
 
+      {/* 7.5 Community notice */}
+      <section className="container mt-5 md:mt-6">
+        <CommunityNotice activityTitle={activity.title} />
+      </section>
+
       {/* 8. Similar activities */}
       <SimilarAttractions activity={activity} />
 
