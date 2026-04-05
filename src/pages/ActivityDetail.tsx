@@ -29,6 +29,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getActivities, PRICE_LEVELS } from "@/data/activities";
 import SimilarAttractions from "@/components/SimilarAttractions";
+import CommunityNotice from "@/components/CommunityNotice";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect, useRef } from "react";
