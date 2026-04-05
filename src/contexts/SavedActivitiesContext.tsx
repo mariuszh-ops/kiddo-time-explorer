@@ -1,5 +1,28 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities } from "@/data/activities";
+
+const LS_FAVORITES_KEY = "ff_favorites";
+const LS_WANT_TO_VISIT_KEY = "ff_want_to_visit";
+
+function loadFromStorage(key: string): Set<number> {
+  try {
+    const stored = localStorage.getItem(key);
+    if (!stored) return new Set();
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed)) return new Set(parsed);
+    return new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveToStorage(key: string, ids: Set<number>) {
+  try {
+    localStorage.setItem(key, JSON.stringify([...ids]));
+  } catch {
+    // localStorage full or unavailable — silently ignore
+  }
+}
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
@@ -37,13 +60,17 @@ interface SavedActivitiesContextType {
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
 
 export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
-  // Initialize with mock data for demo purposes
-  // 4 favorites: IDs 1, 5, 8, 12
-  // 7 want to visit: IDs 2, 3, 6, 10, 14, 17, 20
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set());
-  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(new Set());
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => loadFromStorage(LS_FAVORITES_KEY));
+  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(() => loadFromStorage(LS_WANT_TO_VISIT_KEY));
 
-  // Get full activity objects for saved items
+  useEffect(() => {
+    saveToStorage(LS_FAVORITES_KEY, favoriteIds);
+  }, [favoriteIds]);
+
+  useEffect(() => {
+    saveToStorage(LS_WANT_TO_VISIT_KEY, wantToVisitIds);
+  }, [wantToVisitIds]);
+
   const favorites = getActivities().filter(a => favoriteIds.has(a.id));
   const wantToVisit = getActivities().filter(a => wantToVisitIds.has(a.id));
 
@@ -51,9 +78,6 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const isWantToVisit = useCallback((id: number) => wantToVisitIds.has(id), [wantToVisitIds]);
 
   const toggleFavorite = useCallback(async (activityId: number): Promise<boolean> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
     let newState = false;
     setFavoriteIds(prev => {
       const newSet = new Set(prev);
@@ -66,14 +90,10 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       }
       return newSet;
     });
-    
     return newState;
   }, []);
 
   const toggleWantToVisit = useCallback(async (activityId: number): Promise<boolean> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 150));
-    
     let newState = false;
     setWantToVisitIds(prev => {
       const newSet = new Set(prev);
@@ -86,17 +106,10 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       }
       return newSet;
     });
-    
     return newState;
   }, []);
 
   const removeFromFavorites = useCallback(async (id: number): Promise<void> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    // Uncomment to test error state:
-    // if (Math.random() > 0.5) throw new Error("Network error");
-    
     setFavoriteIds(prev => {
       const newSet = new Set(prev);
       newSet.delete(id);
@@ -105,12 +118,6 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const removeFromWantToVisit = useCallback(async (id: number): Promise<void> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    // Uncomment to test error state:
-    // if (Math.random() > 0.5) throw new Error("Network error");
-    
     setWantToVisitIds(prev => {
       const newSet = new Set(prev);
       newSet.delete(id);
