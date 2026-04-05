@@ -10,6 +10,7 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
+import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
