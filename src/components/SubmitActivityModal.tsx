@@ -129,8 +129,33 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const isEvent = selectedType === "event";
   const descriptionLength = form.watch("description")?.length || 0;
 
+  const { addSubmission } = useSubmissions();
+
   const handleSubmit = (data: FormData) => {
-    console.log("Activity submission:", data);
+    const ageRanges = data.ageGroups.map((g) => {
+      const parts = g.split("-").map(Number);
+      return { min: parts[0] || 0, max: parts[1] || 16 };
+    });
+    const ageMin = Math.min(...ageRanges.map((r) => r.min));
+    const ageMax = Math.max(...ageRanges.map((r) => r.max));
+
+    addSubmission({
+      title: data.name,
+      city: data.city === "inne" ? (data.customCity || "inne") : data.city,
+      address: data.address || "",
+      type: data.activityType,
+      isEvent: data.type === "event",
+      eventDate: data.eventDate,
+      ageMin,
+      ageMax,
+      isIndoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
+      priceLevel: data.priceLevel,
+      priceNote: data.priceNote,
+      description: data.description || "",
+      website: data.link || "",
+      amenities: data.amenities || [],
+    });
+
     setIsSubmitted(true);
   };
 

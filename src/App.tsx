@@ -102,17 +102,19 @@ const App = () => {
           <AuthProvider>
             <SavedActivitiesProvider>
               <UserRatingsProvider>
-                <TooltipProvider>
-                  <Toaster />
-                  <Sonner />
-                  <OfflineIndicator />
-                  <BrowserRouter>
-                    <AnalyticsTracker />
-                    <AnimatedRoutes />
-                    <BottomNav />
-                    <CookieConsent />
-                  </BrowserRouter>
-                </TooltipProvider>
+                <SubmissionsProvider>
+                  <TooltipProvider>
+                    <Toaster />
+                    <Sonner />
+                    <OfflineIndicator />
+                    <BrowserRouter>
+                      <AnalyticsTracker />
+                      <AnimatedRoutes />
+                      <BottomNav />
+                      <CookieConsent />
+                    </BrowserRouter>
+                  </TooltipProvider>
+                </SubmissionsProvider>
               </UserRatingsProvider>
             </SavedActivitiesProvider>
           </AuthProvider>
