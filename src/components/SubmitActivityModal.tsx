@@ -32,6 +32,8 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { FEATURES } from "@/lib/featureFlags";
+import { useSubmissions } from "@/contexts/SubmissionsContext";
+import { filterOptions } from "@/data/activities";
 
 const ageGroups = [
   { id: "0-3", label: "0–3 lata" },
@@ -41,24 +43,16 @@ const ageGroups = [
   { id: "15+", label: "15+ lat" },
 ];
 
-const cityOptions = [
-  { value: "warszawa", label: "Warszawa" },
-  { value: "krakow", label: "Kraków" },
-  { value: "wroclaw", label: "Wrocław" },
-  { value: "gdansk", label: "Gdańsk" },
-  { value: "poznan", label: "Poznań" },
+const allCityOptions = [
+  ...filterOptions.city,
   { value: "inne", label: "Inne" },
 ];
 
-const activityTypeOptions = [
-  { value: "zoo", label: "Zoo i zwierzęta" },
-  { value: "muzea", label: "Muzea" },
-  { value: "place-zabaw", label: "Place zabaw" },
-  { value: "parki", label: "Parki" },
-  { value: "sport", label: "Sport i ruch" },
-  { value: "warsztaty", label: "Warsztaty" },
-  { value: "inne", label: "Inne" },
-];
+const cityOptions = allCityOptions.filter(
+  (c) => c.value === "inne" || FEATURES.ENABLED_CITIES.includes(c.value)
+);
+
+const activityTypeOptions = filterOptions.type;
 
 const amenityOptions = [
   { id: "stroller", label: "Dostępne dla wózków" },
