@@ -32,6 +32,8 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { FEATURES } from "@/lib/featureFlags";
+import { useSubmissions } from "@/contexts/SubmissionsContext";
+import { filterOptions } from "@/data/activities";
 
 const ageGroups = [
   { id: "0-3", label: "0–3 lata" },
@@ -41,24 +43,16 @@ const ageGroups = [
   { id: "15+", label: "15+ lat" },
 ];
 
-const cityOptions = [
-  { value: "warszawa", label: "Warszawa" },
-  { value: "krakow", label: "Kraków" },
-  { value: "wroclaw", label: "Wrocław" },
-  { value: "gdansk", label: "Gdańsk" },
-  { value: "poznan", label: "Poznań" },
+const allCityOptions = [
+  ...filterOptions.city,
   { value: "inne", label: "Inne" },
 ];
 
-const activityTypeOptions = [
-  { value: "zoo", label: "Zoo i zwierzęta" },
-  { value: "muzea", label: "Muzea" },
-  { value: "place-zabaw", label: "Place zabaw" },
-  { value: "parki", label: "Parki" },
-  { value: "sport", label: "Sport i ruch" },
-  { value: "warsztaty", label: "Warsztaty" },
-  { value: "inne", label: "Inne" },
-];
+const cityOptions = allCityOptions.filter(
+  (c) => c.value === "inne" || FEATURES.ENABLED_CITIES.includes(c.value)
+);
+
+const activityTypeOptions = filterOptions.type;
 
 const amenityOptions = [
   { id: "stroller", label: "Dostępne dla wózków" },
@@ -135,8 +129,33 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const isEvent = selectedType === "event";
   const descriptionLength = form.watch("description")?.length || 0;
 
+  const { addSubmission } = useSubmissions();
+
   const handleSubmit = (data: FormData) => {
-    console.log("Activity submission:", data);
+    const ageRanges = data.ageGroups.map((g) => {
+      const parts = g.split("-").map(Number);
+      return { min: parts[0] || 0, max: parts[1] || 16 };
+    });
+    const ageMin = Math.min(...ageRanges.map((r) => r.min));
+    const ageMax = Math.max(...ageRanges.map((r) => r.max));
+
+    addSubmission({
+      title: data.name,
+      city: data.city === "inne" ? (data.customCity || "inne") : data.city,
+      address: data.address || "",
+      type: data.activityType,
+      isEvent: data.type === "event",
+      eventDate: data.eventDate,
+      ageMin,
+      ageMax,
+      isIndoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
+      priceLevel: data.priceLevel,
+      priceNote: data.priceNote,
+      description: data.description || "",
+      website: data.link || "",
+      amenities: data.amenities || [],
+    });
+
     setIsSubmitted(true);
   };
 
