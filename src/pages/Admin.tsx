@@ -524,6 +524,9 @@ const Admin = () => {
             )}
           </section>
 
+          {/* ===== SECTION: Activity Management ===== */}
+          <ActivityManagement />
+
           {/* ===== SECTION 1: JSON Import ===== */}
           <section>
             <div className="mb-6">
