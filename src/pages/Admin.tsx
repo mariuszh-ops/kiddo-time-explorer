@@ -46,6 +46,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import PageTransition from "@/components/PageTransition";
+import ActivityManagement from "@/components/admin/ActivityManagement";
 import { Activity, getActivities, setActivities, filterOptions } from "@/data/activities";
 import { useSubmissions, ActivitySubmission } from "@/contexts/SubmissionsContext";
 import { AMENITIES } from "@/data/amenities";
