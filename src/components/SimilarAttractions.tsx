@@ -42,7 +42,11 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
     const within10 = all.filter((a) => a.distanceKm <= 10);
     if (within10.length >= 1) return { items: within10.slice(0, 12), radiusKm: 10 };
 
-    return { items: all.slice(0, 12), radiusKm: 10 };
+    const fallbackItems = all.slice(0, 12);
+    const maxDist = fallbackItems.length > 0
+      ? Math.ceil(fallbackItems[fallbackItems.length - 1].distanceKm)
+      : 10;
+    return { items: fallbackItems, radiusKm: maxDist };
   }, [activity]);
 
   if (items.length === 0) return null;
@@ -67,11 +71,23 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
           </div>
         ))}
       </HorizontalCarousel>
-      <div className="mt-4">
-        <Suspense fallback={<div style={{ height: 280 }} className="rounded-xl border border-border bg-muted animate-pulse" />}>
-          <NearbyMiniMap currentActivity={activity} nearbyItems={items} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<div className="h-[200px] md:h-[250px] mt-4 rounded-xl bg-muted animate-pulse" />}>
+        <NearbyMiniMap
+          currentActivity={{
+            title: activity.title,
+            latitude: activity.latitude,
+            longitude: activity.longitude,
+          }}
+          nearbyActivities={items.map((a) => ({
+            id: a.id,
+            title: a.title,
+            slug: a.slug,
+            latitude: a.latitude,
+            longitude: a.longitude,
+            distanceKm: a.distanceKm,
+          }))}
+        />
+      </Suspense>
     </section>
   );
 };
