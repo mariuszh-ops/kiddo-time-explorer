@@ -1349,6 +1349,8 @@
 
     "chokidar/glob-parent": ["glob-parent@5.1.2", "", { "dependencies": { "is-glob": "^4.0.1" } }, "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="],
 
+    "concat-stream/inherits": ["inherits@2.0.4", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
+
     "concat-stream/readable-stream": ["readable-stream@2.3.8", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/readable-stream/-/readable-stream-2.3.8.tgz", { "dependencies": { "core-util-is": "~1.0.0", "inherits": "~2.0.3", "isarray": "~1.0.0", "process-nextick-args": "~2.0.0", "safe-buffer": "~5.1.1", "string_decoder": "~1.1.1", "util-deprecate": "~1.0.1" } }, "sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA=="],
 
     "css-tree/source-map": ["source-map@0.5.7", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/source-map/-/source-map-0.5.7.tgz", {}, "sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ=="],
@@ -1375,6 +1377,8 @@
 
     "htmlparser2/entities": ["entities@1.1.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/entities/-/entities-1.1.2.tgz", {}, "sha512-f2LZMYl1Fzu7YSBKg+RoROelpOaNrcGmE9AZubeDfrCEia483oW4MI4VyFd5VNHIgQ/7qm1I0wUHK1eJnn2y2w=="],
 
+    "htmlparser2/inherits": ["inherits@2.0.4", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
+
     "micromatch/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 
     "mkdirp/minimist": ["minimist@0.0.8", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/minimist/-/minimist-0.0.8.tgz", {}, "sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q=="],
@@ -1388,6 +1392,8 @@
     "puppeteer/ws": ["ws@6.2.3", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/ws/-/ws-6.2.3.tgz", { "dependencies": { "async-limiter": "~1.0.0" } }, "sha512-jmTjYU0j60B+vHey6TfR3Z7RD61z/hmxBS3VMSGIrroOWXQEneK1zNuotOUrGyBHQj0yrpsLHPWtigEFd13ndA=="],
 
     "raw-body/iconv-lite": ["iconv-lite@0.4.23", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/iconv-lite/-/iconv-lite-0.4.23.tgz", { "dependencies": { "safer-buffer": ">= 2.1.2 < 3" } }, "sha512-neyTUVFtahjf0mB3dZT77u+8O0QB89jFdnBkd5P1JgYPbPaia3gXXOVL2fq8VyU2gMMD7SaN7QukTB/pmXYvDA=="],
+
+    "readable-stream/inherits": ["inherits@2.0.4", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
 
     "readdirp/picomatch": ["picomatch@2.3.1", "", {}, "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA=="],
 
@@ -1436,6 +1442,8 @@
     "puppeteer/https-proxy-agent/agent-base": ["agent-base@4.3.0", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/agent-base/-/agent-base-4.3.0.tgz", { "dependencies": { "es6-promisify": "^5.0.0" } }, "sha512-salcGninV0nPrwpGNn4VTXBb1SOuXQBiqbrNXoeizJsHrsL6ERFM2Ne3JUSBWRE6aeNJI2ROP/WEEIDUiDe3cg=="],
 
     "puppeteer/https-proxy-agent/debug": ["debug@3.2.7", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/debug/-/debug-3.2.7.tgz", { "dependencies": { "ms": "^2.1.1" } }, "sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ=="],
+
+    "rimraf/glob/inherits": ["inherits@2.0.4", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
 
     "string-width-cjs/strip-ansi/ansi-regex": ["ansi-regex@5.0.1", "", {}, "sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ=="],
 
