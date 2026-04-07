@@ -26,6 +26,53 @@ const Profile = () => {
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
 
+  // Family profile
+  const LS_KEY = "ff_family_profile";
+  interface Child { name: string; birthDate: string; }
+
+  const loadChildren = (): Child[] => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  };
+
+  const [children, setChildren] = useState<Child[]>(loadChildren);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [newChildDate, setNewChildDate] = useState<Date | undefined>();
+
+  const saveChildren = useCallback((list: Child[]) => {
+    setChildren(list);
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+  }, []);
+
+  const addChild = () => {
+    if (!newChildName.trim() || !newChildDate || children.length >= 6) return;
+    saveChildren([...children, { name: newChildName.trim(), birthDate: newChildDate.toISOString() }]);
+    setNewChildName("");
+    setNewChildDate(undefined);
+    setShowAddForm(false);
+  };
+
+  const removeChild = (index: number) => {
+    saveChildren(children.filter((_, i) => i !== index));
+  };
+
+  const getAge = (birthDate: string) => {
+    const d = new Date(birthDate);
+    const years = differenceInYears(new Date(), d);
+    if (years < 1) {
+      const months = differenceInMonths(new Date(), d);
+      return `${months} mies.`;
+    }
+    if (years === 1) return "1 rok";
+    if (years < 5) return `${years} lata`;
+    return `${years} lat`;
+  };
+
   const user = {
     email: "anna.kowalska@email.com",
     initials: "AK",
