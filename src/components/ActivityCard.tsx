@@ -69,6 +69,8 @@ const ActivityCard = ({
   const handleImageError = () => {
     if (imgSrc !== fallbackImage) {
       setImgSrc(fallbackImage);
+    } else {
+      setImgError(true);
     }
   };
 
