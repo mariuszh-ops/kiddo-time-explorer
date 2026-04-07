@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
@@ -60,7 +61,18 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {visibleCities.map((city) => {
                 const count = cityCounts[city.value] || 0;
-                return (
+                const isEmpty = count === 0;
+                return isEmpty ? (
+                  <div
+                    key={city.value}
+                    className="relative overflow-hidden rounded-xl border border-border p-5 text-left opacity-50 cursor-default"
+                    style={{ backgroundColor: city.bg }}
+                  >
+                    <span className="text-3xl mb-2 block">{city.emoji}</span>
+                    <h3 className="font-semibold text-foreground">{city.label}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Wkrótce</p>
+                  </div>
+                ) : (
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
@@ -120,11 +132,19 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
             return (
               <button
                 key={opt.value}
-                onClick={() => onSelectCategory?.(opt.value)}
-                className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                onClick={count > 0 ? () => onSelectCategory?.(opt.value) : undefined}
+                disabled={count === 0}
+                className={cn(
+                  "group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all",
+                  count > 0
+                    ? "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    : "opacity-50 cursor-default"
+                )}
               >
                 <h3 className="font-semibold text-foreground text-sm">{opt.label}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {count > 0 ? `${count} atrakcji` : "Wkrótce"}
+                </p>
               </button>
             );
           })}
