@@ -131,11 +131,19 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
             return (
               <button
                 key={opt.value}
-                onClick={() => onSelectCategory?.(opt.value)}
-                className="group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                onClick={count > 0 ? () => onSelectCategory?.(opt.value) : undefined}
+                disabled={count === 0}
+                className={cn(
+                  "group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all",
+                  count > 0
+                    ? "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    : "opacity-50 cursor-default"
+                )}
               >
                 <h3 className="font-semibold text-foreground text-sm">{opt.label}</h3>
-                <p className="text-xs text-muted-foreground mt-0.5">{count} atrakcji</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {count > 0 ? `${count} atrakcji` : "Wkrótce"}
+                </p>
               </button>
             );
           })}
