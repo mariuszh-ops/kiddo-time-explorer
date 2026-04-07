@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Star, Sparkles, Calendar, MapPinned, Navigation, Heart } from "lucide-react";
+import { Star, Sparkles, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -59,6 +59,7 @@ const ActivityCard = ({
   const routeLocation = useLocation();
   const hasReviews = reviewCount > 0;
   const [imgSrc, setImgSrc] = useState(imageUrl);
+  const [imgError, setImgError] = useState(false);
   const fallbackImage = getPlaceholderImage(type, id);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [justToggled, setJustToggled] = useState(false);
@@ -68,6 +69,8 @@ const ActivityCard = ({
   const handleImageError = () => {
     if (imgSrc !== fallbackImage) {
       setImgSrc(fallbackImage);
+    } else {
+      setImgError(true);
     }
   };
 
@@ -101,15 +104,22 @@ const ActivityCard = ({
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
         <article className="group cursor-pointer transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl active:scale-[0.98] active:opacity-90">
           {/* Image */}
-          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105">
-            <img
-              src={imgSrc}
-              alt={title}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
-              onError={handleImageError}
-            />
+          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105 bg-muted">
+            {imgError ? (
+              <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
+                <Camera className="w-8 h-8 mb-1" />
+                <span className="text-xs">Brak zdjęcia</span>
+              </div>
+            ) : (
+              <img
+                src={imgSrc}
+                alt={title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
+                onError={handleImageError}
+              />
+            )}
 
             {/* Price badge - hidden until better data; events badge preserved */}
             {FEATURES.EVENTS && isEvent && (
