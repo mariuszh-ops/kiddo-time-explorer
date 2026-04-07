@@ -60,7 +60,18 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
               {visibleCities.map((city) => {
                 const count = cityCounts[city.value] || 0;
-                return (
+                const isEmpty = count === 0;
+                return isEmpty ? (
+                  <div
+                    key={city.value}
+                    className="relative overflow-hidden rounded-xl border border-border p-5 text-left opacity-50 cursor-default"
+                    style={{ backgroundColor: city.bg }}
+                  >
+                    <span className="text-3xl mb-2 block">{city.emoji}</span>
+                    <h3 className="font-semibold text-foreground">{city.label}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">Wkrótce</p>
+                  </div>
+                ) : (
                   <button
                     key={city.value}
                     onClick={() => onSelectCity(city.value)}
