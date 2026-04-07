@@ -138,28 +138,34 @@ const CityFilterDropdown = ({
           <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
             Miasto
           </div>
-          {cityOptions.map((option) => (
-            <button
-              key={option.value}
-              onClick={() => {
-                onCitySelect(option.value);
-              }}
-              className={cn(
-                "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
-                option.value === selectedCity
-                  ? "bg-accent text-accent-foreground"
-                  : "hover:bg-muted"
-              )}
-            >
-              <span>{option.label}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">({option.count})</span>
-                {option.value === selectedCity && (
-                  <Check className="w-4 h-4 text-primary" />
+          {cityOptions.map((option) => {
+            const isEmpty = option.count === 0;
+            return (
+              <button
+                key={option.value}
+                onClick={isEmpty ? undefined : () => onCitySelect(option.value)}
+                disabled={isEmpty}
+                className={cn(
+                  "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
+                  isEmpty
+                    ? "opacity-50 cursor-default"
+                    : option.value === selectedCity
+                      ? "bg-accent text-accent-foreground"
+                      : "hover:bg-muted"
                 )}
-              </div>
-            </button>
-          ))}
+              >
+                <span>{option.label}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-muted-foreground">
+                    {isEmpty ? "(wkrótce)" : `(${option.count})`}
+                  </span>
+                  {option.value === selectedCity && !isEmpty && (
+                    <Check className="w-4 h-4 text-primary" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
         
         {/* Distance slider - only when city is selected */}
