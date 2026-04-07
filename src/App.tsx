@@ -12,6 +12,7 @@ import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import HomeSkeleton from "@/components/HomeSkeleton";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
 import Index from "./pages/Index";
@@ -85,14 +86,7 @@ const App = () => {
   }, []);
 
   if (!dataLoaded) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="text-sm text-muted-foreground">Ładowanie atrakcji…</p>
-        </div>
-      </div>
-    );
+    return <HomeSkeleton />;
   }
 
   return (
