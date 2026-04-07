@@ -1,16 +1,23 @@
-import { useState } from "react";
-import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Info, Mail, FileText, Lock } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Mail, FileText, Lock, Users, X, Baby, CalendarIcon } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { format, differenceInYears, differenceInMonths } from "date-fns";
+import { pl } from "date-fns/locale";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import SubmitActivityModal from "@/components/SubmitActivityModal";
+import { FEATURES } from "@/lib/featureFlags";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
