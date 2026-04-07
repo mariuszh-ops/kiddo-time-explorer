@@ -12,6 +12,7 @@ import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import HomeSkeleton from "@/components/HomeSkeleton";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
 import Index from "./pages/Index";
