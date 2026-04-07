@@ -1,16 +1,23 @@
-import { useState } from "react";
-import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Info, Mail, FileText, Lock } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Mail, FileText, Lock, Users, X, Baby, CalendarIcon } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { format, differenceInYears, differenceInMonths } from "date-fns";
+import { pl } from "date-fns/locale";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import SubmitActivityModal from "@/components/SubmitActivityModal";
+import { FEATURES } from "@/lib/featureFlags";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -18,6 +25,53 @@ const Profile = () => {
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+
+  // Family profile
+  const LS_KEY = "ff_family_profile";
+  interface Child { name: string; birthDate: string; }
+
+  const loadChildren = (): Child[] => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  };
+
+  const [children, setChildren] = useState<Child[]>(loadChildren);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [newChildDate, setNewChildDate] = useState<Date | undefined>();
+
+  const saveChildren = useCallback((list: Child[]) => {
+    setChildren(list);
+    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+  }, []);
+
+  const addChild = () => {
+    if (!newChildName.trim() || !newChildDate || children.length >= 6) return;
+    saveChildren([...children, { name: newChildName.trim(), birthDate: newChildDate.toISOString() }]);
+    setNewChildName("");
+    setNewChildDate(undefined);
+    setShowAddForm(false);
+  };
+
+  const removeChild = (index: number) => {
+    saveChildren(children.filter((_, i) => i !== index));
+  };
+
+  const getAge = (birthDate: string) => {
+    const d = new Date(birthDate);
+    const years = differenceInYears(new Date(), d);
+    if (years < 1) {
+      const months = differenceInMonths(new Date(), d);
+      return `${months} mies.`;
+    }
+    if (years === 1) return "1 rok";
+    if (years < 5) return `${years} lata`;
+    return `${years} lat`;
+  };
 
   const user = {
     email: "anna.kowalska@email.com",
@@ -93,6 +147,98 @@ const Profile = () => {
                 </Link>
               </div>
             </section>
+
+            {/* Family section */}
+            {FEATURES.MATCH_PERCENTAGE && (
+              <section className="bg-card rounded-xl p-6 border border-border">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+                  Moja rodzina
+                </h2>
+
+                {children.length === 0 && !showAddForm ? (
+                  <div className="text-center py-4">
+                    <Users className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Dodaj dzieci, żeby otrzymywać lepiej dopasowane rekomendacje
+                    </p>
+                    <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+                      <Baby className="w-4 h-4 mr-2" />
+                      Dodaj dziecko
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {children.map((child, i) => (
+                        <div
+                          key={i}
+                          className="inline-flex items-center gap-2 bg-accent/50 rounded-full px-3 py-1.5 text-sm"
+                        >
+                          <Baby className="w-3.5 h-3.5 text-primary" />
+                          <span className="font-medium text-foreground">{child.name}</span>
+                          <span className="text-muted-foreground">{getAge(child.birthDate)}</span>
+                          <button
+                            onClick={() => removeChild(i)}
+                            className="ml-0.5 w-4 h-4 rounded-full hover:bg-destructive/10 flex items-center justify-center transition-colors"
+                            aria-label={`Usuń ${child.name}`}
+                          >
+                            <X className="w-3 h-3 text-muted-foreground hover:text-destructive" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {showAddForm ? (
+                      <div className="space-y-3 p-3 bg-accent/30 rounded-lg">
+                        <Input
+                          placeholder="Imię dziecka"
+                          value={newChildName}
+                          onChange={(e) => setNewChildName(e.target.value)}
+                          maxLength={30}
+                        />
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !newChildDate && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="w-4 h-4 mr-2" />
+                              {newChildDate ? format(newChildDate, "d MMMM yyyy", { locale: pl }) : "Data urodzenia"}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={newChildDate}
+                              onSelect={setNewChildDate}
+                              disabled={(date) => date > new Date() || date < new Date("2005-01-01")}
+                              initialFocus
+                              className={cn("p-3 pointer-events-auto")}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <div className="flex gap-2">
+                          <Button size="sm" onClick={addChild} disabled={!newChildName.trim() || !newChildDate}>
+                            Dodaj
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => { setShowAddForm(false); setNewChildName(""); setNewChildDate(undefined); }}>
+                            Anuluj
+                          </Button>
+                        </div>
+                      </div>
+                    ) : children.length < 6 ? (
+                      <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+                        <Baby className="w-4 h-4 mr-2" />
+                        Dodaj dziecko
+                      </Button>
+                    ) : null}
+                  </>
+                )}
+              </section>
+            )}
 
             {/* Settings */}
             <section className="bg-card rounded-xl border border-border overflow-hidden">
