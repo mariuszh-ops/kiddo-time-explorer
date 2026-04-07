@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
