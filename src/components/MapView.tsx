@@ -366,7 +366,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   return (
     <div className="flex" style={{ height: "calc(100vh - 56px)" }}>
       {/* Sidebar */}
-      <div className="w-[380px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
+      <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
         <div className="p-3 border-b border-border">
           <span className="text-sm text-muted-foreground font-medium">
             {visibleActivities.length} atrakcji w widoku
