@@ -120,9 +120,16 @@ const FilterBar = ({
                 {/* Map/Grid toggle */}
                 {FEATURES.MAP_VIEW && onViewModeChange && (
                   <button
-                    onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
-                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border active:bg-muted transition-colors"
+                    onClick={() => filters.city ? onViewModeChange(viewMode === "map" ? "grid" : "map") : undefined}
+                    disabled={!filters.city && viewMode !== "map"}
+                    className={cn(
+                      "inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border transition-colors",
+                      !filters.city && viewMode !== "map"
+                        ? "opacity-50 cursor-not-allowed"
+                        : "active:bg-muted"
+                    )}
                     aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+                    title={!filters.city && viewMode !== "map" ? "Wybierz miasto, aby zobaczyć mapę" : undefined}
                   >
                     {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
                   </button>
