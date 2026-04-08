@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
+import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { Activity } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
@@ -19,7 +20,7 @@ interface ActivityGridProps {
   filters?: Filters;
 }
 
-const ITEMS_PER_PAGE = 18;
+const ITEMS_PER_PAGE = 20;
 
 /** Return current grid column count based on Tailwind breakpoints */
 const useGridCols = () => {
@@ -42,7 +43,9 @@ const roundUp = (n: number, cols: number, max: number) =>
 
 const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {} }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   // Determine if social proof should be shown
   const showSocialProof = Boolean(filters.city && (filters.age || (filters.type && filters.type.length > 0)));
@@ -50,8 +53,6 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   // Select which activities get badges (top rated ones when social proof is visible)
   const badgeActivityIds = useMemo(() => {
     if (!showSocialProof) return new Set<number>();
-    
-    // Give badges to top 30% of activities by rating (max 6)
     const sorted = [...activities].sort((a, b) => b.rating - a.rating);
     const badgeCount = Math.min(6, Math.ceil(activities.length * 0.3));
     return new Set(sorted.slice(0, badgeCount).map(a => a.id));
@@ -65,16 +66,39 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   const visibleCount = roundUp(rawVisibleCount, cols, activities.length);
   const visibleActivities = activities.slice(0, visibleCount);
   const hasMore = visibleCount < activities.length;
-  const remainingCount = activities.length - visibleCount;
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || isLoadingMore) return;
+    setIsLoadingMore(true);
+    // Small delay for skeleton visibility
+    setTimeout(() => {
+      setRawVisibleCount((prev) => prev + ITEMS_PER_PAGE);
+      setIsLoadingMore(false);
+    }, 300);
+  }, [hasMore, isLoadingMore]);
+
+  // IntersectionObserver for infinite scroll
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   // Show error state if there's an error
   if (hasError && onRetry) {
     return <ActivityLoadError onRetry={onRetry} />;
   }
-
-  const handleLoadMore = () => {
-    setRawVisibleCount((prev) => prev + ITEMS_PER_PAGE);
-  };
 
   if (activities.length === 0) {
     return (
@@ -94,7 +118,6 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-3">
-              {/* Primary: scroll to filters */}
               <Button
                 onClick={() => {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -105,7 +128,6 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                 Zmień filtry
               </Button>
               
-              {/* Secondary: clear all filters */}
               {hasActiveFilters && onClearFilters && (
                 <button
                   onClick={onClearFilters}
@@ -149,7 +171,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
         {/* Social proof banner - only when filters match criteria */}
         <SocialProofBanner filters={filters} resultCount={activities.length} />
 
-        {/* Activity cards grid - 1 col on mobile, 2 on sm, 3 on md, 4 on lg */}
+        {/* Activity cards grid */}
         <motion.div 
           layout
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
@@ -201,25 +223,28 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
           </AnimatePresence>
         </motion.div>
 
-        {/* Load more button */}
-        <AnimatePresence>
-          {hasMore && (
-            <motion.div 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.3 }}
-              className="mt-8 text-center"
-            >
-              <button
-                onClick={handleLoadMore}
-                className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors"
-              >
-                Pokaż więcej ({remainingCount})
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Loading skeleton row */}
+        {isLoadingMore && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-4 md:mt-6">
+            {Array.from({ length: cols }).map((_, i) => (
+              <ActivityCardSkeleton key={i} />
+            ))}
+          </div>
+        )}
+
+        {/* Sentinel for IntersectionObserver */}
+        {hasMore && <div ref={sentinelRef} className="h-1" />}
+
+        {/* All loaded message */}
+        {!hasMore && activities.length > ITEMS_PER_PAGE && (
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center text-muted-foreground mt-10 text-sm"
+          >
+            To wszystkie atrakcje w tej okolicy 🎉
+          </motion.p>
+        )}
       </div>
     </section>
   );
