@@ -366,7 +366,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   return (
     <div className="flex" style={{ height: "calc(100vh - 56px)" }}>
       {/* Sidebar */}
-      <div className="w-[380px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
+      <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
         <div className="p-3 border-b border-border">
           <span className="text-sm text-muted-foreground font-medium">
             {visibleActivities.length} atrakcji w widoku
@@ -436,6 +436,9 @@ function MiniActivityCard({
   onCardClick: (activity: Activity) => void;
 }) {
   const categoryColor = getCategoryColor(activity.type);
+  const [imgError, setImgError] = useState(false);
+  const initial = activity.title?.charAt(0)?.toUpperCase() || "?";
+
   return (
     <div
       onClick={() => onCardClick(activity)}
@@ -450,17 +453,24 @@ function MiniActivityCard({
         background: isHighlighted ? `${categoryColor}12` : undefined,
       }}
     >
-      <img
-        src={activity.imageUrl}
-        alt={activity.title}
-        className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
-        loading="lazy"
-      />
+      {imgError || !activity.imageUrl ? (
+        <div className="w-20 h-20 rounded-lg flex-shrink-0 flex items-center justify-center bg-muted">
+          <span className="text-2xl font-bold text-muted-foreground">{initial}</span>
+        </div>
+      ) : (
+        <img
+          src={activity.imageUrl}
+          alt={activity.title}
+          className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
+          loading="lazy"
+          onError={() => setImgError(true)}
+        />
+      )}
       <div className="flex-1 min-w-0 py-0.5">
         <Link
           to={`/atrakcje/${activity.slug}`}
           onClick={(e) => e.stopPropagation()}
-          className="font-semibold text-sm text-foreground truncate block hover:underline"
+          className="font-semibold text-sm text-foreground hover:underline line-clamp-2"
         >
           {activity.title}
         </Link>
