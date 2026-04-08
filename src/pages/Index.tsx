@@ -111,8 +111,15 @@ const Index = () => {
       {/* Global header with navigation */}
       <Header />
 
-      {/* Hero section with full-width lifestyle image */}
-      <HeroSection onExplore={handleExplore} />
+      {/* Hero section — hidden in map view */}
+      <div
+        className={cn(
+          "transition-all duration-300 overflow-hidden",
+          viewMode === "map" ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100"
+        )}
+      >
+        <HeroSection onExplore={handleExplore} />
+      </div>
 
       {/* Sticky filter bar - this is the scroll target */}
       <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
