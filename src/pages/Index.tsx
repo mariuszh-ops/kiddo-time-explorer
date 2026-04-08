@@ -13,6 +13,7 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
+import { cn } from "@/lib/utils";
 import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
@@ -111,8 +112,15 @@ const Index = () => {
       {/* Global header with navigation */}
       <Header />
 
-      {/* Hero section with full-width lifestyle image */}
-      <HeroSection onExplore={handleExplore} />
+      {/* Hero section — hidden in map view */}
+      <div
+        className={cn(
+          "transition-all duration-300 overflow-hidden",
+          viewMode === "map" ? "max-h-0 opacity-0" : "max-h-[1000px] opacity-100"
+        )}
+      >
+        <HeroSection onExplore={handleExplore} />
+      </div>
 
       {/* Sticky filter bar - this is the scroll target */}
       <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
@@ -135,11 +143,13 @@ const Index = () => {
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
         <Suspense fallback={
-          <div className="flex items-center justify-center" style={{ height: "calc(100vh - 56px)" }}>
+          <div className="flex items-center justify-center" style={{ height: "calc(100vh - 56px - 52px)" }}>
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
+          <div style={{ height: "calc(100vh - 56px - 52px)" }}>
+            <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
+          </div>
         </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
