@@ -673,12 +673,31 @@ const ActivityDetail = () => {
               </div>
             </div>
             )}
+
+            {/* Inline amenities for 1-2 items */}
+            {activity.amenities && activity.amenities.length > 0 && activity.amenities.length <= 2 && (
+              activity.amenities.map((amenityId) => {
+                const amenity = getAmenityById(amenityId);
+                if (!amenity) return null;
+                return (
+                  <div key={amenityId} className="flex items-center gap-2.5">
+                    <div className="p-2 bg-accent rounded-lg shrink-0">
+                      <AmenityIcon name={amenity.icon} className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] md:text-xs text-muted-foreground">Udogodnienie</p>
+                      <p className="text-xs md:text-sm font-medium text-foreground truncate">{amenity.label}</p>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </section>
 
-      {/* Amenities section */}
-      {activity.amenities && activity.amenities.length > 0 && (
+      {/* Amenities section — only for 3+ amenities */}
+      {activity.amenities && activity.amenities.length >= 3 && (
         <section className="container mt-5 md:mt-6">
           <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
             <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
