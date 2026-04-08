@@ -149,6 +149,7 @@ const Index = () => {
         }>
           <div style={{ height: "calc(100vh - 56px - 52px)" }}>
             <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
+          </div>
         </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
