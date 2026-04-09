@@ -120,16 +120,11 @@ const FilterBar = ({
                 {/* Map/Grid toggle */}
                 {FEATURES.MAP_VIEW && onViewModeChange && (
                   <button
-                    onClick={() => filters.city ? onViewModeChange(viewMode === "map" ? "grid" : "map") : undefined}
-                    disabled={!filters.city && viewMode !== "map"}
+                    onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
                     className={cn(
-                      "inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border transition-colors",
-                      !filters.city && viewMode !== "map"
-                        ? "opacity-50 cursor-not-allowed"
-                        : "active:bg-muted"
+                      "inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border transition-colors active:bg-muted"
                     )}
                     aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
-                    title={!filters.city && viewMode !== "map" ? "Wybierz miasto, aby zobaczyć mapę" : undefined}
                   >
                     {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
                   </button>
@@ -287,24 +282,15 @@ const FilterBar = ({
           {FEATURES.MAP_VIEW && onViewModeChange && (
             <div className="relative group ml-auto">
               <button
-                onClick={() => filters.city ? onViewModeChange(viewMode === "map" ? "grid" : "map") : undefined}
-                disabled={!filters.city && viewMode !== "map"}
+                onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
                 className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium transition-colors whitespace-nowrap",
-                  !filters.city && viewMode !== "map"
-                    ? "opacity-50 cursor-not-allowed text-muted-foreground"
-                    : "text-foreground hover:bg-muted"
+                  "inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium transition-colors whitespace-nowrap text-foreground hover:bg-muted"
                 )}
                 aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
               >
                 {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
                 {viewMode === "map" ? "Lista" : "Mapa"}
               </button>
-              {!filters.city && viewMode !== "map" && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 rounded-lg bg-foreground text-background text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                  Wybierz miasto, aby zobaczyć mapę
-                </div>
-              )}
             </div>
           )}
           {hasActiveFilters && (

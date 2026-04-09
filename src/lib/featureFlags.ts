@@ -14,5 +14,5 @@ export const FEATURES = {
   COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
   SOCIAL_PROOF: false,        // Social proof ("Często wybierane") — bannery i badge'e — wyłączone w MVP
   TOP_RATED_SECTION: false,   // Sekcja "Najlepiej oceniane" na stronie głównej — ukryta
-  TOP_RATED_HOMEPAGE: true,   // Sekcja rekomendacji "Najlepiej oceniane" gdy brak filtrów — aktywna
+  TOP_RATED_HOMEPAGE: false,  // Sekcja rekomendacji "Najlepiej oceniane" gdy brak filtrów — wyłączona
 } as const;
