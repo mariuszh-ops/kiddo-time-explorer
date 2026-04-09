@@ -12,8 +12,12 @@ interface SearchAutocompleteProps {
   onSearchChange: (query: string) => void;
 }
 
+function removeDiacritics(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\u0142/g, "l").replace(/\u0141/g, "L");
+}
+
 function fuzzyMatch(text: string, query: string): boolean {
-  return text.toLowerCase().includes(query.toLowerCase());
+  return removeDiacritics(text.toLowerCase()).includes(removeDiacritics(query.toLowerCase()));
 }
 
 function matchActivity(activity: Activity, query: string): boolean {
@@ -229,21 +233,27 @@ const SearchAutocomplete = ({
                       key={activity.id}
                       onClick={() => handleSelect(i)}
                       onMouseEnter={() => setSelectedIndex(i)}
-                      className={cn(
-                        "w-full flex flex-col text-left transition-colors",
-                        selectedIndex === i ? "" : ""
-                      )}
+                      className="w-full flex items-center gap-3 text-left transition-colors"
                       style={{
                         padding: "10px 16px",
-                        backgroundColor: selectedIndex === i ? "#F3F7F2" : "transparent",
+                        backgroundColor: selectedIndex === i ? "hsl(var(--accent))" : "transparent",
                       }}
                     >
-                      <span className="text-sm font-medium text-foreground truncate">
-                        {activity.title}
-                      </span>
-                      <span className="text-xs text-muted-foreground truncate">
-                        {activity.location} · {getCategoryLabel(activity.type)}
-                      </span>
+                      <img
+                        src={activity.imageUrl}
+                        alt={activity.title}
+                        className="w-10 h-10 rounded-lg object-cover shrink-0 bg-muted"
+                        loading="lazy"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      />
+                      <div className="min-w-0 flex-1">
+                        <span className="text-sm font-medium text-foreground truncate block">
+                          {activity.title}
+                        </span>
+                        <span className="text-xs text-muted-foreground truncate block">
+                          {activity.city} · {getCategoryLabel(activity.type)}
+                        </span>
+                      </div>
                     </button>
                   ))}
                 </div>
