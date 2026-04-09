@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
+import ActivityCard from "@/components/ActivityCard";
 import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
