@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Star, Sparkles, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
+import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -121,7 +121,16 @@ const ActivityCard = ({
               />
             )}
 
-            {/* Price badge - hidden until better data; events badge preserved */}
+            {/* Nowość badge - top left overlay for activities with 0 reviews */}
+            {!hasReviews && (
+              <div className="absolute top-2 left-2 z-10">
+                <span className="text-xs font-medium text-white px-2 py-1 rounded bg-orange-500">
+                  Nowość
+                </span>
+              </div>
+            )}
+
+            {/* Events badge */}
             {FEATURES.EVENTS && isEvent && (
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
                 <Badge
@@ -180,15 +189,9 @@ const ActivityCard = ({
                   )}
                 </>
               ) : (
-                <>
-                  <div className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
-                    <Sparkles className="w-4 h-4 text-accent-foreground" />
-                    <span className="font-medium text-accent-foreground text-sm">Nowa atrakcja</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    Brak opinii rodziców
-                  </span>
-                </>
+                <span className="text-xs text-muted-foreground">
+                  Brak opinii rodziców
+                </span>
               )}
             </div>
 
