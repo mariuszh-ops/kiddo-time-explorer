@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useCallback, useState, useEffect } from "react";
+import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -40,6 +40,14 @@ const Index = () => {
 
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
+
+  // Top rated activities for homepage recommendations (when no filters active)
+  const topRatedActivities = useMemo(() => {
+    if (!FEATURES.TOP_RATED_HOMEPAGE || hasActiveFilters) return [];
+    return [...filteredActivities]
+      .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
+      .slice(0, 8);
+  }, [filteredActivities, hasActiveFilters]);
 
   // Onboarding
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -166,25 +174,65 @@ const Index = () => {
           filters={filters}
         />
       ) : (
-        <DiscoverSections 
-          activities={filteredActivities}
-          onSelectCity={(city) => {
-            updateFilter("city", city);
-            if (listingRef.current) {
-              const headerHeight = 56;
-              const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
-            }
-          }}
-          onSelectCategory={(type) => {
-            toggleArrayFilter("type", type);
-            if (listingRef.current) {
-              const headerHeight = 56;
-              const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-              window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
-            }
-          }}
-        />
+        <>
+          {/* Top rated recommendations when no filters active */}
+          {FEATURES.TOP_RATED_HOMEPAGE && topRatedActivities.length > 0 && (
+            <section className="bg-background py-6 md:py-10">
+              <div className="container">
+                <div className="mb-6 md:mb-8 text-center">
+                  <h2 className="text-xl md:text-2xl font-serif text-foreground flex items-center justify-center gap-2">
+                    <span>🔥</span> Najlepiej oceniane atrakcje w Polsce
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1.5">
+                    Wybierz miasto aby zobaczyć atrakcje w Twojej okolicy
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {topRatedActivities.map((activity) => (
+                    <ActivityCard
+                      key={activity.id}
+                      id={activity.id}
+                      title={activity.title}
+                      location={activity.location}
+                      rating={activity.rating}
+                      reviewCount={activity.reviewCount}
+                      ageRange={activity.ageRange}
+                      matchPercentage={activity.matchPercentage}
+                      imageUrl={activity.imageUrl}
+                      tags={activity.tags}
+                      type={activity.type}
+                      isEvent={activity.isEvent}
+                      eventDate={activity.eventDate}
+                      slug={activity.slug}
+                      amenities={activity.amenities}
+                      priceLevel={activity.priceLevel}
+                      isRecommended={activity.isRecommended}
+                    />
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
+          <DiscoverSections 
+            activities={filteredActivities}
+            onSelectCity={(city) => {
+              updateFilter("city", city);
+              if (listingRef.current) {
+                const headerHeight = 56;
+                const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+              }
+            }}
+            onSelectCategory={(type) => {
+              toggleArrayFilter("type", type);
+              if (listingRef.current) {
+                const headerHeight = 56;
+                const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
+                window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+              }
+            }}
+          />
+        </>
       )}
 
       {/* Submit activity CTA — hidden in map view */}
