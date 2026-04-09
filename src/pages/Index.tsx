@@ -32,12 +32,7 @@ const Index = () => {
   // View mode: grid or map
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
 
-  // Reset to grid if city is cleared while in map mode
-  useEffect(() => {
-    if (!filters.city && viewMode === "map") {
-      setViewMode("grid");
-    }
-  }, [filters.city, viewMode]);
+  // No longer reset to grid when city is cleared — map works without city filter
 
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
