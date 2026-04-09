@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Star, Sparkles, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
+import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
