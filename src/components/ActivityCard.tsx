@@ -102,9 +102,9 @@ const ActivityCard = ({
   return (
     <>
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
-        <article className="group cursor-pointer transition-all duration-300 ease-out md:hover:scale-[1.02] md:hover:shadow-soft rounded-xl active:scale-[0.98] active:opacity-90">
+        <article className="group cursor-pointer rounded-xl transition-all duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] active:opacity-90 active:duration-150">
           {/* Image */}
-          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 transition-all duration-300 md:group-hover:brightness-105 bg-muted">
+          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-muted">
             {imgError ? (
               <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
                 <Camera className="w-8 h-8 mb-1" />
@@ -116,7 +116,7 @@ const ActivityCard = ({
                 alt={title}
                 loading="lazy"
                 decoding="async"
-                className="w-full h-full object-cover md:group-hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover transition-transform duration-200 ease-out [@media(hover:hover)]:group-hover:scale-[1.03]"
                 onError={handleImageError}
               />
             )}
