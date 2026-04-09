@@ -198,7 +198,7 @@ const SearchAutocomplete = ({
       {/* Dropdown */}
       {showDropdown && (
         <div
-          className="absolute top-full left-0 mt-1 bg-white border border-border overflow-y-auto min-w-[320px] z-50"
+          className="absolute top-full left-0 mt-1 bg-popover border border-border overflow-y-auto min-w-[320px] z-50"
           style={{
             borderRadius: "12px",
             boxShadow: "0 8px 24px rgba(31,42,36,0.1)",
