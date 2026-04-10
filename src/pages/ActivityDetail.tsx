@@ -32,7 +32,7 @@ import SimilarAttractions from "@/components/SimilarAttractions";
 import CommunityNotice from "@/components/CommunityNotice";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import Header from "@/components/Header";
 import PageTransition from "@/components/PageTransition";
