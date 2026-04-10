@@ -11,13 +11,14 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
     <section className="md:container md:px-4 md:pt-4">
       <div className="relative min-h-[auto] py-12 md:py-0 md:min-h-[50vh] md:max-h-[55vh] flex items-center md:rounded-2xl overflow-hidden">
         {/* Background image */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-[#8B7355]">
           <img
             src="/images/hero-parent-child.jpg"
             alt="Rodzic z dzieckiem odkrywają świat razem"
             decoding="async"
             fetchPriority="high"
             loading="eager"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
             className="w-full h-full object-cover object-[75%_25%] md:object-[center_25%]"
           />
           {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}
