@@ -10,6 +10,7 @@ import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import MapBottomSheet from "./MapBottomSheet";
 
 // Custom rating pin icon
 const createPinIcon = (rating: number, type?: string) => {
@@ -303,6 +304,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
   const [fading, setFading] = useState(false);
+  const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
@@ -333,6 +335,9 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   }, []);
 
   if (isMobile) {
+    // Adjust locate button offset based on sheet state
+    const locateBottomOffset = mobileSheetState === "peek" ? "96px" : mobileSheetState === "half" ? "54%" : "92%";
+
     return (
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         <MapContainer
@@ -350,7 +355,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ClusteredMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
-          <LocateButton bottomOffset="176px" />
+          <LocateButton bottomOffset={locateBottomOffset} />
           {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
         <MapLegend />
@@ -364,39 +369,14 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           Lista · {visibleActivities.length}
         </button>
 
-        {/* Bottom sheet with cards */}
-        <div className="absolute bottom-0 left-0 right-0 h-[160px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
-          <div className="flex items-center pt-2 pb-1 px-3">
-            <span className="text-xs text-muted-foreground font-medium">
-              {visibleActivities.length} atrakcji
-            </span>
-          </div>
-          <div
-            className={cn("flex-1 overflow-x-auto px-3 pb-2 transition-opacity duration-150 scrollbar-hide", fading ? "opacity-50" : "opacity-100")}
-          >
-            {visibleActivities.length === 0 ? (
-              <div className="flex items-center justify-center h-full text-sm text-muted-foreground px-4 text-center">
-                Brak atrakcji w tym obszarze
-              </div>
-            ) : (
-              <div className="flex gap-3">
-                {visibleActivities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    ref={(el) => { cardRefs.current[activity.id] = el; }}
-                    className="min-w-[240px] flex-shrink-0"
-                  >
-                    <MiniActivityCard
-                      activity={activity}
-                      isHighlighted={highlightedId === activity.id}
-                      onCardClick={handleCardClick}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Draggable bottom sheet */}
+        <MapBottomSheet
+          visibleActivities={visibleActivities}
+          highlightedId={highlightedId}
+          onCardClick={handleCardClick}
+          fading={fading}
+          onSheetStateChange={setMobileSheetState}
+        />
       </div>
     );
   }
