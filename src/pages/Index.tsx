@@ -9,7 +9,6 @@ import ActivityGrid from "@/components/ActivityGrid";
 import ActivityCard from "@/components/ActivityCard";
 import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
-import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import SEOHead from "@/components/SEOHead";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
@@ -240,13 +239,6 @@ const Index = () => {
             }}
           />
         </>
-      )}
-
-      {/* Submit activity CTA — hidden in map view */}
-      {viewMode !== 'map' && (
-        <div className="container py-8 md:py-12">
-          <SubmitActivityCTA variant="card" />
-        </div>
       )}
 
       <Footer />
