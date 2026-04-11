@@ -96,6 +96,13 @@ export default function MapBottomSheet({
     }
   }, [sheetState, isDragging, updateState]);
 
+  // Reset scroll when state changes to half/full or activities change
+  useEffect(() => {
+    if (listRef.current && sheetState !== "peek") {
+      listRef.current.scrollTop = 0;
+    }
+  }, [sheetState, visibleActivities]);
+
   // Scroll highlighted card into view
   useEffect(() => {
     if (highlightedId && listRef.current && sheetState !== "peek") {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, Map } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
@@ -10,7 +10,7 @@ import { Activity } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
-interface ActivityGridProps {
+export interface ActivityGridProps {
   activities: Activity[];
   hasActiveFilters?: boolean;
   onClearFilters?: () => void;
@@ -18,6 +18,7 @@ interface ActivityGridProps {
   hasError?: boolean;
   onRetry?: () => void;
   filters?: Filters;
+  mapReturnAction?: () => void;
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -41,7 +42,7 @@ const useGridCols = () => {
 const roundUp = (n: number, cols: number, max: number) =>
   Math.min(Math.ceil(n / cols) * cols, max);
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {} }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {}, mapReturnAction }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
@@ -168,6 +169,18 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   return (
     <section className="bg-background py-6 md:py-10">
       <div className="container">
+        {/* Map return bar */}
+        {mapReturnAction && (
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-sm text-muted-foreground font-medium">
+              {activities.length} atrakcji z widoku mapy
+            </span>
+            <Button variant="outline" size="sm" onClick={mapReturnAction} className="gap-2">
+              <Map className="w-4 h-4" />
+              Wróć do mapy
+            </Button>
+          </div>
+        )}
         {/* Social proof banner - only when filters match criteria */}
         <SocialProofBanner filters={filters} resultCount={activities.length} />
 

@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { Activity } from "@/data/activities";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -15,12 +16,14 @@ import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const { detectCity } = useGeolocationCity();
   
   // Scroll position restoration - isScrollRestored ensures content only shows after scroll is set
@@ -34,11 +37,23 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<"grid" | "map">(
     searchParams.get("view") === "map" ? "map" : "grid"
   );
+  // Activities from map viewport — used when switching from map to grid
+  const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
+
+  const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
+    if (mode === "grid" && visibleActivities) {
+      setMapVisibleActivities(visibleActivities);
+    } else {
+      setMapVisibleActivities(null);
+    }
+    setViewMode(mode);
+  }, []);
 
   // React to ?view=map param changes (e.g. from bottom nav)
   useEffect(() => {
     if (searchParams.get("view") === "map") {
       setViewMode("map");
+      setMapVisibleActivities(null);
     }
   }, [searchParams]);
 
@@ -154,7 +169,7 @@ const Index = () => {
           onToggleTypeFilter={(value) => toggleArrayFilter("type", value)}
           onClearAll={clearAllFilters}
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={handleViewModeChange}
         />
       </div>
 
@@ -168,8 +183,16 @@ const Index = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
+          <MapView activities={filteredActivities} filters={filters} onViewModeChange={handleViewModeChange} />
         </Suspense>
+      ) : mapVisibleActivities ? (
+        <ActivityGrid 
+          activities={mapVisibleActivities} 
+          hasActiveFilters={true}
+          onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
+          filters={filters}
+          mapReturnAction={() => handleViewModeChange("map")}
+        />
       ) : hasActiveFilters ? (
         <ActivityGrid 
           activities={filteredActivities} 
@@ -239,7 +262,8 @@ const Index = () => {
         </>
       )}
 
-      <Footer />
+      {/* Hide footer on mobile map view */}
+      {!(isMobile && viewMode === 'map') && <Footer />}
     </main>
       <AnimatePresence>
         {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}

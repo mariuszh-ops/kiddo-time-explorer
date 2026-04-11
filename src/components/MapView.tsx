@@ -295,7 +295,7 @@ function ShowAllButton({ activities }: { activities: Activity[] }) {
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
-  onViewModeChange?: (mode: "grid" | "map") => void;
+  onViewModeChange?: (mode: "grid" | "map", visibleActivities?: Activity[]) => void;
 }
 
 const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
@@ -362,7 +362,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 
         {/* Back to list button (mobile) */}
         <button
-          onClick={() => onViewModeChange?.("grid")}
+          onClick={() => onViewModeChange?.("grid", visibleActivities)}
           className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
