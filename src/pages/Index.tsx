@@ -15,12 +15,14 @@ import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const { detectCity } = useGeolocationCity();
   
   // Scroll position restoration - isScrollRestored ensures content only shows after scroll is set
@@ -239,7 +241,8 @@ const Index = () => {
         </>
       )}
 
-      <Footer />
+      {/* Hide footer on mobile map view */}
+      {!(isMobile && viewMode === 'map') && <Footer />}
     </main>
       <AnimatePresence>
         {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}
