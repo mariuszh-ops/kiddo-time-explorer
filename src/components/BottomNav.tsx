@@ -1,17 +1,28 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Compass, Heart, User } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Compass, Map, Heart, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { FEATURES } from "@/lib/featureFlags";
 import AuthRequiredModal from "./AuthRequiredModal";
 
 const BottomNav = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { isLoggedIn, login } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   // Hide on admin page
   if (location.pathname.startsWith("/admin")) return null;
+
+  // Hide on activity detail pages (path is /atrakcje/:slug where slug is not a city)
+  const atrakcjeMatch = location.pathname.match(/^\/atrakcje\/([^/]+)$/);
+  if (atrakcjeMatch) {
+    const slug = atrakcjeMatch[1];
+    if (!FEATURES.ENABLED_CITIES.includes(slug)) return null;
+  }
+  // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
+  if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -20,33 +31,40 @@ const BottomNav = () => {
     setIsAuthOpen(false);
   };
 
+  const handleMapClick = () => {
+    // Navigate to home and trigger map view via URL search param
+    navigate("/?view=map");
+  };
+
   const navItems = [
     { label: "Odkrywaj", icon: Compass, path: "/" },
-    { label: "Zapisane", icon: Heart, path: "/my-places" },
-    { label: "Profil", icon: User, path: "/profile" },
+    { label: "Mapa", icon: Map, path: "MAP_ACTION" },
+    { label: "Ulubione", icon: Heart, path: "/my-places" },
+    { label: "Blog", icon: BookOpen, path: "/inspiracje" },
   ];
 
   return (
     <>
       <nav
-        className="fixed bottom-0 left-0 right-0 z-50 flex sm:hidden bg-background border-t border-border/60 shadow-[0_-1px_6px_0_hsl(var(--foreground)/0.04)]"
+        className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden bg-background shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
         style={{
-          paddingTop: '10px',
-          paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
-          minHeight: 'calc(78px + env(safe-area-inset-bottom, 0px))',
+          height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
         {navItems.map((item) => {
-          const active = isActive(item.path);
+          const active = item.path === "MAP_ACTION" 
+            ? location.search.includes("view=map") 
+            : isActive(item.path);
           const Icon = item.icon;
 
           const itemClasses = cn(
             "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
-            active ? "text-primary" : "text-muted-foreground"
+            active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
           );
 
-          // Profile tab: if not logged in, show auth modal instead of navigating
-          if (item.path === "/profile" && !isLoggedIn) {
+          // Ulubione: if not logged in, show auth modal
+          if (item.path === "/my-places" && !isLoggedIn) {
             return (
               <button
                 key={item.label}
@@ -54,6 +72,20 @@ const BottomNav = () => {
                 className={cn(itemClasses, "text-muted-foreground")}
               >
                 <Icon className="w-[22px] h-[22px]" strokeWidth={1.5} />
+                <span className="text-[10px] leading-none font-medium">{item.label}</span>
+              </button>
+            );
+          }
+
+          // Map: special action
+          if (item.path === "MAP_ACTION") {
+            return (
+              <button
+                key={item.label}
+                onClick={handleMapClick}
+                className={itemClasses}
+              >
+                <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
                 <span className="text-[10px] leading-none font-medium">{item.label}</span>
               </button>
             );

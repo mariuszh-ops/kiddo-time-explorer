@@ -76,7 +76,7 @@ const BlogPostPage = () => {
         image={post.imageUrl}
         type="article"
       />
-      <div className="min-h-screen bg-background pb-20 sm:pb-0">
+      <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
         <main className="container py-6 md:py-10">
           <div className="max-w-2xl mx-auto">

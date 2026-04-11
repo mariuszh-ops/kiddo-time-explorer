@@ -1,4 +1,5 @@
 import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -29,8 +30,18 @@ const Index = () => {
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
-  // View mode: grid or map
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
+  // View mode: grid or map (sync with URL param from bottom nav)
+  const [searchParams] = useSearchParams();
+  const [viewMode, setViewMode] = useState<"grid" | "map">(
+    searchParams.get("view") === "map" ? "map" : "grid"
+  );
+
+  // React to ?view=map param changes (e.g. from bottom nav)
+  useEffect(() => {
+    if (searchParams.get("view") === "map") {
+      setViewMode("map");
+    }
+  }, [searchParams]);
 
   // No longer reset to grid when city is cleared — map works without city filter
 
@@ -115,7 +126,7 @@ const Index = () => {
         }}
       />
       <main
-        className="min-h-screen bg-background pb-20 sm:pb-0 transition-opacity duration-150"
+        className="min-h-screen bg-background pb-20 md:pb-0 transition-opacity duration-150"
         style={{ 
           opacity: isScrollRestored ? 1 : 0
         }}

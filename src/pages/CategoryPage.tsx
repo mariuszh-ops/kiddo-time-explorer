@@ -108,7 +108,7 @@ const CategoryPage = () => {
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <Header />
-      <main className="pb-20 sm:pb-0">
+      <main className="pb-20 md:pb-0">
         <div className="container py-6">
           {/* Breadcrumbs: Strona główna > [City] > [Category ▾] */}
           <Breadcrumb className="mb-6">
