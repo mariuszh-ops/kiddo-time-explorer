@@ -451,6 +451,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
+          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
         <MapLegend />
 
