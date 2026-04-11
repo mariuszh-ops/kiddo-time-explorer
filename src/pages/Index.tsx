@@ -33,7 +33,7 @@ const Index = () => {
   const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
   // View mode: grid or map (sync with URL param from bottom nav)
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "map">(
     searchParams.get("view") === "map" ? "map" : "grid"
   );
