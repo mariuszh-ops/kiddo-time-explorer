@@ -168,7 +168,7 @@ const Index = () => {
           onToggleTypeFilter={(value) => toggleArrayFilter("type", value)}
           onClearAll={clearAllFilters}
           viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          onViewModeChange={handleViewModeChange}
         />
       </div>
 
@@ -182,8 +182,16 @@ const Index = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
+          <MapView activities={filteredActivities} filters={filters} onViewModeChange={handleViewModeChange} />
         </Suspense>
+      ) : mapVisibleActivities ? (
+        <ActivityGrid 
+          activities={mapVisibleActivities} 
+          hasActiveFilters={true}
+          onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
+          filters={filters}
+          mapReturnAction={() => handleViewModeChange("map")}
+        />
       ) : hasActiveFilters ? (
         <ActivityGrid 
           activities={filteredActivities} 
