@@ -3,12 +3,13 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin } from "lucide-react";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor, CATEGORY_COLORS } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 // Custom rating pin icon
 const createPinIcon = (rating: number, type?: string) => {
@@ -212,6 +213,7 @@ function LocateButton() {
   const [locating, setLocating] = useState(false);
   const [denied, setDenied] = useState(false);
   const markerRef = useRef<L.CircleMarker | null>(null);
+  const pulseRef = useRef<L.CircleMarker | null>(null);
 
   const handleLocate = useCallback(() => {
     if (denied || locating) return;
@@ -220,6 +222,17 @@ function LocateButton() {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         if (markerRef.current) markerRef.current.remove();
+        if (pulseRef.current) pulseRef.current.remove();
+        // Pulse ring
+        pulseRef.current = L.circleMarker([latitude, longitude], {
+          radius: 20,
+          fillColor: "#3b82f6",
+          fillOpacity: 0.15,
+          color: "#3b82f6",
+          weight: 1,
+          opacity: 0.3,
+        }).addTo(map);
+        // Solid dot
         markerRef.current = L.circleMarker([latitude, longitude], {
           radius: 8,
           fillColor: "#3b82f6",
@@ -233,6 +246,7 @@ function LocateButton() {
       () => {
         setDenied(true);
         setLocating(false);
+        toast.error("Włącz lokalizację w ustawieniach przeglądarki");
       },
       { enableHighAccuracy: false, timeout: 8000 }
     );
@@ -243,12 +257,35 @@ function LocateButton() {
       onClick={handleLocate}
       disabled={denied}
       className={cn(
-        "absolute z-[1000] bottom-4 right-4 md:top-4 md:bottom-auto w-10 h-10 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
+        "absolute z-[1000] w-11 h-11 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
+        "bottom-4 right-4",
         denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
       )}
       title="Moja lokalizacja"
     >
       <LocateFixed className={cn("w-5 h-5", locating ? "animate-pulse text-primary" : "text-foreground")} />
+    </button>
+  );
+}
+
+// "Show all attractions" button when viewport has 0 visible
+function ShowAllButton({ activities }: { activities: Activity[] }) {
+  const map = useMap();
+  const handleClick = useCallback(() => {
+    if (activities.length === 0) return;
+    const bounds = L.latLngBounds(
+      activities.map((a) => [a.latitude, a.longitude] as [number, number])
+    );
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+  }, [map, activities]);
+
+  return (
+    <button
+      onClick={handleClick}
+      className="absolute z-[1000] top-16 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-full px-4 py-2.5 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+    >
+      <MapPin className="w-4 h-4 text-primary" />
+      Pokaż wszystkie atrakcje
     </button>
   );
 }
