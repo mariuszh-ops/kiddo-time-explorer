@@ -42,7 +42,7 @@ const useGridCols = () => {
 const roundUp = (n: number, cols: number, max: number) =>
   Math.min(Math.ceil(n / cols) * cols, max);
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {} }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {}, mapReturnAction }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
