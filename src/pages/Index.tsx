@@ -169,9 +169,7 @@ const Index = () => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         }>
-          <div style={{ height: "calc(100vh - 56px - 52px)" }}>
-            <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
-          </div>
+          <MapView activities={filteredActivities} filters={filters} onViewModeChange={setViewMode} />
         </Suspense>
       ) : hasActiveFilters ? (
         <ActivityGrid 
