@@ -119,17 +119,27 @@ const CategoryPage = () => {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbCityDropdown currentCitySlug={citySlug!} />
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbCategoryDropdown
-                  citySlug={citySlug!}
-                  activeCategorySlug={categorySlug}
-                  currentLabel={categorySlug ? (filterOptions.type.find(t => t.value === categorySlug)?.label ?? config.label) : "Wszystkie"}
-                />
-              </BreadcrumbItem>
+              {categorySlug ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbCityDropdown currentCitySlug={citySlug!} />
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbCategoryDropdown
+                      citySlug={citySlug!}
+                      activeCategorySlug={categorySlug}
+                      currentLabel={filterOptions.type.find(t => t.value === categorySlug)?.label ?? config.label}
+                    />
+                  </BreadcrumbItem>
+                </>
+              ) : (
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="text-muted-foreground font-medium">
+                    {cityLabel.nominative}
+                  </BreadcrumbPage>
+                </BreadcrumbItem>
+              )}
             </BreadcrumbList>
           </Breadcrumb>
 
