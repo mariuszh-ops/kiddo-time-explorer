@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Compass, Map, Heart, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { FEATURES } from "@/lib/featureFlags";
 import AuthRequiredModal from "./AuthRequiredModal";
 
 const BottomNav = () => {
@@ -11,8 +12,16 @@ const BottomNav = () => {
   const { isLoggedIn, login } = useAuth();
   const [isAuthOpen, setIsAuthOpen] = useState(false);
 
-  // Hide on admin page and activity detail pages
+  // Hide on admin page
   if (location.pathname.startsWith("/admin")) return null;
+
+  // Hide on activity detail pages (path is /atrakcje/:slug where slug is not a city)
+  const atrakcjeMatch = location.pathname.match(/^\/atrakcje\/([^/]+)$/);
+  if (atrakcjeMatch) {
+    const slug = atrakcjeMatch[1];
+    if (!FEATURES.ENABLED_CITIES.includes(slug)) return null;
+  }
+  // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
   const isActive = (path: string) => location.pathname === path;
