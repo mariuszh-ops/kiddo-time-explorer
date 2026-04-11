@@ -103,7 +103,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <main className="container py-6 md:py-8 pb-20 sm:pb-8">
+        <main className="container py-6 md:py-8 pb-20 md:pb-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
