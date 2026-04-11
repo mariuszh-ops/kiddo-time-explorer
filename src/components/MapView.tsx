@@ -304,6 +304,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
   const [fading, setFading] = useState(false);
+  const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
