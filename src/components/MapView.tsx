@@ -3,12 +3,13 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin } from "lucide-react";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor, CATEGORY_COLORS } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 // Custom rating pin icon
 const createPinIcon = (rating: number, type?: string) => {
@@ -207,11 +208,12 @@ function MapFitBounds({ activities }: { activities: Activity[] }) {
 }
 
 // Geolocation button
-function LocateButton() {
+function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
   const map = useMap();
   const [locating, setLocating] = useState(false);
   const [denied, setDenied] = useState(false);
   const markerRef = useRef<L.CircleMarker | null>(null);
+  const pulseRef = useRef<L.CircleMarker | null>(null);
 
   const handleLocate = useCallback(() => {
     if (denied || locating) return;
@@ -220,6 +222,17 @@ function LocateButton() {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         if (markerRef.current) markerRef.current.remove();
+        if (pulseRef.current) pulseRef.current.remove();
+        // Pulse ring
+        pulseRef.current = L.circleMarker([latitude, longitude], {
+          radius: 20,
+          fillColor: "#3b82f6",
+          fillOpacity: 0.15,
+          color: "#3b82f6",
+          weight: 1,
+          opacity: 0.3,
+        }).addTo(map);
+        // Solid dot
         markerRef.current = L.circleMarker([latitude, longitude], {
           radius: 8,
           fillColor: "#3b82f6",
@@ -233,6 +246,7 @@ function LocateButton() {
       () => {
         setDenied(true);
         setLocating(false);
+        toast.error("Włącz lokalizację w ustawieniach przeglądarki");
       },
       { enableHighAccuracy: false, timeout: 8000 }
     );
@@ -243,12 +257,36 @@ function LocateButton() {
       onClick={handleLocate}
       disabled={denied}
       className={cn(
-        "absolute z-[1000] bottom-4 right-4 md:top-4 md:bottom-auto w-10 h-10 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
+        "absolute z-[1000] w-11 h-11 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
+        bottomOffset ? `right-4` : "bottom-4 right-4",
         denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
       )}
+      style={bottomOffset ? { bottom: bottomOffset } : undefined}
       title="Moja lokalizacja"
     >
       <LocateFixed className={cn("w-5 h-5", locating ? "animate-pulse text-primary" : "text-foreground")} />
+    </button>
+  );
+}
+
+// "Show all attractions" button when viewport has 0 visible
+function ShowAllButton({ activities }: { activities: Activity[] }) {
+  const map = useMap();
+  const handleClick = useCallback(() => {
+    if (activities.length === 0) return;
+    const bounds = L.latLngBounds(
+      activities.map((a) => [a.latitude, a.longitude] as [number, number])
+    );
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+  }, [map, activities]);
+
+  return (
+    <button
+      onClick={handleClick}
+      className="absolute z-[1000] top-16 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-full px-4 py-2.5 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
+    >
+      <MapPin className="w-4 h-4 text-primary" />
+      Pokaż wszystkie atrakcje
     </button>
   );
 }
@@ -296,7 +334,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 
   if (isMobile) {
     return (
-      <div className="relative" style={{ height: "calc(100vh - 56px - 64px)" }}>
+      <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         <MapContainer
           center={mapCenter}
           zoom={11}
@@ -312,32 +350,33 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ClusteredMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
-          <LocateButton />
+          <LocateButton bottomOffset="176px" />
+          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
         <MapLegend />
 
-        {/* Back to list button + count (mobile) */}
+        {/* Back to list button (mobile) */}
         <button
           onClick={() => onViewModeChange?.("grid")}
-          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium"
+          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          Lista · {visibleActivities.length} atrakcji
+          Lista · {visibleActivities.length}
         </button>
 
-        {/* Static bottom card strip */}
-        <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
-          <div className="flex items-center pt-3 pb-2 px-3">
+        {/* Bottom sheet with cards */}
+        <div className="absolute bottom-0 left-0 right-0 h-[160px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
+          <div className="flex items-center pt-2 pb-1 px-3">
             <span className="text-xs text-muted-foreground font-medium">
               {visibleActivities.length} atrakcji
             </span>
           </div>
           <div
-            className={cn("flex-1 overflow-x-auto px-3 pb-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
+            className={cn("flex-1 overflow-x-auto px-3 pb-2 transition-opacity duration-150 scrollbar-hide", fading ? "opacity-50" : "opacity-100")}
           >
             {visibleActivities.length === 0 ? (
               <div className="flex items-center justify-center h-full text-sm text-muted-foreground px-4 text-center">
-                Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                Brak atrakcji w tym obszarze
               </div>
             ) : (
               <div className="flex gap-3">
@@ -345,7 +384,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
                   <div
                     key={activity.id}
                     ref={(el) => { cardRefs.current[activity.id] = el; }}
-                    className="min-w-[260px] flex-shrink-0"
+                    className="min-w-[240px] flex-shrink-0"
                   >
                     <MiniActivityCard
                       activity={activity}
@@ -413,6 +452,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
+          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
         <MapLegend />
 
