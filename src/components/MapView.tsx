@@ -10,6 +10,7 @@ import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import MapBottomSheet from "./MapBottomSheet";
 
 // Custom rating pin icon
 const createPinIcon = (rating: number, type?: string) => {
