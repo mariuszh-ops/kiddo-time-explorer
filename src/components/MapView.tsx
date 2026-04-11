@@ -349,9 +349,13 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ClusteredMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
-          <LocateButton />
           {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
+
+        {/* Locate button - positioned above bottom sheet */}
+        <div className="absolute z-[1000] right-4 bottom-[176px]">
+          <MobileLocateButton />
+        </div>
         <MapLegend />
 
         {/* Back to list button (mobile) */}
