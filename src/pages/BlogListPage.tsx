@@ -13,7 +13,7 @@ const BlogListPage = () => {
         description="Porady, rankingi i pomysły na czas z dzieckiem. Blog FamilyFun."
         path="/inspiracje"
       />
-      <div className="min-h-screen bg-background pb-20 sm:pb-0">
+      <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
         <main className="container py-8 md:py-12">
           <div className="max-w-4xl mx-auto">

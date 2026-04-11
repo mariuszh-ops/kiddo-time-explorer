@@ -19,7 +19,7 @@ const NotFound = () => {
       <SEOHead title="Nie znaleziono strony" description="Strona, której szukasz, nie istnieje lub została przeniesiona." path={location.pathname} />
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
-        <main className="flex-1 flex items-center justify-center pb-20 sm:pb-0">
+        <main className="flex-1 flex items-center justify-center pb-20 md:pb-0">
           <div className="text-center max-w-sm mx-auto px-4">
             <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mx-auto mb-4">
               <SearchX className="w-7 h-7 text-accent-foreground" />
