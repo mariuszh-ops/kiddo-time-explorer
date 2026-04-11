@@ -10,7 +10,7 @@ import { Activity } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
-interface ActivityGridProps {
+export interface ActivityGridProps {
   activities: Activity[];
   hasActiveFilters?: boolean;
   onClearFilters?: () => void;
@@ -18,6 +18,7 @@ interface ActivityGridProps {
   hasError?: boolean;
   onRetry?: () => void;
   filters?: Filters;
+  mapReturnAction?: () => void;
 }
 
 const ITEMS_PER_PAGE = 20;
