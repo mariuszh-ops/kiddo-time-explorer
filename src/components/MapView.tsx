@@ -208,7 +208,7 @@ function MapFitBounds({ activities }: { activities: Activity[] }) {
 }
 
 // Geolocation button
-function LocateButton() {
+function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
   const map = useMap();
   const [locating, setLocating] = useState(false);
   const [denied, setDenied] = useState(false);
@@ -258,9 +258,10 @@ function LocateButton() {
       disabled={denied}
       className={cn(
         "absolute z-[1000] w-11 h-11 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
-        "bottom-4 right-4",
+        bottomOffset ? `right-4` : "bottom-4 right-4",
         denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
       )}
+      style={bottomOffset ? { bottom: bottomOffset } : undefined}
       title="Moja lokalizacja"
     >
       <LocateFixed className={cn("w-5 h-5", locating ? "animate-pulse text-primary" : "text-foreground")} />
