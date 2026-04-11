@@ -36,6 +36,17 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<"grid" | "map">(
     searchParams.get("view") === "map" ? "map" : "grid"
   );
+  // Activities from map viewport — used when switching from map to grid
+  const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
+
+  const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
+    if (mode === "grid" && visibleActivities) {
+      setMapVisibleActivities(visibleActivities);
+    } else {
+      setMapVisibleActivities(null);
+    }
+    setViewMode(mode);
+  }, []);
 
   // React to ?view=map param changes (e.g. from bottom nav)
   useEffect(() => {
