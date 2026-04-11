@@ -47,7 +47,13 @@ const Index = () => {
       setMapVisibleActivities(null);
     }
     setViewMode(mode);
-  }, []);
+    // Sync URL param
+    if (mode === "map") {
+      setSearchParams((prev) => { prev.set("view", "map"); return prev; }, { replace: true });
+    } else {
+      setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
+    }
+  }, [setSearchParams]);
 
   // React to ?view=map param changes (e.g. from bottom nav)
   useEffect(() => {
