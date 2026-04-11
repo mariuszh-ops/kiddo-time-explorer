@@ -333,7 +333,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 
   if (isMobile) {
     return (
-      <div className="relative" style={{ height: "calc(100vh - 56px - 64px)" }}>
+      <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         <MapContainer
           center={mapCenter}
           zoom={11}
@@ -350,31 +350,32 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
+          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
         </MapContainer>
         <MapLegend />
 
-        {/* Back to list button + count (mobile) */}
+        {/* Back to list button (mobile) */}
         <button
           onClick={() => onViewModeChange?.("grid")}
-          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium"
+          className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          Lista · {visibleActivities.length} atrakcji
+          Lista · {visibleActivities.length}
         </button>
 
-        {/* Static bottom card strip */}
-        <div className="absolute bottom-0 left-0 right-0 h-[180px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
-          <div className="flex items-center pt-3 pb-2 px-3">
+        {/* Bottom sheet with cards */}
+        <div className="absolute bottom-0 left-0 right-0 h-[160px] bg-card rounded-t-2xl shadow-[0_-4px_20px_rgba(0,0,0,0.1)] z-30 flex flex-col">
+          <div className="flex items-center pt-2 pb-1 px-3">
             <span className="text-xs text-muted-foreground font-medium">
               {visibleActivities.length} atrakcji
             </span>
           </div>
           <div
-            className={cn("flex-1 overflow-x-auto px-3 pb-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
+            className={cn("flex-1 overflow-x-auto px-3 pb-2 transition-opacity duration-150 scrollbar-hide", fading ? "opacity-50" : "opacity-100")}
           >
             {visibleActivities.length === 0 ? (
               <div className="flex items-center justify-center h-full text-sm text-muted-foreground px-4 text-center">
-                Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                Brak atrakcji w tym obszarze
               </div>
             ) : (
               <div className="flex gap-3">
@@ -382,7 +383,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
                   <div
                     key={activity.id}
                     ref={(el) => { cardRefs.current[activity.id] = el; }}
-                    className="min-w-[260px] flex-shrink-0"
+                    className="min-w-[240px] flex-shrink-0"
                   >
                     <MiniActivityCard
                       activity={activity}
