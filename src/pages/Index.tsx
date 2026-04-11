@@ -53,6 +53,7 @@ const Index = () => {
   useEffect(() => {
     if (searchParams.get("view") === "map") {
       setViewMode("map");
+      setMapVisibleActivities(null);
     }
   }, [searchParams]);
 
