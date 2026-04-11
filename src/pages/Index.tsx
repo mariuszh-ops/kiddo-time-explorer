@@ -1,6 +1,7 @@
 import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { Activity } from "@/data/activities";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
