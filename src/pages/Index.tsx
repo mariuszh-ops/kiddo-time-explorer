@@ -140,7 +140,10 @@ const Index = () => {
         }}
       />
       <main
-        className="min-h-screen bg-background pb-20 md:pb-0 transition-opacity duration-150"
+        className={cn(
+          "min-h-screen bg-background pb-20 md:pb-0 transition-opacity duration-150",
+          isMobile && viewMode === 'map' && "h-screen overflow-hidden pb-0"
+        )}
         style={{ 
           opacity: isScrollRestored ? 1 : 0
         }}
