@@ -27,7 +27,7 @@ interface MapBottomSheetProps {
 const HEADER_HEIGHT = 56;
 const BOTTOM_NAV_HEIGHT = 64;
 
-const PEEK_HEIGHT = 80;
+const PEEK_HEIGHT = 140;
 const getHalfHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.5;
 const getFullHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.9;
 
