@@ -463,7 +463,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
           {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
@@ -542,7 +542,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
           {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
