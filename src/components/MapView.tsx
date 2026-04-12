@@ -11,6 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
+import MapCategoryChips from "./MapCategoryChips";
 
 // Custom rating pin icon
 const createPinIcon = (rating: number, type?: string) => {
@@ -305,12 +306,34 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
   const mapCenter: [number, number] = [center.lat, center.lng];
+
+  // Filter activities by selected categories
+  const filteredActivities = useMemo(() => {
+    if (selectedCategories.size === 0) return activities;
+    return activities.filter((a) => selectedCategories.has(a.type));
+  }, [activities, selectedCategories]);
+
+  const handleCategoryToggle = useCallback((category: string) => {
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(category)) next.delete(category);
+      else next.add(category);
+      return next;
+    });
+  }, []);
+
+  // Filtered visible activities (viewport + category)
+  const displayedActivities = useMemo(() => {
+    if (selectedCategories.size === 0) return visibleActivities;
+    return visibleActivities.filter((a) => selectedCategories.has(a.type));
+  }, [visibleActivities, selectedCategories]);
 
   const handleMarkerClick = useCallback((id: number) => {
     setHighlightedId(id);
