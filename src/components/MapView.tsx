@@ -12,7 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
-import MapCategoryChips from "./MapCategoryChips";
+import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -409,11 +409,24 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const center = cityCenters[cityKey] || cityCenters.warszawa;
   const mapCenter: [number, number] = [center.lat, center.lng];
 
-  // Filter activities by selected categories
+  // Filter activities by selected categories + favorites
+  const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
+  const categoryFilters = useMemo(() => {
+    const s = new Set(selectedCategories);
+    s.delete(FAVORITES_CHIP_KEY);
+    return s;
+  }, [selectedCategories]);
+
   const filteredActivities = useMemo(() => {
-    if (selectedCategories.size === 0) return activities;
-    return activities.filter((a) => selectedCategories.has(a.type));
-  }, [activities, selectedCategories]);
+    let result = activities;
+    if (categoryFilters.size > 0) {
+      result = result.filter((a) => categoryFilters.has(a.type));
+    }
+    if (showFavoritesOnly) {
+      result = result.filter((a) => isFavorite(a.id));
+    }
+    return result;
+  }, [activities, categoryFilters, showFavoritesOnly, isFavorite]);
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
@@ -424,10 +437,16 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     });
   }, []);
 
-  // Filtered visible activities (viewport + category)
+  // Filtered visible activities (viewport + category + favorites)
   const displayedActivities = useMemo(() => {
-    if (selectedCategories.size === 0) return visibleActivities;
-    return visibleActivities.filter((a) => selectedCategories.has(a.type));
+    let result = visibleActivities;
+    if (categoryFilters.size > 0) {
+      result = result.filter((a) => categoryFilters.has(a.type));
+    }
+    if (showFavoritesOnly) {
+      result = result.filter((a) => isFavorite(a.id));
+    }
+    return result;
   }, [visibleActivities, selectedCategories]);
 
   const handleMarkerClick = useCallback((id: number) => {
