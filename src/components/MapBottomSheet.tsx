@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
+import MapCategoryChips from "./MapCategoryChips";
 
 type SheetState = "peek" | "half" | "full";
 
@@ -13,6 +14,8 @@ interface MapBottomSheetProps {
   onCardClick: (activity: Activity) => void;
   fading: boolean;
   onSheetStateChange?: (state: SheetState) => void;
+  selectedCategories: Set<string>;
+  onCategoryToggle: (category: string) => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -37,6 +40,8 @@ export default function MapBottomSheet({
   onCardClick,
   fading,
   onSheetStateChange,
+  selectedCategories,
+  onCategoryToggle,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
@@ -147,6 +152,11 @@ export default function MapBottomSheet({
         <span className="text-xs text-muted-foreground font-medium">
           {visibleActivities.length} atrakcji w widoku
         </span>
+      </div>
+
+      {/* Category chips */}
+      <div className="px-3 pb-1 shrink-0">
+        <MapCategoryChips selected={selectedCategories} onToggle={onCategoryToggle} />
       </div>
 
       {/* List content */}
