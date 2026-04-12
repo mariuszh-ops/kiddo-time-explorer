@@ -256,7 +256,9 @@ function FlyToHandler({
   const map = useMap();
   useEffect(() => {
     if (!targetActivity) return;
-    map.flyTo([targetActivity.latitude, targetActivity.longitude], 15, { duration: 0.8 });
+    const currentZoom = map.getZoom();
+    const targetZoom = Math.max(currentZoom, 13);
+    map.flyTo([targetActivity.latitude, targetActivity.longitude], targetZoom, { duration: 0.5 });
     const marker = markersRef.current[targetActivity.id];
     if (marker) {
       setTimeout(() => marker.openPopup(), 400);
