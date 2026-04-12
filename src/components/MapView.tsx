@@ -389,6 +389,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
