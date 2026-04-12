@@ -201,13 +201,15 @@ function ClusteredMarkers({
   return null;
 }
 
-// Listens to map viewport changes and reports visible activities
+// Listens to map viewport changes and reports visible activities + center
 function ViewportFilter({
   activities,
   onVisibleChange,
+  onCenterChange,
 }: {
   activities: Activity[];
   onVisibleChange: (visible: Activity[]) => void;
+  onCenterChange?: (center: [number, number]) => void;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -218,7 +220,9 @@ function ViewportFilter({
       bounds.contains([a.latitude, a.longitude])
     );
     onVisibleChange(visible);
-  }, [map, activities, onVisibleChange]);
+    const c = map.getCenter();
+    onCenterChange?.([c.lat, c.lng]);
+  }, [map, activities, onVisibleChange, onCenterChange]);
 
   // Initial filter after map loads
   useEffect(() => {
@@ -385,6 +389,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
@@ -458,7 +463,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
           {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
@@ -483,6 +488,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           onSheetStateChange={setMobileSheetState}
           selectedCategories={selectedCategories}
           onCategoryToggle={handleCategoryToggle}
+          mapCenter={liveMapCenter}
         />
       </div>
     );
@@ -537,7 +543,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
           {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
