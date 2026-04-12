@@ -1,12 +1,13 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star } from "lucide-react";
+import { Star, ArrowUpDown, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import MapCategoryChips from "./MapCategoryChips";
 
 type SheetState = "peek" | "half" | "full";
+type SortMode = "rating" | "nearest";
 
 interface MapBottomSheetProps {
   visibleActivities: Activity[];
@@ -16,6 +17,7 @@ interface MapBottomSheetProps {
   onSheetStateChange?: (state: SheetState) => void;
   selectedCategories: Set<string>;
   onCategoryToggle: (category: string) => void;
+  mapCenter?: [number, number] | null;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -34,6 +36,22 @@ function getTargetHeight(state: SheetState): number {
   }
 }
 
+// Simple distance calc (good enough for sorting)
+function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDistance(km: number): string {
+  if (km < 1) return `${Math.round(km * 1000)} m`;
+  return `${km.toFixed(1)} km`;
+}
+
 export default function MapBottomSheet({
   visibleActivities,
   highlightedId,
@@ -42,13 +60,50 @@ export default function MapBottomSheet({
   onSheetStateChange,
   selectedCategories,
   onCategoryToggle,
+  mapCenter,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
   const [isDragging, setIsDragging] = useState(false);
+  const [sortMode, setSortMode] = useState<SortMode>("rating");
+  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
+  const sortRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!sortDropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (sortRef.current && !sortRef.current.contains(e.target as Node)) {
+        setSortDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [sortDropdownOpen]);
+
+  // Compute distances from map center
+  const distancesMap = useMemo(() => {
+    if (!mapCenter) return new Map<number, number>();
+    const m = new Map<number, number>();
+    visibleActivities.forEach((a) => {
+      m.set(a.id, distanceKm(mapCenter[0], mapCenter[1], a.latitude, a.longitude));
+    });
+    return m;
+  }, [visibleActivities, mapCenter]);
+
+  // Sort activities
+  const sortedActivities = useMemo(() => {
+    const arr = [...visibleActivities];
+    if (sortMode === "nearest" && mapCenter) {
+      arr.sort((a, b) => (distancesMap.get(a.id) ?? 0) - (distancesMap.get(b.id) ?? 0));
+    } else {
+      arr.sort((a, b) => b.rating - a.rating);
+    }
+    return arr;
+  }, [visibleActivities, sortMode, mapCenter, distancesMap]);
 
   const updateState = useCallback((state: SheetState) => {
     setSheetState(state);
@@ -56,12 +111,10 @@ export default function MapBottomSheet({
     onSheetStateChange?.(state);
   }, [onSheetStateChange]);
 
-  // Snap to nearest state
   const snapToNearest = useCallback((currentHeight: number) => {
     const peek = PEEK_HEIGHT;
     const half = getHalfHeight();
     const full = getFullHeight();
-
     const distances = [
       { state: "peek" as SheetState, dist: Math.abs(currentHeight - peek) },
       { state: "half" as SheetState, dist: Math.abs(currentHeight - half) },
@@ -71,7 +124,6 @@ export default function MapBottomSheet({
     updateState(distances[0].state);
   }, [updateState]);
 
-  // Touch handlers on handle bar
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
     dragStartY.current = e.touches[0].clientY;
@@ -91,7 +143,6 @@ export default function MapBottomSheet({
     snapToNearest(sheetHeight);
   }, [isDragging, sheetHeight, snapToNearest]);
 
-  // Tap on handle bar toggles peek <-> half
   const handleHandleTap = useCallback(() => {
     if (isDragging) return;
     if (sheetState === "peek") {
@@ -101,14 +152,12 @@ export default function MapBottomSheet({
     }
   }, [sheetState, isDragging, updateState]);
 
-  // Reset scroll when state changes to half/full or activities change
   useEffect(() => {
     if (listRef.current && sheetState !== "peek") {
       listRef.current.scrollTop = 0;
     }
   }, [sheetState, visibleActivities]);
 
-  // Scroll highlighted card into view
   useEffect(() => {
     if (highlightedId && listRef.current && sheetState !== "peek") {
       const card = listRef.current.querySelector(`[data-activity-id="${highlightedId}"]`);
@@ -118,12 +167,11 @@ export default function MapBottomSheet({
     }
   }, [highlightedId, sheetState]);
 
-  // When marker is clicked on map, open to half if in peek
   useEffect(() => {
     if (highlightedId && sheetState === "peek") {
       updateState("half");
     }
-  }, [highlightedId]); // intentionally not including sheetState/updateState to avoid loops
+  }, [highlightedId]); // intentionally not including sheetState/updateState
 
   const showList = sheetState !== "peek";
 
@@ -147,11 +195,48 @@ export default function MapBottomSheet({
         onClick={handleHandleTap}
         className="flex flex-col items-center pt-2 pb-2 cursor-grab active:cursor-grabbing shrink-0"
       >
-        {/* Handle bar */}
         <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
-        <span className="text-xs text-muted-foreground font-medium">
-          {visibleActivities.length} atrakcji w widoku
-        </span>
+        <div className="flex items-center justify-between w-full px-3">
+          <span className="text-xs text-muted-foreground font-medium">
+            {visibleActivities.length} atrakcji w widoku
+          </span>
+          {/* Sort button */}
+          <div
+            ref={sortRef}
+            className="relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSortDropdownOpen((v) => !v)}
+              className="flex items-center gap-1 text-xs text-muted-foreground font-medium hover:text-foreground transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-accent"
+            >
+              <ArrowUpDown className="w-3.5 h-3.5" />
+              {sortMode === "rating" ? "Ocena ↓" : "Najbliższe"}
+            </button>
+            {sortDropdownOpen && (
+              <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[160px] py-1">
+                <button
+                  onClick={() => { setSortMode("rating"); setSortDropdownOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
+                >
+                  <span className={cn("text-foreground", sortMode === "rating" && "font-semibold")}>
+                    Najlepiej oceniane
+                  </span>
+                  {sortMode === "rating" && <Check className="w-3.5 h-3.5 text-primary" />}
+                </button>
+                <button
+                  onClick={() => { setSortMode("nearest"); setSortDropdownOpen(false); }}
+                  className="w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
+                >
+                  <span className={cn("text-foreground", sortMode === "nearest" && "font-semibold")}>
+                    Najbliższe centrum mapy
+                  </span>
+                  {sortMode === "nearest" && <Check className="w-3.5 h-3.5 text-primary" />}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Category chips */}
@@ -168,18 +253,19 @@ export default function MapBottomSheet({
             fading ? "opacity-50" : "opacity-100"
           )}
         >
-          {visibleActivities.length === 0 ? (
+          {sortedActivities.length === 0 ? (
             <div className="flex items-center justify-center h-24 text-sm text-muted-foreground text-center px-4">
               Brak atrakcji w tym obszarze — oddal mapę lub przesuń
             </div>
           ) : (
             <div className="space-y-2">
-              {visibleActivities.map((activity) => (
+              {sortedActivities.map((activity) => (
                 <SheetActivityCard
                   key={activity.id}
                   activity={activity}
                   isHighlighted={highlightedId === activity.id}
                   onCardClick={onCardClick}
+                  distance={sortMode === "nearest" ? distancesMap.get(activity.id) : undefined}
                 />
               ))}
             </div>
@@ -212,10 +298,12 @@ function SheetActivityCard({
   activity,
   isHighlighted,
   onCardClick,
+  distance,
 }: {
   activity: Activity;
   isHighlighted: boolean;
   onCardClick: (activity: Activity) => void;
+  distance?: number;
 }) {
   const categoryColor = getCategoryColor(activity.type);
   const [imgError, setImgError] = useState(false);
@@ -255,9 +343,16 @@ function SheetActivityCard({
         >
           {activity.title}
         </Link>
-        <p className="text-xs text-muted-foreground truncate mt-0.5">
-          {activity.location}
-        </p>
+        <div className="flex items-center gap-1 mt-0.5">
+          <p className="text-xs text-muted-foreground truncate">
+            {activity.location}
+          </p>
+          {distance !== undefined && (
+            <span className="text-xs text-muted-foreground shrink-0">
+              · {formatDistance(distance)}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
           <span className="flex items-center gap-1 text-xs font-medium text-foreground">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
