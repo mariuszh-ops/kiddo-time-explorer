@@ -153,11 +153,11 @@ function ViewportFilter({
   useMapEvents({
     moveend: () => {
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 250);
+      timerRef.current = setTimeout(filterByBounds, 400);
     },
     zoomend: () => {
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 250);
+      timerRef.current = setTimeout(filterByBounds, 400);
     },
   });
 
