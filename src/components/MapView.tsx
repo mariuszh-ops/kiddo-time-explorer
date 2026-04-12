@@ -488,6 +488,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           onSheetStateChange={setMobileSheetState}
           selectedCategories={selectedCategories}
           onCategoryToggle={handleCategoryToggle}
+          mapCenter={liveMapCenter}
         />
       </div>
     );
