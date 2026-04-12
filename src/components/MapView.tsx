@@ -13,22 +13,57 @@ import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips from "./MapCategoryChips";
 
-// Custom rating pin icon
+// Category emoji map
+const CATEGORY_EMOJI: Record<string, string> = {
+  "sala-zabaw": "🎪",
+  "plac-zabaw": "🛝",
+  "park-rozrywki": "🎢",
+  "muzeum-teatr": "🎭",
+  "sport": "⚽",
+  "zoo": "🦁",
+  "park": "🌳",
+  "inne": "📌",
+};
+
+// Border color based on rating
+const getRatingBorderColor = (rating: number): string => {
+  if (rating >= 4.5) return "#22c55e";
+  if (rating >= 4.0) return "#84cc16";
+  if (rating >= 3.5) return "#eab308";
+  return "#9ca3af";
+};
+
+// Custom pin icon with emoji + rating-colored border
 const createPinIcon = (rating: number, type?: string) => {
-  const color = getCategoryColor(type || "inne");
+  const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
+  const borderColor = getRatingBorderColor(rating);
   return L.divIcon({
     className: "custom-rating-pin",
     html: `<div style="
-      width:36px;height:36px;border-radius:50%;
-      background:${color};color:#fff;
+      position:relative;
+      width:36px;height:36px;border-radius:8px;
+      background:#fff;
       display:flex;align-items:center;justify-content:center;
-      font-size:12px;font-weight:700;
-      border:3px solid #fff;
-      box-shadow:0 2px 8px rgba(0,0,0,0.3);
+      font-size:18px;
+      border:2.5px solid ${borderColor};
+      box-shadow:0 2px 6px rgba(0,0,0,0.25);
       cursor:pointer;
-    ">${rating.toFixed(1)}</div>`,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
+    ">${emoji}<div style="
+      position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+      width:0;height:0;
+      border-left:6px solid transparent;
+      border-right:6px solid transparent;
+      border-top:7px solid ${borderColor};
+    "></div><div style="
+      position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+      width:0;height:0;
+      border-left:4.5px solid transparent;
+      border-right:4.5px solid transparent;
+      border-top:5px solid #fff;
+    "></div></div>`,
+    iconSize: [36, 43],
+    iconAnchor: [18, 43],
+    popupAnchor: [0, -43],
   });
 };
 
