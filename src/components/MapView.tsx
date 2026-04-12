@@ -201,13 +201,15 @@ function ClusteredMarkers({
   return null;
 }
 
-// Listens to map viewport changes and reports visible activities
+// Listens to map viewport changes and reports visible activities + center
 function ViewportFilter({
   activities,
   onVisibleChange,
+  onCenterChange,
 }: {
   activities: Activity[];
   onVisibleChange: (visible: Activity[]) => void;
+  onCenterChange?: (center: [number, number]) => void;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -218,7 +220,9 @@ function ViewportFilter({
       bounds.contains([a.latitude, a.longitude])
     );
     onVisibleChange(visible);
-  }, [map, activities, onVisibleChange]);
+    const c = map.getCenter();
+    onCenterChange?.([c.lat, c.lng]);
+  }, [map, activities, onVisibleChange, onCenterChange]);
 
   // Initial filter after map loads
   useEffect(() => {
