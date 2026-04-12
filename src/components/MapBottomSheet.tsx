@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check, Heart } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
