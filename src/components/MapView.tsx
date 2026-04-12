@@ -424,6 +424,10 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     setFlyTarget(activity);
   }, []);
 
+  const handleMapClick = useCallback(() => {
+    setHighlightedId(null);
+  }, []);
+
   const handleVisibleChange = useCallback((visible: Activity[]) => {
     setFading(true);
     // Brief fade transition
