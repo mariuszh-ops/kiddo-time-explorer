@@ -181,6 +181,40 @@ export default function MapBottomSheet({
     }
   }, [highlightedId]); // intentionally not including sheetState/updateState
 
+  // Debounced search
+  const handleSearchInput = useCallback((value: string) => {
+    setLocalSearch(value);
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      onSearchChange(value);
+    }, 200);
+  }, [onSearchChange]);
+
+  useEffect(() => {
+    return () => clearTimeout(searchTimerRef.current);
+  }, []);
+
+  // Sync external searchQuery with local
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  const handleSearchFocus = useCallback(() => {
+    if (sheetState !== "full") {
+      updateState("full");
+    }
+  }, [sheetState, updateState]);
+
+  const handleSearchBlur = useCallback(() => {
+    if (!localSearch && sheetState === "full") {
+      updateState("half");
+    }
+  }, [localSearch, sheetState, updateState]);
+
+  const headerText = searchQuery.trim()
+    ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
+    : `${visibleActivities.length} atrakcji w widoku`;
+
   const showList = sheetState !== "peek";
 
   return (
