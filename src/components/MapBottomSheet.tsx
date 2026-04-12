@@ -40,6 +40,8 @@ export default function MapBottomSheet({
   onCardClick,
   fading,
   onSheetStateChange,
+  selectedCategories,
+  onCategoryToggle,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
