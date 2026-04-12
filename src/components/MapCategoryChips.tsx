@@ -1,6 +1,9 @@
 import { cn } from "@/lib/utils";
 
+export const FAVORITES_CHIP_KEY = "_favorites";
+
 const CATEGORIES = [
+  { key: FAVORITES_CHIP_KEY, label: "Ulubione", emoji: "❤️" },
   { key: "sala-zabaw", label: "Sala zabaw", emoji: "🎪" },
   { key: "plac-zabaw", label: "Plac zabaw", emoji: "🛝" },
   { key: "park-rozrywki", label: "Park rozrywki", emoji: "🎢" },
@@ -27,7 +30,9 @@ export default function MapCategoryChips({ selected, onToggle }: MapCategoryChip
             className={cn(
               "shrink-0 flex items-center gap-1 px-3.5 py-1.5 rounded-full text-xs font-medium transition-colors cursor-pointer",
               isActive
-                ? "bg-primary text-primary-foreground"
+                ? key === FAVORITES_CHIP_KEY
+                  ? "bg-red-500 text-white"
+                  : "bg-primary text-primary-foreground"
                 : "bg-background border border-border text-muted-foreground hover:bg-accent"
             )}
           >
