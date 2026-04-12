@@ -394,6 +394,7 @@ interface MapViewProps {
 
 const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
+  const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
