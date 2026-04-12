@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check, Heart } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart, Search, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -19,13 +19,15 @@ interface MapBottomSheetProps {
   selectedCategories: Set<string>;
   onCategoryToggle: (category: string) => void;
   mapCenter?: [number, number] | null;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
 const HEADER_HEIGHT = 56;
 const BOTTOM_NAV_HEIGHT = 64;
 
-const PEEK_HEIGHT = 80;
+const PEEK_HEIGHT = 140;
 const getHalfHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.5;
 const getFullHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.9;
 
@@ -62,12 +64,17 @@ export default function MapBottomSheet({
   selectedCategories,
   onCategoryToggle,
   mapCenter,
+  searchQuery,
+  onSearchChange,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
   const [isDragging, setIsDragging] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
@@ -174,6 +181,40 @@ export default function MapBottomSheet({
     }
   }, [highlightedId]); // intentionally not including sheetState/updateState
 
+  // Debounced search
+  const handleSearchInput = useCallback((value: string) => {
+    setLocalSearch(value);
+    clearTimeout(searchTimerRef.current);
+    searchTimerRef.current = setTimeout(() => {
+      onSearchChange(value);
+    }, 200);
+  }, [onSearchChange]);
+
+  useEffect(() => {
+    return () => clearTimeout(searchTimerRef.current);
+  }, []);
+
+  // Sync external searchQuery with local
+  useEffect(() => {
+    setLocalSearch(searchQuery);
+  }, [searchQuery]);
+
+  const handleSearchFocus = useCallback(() => {
+    if (sheetState !== "full") {
+      updateState("full");
+    }
+  }, [sheetState, updateState]);
+
+  const handleSearchBlur = useCallback(() => {
+    if (!localSearch && sheetState === "full") {
+      updateState("half");
+    }
+  }, [localSearch, sheetState, updateState]);
+
+  const headerText = searchQuery.trim()
+    ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
+    : `${visibleActivities.length} atrakcji w widoku`;
+
   const showList = sheetState !== "peek";
 
   return (
@@ -198,13 +239,13 @@ export default function MapBottomSheet({
       >
         <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
         <div className="flex items-center justify-between w-full px-3">
-          <span className="text-xs text-muted-foreground font-medium">
-            {visibleActivities.length} atrakcji w widoku
+          <span className="text-xs text-muted-foreground font-medium truncate">
+            {headerText}
           </span>
           {/* Sort button */}
           <div
             ref={sortRef}
-            className="relative"
+            className="relative shrink-0"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -237,6 +278,31 @@ export default function MapBottomSheet({
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Search input */}
+      <div className="px-3 pb-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            ref={searchInputRef}
+            type="text"
+            value={localSearch}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            onFocus={handleSearchFocus}
+            onBlur={handleSearchBlur}
+            placeholder="Szukaj atrakcji..."
+            className="w-full h-10 pl-9 pr-8 rounded-xl bg-muted border-none text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+          />
+          {localSearch && (
+            <button
+              onClick={() => { handleSearchInput(""); searchInputRef.current?.focus(); }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full hover:bg-accent cursor-pointer"
+            >
+              <X className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+          )}
         </div>
       </div>
 

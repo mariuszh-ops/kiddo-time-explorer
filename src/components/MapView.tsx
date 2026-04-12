@@ -402,6 +402,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
 
@@ -409,13 +410,26 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const center = cityCenters[cityKey] || cityCenters.warszawa;
   const mapCenter: [number, number] = [center.lat, center.lng];
 
-  // Filter activities by selected categories + favorites
+  // Normalize for search
+  const normalizeText = useCallback((text: string) =>
+    text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), []);
+
+  const searchNormalized = useMemo(() => normalizeText(searchQuery.trim()), [searchQuery, normalizeText]);
+
+  // Filter activities by selected categories + favorites + search
   const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
   const categoryFilters = useMemo(() => {
     const s = new Set(selectedCategories);
     s.delete(FAVORITES_CHIP_KEY);
     return s;
   }, [selectedCategories]);
+
+  const matchesSearch = useCallback((a: Activity) => {
+    if (!searchNormalized) return true;
+    return normalizeText(a.title).includes(searchNormalized) ||
+      normalizeText(a.location).includes(searchNormalized) ||
+      normalizeText(a.type).includes(searchNormalized);
+  }, [searchNormalized, normalizeText]);
 
   const filteredActivities = useMemo(() => {
     let result = activities;
@@ -425,8 +439,11 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
     }
+    if (searchNormalized) {
+      result = result.filter(matchesSearch);
+    }
     return result;
-  }, [activities, categoryFilters, showFavoritesOnly, isFavorite]);
+  }, [activities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
@@ -437,7 +454,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     });
   }, []);
 
-  // Filtered visible activities (viewport + category + favorites)
+  // Filtered visible activities (viewport + category + favorites + search)
   const displayedActivities = useMemo(() => {
     let result = visibleActivities;
     if (categoryFilters.size > 0) {
@@ -446,8 +463,20 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
     }
+    if (searchNormalized) {
+      result = result.filter(matchesSearch);
+    }
     return result;
-  }, [visibleActivities, selectedCategories]);
+  }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+
+  // Auto-fly when exactly 1 search result
+  useEffect(() => {
+    if (searchNormalized && displayedActivities.length === 1) {
+      const activity = displayedActivities[0];
+      setHighlightedId(activity.id);
+      setFlyTarget(activity);
+    }
+  }, [displayedActivities, searchNormalized]);
 
   const handleMarkerClick = useCallback((id: number) => {
     setHighlightedId(id);
@@ -520,6 +549,8 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           selectedCategories={selectedCategories}
           onCategoryToggle={handleCategoryToggle}
           mapCenter={liveMapCenter}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
       </div>
     );
