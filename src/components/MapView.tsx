@@ -374,31 +374,33 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapFitBounds activities={activities} />
-          <ClusteredMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
-          <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
+          <MapFitBounds activities={filteredActivities} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
-          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
+          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 
         {/* Back to list button (mobile) */}
         <button
-          onClick={() => onViewModeChange?.("grid", visibleActivities)}
+          onClick={() => onViewModeChange?.("grid", displayedActivities)}
           className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          Lista · {visibleActivities.length}
+          Lista · {displayedActivities.length}
         </button>
 
         {/* Draggable bottom sheet */}
         <MapBottomSheet
-          visibleActivities={visibleActivities}
+          visibleActivities={displayedActivities}
           highlightedId={highlightedId}
           onCardClick={handleCardClick}
           fading={fading}
           onSheetStateChange={setMobileSheetState}
+          selectedCategories={selectedCategories}
+          onCategoryToggle={handleCategoryToggle}
         />
       </div>
     );
