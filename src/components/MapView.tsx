@@ -34,7 +34,7 @@ const getRatingBorderColor = (rating: number): string => {
 };
 
 // Custom pin icon — normal state
-const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false) => {
+const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false, isFav = false) => {
   const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
   const borderColor = isActive ? "#1a1a1a" : getRatingBorderColor(rating);
   const size = isActive ? 46 : 36;
@@ -50,6 +50,14 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
   const arrowOffset = isActive ? -8 : -7;
   const arrowInnerOffset = isActive ? -5 : -4;
 
+  const heartBadge = isFav ? `<div style="
+    position:absolute;top:-5px;right:-5px;
+    width:16px;height:16px;border-radius:50%;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  "><span style="font-size:10px;line-height:1;">❤️</span></div>` : "";
+
   return L.divIcon({
     className: "custom-rating-pin",
     html: `<div style="
@@ -63,7 +71,7 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
       cursor:pointer;
       opacity:${opacity};
       transition:opacity 0.2s;
-    ">${emoji}<div style="
+    ">${emoji}${heartBadge}<div style="
       position:absolute;bottom:${arrowOffset}px;left:50%;transform:translateX(-50%);
       width:0;height:0;
       border-left:${arrowSize}px solid transparent;
@@ -125,12 +133,14 @@ function ClusteredMarkers({
   markersRef,
   highlightedId,
   onMapClick,
+  isFavorite,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
   markersRef: React.MutableRefObject<Record<number, L.Marker>>;
   highlightedId: number | null;
   onMapClick: () => void;
+  isFavorite: (id: number) => boolean;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -155,7 +165,7 @@ function ClusteredMarkers({
 
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
-        icon: createPinIcon(activity.rating, activity.type),
+        icon: createPinIcon(activity.rating, activity.type, false, false, isFavorite(activity.id)),
       }).bindPopup(createPopupContent(activity), {
         maxWidth: 240,
         className: "custom-map-popup",
@@ -177,9 +187,9 @@ function ClusteredMarkers({
       }
       markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick, markersRef]);
+  }, [activities, map, onMarkerClick, markersRef, isFavorite]);
 
-  // Update pin icons when highlightedId changes
+  // Update pin icons when highlightedId or favorites change
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([idStr, marker]) => {
       const id = Number(idStr);
@@ -187,11 +197,11 @@ function ClusteredMarkers({
       if (!activity) return;
       const isActive = highlightedId === id;
       const isDimmed = highlightedId !== null && !isActive;
-      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed));
+      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed, isFavorite(id)));
       if (isActive) marker.setZIndexOffset(1000);
       else marker.setZIndexOffset(0);
     });
-  }, [highlightedId, markersRef]);
+  }, [highlightedId, markersRef, isFavorite]);
 
   // Listen for clicks on empty map area to deselect
   useMapEvents({
