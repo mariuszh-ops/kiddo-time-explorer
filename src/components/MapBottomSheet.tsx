@@ -154,6 +154,11 @@ export default function MapBottomSheet({
         </span>
       </div>
 
+      {/* Category chips */}
+      <div className="px-3 pb-1 shrink-0">
+        <MapCategoryChips selected={selectedCategories} onToggle={onCategoryToggle} />
+      </div>
+
       {/* List content */}
       {showList && (
         <div
