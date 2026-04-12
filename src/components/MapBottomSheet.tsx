@@ -19,6 +19,8 @@ interface MapBottomSheetProps {
   selectedCategories: Set<string>;
   onCategoryToggle: (category: string) => void;
   mapCenter?: [number, number] | null;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -62,6 +64,8 @@ export default function MapBottomSheet({
   selectedCategories,
   onCategoryToggle,
   mapCenter,
+  searchQuery,
+  onSearchChange,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
