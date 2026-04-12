@@ -72,6 +72,9 @@ export default function MapBottomSheet({
   const [isDragging, setIsDragging] = useState(false);
   const [sortMode, setSortMode] = useState<SortMode>("rating");
   const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
+  const [localSearch, setLocalSearch] = useState(searchQuery);
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
