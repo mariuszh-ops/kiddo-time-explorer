@@ -1,9 +1,10 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
+import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import MapCategoryChips from "./MapCategoryChips";
 
 type SheetState = "peek" | "half" | "full";
@@ -308,13 +309,15 @@ function SheetActivityCard({
   const categoryColor = getCategoryColor(activity.type);
   const [imgError, setImgError] = useState(false);
   const initial = activity.title?.charAt(0)?.toUpperCase() || "?";
+  const { isFavorite, toggleFavorite } = useSavedActivities();
+  const fav = isFavorite(activity.id);
 
   return (
     <div
       data-activity-id={activity.id}
       onClick={() => onCardClick(activity)}
       className={cn(
-        "flex gap-3 p-2 rounded-xl border bg-card transition-all cursor-pointer active:opacity-90",
+        "flex gap-3 p-2 rounded-xl border bg-card transition-all cursor-pointer active:opacity-90 relative",
         isHighlighted ? "shadow-md" : "border-border"
       )}
       style={{
@@ -335,7 +338,7 @@ function SheetActivityCard({
           onError={() => setImgError(true)}
         />
       )}
-      <div className="flex-1 min-w-0 py-0.5">
+      <div className="flex-1 min-w-0 py-0.5 pr-6">
         <Link
           to={`/atrakcje/${activity.slug}`}
           onClick={(e) => e.stopPropagation()}
@@ -361,6 +364,21 @@ function SheetActivityCard({
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>
       </div>
+      {/* Favorite heart button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleFavorite(activity.id);
+        }}
+        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full hover:bg-accent transition-colors cursor-pointer"
+      >
+        <Heart
+          className={cn(
+            "w-4 h-4 transition-colors",
+            fav ? "fill-red-500 text-red-500" : "text-muted-foreground"
+          )}
+        />
+      </button>
     </div>
   );
 }

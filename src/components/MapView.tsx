@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet.markercluster";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid, MapPin } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin, Heart } from "lucide-react";
+import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor, CATEGORY_COLORS } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
@@ -11,7 +12,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
-import MapCategoryChips from "./MapCategoryChips";
+import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -34,7 +35,7 @@ const getRatingBorderColor = (rating: number): string => {
 };
 
 // Custom pin icon — normal state
-const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false) => {
+const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false, isFav = false) => {
   const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
   const borderColor = isActive ? "#1a1a1a" : getRatingBorderColor(rating);
   const size = isActive ? 46 : 36;
@@ -50,6 +51,14 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
   const arrowOffset = isActive ? -8 : -7;
   const arrowInnerOffset = isActive ? -5 : -4;
 
+  const heartBadge = isFav ? `<div style="
+    position:absolute;top:-5px;right:-5px;
+    width:16px;height:16px;border-radius:50%;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 1px 3px rgba(0,0,0,0.2);
+  "><span style="font-size:10px;line-height:1;">❤️</span></div>` : "";
+
   return L.divIcon({
     className: "custom-rating-pin",
     html: `<div style="
@@ -63,7 +72,7 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
       cursor:pointer;
       opacity:${opacity};
       transition:opacity 0.2s;
-    ">${emoji}<div style="
+    ">${emoji}${heartBadge}<div style="
       position:absolute;bottom:${arrowOffset}px;left:50%;transform:translateX(-50%);
       width:0;height:0;
       border-left:${arrowSize}px solid transparent;
@@ -125,12 +134,14 @@ function ClusteredMarkers({
   markersRef,
   highlightedId,
   onMapClick,
+  isFavorite,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
   markersRef: React.MutableRefObject<Record<number, L.Marker>>;
   highlightedId: number | null;
   onMapClick: () => void;
+  isFavorite: (id: number) => boolean;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -155,7 +166,7 @@ function ClusteredMarkers({
 
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
-        icon: createPinIcon(activity.rating, activity.type),
+        icon: createPinIcon(activity.rating, activity.type, false, false, isFavorite(activity.id)),
       }).bindPopup(createPopupContent(activity), {
         maxWidth: 240,
         className: "custom-map-popup",
@@ -177,9 +188,9 @@ function ClusteredMarkers({
       }
       markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick, markersRef]);
+  }, [activities, map, onMarkerClick, markersRef, isFavorite]);
 
-  // Update pin icons when highlightedId changes
+  // Update pin icons when highlightedId or favorites change
   useEffect(() => {
     Object.entries(markersRef.current).forEach(([idStr, marker]) => {
       const id = Number(idStr);
@@ -187,11 +198,11 @@ function ClusteredMarkers({
       if (!activity) return;
       const isActive = highlightedId === id;
       const isDimmed = highlightedId !== null && !isActive;
-      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed));
+      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed, isFavorite(id)));
       if (isActive) marker.setZIndexOffset(1000);
       else marker.setZIndexOffset(0);
     });
-  }, [highlightedId, markersRef]);
+  }, [highlightedId, markersRef, isFavorite]);
 
   // Listen for clicks on empty map area to deselect
   useMapEvents({
@@ -383,6 +394,7 @@ interface MapViewProps {
 
 const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const isMobile = useIsMobile();
+  const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
@@ -397,11 +409,24 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const center = cityCenters[cityKey] || cityCenters.warszawa;
   const mapCenter: [number, number] = [center.lat, center.lng];
 
-  // Filter activities by selected categories
+  // Filter activities by selected categories + favorites
+  const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
+  const categoryFilters = useMemo(() => {
+    const s = new Set(selectedCategories);
+    s.delete(FAVORITES_CHIP_KEY);
+    return s;
+  }, [selectedCategories]);
+
   const filteredActivities = useMemo(() => {
-    if (selectedCategories.size === 0) return activities;
-    return activities.filter((a) => selectedCategories.has(a.type));
-  }, [activities, selectedCategories]);
+    let result = activities;
+    if (categoryFilters.size > 0) {
+      result = result.filter((a) => categoryFilters.has(a.type));
+    }
+    if (showFavoritesOnly) {
+      result = result.filter((a) => isFavorite(a.id));
+    }
+    return result;
+  }, [activities, categoryFilters, showFavoritesOnly, isFavorite]);
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
@@ -412,10 +437,16 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     });
   }, []);
 
-  // Filtered visible activities (viewport + category)
+  // Filtered visible activities (viewport + category + favorites)
   const displayedActivities = useMemo(() => {
-    if (selectedCategories.size === 0) return visibleActivities;
-    return visibleActivities.filter((a) => selectedCategories.has(a.type));
+    let result = visibleActivities;
+    if (categoryFilters.size > 0) {
+      result = result.filter((a) => categoryFilters.has(a.type));
+    }
+    if (showFavoritesOnly) {
+      result = result.filter((a) => isFavorite(a.id));
+    }
+    return result;
   }, [visibleActivities, selectedCategories]);
 
   const handleMarkerClick = useCallback((id: number) => {
@@ -462,7 +493,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={filteredActivities} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
@@ -542,7 +573,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={filteredActivities} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
