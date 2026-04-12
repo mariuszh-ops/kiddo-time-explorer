@@ -411,20 +411,21 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     <div className="flex" style={{ height: "calc(100vh - 56px)" }}>
       {/* Sidebar */}
       <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
-        <div className="p-3 border-b border-border">
+        <div className="p-3 border-b border-border space-y-2">
           <span className="text-sm text-muted-foreground font-medium">
-            {visibleActivities.length} atrakcji w widoku
+            {displayedActivities.length} atrakcji w widoku
           </span>
+          <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} />
         </div>
         <div
           className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
         >
-          {visibleActivities.length === 0 ? (
+          {displayedActivities.length === 0 ? (
             <div className="py-12 text-center text-sm text-muted-foreground px-4">
               Brak atrakcji w tym obszarze — oddal mapę lub przesuń
             </div>
           ) : (
-            visibleActivities.map((activity) => (
+            displayedActivities.map((activity) => (
               <div
                 key={activity.id}
                 ref={(el) => { cardRefs.current[activity.id] = el; }}
@@ -452,18 +453,18 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapFitBounds activities={activities} />
-          <ClusteredMarkers activities={activities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
-          <ViewportFilter activities={activities} onVisibleChange={handleVisibleChange} />
+          <MapFitBounds activities={filteredActivities} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
-          {visibleActivities.length === 0 && <ShowAllButton activities={activities} />}
+          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 
         {/* Count label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
-          {visibleActivities.length} atrakcji w widoku
+          {displayedActivities.length} atrakcji w widoku
         </div>
       </div>
     </div>

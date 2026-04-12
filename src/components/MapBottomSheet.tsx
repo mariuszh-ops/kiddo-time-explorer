@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
+import MapCategoryChips from "./MapCategoryChips";
 
 type SheetState = "peek" | "half" | "full";
 
@@ -13,6 +14,8 @@ interface MapBottomSheetProps {
   onCardClick: (activity: Activity) => void;
   fading: boolean;
   onSheetStateChange?: (state: SheetState) => void;
+  selectedCategories: Set<string>;
+  onCategoryToggle: (category: string) => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
