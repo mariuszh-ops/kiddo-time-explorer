@@ -33,37 +33,52 @@ const getRatingBorderColor = (rating: number): string => {
   return "#9ca3af";
 };
 
-// Custom pin icon with emoji + rating-colored border
-const createPinIcon = (rating: number, type?: string) => {
+// Custom pin icon — normal state
+const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false) => {
   const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
-  const borderColor = getRatingBorderColor(rating);
+  const borderColor = isActive ? "#1a1a1a" : getRatingBorderColor(rating);
+  const size = isActive ? 46 : 36;
+  const borderW = isActive ? 3 : 2.5;
+  const fontSize = isActive ? 22 : 18;
+  const radius = isActive ? 10 : 8;
+  const opacity = isDimmed ? 0.55 : 1;
+  const shadow = isActive
+    ? "0 4px 12px rgba(0,0,0,0.4)"
+    : "0 2px 6px rgba(0,0,0,0.25)";
+  const arrowSize = isActive ? 8 : 6;
+  const arrowInner = isActive ? 6 : 4.5;
+  const arrowOffset = isActive ? -8 : -7;
+  const arrowInnerOffset = isActive ? -5 : -4;
+
   return L.divIcon({
     className: "custom-rating-pin",
     html: `<div style="
       position:relative;
-      width:36px;height:36px;border-radius:8px;
+      width:${size}px;height:${size}px;border-radius:${radius}px;
       background:#fff;
       display:flex;align-items:center;justify-content:center;
-      font-size:18px;
-      border:2.5px solid ${borderColor};
-      box-shadow:0 2px 6px rgba(0,0,0,0.25);
+      font-size:${fontSize}px;
+      border:${borderW}px solid ${borderColor};
+      box-shadow:${shadow};
       cursor:pointer;
+      opacity:${opacity};
+      transition:opacity 0.2s;
     ">${emoji}<div style="
-      position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+      position:absolute;bottom:${arrowOffset}px;left:50%;transform:translateX(-50%);
       width:0;height:0;
-      border-left:6px solid transparent;
-      border-right:6px solid transparent;
-      border-top:7px solid ${borderColor};
+      border-left:${arrowSize}px solid transparent;
+      border-right:${arrowSize}px solid transparent;
+      border-top:${Math.abs(arrowOffset)}px solid ${borderColor};
     "></div><div style="
-      position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);
+      position:absolute;bottom:${arrowInnerOffset}px;left:50%;transform:translateX(-50%);
       width:0;height:0;
-      border-left:4.5px solid transparent;
-      border-right:4.5px solid transparent;
-      border-top:5px solid #fff;
+      border-left:${arrowInner}px solid transparent;
+      border-right:${arrowInner}px solid transparent;
+      border-top:${Math.abs(arrowInnerOffset) + 1}px solid #fff;
     "></div></div>`,
-    iconSize: [36, 43],
-    iconAnchor: [18, 43],
-    popupAnchor: [0, -43],
+    iconSize: [size, size + Math.abs(arrowOffset)],
+    iconAnchor: [size / 2, size + Math.abs(arrowOffset)],
+    popupAnchor: [0, -(size + Math.abs(arrowOffset))],
   });
 };
 
@@ -108,20 +123,26 @@ function ClusteredMarkers({
   activities,
   onMarkerClick,
   markersRef,
+  highlightedId,
+  onMapClick,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
   markersRef: React.MutableRefObject<Record<number, L.Marker>>;
+  highlightedId: number | null;
+  onMapClick: () => void;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
+  const activityMapRef = useRef<Record<number, Activity>>({});
 
+  // Build markers
   useEffect(() => {
-    // Clean up previous
     if (clusterGroupRef.current) {
       map.removeLayer(clusterGroupRef.current);
     }
     markersRef.current = {};
+    activityMapRef.current = {};
 
     const group = L.markerClusterGroup({
       disableClusteringAtZoom: 12,
@@ -143,6 +164,7 @@ function ClusteredMarkers({
 
       marker.on("click", () => onMarkerClick(activity.id));
       markersRef.current[activity.id] = marker;
+      activityMapRef.current[activity.id] = activity;
       group.addLayer(marker);
     });
 
@@ -156,6 +178,25 @@ function ClusteredMarkers({
       markersRef.current = {};
     };
   }, [activities, map, onMarkerClick, markersRef]);
+
+  // Update pin icons when highlightedId changes
+  useEffect(() => {
+    Object.entries(markersRef.current).forEach(([idStr, marker]) => {
+      const id = Number(idStr);
+      const activity = activityMapRef.current[id];
+      if (!activity) return;
+      const isActive = highlightedId === id;
+      const isDimmed = highlightedId !== null && !isActive;
+      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed));
+      if (isActive) marker.setZIndexOffset(1000);
+      else marker.setZIndexOffset(0);
+    });
+  }, [highlightedId, markersRef]);
+
+  // Listen for clicks on empty map area to deselect
+  useMapEvents({
+    click: () => onMapClick(),
+  });
 
   return null;
 }
@@ -215,7 +256,9 @@ function FlyToHandler({
   const map = useMap();
   useEffect(() => {
     if (!targetActivity) return;
-    map.flyTo([targetActivity.latitude, targetActivity.longitude], 15, { duration: 0.8 });
+    const currentZoom = map.getZoom();
+    const targetZoom = Math.max(currentZoom, 13);
+    map.flyTo([targetActivity.latitude, targetActivity.longitude], targetZoom, { duration: 0.5 });
     const marker = markersRef.current[targetActivity.id];
     if (marker) {
       setTimeout(() => marker.openPopup(), 400);
@@ -383,6 +426,10 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     setFlyTarget(activity);
   }, []);
 
+  const handleMapClick = useCallback(() => {
+    setHighlightedId(null);
+  }, []);
+
   const handleVisibleChange = useCallback((visible: Activity[]) => {
     setFading(true);
     // Brief fade transition
@@ -410,7 +457,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={filteredActivities} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
@@ -489,7 +536,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapFitBounds activities={filteredActivities} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
