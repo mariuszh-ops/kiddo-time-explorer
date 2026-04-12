@@ -549,6 +549,8 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           selectedCategories={selectedCategories}
           onCategoryToggle={handleCategoryToggle}
           mapCenter={liveMapCenter}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
       </div>
     );
