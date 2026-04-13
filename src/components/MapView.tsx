@@ -525,12 +525,12 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapInvalidateSize />
+          <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
-          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 
@@ -555,6 +555,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           mapCenter={liveMapCenter}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onShowAll={handleShowAll}
         />
       </div>
     );
@@ -608,12 +609,12 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapInvalidateSize />
+          <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
-          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 
