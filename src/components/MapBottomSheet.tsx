@@ -121,10 +121,27 @@ export default function MapBottomSheet({
     onSheetStateChange?.(state);
   }, [onSheetStateChange]);
 
-  const snapToNearest = useCallback((currentHeight: number) => {
+  const snapToNearest = useCallback((currentHeight: number, velocityY: number) => {
     const peek = PEEK_HEIGHT;
     const half = getHalfHeight();
     const full = getFullHeight();
+    const VELOCITY_THRESHOLD = 0.4; // px/ms — fast swipe overrides position
+
+    // Fast swipe: jump to next/prev snap
+    if (Math.abs(velocityY) > VELOCITY_THRESHOLD) {
+      const ordered: SheetState[] = ["peek", "half", "full"];
+      const idx = ordered.indexOf(sheetState);
+      if (velocityY > 0 && idx < 2) {
+        updateState(ordered[idx + 1]);
+        return;
+      }
+      if (velocityY < 0 && idx > 0) {
+        updateState(ordered[idx - 1]);
+        return;
+      }
+    }
+
+    // Slow drag: snap to nearest position
     const distances = [
       { state: "peek" as SheetState, dist: Math.abs(currentHeight - peek) },
       { state: "half" as SheetState, dist: Math.abs(currentHeight - half) },
@@ -132,16 +149,20 @@ export default function MapBottomSheet({
     ];
     distances.sort((a, b) => a.dist - b.dist);
     updateState(distances[0].state);
-  }, [updateState]);
+  }, [updateState, sheetState]);
 
+  // --- Touch handlers ---
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
     dragStartY.current = e.touches[0].clientY;
     dragStartHeight.current = sheetHeight;
+    dragStartTime.current = Date.now();
+    lastY.current = e.touches[0].clientY;
   }, [sheetHeight]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isDragging) return;
+    lastY.current = e.touches[0].clientY;
     const deltaY = dragStartY.current - e.touches[0].clientY;
     const newHeight = Math.max(PEEK_HEIGHT, Math.min(getFullHeight(), dragStartHeight.current + deltaY));
     setSheetHeight(newHeight);
@@ -150,16 +171,51 @@ export default function MapBottomSheet({
   const handleTouchEnd = useCallback(() => {
     if (!isDragging) return;
     setIsDragging(false);
-    snapToNearest(sheetHeight);
+    const elapsed = Date.now() - dragStartTime.current;
+    const dy = dragStartY.current - lastY.current; // positive = swipe up
+    const velocity = elapsed > 0 ? dy / elapsed : 0;
+    snapToNearest(sheetHeight, velocity);
+  }, [isDragging, sheetHeight, snapToNearest]);
+
+  // --- Mouse handlers (for desktop) ---
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    dragStartY.current = e.clientY;
+    dragStartHeight.current = sheetHeight;
+    dragStartTime.current = Date.now();
+    lastY.current = e.clientY;
+  }, [sheetHeight]);
+
+  useEffect(() => {
+    if (!isDragging) return;
+    const onMouseMove = (e: MouseEvent) => {
+      lastY.current = e.clientY;
+      const deltaY = dragStartY.current - e.clientY;
+      const newHeight = Math.max(PEEK_HEIGHT, Math.min(getFullHeight(), dragStartHeight.current + deltaY));
+      setSheetHeight(newHeight);
+    };
+    const onMouseUp = () => {
+      setIsDragging(false);
+      const elapsed = Date.now() - dragStartTime.current;
+      const dy = dragStartY.current - lastY.current;
+      const velocity = elapsed > 0 ? dy / elapsed : 0;
+      snapToNearest(sheetHeight, velocity);
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
   }, [isDragging, sheetHeight, snapToNearest]);
 
   const handleHandleTap = useCallback(() => {
     if (isDragging) return;
-    if (sheetState === "peek") {
-      updateState("half");
-    } else {
-      updateState("peek");
-    }
+    const ordered: SheetState[] = ["peek", "half", "full"];
+    const idx = ordered.indexOf(sheetState);
+    // Tap cycles: peek→half, half→full, full→peek
+    updateState(ordered[(idx + 1) % 3]);
   }, [sheetState, isDragging, updateState]);
 
   useEffect(() => {
