@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -52,29 +52,31 @@ const AnimatedRoutes = () => {
   
   return (
     <ErrorBoundary fallbackLevel="page" key={location.pathname}>
-      <AnimatePresence mode="wait" initial={false}>
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Index />} />
-          <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
-          <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
-          <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
-          <Route path="/my-places" element={<MyPlaces />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/regulamin" element={<Regulamin />} />
-          <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
-          <Route path="/kontakt" element={<Kontakt />} />
-          <Route path="/o-nas" element={<ONas />} />
-          {FEATURES.BLOG && (
-            <>
-              <Route path="/inspiracje" element={<BlogListPage />} />
-              <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
-            </>
-          )}
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </AnimatePresence>
+      <Suspense fallback={<HomeSkeleton />}>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <Routes location={location} key={location.pathname}>
+            <Route path="/" element={<Index />} />
+            <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
+            <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
+            <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
+            <Route path="/my-places" element={<MyPlaces />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/regulamin" element={<Regulamin />} />
+            <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
+            <Route path="/kontakt" element={<Kontakt />} />
+            <Route path="/o-nas" element={<ONas />} />
+            {FEATURES.BLOG && (
+              <>
+                <Route path="/inspiracje" element={<BlogListPage />} />
+                <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
+              </>
+            )}
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AnimatePresence>
+      </Suspense>
     </ErrorBoundary>
   );
 };
