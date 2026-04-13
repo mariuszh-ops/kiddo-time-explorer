@@ -19,7 +19,14 @@ const BottomNav = () => {
   // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
+  const isMapView = location.pathname === "/" && location.search.includes("view=map");
   const isActive = (path: string) => location.pathname === path;
+
+  const handleDiscoverClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Always go to list view — strip ?view=map
+    navigate("/", { replace: true });
+  };
 
   const handleMapClick = () => {
     navigate("/?view=map");
