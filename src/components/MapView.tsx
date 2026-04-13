@@ -372,27 +372,11 @@ function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
     </button>
   );
 }
-
-// "Show all attractions" button when viewport has 0 visible
-function ShowAllButton({ activities }: { activities: Activity[] }) {
+// MapRefCapture — stores map instance for external use
+function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
   const map = useMap();
-  const handleClick = useCallback(() => {
-    if (activities.length === 0) return;
-    const bounds = L.latLngBounds(
-      activities.map((a) => [a.latitude, a.longitude] as [number, number])
-    );
-    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
-  }, [map, activities]);
-
-  return (
-    <button
-      onClick={handleClick}
-      className="absolute z-[1000] top-16 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-full px-4 py-2.5 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
-    >
-      <MapPin className="w-4 h-4 text-primary" />
-      Pokaż wszystkie atrakcje
-    </button>
-  );
+  useEffect(() => { mapRef.current = map; }, [map, mapRef]);
+  return null;
 }
 
 interface MapViewProps {
@@ -414,6 +398,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
@@ -513,6 +498,15 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     }, 100);
   }, []);
 
+  const handleShowAll = useCallback(() => {
+    const map = mapInstanceRef.current;
+    if (!map || filteredActivities.length === 0) return;
+    const bounds = L.latLngBounds(
+      filteredActivities.map((a) => [a.latitude, a.longitude] as [number, number])
+    );
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+  }, [filteredActivities]);
+
   if (isMobile) {
     // Adjust locate button offset based on sheet state
     const locateBottomOffset = mobileSheetState === "peek" ? "96px" : mobileSheetState === "half" ? "54%" : "92%";
@@ -531,12 +525,12 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapInvalidateSize />
+          <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
-          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 
@@ -561,6 +555,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           mapCenter={liveMapCenter}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
+          onShowAll={handleShowAll}
         />
       </div>
     );
@@ -614,12 +609,12 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <MapInvalidateSize />
+          <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
-          {displayedActivities.length === 0 && <ShowAllButton activities={filteredActivities} />}
         </MapContainer>
         <MapLegend />
 

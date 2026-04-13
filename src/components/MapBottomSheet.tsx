@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check, Heart, Search, X } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart, Search, X, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -21,6 +21,7 @@ interface MapBottomSheetProps {
   mapCenter?: [number, number] | null;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  onShowAll?: () => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -66,6 +67,7 @@ export default function MapBottomSheet({
   mapCenter,
   searchQuery,
   onSearchChange,
+  onShowAll,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
@@ -380,8 +382,19 @@ export default function MapBottomSheet({
           )}
         >
           {sortedActivities.length === 0 ? (
-            <div className="flex items-center justify-center h-24 text-sm text-muted-foreground text-center px-4">
-              Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+            <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
+              <p className="text-sm text-muted-foreground">
+                Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+              </p>
+              {onShowAll && (
+                <button
+                  onClick={onShowAll}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Pokaż wszystkie atrakcje
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-2">
