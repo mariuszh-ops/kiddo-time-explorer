@@ -1375,6 +1375,8 @@
 
     "html-minifier/commander": ["commander@2.17.1", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/commander/-/commander-2.17.1.tgz", {}, "sha512-wPMUt6FnH2yzG95SA6mzjQOEKUU3aLaDEmzs1ti+1E9h+CsrZghRlqEM/EJ4KscsQVG8uNN4uVreUeT8+drlgg=="],
 
+    "htmlparser2/domutils": ["domutils@1.7.0", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/domutils/-/domutils-1.7.0.tgz", { "dependencies": { "dom-serializer": "0", "domelementtype": "1" } }, "sha512-Lgd2XcJ/NjEw+7tFvfKxOzCYKZsdct5lczQ2ZaQY8Djz7pfAD3Gbp8ySJWtreII/vDlMVmxwa6pHmdxIYgttDg=="],
+
     "htmlparser2/entities": ["entities@1.1.2", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/entities/-/entities-1.1.2.tgz", {}, "sha512-f2LZMYl1Fzu7YSBKg+RoROelpOaNrcGmE9AZubeDfrCEia483oW4MI4VyFd5VNHIgQ/7qm1I0wUHK1eJnn2y2w=="],
 
     "htmlparser2/inherits": ["inherits@2.0.4", "https://europe-west4-npm.pkg.dev/lovable-core-prod/sandbox-npm-cache/inherits/-/inherits-2.0.4.tgz", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
