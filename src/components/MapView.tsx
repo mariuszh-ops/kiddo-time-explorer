@@ -372,27 +372,11 @@ function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
     </button>
   );
 }
-
-// "Show all attractions" button when viewport has 0 visible
-function ShowAllButton({ activities }: { activities: Activity[] }) {
+// MapRefCapture — stores map instance for external use
+function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
   const map = useMap();
-  const handleClick = useCallback(() => {
-    if (activities.length === 0) return;
-    const bounds = L.latLngBounds(
-      activities.map((a) => [a.latitude, a.longitude] as [number, number])
-    );
-    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
-  }, [map, activities]);
-
-  return (
-    <button
-      onClick={handleClick}
-      className="absolute z-[1000] top-16 left-1/2 -translate-x-1/2 bg-background/95 backdrop-blur-sm border border-border shadow-lg rounded-full px-4 py-2.5 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-accent transition-colors cursor-pointer"
-    >
-      <MapPin className="w-4 h-4 text-primary" />
-      Pokaż wszystkie atrakcje
-    </button>
-  );
+  useEffect(() => { mapRef.current = map; }, [map, mapRef]);
+  return null;
 }
 
 interface MapViewProps {
