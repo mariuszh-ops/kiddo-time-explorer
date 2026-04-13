@@ -63,19 +63,7 @@ const BottomNav = () => {
             active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
           );
 
-          // Ulubione: if not logged in, show auth modal
-          if (item.path === "/my-places" && !isLoggedIn) {
-            return (
-              <button
-                key={item.label}
-                onClick={() => setIsAuthOpen(true)}
-                className={cn(itemClasses, "text-muted-foreground")}
-              >
-                <Icon className="w-[22px] h-[22px]" strokeWidth={1.5} />
-                <span className="text-[10px] leading-none font-medium">{item.label}</span>
-              </button>
-            );
-          }
+          // Ulubione: always navigate, no auth check
 
           // Map: special action
           if (item.path === "MAP_ACTION") {
