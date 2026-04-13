@@ -12,9 +12,11 @@ import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
-import { Heart, MapPin, Plus, Image } from "lucide-react";
+import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 
 const CollectionsView = () => {
