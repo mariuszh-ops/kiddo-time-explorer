@@ -49,7 +49,9 @@ const BottomNav = () => {
     >
       {navItems.map((item) => {
         const active = item.path === "MAP_ACTION" 
-          ? location.search.includes("view=map") 
+          ? isMapView
+          : item.path === "/"
+          ? (isActive("/") && !isMapView)
           : isActive(item.path);
         const Icon = item.icon;
 
