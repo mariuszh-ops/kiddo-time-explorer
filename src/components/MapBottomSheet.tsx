@@ -342,30 +342,6 @@ export default function MapBottomSheet({
         </div>
       </div>
 
-      {/* Search input */}
-      <div className="px-3 pb-1.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={localSearch}
-            onChange={(e) => handleSearchInput(e.target.value)}
-            onFocus={handleSearchFocus}
-            onBlur={handleSearchBlur}
-            placeholder="Szukaj atrakcji..."
-            className="w-full h-10 pl-9 pr-8 rounded-xl bg-muted border-none text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
-          />
-          {localSearch && (
-            <button
-              onClick={() => { handleSearchInput(""); searchInputRef.current?.focus(); }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full hover:bg-accent cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
-          )}
-        </div>
-      </div>
 
       {/* Category chips */}
       <div className="px-3 pb-1 shrink-0">
