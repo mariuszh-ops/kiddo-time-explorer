@@ -11,11 +11,14 @@ const SubmitActivityFAB = () => {
   // Only show on: home, city pages, map view
   const path = location.pathname;
   const isHome = path === "/";
+  const isMapView = isHome && location.search.includes("view=map");
   const isCityPage = path.match(/^\/atrakcje\/([^/]+)$/) && 
     FEATURES.ENABLED_CITIES.includes(path.split("/")[2]);
   const isCityCategoryPage = path.match(/^\/atrakcje\/[^/]+\/[^/]+/) &&
     FEATURES.ENABLED_CITIES.includes(path.split("/")[2]);
 
+  // Hide on map view entirely, and hide on non-allowed pages
+  if (isMapView) return null;
   if (!isHome && !isCityPage && !isCityCategoryPage) return null;
 
   return (
