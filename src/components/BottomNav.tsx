@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Compass, Map, Heart, BookOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
@@ -6,6 +6,7 @@ import { FEATURES } from "@/lib/featureFlags";
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   // Hide on admin page
   if (location.pathname.startsWith("/admin")) return null;
@@ -19,7 +20,7 @@ const BottomNav = () => {
   // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
-  const isMapView = location.pathname === "/" && location.search.includes("view=map");
+  const isMapView = location.pathname === "/" && searchParams.get("view") === "map";
   const isActive = (path: string) => location.pathname === path;
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
