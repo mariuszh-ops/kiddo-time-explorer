@@ -19,7 +19,14 @@ const BottomNav = () => {
   // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
+  const isMapView = location.pathname === "/" && location.search.includes("view=map");
   const isActive = (path: string) => location.pathname === path;
+
+  const handleDiscoverClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Always go to list view — strip ?view=map
+    navigate("/", { replace: true });
+  };
 
   const handleMapClick = () => {
     navigate("/?view=map");
@@ -42,7 +49,9 @@ const BottomNav = () => {
     >
       {navItems.map((item) => {
         const active = item.path === "MAP_ACTION" 
-          ? location.search.includes("view=map") 
+          ? isMapView
+          : item.path === "/"
+          ? (isActive("/") && !isMapView)
           : isActive(item.path);
         const Icon = item.icon;
 
@@ -51,7 +60,20 @@ const BottomNav = () => {
           active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
         );
 
-        // Map: special action
+          // Odkrywaj: always navigate to list view
+          if (item.path === "/") {
+            return (
+              <button
+                key={item.label}
+                onClick={handleDiscoverClick}
+                className={itemClasses}
+              >
+                <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+                <span className="text-[10px] leading-none font-medium">{item.label}</span>
+              </button>
+            );
+          }
+
         if (item.path === "MAP_ACTION") {
           return (
             <button
