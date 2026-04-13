@@ -1,12 +1,12 @@
 export const CATEGORY_COLORS: Record<string, string> = {
-  "sala-zabaw":    "#4CAF50",
-  "plac-zabaw":    "#2E7D32",
-  "sport":         "#1E88E5",
-  "zoo":           "#F9A825",
-  "park-rozrywki": "#FF7043",
-  "muzeum-teatr":  "#8E24AA",
-  "park":          "#00897B",
-  "inne":          "#757575",
+  "sala-zabaw":    "#E91E63",
+  "plac-zabaw":    "#4CAF50",
+  "sport":         "#2196F3",
+  "zoo":           "#FF9800",
+  "park-rozrywki": "#F44336",
+  "muzeum-teatr":  "#9C27B0",
+  "park":          "#2E7D32",
+  "inne":          "#607D8B",
 };
 
 export function getCategoryColor(type: string): string {
