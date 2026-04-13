@@ -498,6 +498,15 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
     }, 100);
   }, []);
 
+  const handleShowAll = useCallback(() => {
+    const map = mapInstanceRef.current;
+    if (!map || filteredActivities.length === 0) return;
+    const bounds = L.latLngBounds(
+      filteredActivities.map((a) => [a.latitude, a.longitude] as [number, number])
+    );
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+  }, [filteredActivities]);
+
   if (isMobile) {
     // Adjust locate button offset based on sheet state
     const locateBottomOffset = mobileSheetState === "peek" ? "96px" : mobileSheetState === "half" ? "54%" : "92%";
