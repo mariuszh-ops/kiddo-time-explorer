@@ -292,8 +292,9 @@ export default function MapBottomSheet({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onMouseDown={handleMouseDown}
         onClick={handleHandleTap}
-        className="flex flex-col items-center pt-2 pb-2 cursor-grab active:cursor-grabbing shrink-0"
+        className="flex flex-col items-center pt-2 pb-2 cursor-grab active:cursor-grabbing shrink-0 select-none"
       >
         <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
         <div className="flex items-center justify-between w-full px-3">
