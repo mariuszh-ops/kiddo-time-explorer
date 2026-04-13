@@ -382,8 +382,19 @@ export default function MapBottomSheet({
           )}
         >
           {sortedActivities.length === 0 ? (
-            <div className="flex items-center justify-center h-24 text-sm text-muted-foreground text-center px-4">
-              Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+            <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
+              <p className="text-sm text-muted-foreground">
+                Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+              </p>
+              {onShowAll && (
+                <button
+                  onClick={onShowAll}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Pokaż wszystkie atrakcje
+                </button>
+              )}
             </div>
           ) : (
             <div className="space-y-2">
