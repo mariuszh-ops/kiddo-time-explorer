@@ -77,6 +77,8 @@ export default function MapBottomSheet({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dragStartY = useRef(0);
   const dragStartHeight = useRef(0);
+  const dragStartTime = useRef(0);
+  const lastY = useRef(0);
   const listRef = useRef<HTMLDivElement>(null);
   const sortRef = useRef<HTMLDivElement>(null);
 
