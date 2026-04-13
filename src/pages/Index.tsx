@@ -188,11 +188,7 @@ const Index = () => {
 
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
-        <Suspense fallback={
-          <div className="flex items-center justify-center" style={{ height: "calc(100vh - 56px - 52px)" }}>
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-          </div>
-        }>
+        <Suspense fallback={<MapViewSkeleton />}>
           <MapView activities={filteredActivities} filters={filters} onViewModeChange={handleViewModeChange} />
         </Suspense>
       ) : mapVisibleActivities ? (
