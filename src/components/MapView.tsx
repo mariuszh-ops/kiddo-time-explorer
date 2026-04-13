@@ -414,6 +414,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
+  const mapInstanceRef = useRef<L.Map | null>(null);
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
