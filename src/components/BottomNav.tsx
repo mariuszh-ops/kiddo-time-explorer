@@ -60,7 +60,20 @@ const BottomNav = () => {
           active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
         );
 
-        // Map: special action
+          // Odkrywaj: always navigate to list view
+          if (item.path === "/") {
+            return (
+              <button
+                key={item.label}
+                onClick={handleDiscoverClick}
+                className={itemClasses}
+              >
+                <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+                <span className="text-[10px] leading-none font-medium">{item.label}</span>
+              </button>
+            );
+          }
+
         if (item.path === "MAP_ACTION") {
           return (
             <button
