@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import SEOHead from "@/components/SEOHead";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
@@ -12,9 +12,11 @@ import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
-import { Heart, MapPin, Plus, Image } from "lucide-react";
+import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 
 const CollectionsView = () => {
@@ -93,10 +95,58 @@ const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const defaultTab = tabParam === "wantToVisit" ? "wantToVisit" : tabParam === "visited" ? "visited" : "favorites";
+  const { isLoggedIn, login } = useAuth();
+  const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+  
+  const handleAuthAction = () => {
+    login();
+    setIsAuthModalOpen(false);
+  };
+
+  // Logged-out empty state
+  if (!isLoggedIn) {
+    return (
+      <PageTransition>
+        <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" />
+        <div className="min-h-screen bg-background">
+          <Header />
+          <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
+            <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
+              <Heart className="w-7 h-7 text-accent-foreground" />
+            </div>
+            <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2">
+              Twoje ulubione miejsca
+            </h1>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Zaloguj się, aby zapisywać atrakcje i planować wizyty z rodziną.
+            </p>
+            <Button onClick={() => setIsAuthModalOpen(true)} className="gap-2">
+              <LogIn className="w-4 h-4" />
+              Zaloguj się
+            </Button>
+          </div>
+          <Footer />
+        </div>
+        <AuthRequiredModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onGoogleClick={handleAuthAction}
+          onEmailClick={handleAuthAction}
+          onLoginClick={handleAuthAction}
+        />
+      </PageTransition>
+    );
+  }
+
+  return <MyPlacesContent defaultTab={defaultTab} />;
+};
+
+const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   
   const {
     favorites,
