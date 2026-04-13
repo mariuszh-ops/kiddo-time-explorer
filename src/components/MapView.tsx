@@ -524,7 +524,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={filteredActivities} />
+          <MapFitBounds activities={activities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
@@ -608,7 +608,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={filteredActivities} />
+          <MapFitBounds activities={activities} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
