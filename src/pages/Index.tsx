@@ -195,7 +195,13 @@ const Index = () => {
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
         <Suspense fallback={<MapViewSkeleton />}>
-          <MapView activities={filteredActivities} filters={filters} onViewModeChange={handleViewModeChange} />
+          <MapView
+            activities={filteredActivities}
+            filters={filters}
+            onViewModeChange={handleViewModeChange}
+            savedMapState={savedMapStateRef.current}
+            onSaveMapState={handleSaveMapState}
+          />
         </Suspense>
       ) : mapVisibleActivities ? (
         <ActivityGrid 
