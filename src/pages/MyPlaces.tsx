@@ -247,6 +247,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             <TabsContent value="favorites">
               {favorites.length === 0 ? (
                 <SavedActivitiesEmptyState type="favorites" />
+              ) : FEATURES.TRIP_PLANNER ? (
+                <TripPlannerFavorites favorites={favorites} onRemove={removeFromFavorites} />
               ) : (
                 <motion.div 
                   initial={{ opacity: 0 }}
