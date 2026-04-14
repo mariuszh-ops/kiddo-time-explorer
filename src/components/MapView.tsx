@@ -529,7 +529,6 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
         </MapContainer>
-        <MapLegend />
 
         {/* Back to list button (mobile) */}
         <button
@@ -613,7 +612,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
-        <MapLegend />
+        
 
         {/* Count label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
@@ -688,48 +687,5 @@ function MiniActivityCard({
   );
 }
 
-// Collapsible map legend
-function MapLegend() {
-  const [open, setOpen] = useState(false);
-  const labels: Record<string, string> = {
-    "sala-zabaw": "Sale zabaw",
-    "plac-zabaw": "Place zabaw",
-    "sport": "Sport i ruch",
-    "zoo": "Zoo i zwierzęta",
-    "park-rozrywki": "Parki rozrywki",
-    "muzeum-teatr": "Muzea i teatry",
-    "park": "Parki i natura",
-    "inne": "Inne",
-  };
-
-  return (
-    <div className="absolute z-[1000] bottom-4 left-4 md:bottom-4 md:left-auto md:right-16">
-      {open ? (
-        <div className="bg-background/95 backdrop-blur-sm border border-border rounded-xl shadow-lg p-3 min-w-[160px]">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-foreground">Legenda</span>
-            <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground text-xs cursor-pointer">✕</button>
-          </div>
-          <div className="space-y-1.5">
-            {Object.entries(CATEGORY_COLORS).map(([key, color]) => (
-              <div key={key} className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: color }} />
-                <span className="text-xs text-foreground">{labels[key] || key}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <button
-          onClick={() => setOpen(true)}
-          className="w-10 h-10 rounded-full bg-background border border-border shadow-md flex items-center justify-center hover:bg-accent cursor-pointer"
-          title="Legenda"
-        >
-          <span className="text-base">🗂</span>
-        </button>
-      )}
-    </div>
-  );
-}
 
 export default MapView;
