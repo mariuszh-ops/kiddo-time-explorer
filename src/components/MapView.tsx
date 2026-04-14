@@ -537,7 +537,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         <MapContainer
           center={mapCenter}
-          zoom={11}
+          zoom={initialZoom}
           className="w-full h-full z-0"
           zoomControl={false}
           attributionControl={true}
@@ -548,7 +548,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={activities} />
+          <MapFitBounds activities={activities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
@@ -621,7 +621,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       <div className="flex-1 relative">
         <MapContainer
           center={mapCenter}
-          zoom={11}
+          zoom={initialZoom}
           className="w-full h-full z-0"
           attributionControl={true}
         >
@@ -631,7 +631,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={activities} />
+          <MapFitBounds activities={activities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
