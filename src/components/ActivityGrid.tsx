@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { SlidersHorizontal, Map } from "lucide-react";
-import { SlidersHorizontal, Map } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
@@ -105,10 +104,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     return (
       <section className="bg-background py-8 md:py-12">
         <div className="container">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+          <div 
             className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-md mx-auto"
           >
             <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
@@ -138,7 +134,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                 </button>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     );
@@ -232,13 +228,11 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
 
         {/* All loaded message */}
         {!hasMore && activities.length > ITEMS_PER_PAGE && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <p
             className="text-center text-muted-foreground mt-10 text-sm"
           >
             To wszystkie atrakcje w tej okolicy 🎉
-          </motion.p>
+          </p>
         )}
       </div>
     </section>
