@@ -303,6 +303,8 @@ const FilterBar = ({
               >
                 <option value="rating">Najlepiej oceniane</option>
                 <option value="most_reviewed">Najwięcej ocen</option>
+                <option value="google_rating">Najlepiej oceniane (Google)</option>
+                <option value="google_popular">Najpopularniejsze (Google)</option>
                 <option value="name">Nazwa A–Z</option>
               </select>
             </div>

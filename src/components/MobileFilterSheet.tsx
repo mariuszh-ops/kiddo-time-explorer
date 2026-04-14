@@ -281,6 +281,8 @@ const MobileFilterSheet = ({
               {[
                 { value: "rating", label: "Najlepiej oceniane" },
                 { value: "most_reviewed", label: "Najwięcej ocen" },
+                { value: "google_rating", label: "Najlepiej oceniane (Google)" },
+                { value: "google_popular", label: "Najpopularniejsze (Google)" },
                 { value: "name", label: "Nazwa A–Z" },
               ].map((option) => (
                 <button

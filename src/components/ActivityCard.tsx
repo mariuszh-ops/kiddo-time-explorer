@@ -33,7 +33,18 @@ interface ActivityCardProps {
   amenities?: string[];
   priceLevel?: 0 | 1 | 2 | 3;
   isRecommended?: boolean;
+  google_rating?: number;
+  google_review_count?: number;
 }
+
+const formatGoogleReviewCount = (count: number): string => {
+  if (count < 50) return "kilkadziesiąt ocen";
+  if (count < 100) return "50+ ocen";
+  if (count < 500) return "100+ ocen";
+  if (count < 1000) return "500+ ocen";
+  if (count < 5000) return "1 000+ ocen";
+  return "5 000+ ocen";
+};
 
 const ActivityCard = ({
   id,
@@ -54,6 +65,8 @@ const ActivityCard = ({
   amenities,
   priceLevel,
   isRecommended,
+  google_rating,
+  google_review_count,
 }: ActivityCardProps) => {
   const { isLoggedIn, login } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
@@ -172,26 +185,36 @@ const ActivityCard = ({
 
           {/* Content */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              {hasReviews ? (
-                <>
-                  <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    ({reviewCount} opinii)
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                {hasReviews ? (
+                  <>
+                    <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
+                      <Star className="w-4 h-4 fill-primary text-primary" />
+                      <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      ({reviewCount} opinii)
+                    </span>
+                    {FEATURES.RECOMMENDED_BADGE && isRecommended && (
+                      <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] font-medium">
+                        ✓ Polecane
+                      </Badge>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    Brak opinii rodziców
                   </span>
-                  {FEATURES.RECOMMENDED_BADGE && isRecommended && (
-                    <Badge className="bg-primary/10 text-primary border-primary/30 text-[10px] font-medium">
-                      ✓ Polecane
-                    </Badge>
-                  )}
-                </>
-              ) : (
-                <span className="text-xs text-muted-foreground">
-                  Brak opinii rodziców
-                </span>
+                )}
+              </div>
+              {google_rating != null && google_review_count != null && (
+                <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-muted text-muted-foreground text-xs whitespace-nowrap shrink-0">
+                  <span className="font-bold" style={{ color: '#4285F4' }}>G</span>
+                  <span className="font-bold text-foreground">{google_rating.toFixed(1)}</span>
+                  <span className="text-muted-foreground/60">·</span>
+                  <span>{formatGoogleReviewCount(google_review_count)}</span>
+                </div>
               )}
             </div>
 

@@ -33,6 +33,8 @@ export interface Activity {
   priceNote?: string;
   isRecommended?: boolean;
   googlePlaceId?: string;
+  google_rating?: number;
+  google_review_count?: number;
 }
 
 export const PRICE_LEVELS = {

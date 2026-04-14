@@ -230,6 +230,8 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   amenities={activity.amenities}
                   priceLevel={activity.priceLevel}
                   isRecommended={activity.isRecommended}
+                  google_rating={activity.google_rating}
+                  google_review_count={activity.google_review_count}
                 />
               </motion.div>
             ))}
