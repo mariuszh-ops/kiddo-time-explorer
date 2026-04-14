@@ -192,6 +192,19 @@ export function useActivityFilters() {
       case "name":
         result.sort((a, b) => a.title.localeCompare(b.title, "pl"));
         break;
+      case "google_rating":
+        result.sort((a, b) => {
+          const aR = a.google_rating ?? -1;
+          const bR = b.google_rating ?? -1;
+          if (bR !== aR) return bR - aR;
+          return (b.google_review_count ?? 0) - (a.google_review_count ?? 0);
+        });
+        break;
+      case "google_popular":
+        result.sort((a, b) => {
+          return (b.google_review_count ?? -1) - (a.google_review_count ?? -1);
+        });
+        break;
     }
 
     return result;
