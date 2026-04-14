@@ -10,6 +10,7 @@ import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import VisitedActivityCard from "@/components/VisitedActivityCard";
 import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
+import TripPlannerFavorites from "@/components/TripPlannerFavorites";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useAuth } from "@/contexts/AuthContext";
@@ -246,6 +247,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             <TabsContent value="favorites">
               {favorites.length === 0 ? (
                 <SavedActivitiesEmptyState type="favorites" />
+              ) : FEATURES.TRIP_PLANNER ? (
+                <TripPlannerFavorites favorites={favorites} onRemove={removeFromFavorites} />
               ) : (
                 <motion.div 
                   initial={{ opacity: 0 }}
