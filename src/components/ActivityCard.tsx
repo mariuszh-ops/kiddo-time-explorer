@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
+import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
