@@ -57,11 +57,11 @@ export async function loadActivities(): Promise<Activity[]> {
     const response = await fetch('/data/activities.json');
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data: Activity[] = await response.json();
-    _activities = data.map(a => ({ ...a, reviewCount: a.reviews?.length || 0 }));
+    _activities = data.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
   } catch (err) {
     console.warn('Ładuję dane fallback:', err);
-    _activities = fallbackActivities.map(a => ({ ...a, reviewCount: a.reviews?.length || 0 }));
+    _activities = fallbackActivities.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
   }
   return _activities;
