@@ -112,11 +112,10 @@ const ActivityCard = ({
                 <span className="text-xs">Brak zdjęcia</span>
               </div>
             ) : (
-              <img
+              <LazyImage
                 src={imgSrc}
                 alt={title}
-                loading="lazy"
-                decoding="async"
+                categoryColor={getCategoryPlaceholderColor(type)}
                 className="w-full h-full object-cover transition-transform duration-200 ease-out [@media(hover:hover)]:group-hover:scale-[1.03]"
                 onError={handleImageError}
               />
