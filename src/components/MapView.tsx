@@ -290,20 +290,20 @@ function MapInvalidateSize() {
   return null;
 }
 
-// Fit map bounds to all activity pins — only on initial mount
-function MapFitBounds({ activities }: { activities: Activity[] }) {
+// Fit map bounds to all activity pins — only on initial mount (skip if restoring saved state)
+function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boolean }) {
   const map = useMap();
   const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (hasInitialized.current || activities.length === 0) return;
+    if (hasInitialized.current || activities.length === 0 || skip) return;
     hasInitialized.current = true;
 
     const bounds = L.latLngBounds(
       activities.map((a) => [a.latitude, a.longitude] as [number, number])
     );
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
-  }, [activities, map]);
+  }, [activities, map, skip]);
 
   return null;
 }
@@ -376,13 +376,21 @@ function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null
   return null;
 }
 
+export interface SavedMapState {
+  center: [number, number];
+  zoom: number;
+  selectedCategories: Set<string>;
+}
+
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
   onViewModeChange?: (mode: "grid" | "map", visibleActivities?: Activity[]) => void;
+  savedMapState?: SavedMapState | null;
+  onSaveMapState?: (state: SavedMapState) => void;
 }
 
-const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState }: MapViewProps) => {
   const isMobile = useIsMobile();
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
@@ -390,7 +398,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -399,7 +407,24 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
-  const mapCenter: [number, number] = [center.lat, center.lng];
+  const mapCenter: [number, number] = savedMapState ? savedMapState.center : [center.lat, center.lng];
+  const initialZoom = savedMapState ? savedMapState.zoom : 11;
+
+  // Save map state on unmount
+  useEffect(() => {
+    return () => {
+      const map = mapInstanceRef.current;
+      if (map && onSaveMapState) {
+        const c = map.getCenter();
+        onSaveMapState({
+          center: [c.lat, c.lng],
+          zoom: map.getZoom(),
+          selectedCategories,
+        });
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onSaveMapState, selectedCategories]);
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
@@ -512,7 +537,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         <MapContainer
           center={mapCenter}
-          zoom={11}
+          zoom={initialZoom}
           className="w-full h-full z-0"
           zoomControl={false}
           attributionControl={true}
@@ -523,7 +548,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={activities} />
+          <MapFitBounds activities={activities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
@@ -596,7 +621,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
       <div className="flex-1 relative">
         <MapContainer
           center={mapCenter}
-          zoom={11}
+          zoom={initialZoom}
           className="w-full h-full z-0"
           attributionControl={true}
         >
@@ -606,7 +631,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={activities} />
+          <MapFitBounds activities={activities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />

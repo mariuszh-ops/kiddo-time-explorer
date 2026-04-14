@@ -3,6 +3,7 @@ import MapViewSkeleton from "@/components/MapViewSkeleton";
 import { useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Activity } from "@/data/activities";
+import type { SavedMapState } from "@/components/MapView";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
@@ -40,6 +41,11 @@ const Index = () => {
   );
   // Activities from map viewport — used when switching from map to grid
   const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
+  // Persist map state (center, zoom, categories) across view switches
+  const savedMapStateRef = useRef<SavedMapState | null>(null);
+  const handleSaveMapState = useCallback((state: SavedMapState) => {
+    savedMapStateRef.current = state;
+  }, []);
 
   const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
     if (mode === "grid" && visibleActivities) {
@@ -189,7 +195,13 @@ const Index = () => {
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
         <Suspense fallback={<MapViewSkeleton />}>
-          <MapView activities={filteredActivities} filters={filters} onViewModeChange={handleViewModeChange} />
+          <MapView
+            activities={filteredActivities}
+            filters={filters}
+            onViewModeChange={handleViewModeChange}
+            savedMapState={savedMapStateRef.current}
+            onSaveMapState={handleSaveMapState}
+          />
         </Suspense>
       ) : mapVisibleActivities ? (
         <ActivityGrid 
