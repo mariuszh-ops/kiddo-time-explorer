@@ -1,10 +1,10 @@
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
-import { useState } from "react";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { saveScrollPositionForPath } from "@/hooks/useScrollPosition";
 import { FEATURES } from "@/lib/featureFlags";
@@ -296,4 +296,4 @@ const ActivityCard = ({
   );
 };
 
-export default ActivityCard;
+export default React.memo(ActivityCard);
