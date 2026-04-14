@@ -290,20 +290,20 @@ function MapInvalidateSize() {
   return null;
 }
 
-// Fit map bounds to all activity pins — only on initial mount
-function MapFitBounds({ activities }: { activities: Activity[] }) {
+// Fit map bounds to all activity pins — only on initial mount (skip if restoring saved state)
+function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boolean }) {
   const map = useMap();
   const hasInitialized = useRef(false);
 
   useEffect(() => {
-    if (hasInitialized.current || activities.length === 0) return;
+    if (hasInitialized.current || activities.length === 0 || skip) return;
     hasInitialized.current = true;
 
     const bounds = L.latLngBounds(
       activities.map((a) => [a.latitude, a.longitude] as [number, number])
     );
     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
-  }, [activities, map]);
+  }, [activities, map, skip]);
 
   return null;
 }
