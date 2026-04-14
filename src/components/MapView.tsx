@@ -16,12 +16,11 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
-  "sala-zabaw": "🎪",
   "plac-zabaw": "🛝",
-  "park-rozrywki": "🎢",
-  "muzeum-teatr": "🎭",
   "sport": "⚽",
+  "warsztaty": "🎨",
   "zoo": "🦁",
+  "muzeum": "🎭",
   "park": "🌳",
   "inne": "📌",
 };
