@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { SlidersHorizontal, Map } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
@@ -105,10 +104,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     return (
       <section className="bg-background py-8 md:py-12">
         <div className="container">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+          <div 
             className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-md mx-auto"
           >
             <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
@@ -138,7 +134,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                 </button>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     );
@@ -185,31 +181,12 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
         <SocialProofBanner filters={filters} resultCount={activities.length} />
 
         {/* Activity cards grid */}
-        <motion.div 
-          layout
+        <div 
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
-          <AnimatePresence mode="popLayout">
-            {visibleActivities.map((activity, index) => (
-              <motion.div
+            {visibleActivities.map((activity) => (
+              <div
                 key={activity.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ 
-                  opacity: 1, 
-                  scale: 1, 
-                  y: 0,
-                  transition: {
-                    duration: 0.3,
-                    delay: index < ITEMS_PER_PAGE ? index * 0.03 : 0,
-                    ease: [0.25, 0.1, 0.25, 1]
-                  }
-                }}
-                exit={{ 
-                  opacity: 0, 
-                  scale: 0.9,
-                  transition: { duration: 0.2 }
-                }}
               >
                 <ActivityCard
                   id={activity.id}
@@ -233,10 +210,9 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
                   google_rating={activity.google_rating}
                   google_review_count={activity.google_review_count}
                 />
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
-        </motion.div>
+        </div>
 
         {/* Loading skeleton row */}
         {isLoadingMore && (
@@ -252,13 +228,11 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
 
         {/* All loaded message */}
         {!hasMore && activities.length > ITEMS_PER_PAGE && (
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+          <p
             className="text-center text-muted-foreground mt-10 text-sm"
           >
             To wszystkie atrakcje w tej okolicy 🎉
-          </motion.p>
+          </p>
         )}
       </div>
     </section>
