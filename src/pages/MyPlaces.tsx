@@ -10,6 +10,7 @@ import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
 import VisitedActivityCard from "@/components/VisitedActivityCard";
 import PageTransition from "@/components/PageTransition";
 import SubmitActivityCTA from "@/components/SubmitActivityCTA";
+import TripPlannerFavorites from "@/components/TripPlannerFavorites";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useAuth } from "@/contexts/AuthContext";
