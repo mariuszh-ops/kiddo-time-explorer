@@ -376,13 +376,21 @@ function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null
   return null;
 }
 
+export interface SavedMapState {
+  center: [number, number];
+  zoom: number;
+  selectedCategories: Set<string>;
+}
+
 interface MapViewProps {
   activities: Activity[];
   filters: Filters;
   onViewModeChange?: (mode: "grid" | "map", visibleActivities?: Activity[]) => void;
+  savedMapState?: SavedMapState | null;
+  onSaveMapState?: (state: SavedMapState) => void;
 }
 
-const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState }: MapViewProps) => {
   const isMobile = useIsMobile();
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
@@ -390,7 +398,7 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -399,7 +407,24 @@ const MapView = ({ activities, filters, onViewModeChange }: MapViewProps) => {
 
   const cityKey = filters.city || "warszawa";
   const center = cityCenters[cityKey] || cityCenters.warszawa;
-  const mapCenter: [number, number] = [center.lat, center.lng];
+  const mapCenter: [number, number] = savedMapState ? savedMapState.center : [center.lat, center.lng];
+  const initialZoom = savedMapState ? savedMapState.zoom : 11;
+
+  // Save map state on unmount
+  useEffect(() => {
+    return () => {
+      const map = mapInstanceRef.current;
+      if (map && onSaveMapState) {
+        const c = map.getCenter();
+        onSaveMapState({
+          center: [c.lat, c.lng],
+          zoom: map.getZoom(),
+          selectedCategories,
+        });
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onSaveMapState, selectedCategories]);
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
