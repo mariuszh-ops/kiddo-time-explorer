@@ -41,6 +41,11 @@ const Index = () => {
   );
   // Activities from map viewport — used when switching from map to grid
   const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
+  // Persist map state (center, zoom, categories) across view switches
+  const savedMapStateRef = useRef<SavedMapState | null>(null);
+  const handleSaveMapState = useCallback((state: SavedMapState) => {
+    savedMapStateRef.current = state;
+  }, []);
 
   const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
     if (mode === "grid" && visibleActivities) {
