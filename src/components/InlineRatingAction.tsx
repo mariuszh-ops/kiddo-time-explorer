@@ -98,7 +98,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
   if (existingRating && !isEditing) {
     return (
       <>
-        <div className="pt-4 border-t border-border/50">
+        <div className={compact ? "" : "pt-4 border-t border-border/50"}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex flex-col gap-1.5">
               <p className="text-sm font-medium text-foreground">Twoja ocena</p>
