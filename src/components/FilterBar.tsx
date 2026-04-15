@@ -159,7 +159,7 @@ const FilterBar = ({
 
   // Desktop layout (unchanged)
   return (
-    <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
+    <>
       <div className="container py-3">
         {/* Filter pills - horizontal scroll on mobile */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
