@@ -132,15 +132,6 @@ const ActivityCard = ({
               />
             )}
 
-            {/* Nowość badge - top left overlay for activities with 0 reviews */}
-            {!hasReviews && (
-              <div className="absolute top-2 left-2 z-10">
-                <span className="text-xs font-medium text-white px-2 py-1 rounded bg-orange-500">
-                  Nowość
-                </span>
-              </div>
-            )}
-
             {/* Events badge */}
             {FEATURES.EVENTS && isEvent && (
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
