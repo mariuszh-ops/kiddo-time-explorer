@@ -275,6 +275,7 @@ const Index = () => {
           />
         </>
       )}
+      </div>
 
       {/* Hide footer on mobile map view */}
       {!(isMobile && viewMode === 'map') && <Footer />}
