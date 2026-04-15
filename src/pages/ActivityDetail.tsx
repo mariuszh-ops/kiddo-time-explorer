@@ -772,12 +772,6 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-          {/* Inline rating action — rate this place */}
-          <InlineRatingAction 
-            activityId={activityId} 
-            onAuthRequired={() => setIsAuthModalOpen(true)}
-          />
-
       {/* 6. Reviews section */}
       <section className="container mt-5 md:mt-6">
         <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
@@ -792,6 +786,12 @@ const ActivityDetail = () => {
               </div>
             )}
           </div>
+
+          {/* Inline rating action — rate this place */}
+          <InlineRatingAction 
+            activityId={activityId} 
+            onAuthRequired={() => setIsAuthModalOpen(true)}
+          />
 
           {hasReviews ? (
             <>
