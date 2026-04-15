@@ -313,10 +313,10 @@ const ActivityDetail = () => {
               <p className="text-sm font-medium text-foreground truncate max-w-[40ch]">
                 {activity.title}
               </p>
-              {hasReviews && (
+              {activity.google_rating && (
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                  <span className="text-xs text-muted-foreground">{activity.rating.toFixed(1)} ({activity.reviewCount} opinii)</span>
+                  <span className="text-xs text-muted-foreground">{activity.google_rating.toFixed(1)}</span>
                 </div>
               )}
             </div>
