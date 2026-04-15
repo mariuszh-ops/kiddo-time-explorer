@@ -214,7 +214,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
                     transition={{ duration: 0.1 }}
                   >
                     <Star
-                      className={`w-7 h-7 md:w-8 md:h-8 transition-colors ${
+                      className={`${compact ? "w-5 h-5" : "w-7 h-7 md:w-8 md:h-8"} transition-colors ${
                         isFilled
                           ? "fill-primary text-primary"
                           : "text-muted-foreground/30 hover:text-muted-foreground/50"
