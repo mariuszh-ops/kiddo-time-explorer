@@ -12,9 +12,10 @@ import ReviewModal from "@/components/ReviewModal";
 interface InlineRatingActionProps {
   activityId: number;
   onAuthRequired: () => void;
+  compact?: boolean;
 }
 
-const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionProps) => {
+const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
   const { getUserRating, rateActivity, updateReview } = useUserRatings();
   
