@@ -426,6 +426,9 @@ const ActivityDetail = () => {
               onAuthRequired={() => setIsAuthModalOpen(true)}
             />
 
+            {/* Separator between rating and action buttons */}
+            <div className="border-t border-border/40 my-1" />
+
             {/* Action buttons - prominent placement */}
             <div className="flex flex-col gap-3">
               {/* Stack vertically on mobile, side-by-side on desktop */}
