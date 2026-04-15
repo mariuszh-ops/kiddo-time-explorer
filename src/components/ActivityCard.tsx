@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
@@ -70,7 +70,6 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   const { isLoggedIn, login } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
-  const routeLocation = useLocation();
   const hasReviews = reviewCount > 0;
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
@@ -80,17 +79,18 @@ const ActivityCard = ({
 
   const isFav = checkIsFavorite(id);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     if (imgSrc !== fallbackImage) {
       setImgSrc(fallbackImage);
     } else {
       setImgError(true);
     }
-  };
+  }, [imgSrc, fallbackImage]);
 
-  const handleClick = () => {
-    saveScrollPositionForPath(routeLocation.pathname);
-  };
+  const handleClick = useCallback(() => {
+    // Use window.location.pathname to avoid subscribing to router context
+    saveScrollPositionForPath(window.location.pathname);
+  }, []);
 
   const handleHeartClick = async (e: React.MouseEvent) => {
     e.preventDefault();
