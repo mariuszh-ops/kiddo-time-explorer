@@ -314,7 +314,7 @@ const FilterBar = ({
           {hasActiveFilters && (
             <button
               onClick={onClearAll}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap shrink-0"
             >
               <X className="w-3.5 h-3.5" />
               Wyczyść filtry
