@@ -313,10 +313,10 @@ const ActivityDetail = () => {
               <p className="text-sm font-medium text-foreground truncate max-w-[40ch]">
                 {activity.title}
               </p>
-              {hasReviews && (
+              {activity.google_rating && (
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                  <span className="text-xs text-muted-foreground">{activity.rating.toFixed(1)} ({activity.reviewCount} opinii)</span>
+                  <span className="text-xs text-muted-foreground">{activity.google_rating.toFixed(1)}</span>
                 </div>
               )}
             </div>
@@ -431,29 +431,40 @@ const ActivityDetail = () => {
               <span className="line-clamp-1">{activity.location}</span>
             </p>
             
-            {/* Rating display or New badge */}
-            <div className="flex items-center gap-2 mb-5">
-              {hasReviews ? (
-                <>
-                  <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{activity.rating.toFixed(1)}</span>
+            {/* Dual rating section — FamilyFun (left) + Google (right) */}
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              {/* LEFT: Ocena rodziców FamilyFun */}
+              <div className="bg-card border border-border rounded-xl p-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ocena rodziców</p>
+                <InlineRatingAction 
+                  activityId={activityId} 
+                  onAuthRequired={() => setIsAuthModalOpen(true)}
+                  compact
+                />
+              </div>
+              {/* RIGHT: Ocena Google (read-only) */}
+              <div className="bg-card border border-border rounded-xl p-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ocena Google</p>
+                {activity.google_rating ? (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5">
+                      <Star className="w-5 h-5 fill-primary text-primary" />
+                      <span className="text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      {(() => {
+                        const c = activity.google_review_count || 0;
+                        if (c < 50) return "do 50 ocen";
+                        if (c < 100) return "50+ ocen";
+                        if (c < 1000) return "100+ ocen";
+                        return "1000+ ocen";
+                      })()}
+                    </span>
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    ({activity.reviewCount} opinii)
-                  </span>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center gap-1.5 bg-accent px-3 py-1.5 rounded-lg">
-                    <Sparkles className="w-4 h-4 text-accent-foreground" />
-                    <span className="font-medium text-accent-foreground">Nowa atrakcja</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    Brak opinii rodziców
-                  </span>
-                </>
-              )}
+                ) : (
+                  <p className="text-xs text-muted-foreground">Brak danych</p>
+                )}
+              </div>
             </div>
 
             {/* Action buttons - prominent placement */}
@@ -584,11 +595,7 @@ const ActivityDetail = () => {
                 </div>
               )}
 
-              {/* Rating action - directly below CTA buttons */}
-              <InlineRatingAction 
-                activityId={activityId} 
-                onAuthRequired={() => setIsAuthModalOpen(true)}
-              />
+              {/* Rating action moved to dual-column section above */}
             </div>
           </div>
         </div>

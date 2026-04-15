@@ -12,9 +12,10 @@ import ReviewModal from "@/components/ReviewModal";
 interface InlineRatingActionProps {
   activityId: number;
   onAuthRequired: () => void;
+  compact?: boolean;
 }
 
-const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionProps) => {
+const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
   const { getUserRating, rateActivity, updateReview } = useUserRatings();
   
@@ -69,9 +70,9 @@ const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionPr
   // Guest state - not logged in
   if (!isLoggedIn) {
     return (
-      <div className="pt-4 border-t border-border/50">
+      <div className={compact ? "" : "pt-4 border-t border-border/50"}>
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>
+          {!compact && <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>}
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <button
@@ -81,12 +82,12 @@ const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionPr
                 className="p-0.5 transition-transform hover:scale-110 active:scale-95"
                 aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
               >
-                <Star className="w-7 h-7 md:w-8 md:h-8 text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors" />
+                <Star className={`${compact ? "w-5 h-5" : "w-7 h-7 md:w-8 md:h-8"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
               </button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Zaloguj się, aby ocenić
+            {compact ? "Bądź pierwszym, który oceni!" : "Zaloguj się, aby ocenić"}
           </p>
         </div>
       </div>
@@ -97,7 +98,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionPr
   if (existingRating && !isEditing) {
     return (
       <>
-        <div className="pt-4 border-t border-border/50">
+        <div className={compact ? "" : "pt-4 border-t border-border/50"}>
           <div className="flex items-center justify-between mb-2">
             <div className="flex flex-col gap-1.5">
               <p className="text-sm font-medium text-foreground">Twoja ocena</p>
@@ -174,7 +175,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionPr
 
   // Logged in - rating mode (new or editing)
   return (
-    <div className="pt-4 border-t border-border/50">
+    <div className={compact ? "" : "pt-4 border-t border-border/50"}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground">
@@ -213,7 +214,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired }: InlineRatingActionPr
                     transition={{ duration: 0.1 }}
                   >
                     <Star
-                      className={`w-7 h-7 md:w-8 md:h-8 transition-colors ${
+                      className={`${compact ? "w-5 h-5" : "w-7 h-7 md:w-8 md:h-8"} transition-colors ${
                         isFilled
                           ? "fill-primary text-primary"
                           : "text-muted-foreground/30 hover:text-muted-foreground/50"
