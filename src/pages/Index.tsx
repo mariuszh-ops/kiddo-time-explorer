@@ -174,7 +174,7 @@ const Index = () => {
         <HeroSection onExplore={handleExplore} />
       </div>
 
-      {/* Sticky filter bar - this is the scroll target */}
+      {/* Sticky filter bar + content wrapper */}
       <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
         <FilterBar
           filters={filters}
@@ -187,10 +187,6 @@ const Index = () => {
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
         />
-      </div>
-
-      {/* Decision shortcut chips — hidden to avoid duplication with filter bar */}
-      {false && <DecisionChips filters={filters} onUpdateFilter={updateFilter} />}
 
       {/* Activity cards grid or curated sections */}
       {FEATURES.MAP_VIEW && viewMode === 'map' ? (
@@ -279,6 +275,7 @@ const Index = () => {
           />
         </>
       )}
+      </div>
 
       {/* Hide footer on mobile map view */}
       {!(isMobile && viewMode === 'map') && <Footer />}
