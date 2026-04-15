@@ -126,7 +126,7 @@ Najlepszy czas na wyjście z maluchem to poranek — mniej tłumów, dziecko jes
 ## Podsumowanie
 
 Warszawa ma sporo miejsc przyjaznych maluchom — trzeba tylko wiedzieć, gdzie szukać. Filtruj atrakcje w FamilyFun po wieku 0–3 lata i sprawdzaj udogodnienia przed wyjściem.`,
-    imageUrl: "https://images.unsplash.com/photo-1587654780291-39c9404d7dd0?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=800&auto=format&fit=crop",
     category: "Poradnik",
     city: "warszawa",
     tags: ["Warszawa", "maluchy", "0-3 lata", "poradnik"],
@@ -202,7 +202,7 @@ Nowoczesne biblioteki w Warszawie to nie tylko książki. Kąciki zabaw, czytani
 ## Podsumowanie
 
 Bezpłatnych atrakcji jest dużo więcej niż myślisz. W FamilyFun filtruj po "Bezpłatne" żeby zobaczyć pełną listę.`,
-    imageUrl: "https://images.unsplash.com/photo-1544776193-65a6a3c2e256?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1543721546-4d19eb8fbb13?w=800&auto=format&fit=crop",
     category: "Top lista",
     city: "warszawa",
     tags: ["Warszawa", "za darmo", "bezpłatne", "oszczędności"],
@@ -313,7 +313,7 @@ Sprawdzaj opinie przed wyjściem — niektóre place zabaw wyglądają świetnie
 ## Podsumowanie
 
 Najlepszy plac zabaw to ten blisko domu, do którego chodzicie regularnie. Ale na weekendowy wypad — Park Praski to bezkonkurencyjny numer jeden.`,
-    imageUrl: "https://images.unsplash.com/photo-1566454825481-f8b1cc0a5765?w=800&auto=format&fit=crop",
+    imageUrl: "https://images.unsplash.com/photo-1680458841602-8cdba0901e6a?w=800&auto=format&fit=crop",
     category: "Ranking",
     city: "warszawa",
     tags: ["Warszawa", "place zabaw", "ranking", "na zewnątrz"],
