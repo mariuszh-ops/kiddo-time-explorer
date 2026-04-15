@@ -385,11 +385,29 @@ const ActivityDetail = () => {
               <span className="text-foreground font-medium truncate max-w-[300px]">{activity.title}</span>
             </nav>
             
-            {/* Activity title */}
-            <div className="flex items-center gap-2 mb-1 md:mb-2">
+            {/* Activity title + Google rating inline */}
+            <div className="flex items-start justify-between gap-4 mb-1 md:mb-2">
               <h1 className="text-xl md:text-3xl font-serif text-foreground leading-tight">
                 {activity.title}
               </h1>
+              {activity.google_rating && (
+                <div className="shrink-0 text-right">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <span className="font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                    <span className="text-sm text-muted-foreground">
+                      · {(() => {
+                        const c = activity.google_review_count || 0;
+                        if (c < 50) return "do 50 ocen";
+                        if (c < 100) return "50+ ocen";
+                        if (c < 1000) return "100+ ocen";
+                        return "1000+ ocen";
+                      })()}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Google</p>
+                </div>
+              )}
             </div>
 
             {FEATURES.RECOMMENDED_BADGE && activity.isRecommended && (
@@ -399,73 +417,11 @@ const ActivityDetail = () => {
               </div>
             )}
             
-            {/* Type indicator - hidden in MVP, structure preserved */}
-            {/* 
-            <div className="flex items-center gap-2 mb-3">
-              <Badge 
-                variant="outline" 
-                className={`text-xs font-medium ${
-                  activity.isEvent 
-                    ? "border-amber-500/50 text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30" 
-                    : "border-primary/30 text-primary"
-                }`}
-              >
-                {activity.isEvent ? (
-                  <><Calendar className="w-3 h-3 mr-1" />Wydarzenie</>
-                ) : (
-                  <><MapPinned className="w-3 h-3 mr-1" />Miejsce</>
-                )}
-              </Badge>
-              
-              {activity.isEvent && (
-                <span className="text-sm text-muted-foreground">
-                  {activity.eventDate || "Wydarzenie czasowe"}
-                </span>
-              )}
-            </div>
-            */}
-            
             {/* Location */}
-            <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
+            <p className="text-sm md:text-base text-muted-foreground mb-5 flex items-center gap-1">
               <MapPin className="w-4 h-4 shrink-0" />
               <span className="line-clamp-1">{activity.location}</span>
             </p>
-            
-            {/* Dual rating section — FamilyFun (left) + Google (right) */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
-              {/* LEFT: Ocena rodziców FamilyFun */}
-              <div className="bg-card border border-border rounded-xl p-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ocena rodziców</p>
-                <InlineRatingAction 
-                  activityId={activityId} 
-                  onAuthRequired={() => setIsAuthModalOpen(true)}
-                  compact
-                />
-              </div>
-              {/* RIGHT: Ocena Google (read-only) */}
-              <div className="bg-card border border-border rounded-xl p-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">Ocena Google</p>
-                {activity.google_rating ? (
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1.5">
-                      <Star className="w-5 h-5 fill-primary text-primary" />
-                      <span className="text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
-                    </div>
-                    <span className="text-xs text-muted-foreground">
-                      {(() => {
-                        const c = activity.google_review_count || 0;
-                        if (c < 50) return "do 50 ocen";
-                        if (c < 100) return "50+ ocen";
-                        if (c < 1000) return "100+ ocen";
-                        return "1000+ ocen";
-                      })()}
-                    </span>
-                  </div>
-                ) : (
-                  <p className="text-xs text-muted-foreground">Brak danych</p>
-                )}
-              </div>
-            </div>
 
             {/* Action buttons - prominent placement */}
             <div className="flex flex-col gap-3">
@@ -816,7 +772,6 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-
       {/* 6. Reviews section */}
       <section className="container mt-5 md:mt-6">
         <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
@@ -831,6 +786,12 @@ const ActivityDetail = () => {
               </div>
             )}
           </div>
+
+          {/* Inline rating action — rate this place */}
+          <InlineRatingAction 
+            activityId={activityId} 
+            onAuthRequired={() => setIsAuthModalOpen(true)}
+          />
 
           {hasReviews ? (
             <>
