@@ -99,7 +99,7 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40">
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
           <div className="container py-3">
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
