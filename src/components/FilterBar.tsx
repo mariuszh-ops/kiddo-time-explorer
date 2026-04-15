@@ -160,176 +160,178 @@ const FilterBar = ({
   // Desktop layout (unchanged)
   return (
     <>
-      <div className="container py-3">
-        {/* Filter pills - horizontal scroll on mobile */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
-          {/* Combined City + Distance filter — shown only when multiple cities enabled */}
-          {FEATURES.ENABLED_CITIES.length > 1 && (
-            <CityFilterDropdown
-              cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
-              selectedCity={filters.city}
-              selectedDistance={filters.distance}
-              hasAnyFilter={filterCounts.hasAnyFilter}
-              filteredCount={filterCounts.filtered}
-              onCitySelect={(value) => onUpdateFilter("city", value)}
-              onDistanceChange={(value) => onUpdateFilter("distance", value)}
-            />
-          )}
-          
-          <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+      <section className="bg-card sticky top-0 z-40 shadow-sm border-b border-border">
+        <div className="container py-3">
+          {/* Filter pills - horizontal scroll on mobile */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
+            {/* Combined City + Distance filter — shown only when multiple cities enabled */}
+            {FEATURES.ENABLED_CITIES.length > 1 && (
+              <CityFilterDropdown
+                cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
+                selectedCity={filters.city}
+                selectedDistance={filters.distance}
+                hasAnyFilter={filterCounts.hasAnyFilter}
+                filteredCount={filterCounts.filtered}
+                onCitySelect={(value) => onUpdateFilter("city", value)}
+                onDistanceChange={(value) => onUpdateFilter("distance", value)}
+              />
+            )}
+            
+            <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+              <FilterDropdown
+                label="Wiek dziecka"
+                options={filterCounts.age}
+                selectedValue={filters.age}
+                hasAnyFilter={filterCounts.hasAnyFilter}
+                onSelect={(value) => onUpdateFilter("age", value)}
+              />
+            </div>
+            
+            <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+              <MultiFilterDropdown
+                label="Kategoria"
+                options={filterCounts.type}
+                selectedValues={filters.type || []}
+                hasAnyFilter={filterCounts.hasAnyFilter}
+                onToggle={onToggleTypeFilter}
+                onClear={() => onUpdateFilter("type", undefined)}
+              />
+            </div>
+            
             <FilterDropdown
-              label="Wiek dziecka"
-              options={filterCounts.age}
-              selectedValue={filters.age}
+              label="Pod dachem?"
+              options={filterCounts.indoor}
+              selectedValue={filters.indoor}
               hasAnyFilter={filterCounts.hasAnyFilter}
-              onSelect={(value) => onUpdateFilter("age", value)}
+              onSelect={(value) => onUpdateFilter("indoor", value)}
             />
-          </div>
-          
-          <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
-            <MultiFilterDropdown
-              label="Kategoria"
-              options={filterCounts.type}
-              selectedValues={filters.type || []}
+            
+            {/* Price filter - hidden until better data */}
+            {/* 
+            <FilterDropdown
+              label="Cena"
+              options={filterCounts.price}
+              selectedValue={filters.price}
               hasAnyFilter={filterCounts.hasAnyFilter}
-              onToggle={onToggleTypeFilter}
-              onClear={() => onUpdateFilter("type", undefined)}
+              onSelect={(value) => onUpdateFilter("price", value)}
             />
-          </div>
-          
-          <FilterDropdown
-            label="Pod dachem?"
-            options={filterCounts.indoor}
-            selectedValue={filters.indoor}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("indoor", value)}
-          />
-          
-          {/* Price filter - hidden until better data */}
-          {/* 
-          <FilterDropdown
-            label="Cena"
-            options={filterCounts.price}
-            selectedValue={filters.price}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("price", value)}
-          />
-          */}
-          
-          {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
-          {/* 
-          <FilterDropdown
-            label="Typ atrakcji"
-            options={filterCounts.activityKind}
-            selectedValue={filters.activityKind}
-            hasAnyFilter={filterCounts.hasAnyFilter}
-            onSelect={(value) => onUpdateFilter("activityKind", value)}
-          />
-          */}
+            */}
+            
+            {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
+            {/* 
+            <FilterDropdown
+              label="Typ atrakcji"
+              options={filterCounts.activityKind}
+              selectedValue={filters.activityKind}
+              hasAnyFilter={filterCounts.hasAnyFilter}
+              onSelect={(value) => onUpdateFilter("activityKind", value)}
+            />
+            */}
 
-          {/* Search input */}
-          {FEATURES.SEARCH_AUTOCOMPLETE ? (
-            <SearchAutocomplete
-              activities={getActivities()}
-              searchQuery={searchQuery}
-              onSearchChange={onSearchChange}
-            />
-          ) : (
-            <div className="relative flex items-center">
-              {isSearchExpanded ? (
-                <div className="flex items-center gap-1">
-                  <div className="relative">
-                    <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => onSearchChange(e.target.value)}
-                      placeholder="Szukaj..."
-                      autoFocus
-                      className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-                      onBlur={() => {
-                        if (!searchQuery.trim()) {
+            {/* Search input */}
+            {FEATURES.SEARCH_AUTOCOMPLETE ? (
+              <SearchAutocomplete
+                activities={getActivities()}
+                searchQuery={searchQuery}
+                onSearchChange={onSearchChange}
+              />
+            ) : (
+              <div className="relative flex items-center">
+                {isSearchExpanded ? (
+                  <div className="flex items-center gap-1">
+                    <div className="relative">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => onSearchChange(e.target.value)}
+                        placeholder="Szukaj..."
+                        autoFocus
+                        className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+                        onBlur={() => {
+                          if (!searchQuery.trim()) {
+                            setIsSearchExpanded(false);
+                          }
+                        }}
+                      />
+                    </div>
+                    {searchQuery && (
+                      <button
+                        onClick={() => {
+                          onSearchChange("");
                           setIsSearchExpanded(false);
-                        }
-                      }}
-                    />
+                        }}
+                        className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                      >
+                        <X className="w-4 h-4 text-muted-foreground" />
+                      </button>
+                    )}
                   </div>
-                  {searchQuery && (
-                    <button
-                      onClick={() => {
-                        onSearchChange("");
-                        setIsSearchExpanded(false);
-                      }}
-                      className="p-1.5 rounded-full hover:bg-muted transition-colors"
-                    >
-                      <X className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                  )}
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsSearchExpanded(true)}
-                  className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
-                  aria-label="Szukaj"
-                >
-                  <Search className="w-4 h-4 text-muted-foreground" />
-                </button>
-              )}
-            </div>
-          )}
-
-          {/* Map/Grid toggle - desktop */}
-          {FEATURES.MAP_VIEW && onViewModeChange && (
-            <div className="relative group ml-auto">
-              <button
-                onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium transition-colors whitespace-nowrap text-foreground hover:bg-muted"
+                ) : (
+                  <button
+                    onClick={() => setIsSearchExpanded(true)}
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
+                    aria-label="Szukaj"
+                  >
+                    <Search className="w-4 h-4 text-muted-foreground" />
+                  </button>
                 )}
-                aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+              </div>
+            )}
+
+            {/* Map/Grid toggle - desktop */}
+            {FEATURES.MAP_VIEW && onViewModeChange && (
+              <div className="relative group ml-auto">
+                <button
+                  onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium transition-colors whitespace-nowrap text-foreground hover:bg-muted"
+                  )}
+                  aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+                >
+                  {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
+                  {viewMode === "map" ? "Lista" : "Mapa"}
+                </button>
+              </div>
+            )}
+            {hasActiveFilters && (
+              <div className="flex items-center gap-1.5 whitespace-nowrap">
+                <span className="text-xs text-muted-foreground">Sortuj:</span>
+                <select
+                  value={filters.sort || "rating"}
+                  onChange={(e) => onUpdateFilter("sort", e.target.value)}
+                  className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"
+                >
+                  <option value="rating">Najlepiej oceniane</option>
+                  <option value="most_reviewed">Najwięcej ocen</option>
+                  <option value="google_rating">Najlepiej oceniane (Google)</option>
+                  <option value="google_popular">Najpopularniejsze (Google)</option>
+                  <option value="name">Nazwa A–Z</option>
+                </select>
+              </div>
+            )}
+
+            {/* Clear all button - only when filters active */}
+            {hasActiveFilters && (
+              <button
+                onClick={onClearAll}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap shrink-0"
               >
-                {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
-                {viewMode === "map" ? "Lista" : "Mapa"}
+                <X className="w-3.5 h-3.5" />
+                Wyczyść filtry
               </button>
-            </div>
-          )}
-          {hasActiveFilters && (
-            <div className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="text-xs text-muted-foreground">Sortuj:</span>
-              <select
-                value={filters.sort || "rating"}
-                onChange={(e) => onUpdateFilter("sort", e.target.value)}
-                className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"
-              >
-                <option value="rating">Najlepiej oceniane</option>
-                <option value="most_reviewed">Najwięcej ocen</option>
-                <option value="google_rating">Najlepiej oceniane (Google)</option>
-                <option value="google_popular">Najpopularniejsze (Google)</option>
-                <option value="name">Nazwa A–Z</option>
-              </select>
-            </div>
-          )}
-
-          {/* Clear all button - only when filters active */}
-          {hasActiveFilters && (
-            <button
-              onClick={onClearAll}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap shrink-0"
-            >
-              <X className="w-3.5 h-3.5" />
-              Wyczyść filtry
-            </button>
-          )}
-        </div>
-
-        {/* Results feedback - only when filters active */}
-        {hasActiveFilters && (
-          <div className="mt-2 text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">{getFeedbackText()}</span>
+            )}
           </div>
-        )}
-      </div>
-    </section>
+        </div>
+      </section>
+
+      {/* Results feedback - outside sticky, scrolls normally */}
+      {hasActiveFilters && (
+        <div className="container py-2 text-sm text-muted-foreground">
+          <span className="font-medium text-foreground">{getFeedbackText()}</span>
+        </div>
+      )}
+    </>
   );
 };
 
