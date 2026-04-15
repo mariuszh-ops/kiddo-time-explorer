@@ -233,22 +233,6 @@ const ActivityCard = ({
               ))}
             </div>
 
-            {amenities && amenities.length > 0 && (
-              <div className="flex items-center gap-1.5 mt-1.5">
-                {amenities.slice(0, 3).map((amenityId) => {
-                  const amenity = getAmenityById(amenityId);
-                  if (!amenity) return null;
-                  return (
-                    <div key={amenityId} className="text-muted-foreground" title={amenity.label}>
-                      <AmenityIcon name={amenity.icon} className="w-3.5 h-3.5" />
-                    </div>
-                  );
-                })}
-                {amenities.length > 3 && (
-                  <span className="text-xs text-muted-foreground">+{amenities.length - 3}</span>
-                )}
-              </div>
-            )}
 
             {socialProofBadge && (
               <p className="text-xs text-muted-foreground/80 mt-1.5 italic">
