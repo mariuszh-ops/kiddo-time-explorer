@@ -391,21 +391,18 @@ const ActivityDetail = () => {
                 {activity.title}
               </h1>
               {activity.google_rating && (
-                <div className="shrink-0 text-right">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
-                    <span className="text-sm text-muted-foreground">
-                      · {(() => {
-                        const c = activity.google_review_count || 0;
-                        if (c < 50) return "do 50 ocen";
-                        if (c < 100) return "50+ ocen";
-                        if (c < 1000) return "100+ ocen";
-                        return "1000+ ocen";
-                      })()}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Google</p>
+                <div className="shrink-0 flex items-center gap-1">
+                  <Star className="w-4 h-4 fill-primary text-primary" />
+                  <span className="font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                  <span className="text-sm text-muted-foreground">
+                    · {(() => {
+                      const c = activity.google_review_count || 0;
+                      if (c < 50) return "do 50 ocen";
+                      if (c < 100) return "50+ ocen";
+                      if (c < 1000) return "100+ ocen";
+                      return "1000+ ocen";
+                    })()} · <span className="text-muted-foreground">Google</span>
+                  </span>
                 </div>
               )}
             </div>
@@ -418,10 +415,16 @@ const ActivityDetail = () => {
             )}
             
             {/* Location */}
-            <p className="text-sm md:text-base text-muted-foreground mb-5 flex items-center gap-1">
+            <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
               <MapPin className="w-4 h-4 shrink-0" />
               <span className="line-clamp-1">{activity.location}</span>
             </p>
+
+            {/* Rating action — directly under address */}
+            <InlineRatingAction 
+              activityId={activityId} 
+              onAuthRequired={() => setIsAuthModalOpen(true)}
+            />
 
             {/* Action buttons - prominent placement */}
             <div className="flex flex-col gap-3">
@@ -779,19 +782,7 @@ const ActivityDetail = () => {
             <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Opinie rodziców
             </h2>
-            {hasReviews && (
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-primary text-primary" />
-                <span className="text-sm font-medium text-foreground">{averageRating.toFixed(1)}</span>
-              </div>
-            )}
           </div>
-
-          {/* Inline rating action — rate this place */}
-          <InlineRatingAction 
-            activityId={activityId} 
-            onAuthRequired={() => setIsAuthModalOpen(true)}
-          />
 
           {hasReviews ? (
             <>
