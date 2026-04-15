@@ -68,7 +68,7 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   const { isLoggedIn, login } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
-  const hasReviews = reviewCount > 0;
+  
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
   const fallbackImage = getPlaceholderImage(type, id);
