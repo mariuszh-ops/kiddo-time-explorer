@@ -37,13 +37,11 @@ interface ActivityCardProps {
   google_review_count?: number;
 }
 
-const formatGoogleReviewCount = (count: number): string => {
-  if (count < 50) return "kilkadziesiąt ocen";
+const formatReviewBucket = (count: number): string => {
+  if (count < 50) return "do 50 ocen";
   if (count < 100) return "50+ ocen";
-  if (count < 500) return "100+ ocen";
-  if (count < 1000) return "500+ ocen";
-  if (count < 5000) return "1 000+ ocen";
-  return "5 000+ ocen";
+  if (count < 1000) return "100+ ocen";
+  return "1000+ ocen";
 };
 
 const ActivityCard = ({
