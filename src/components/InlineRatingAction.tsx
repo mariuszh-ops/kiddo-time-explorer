@@ -175,7 +175,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
 
   // Logged in - rating mode (new or editing)
   return (
-    <div className="pt-4 border-t border-border/50">
+    <div className={compact ? "" : "pt-4 border-t border-border/50"}>
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground">
