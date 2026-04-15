@@ -70,9 +70,9 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
   // Guest state - not logged in
   if (!isLoggedIn) {
     return (
-      <div className="pt-4 border-t border-border/50">
+      <div className={compact ? "" : "pt-4 border-t border-border/50"}>
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>
+          {!compact && <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>}
           <div className="flex items-center gap-1">
             {Array.from({ length: 5 }).map((_, i) => (
               <button
@@ -82,12 +82,12 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
                 className="p-0.5 transition-transform hover:scale-110 active:scale-95"
                 aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
               >
-                <Star className="w-7 h-7 md:w-8 md:h-8 text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors" />
+                <Star className={`${compact ? "w-5 h-5" : "w-7 h-7 md:w-8 md:h-8"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
               </button>
             ))}
           </div>
           <p className="text-xs text-muted-foreground">
-            Zaloguj się, aby ocenić
+            {compact ? "Bądź pierwszym, który oceni!" : "Zaloguj się, aby ocenić"}
           </p>
         </div>
       </div>
