@@ -625,6 +625,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           center={mapCenter}
           zoom={initialZoom}
           className="w-full h-full z-0"
+          style={{ height: '100%', width: '100%' }}
           attributionControl={true}
         >
           <TileLayer
