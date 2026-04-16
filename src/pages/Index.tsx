@@ -174,7 +174,20 @@ const Index = () => {
         <HeroSection onExplore={handleExplore} />
       </div>
 
-      {/* Sticky filter bar + content wrapper */}
+      {/* Map view — rendered outside the hidden wrapper so it's visible on mobile */}
+      {FEATURES.MAP_VIEW && viewMode === 'map' && (
+        <Suspense fallback={<MapViewSkeleton />}>
+          <MapView
+            activities={filteredActivities}
+            filters={filters}
+            onViewModeChange={handleViewModeChange}
+            savedMapState={savedMapStateRef.current}
+            onSaveMapState={handleSaveMapState}
+          />
+        </Suspense>
+      )}
+
+      {/* Sticky filter bar + content wrapper — hidden on mobile map view */}
       <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
         <FilterBar
           filters={filters}
@@ -189,17 +202,7 @@ const Index = () => {
         />
 
       {/* Activity cards grid or curated sections */}
-      {FEATURES.MAP_VIEW && viewMode === 'map' ? (
-        <Suspense fallback={<MapViewSkeleton />}>
-          <MapView
-            activities={filteredActivities}
-            filters={filters}
-            onViewModeChange={handleViewModeChange}
-            savedMapState={savedMapStateRef.current}
-            onSaveMapState={handleSaveMapState}
-          />
-        </Suspense>
-      ) : mapVisibleActivities ? (
+      {mapVisibleActivities ? (
         <ActivityGrid 
           activities={mapVisibleActivities} 
           hasActiveFilters={true}
