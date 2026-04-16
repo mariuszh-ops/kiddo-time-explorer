@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster";
 import { Link } from "react-router-dom";
 import { Star, LocateFixed, LayoutGrid, MapPin, Heart } from "lucide-react";
@@ -539,6 +540,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           center={mapCenter}
           zoom={initialZoom}
           className="w-full h-full z-0"
+          style={{ height: '100%', width: '100%' }}
           zoomControl={false}
           attributionControl={true}
         >
