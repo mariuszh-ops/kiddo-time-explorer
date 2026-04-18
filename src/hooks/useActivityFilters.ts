@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -174,6 +175,29 @@ export function useActivityFilters() {
 
     // Dynamic sorting
     const sortKey = filters.sort || "rating";
+
+    // Pre-compute distance from region center once per activity (memoized via useMemo
+    // wrapping this whole block) — avoids recalculating inside the comparator.
+    if (sortKey === "distance-from-center") {
+      const distanceMap = new Map<number, number>();
+      result.forEach((a) => distanceMap.set(a.id, getDistanceFromRegionCenter(a)));
+      result.sort((a, b) => {
+        const da = distanceMap.get(a.id) ?? Infinity;
+        const db = distanceMap.get(b.id) ?? Infinity;
+        return da - db;
+      });
+
+      if (typeof window !== "undefined" && result.length > 0) {
+        const fmt = (a: Activity) =>
+          `${a.title} (${a.city}) — ${distanceMap.get(a.id)?.toFixed(2)} km`;
+        // eslint-disable-next-line no-console
+        console.log("[sort:distance-from-center] first 3:", result.slice(0, 3).map(fmt));
+        // eslint-disable-next-line no-console
+        console.log("[sort:distance-from-center] last 3:", result.slice(-3).map(fmt));
+      }
+
+      return result;
+    }
 
     switch (sortKey) {
       case "rating":
