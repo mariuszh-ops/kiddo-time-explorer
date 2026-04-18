@@ -283,6 +283,7 @@ const MobileFilterSheet = ({
                 { value: "most_reviewed", label: "Najwięcej ocen" },
                 { value: "google_rating", label: "Najlepiej oceniane (Google)" },
                 { value: "google_popular", label: "Najpopularniejsze (Google)" },
+                { value: "distance-from-center", label: "Najbliżej centrum" },
                 { value: "name", label: "Nazwa A–Z" },
               ].map((option) => (
                 <button
