@@ -100,40 +100,64 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     return <ActivityLoadError onRetry={onRetry} />;
   }
 
+  const activeFilterLabels = useMemo(() => {
+    const labels: string[] = [];
+    if (filters.city) {
+      const opt = filterOptions.city.find(o => o.value === filters.city);
+      if (opt) labels.push(opt.label);
+    }
+    if (filters.age) {
+      const opt = filterOptions.age.find(o => o.value === filters.age);
+      if (opt) labels.push(opt.label);
+    }
+    if (filters.type && filters.type.length > 0) {
+      filters.type.forEach(t => {
+        const opt = filterOptions.type.find(o => o.value === t);
+        if (opt) labels.push(opt.label);
+      });
+    }
+    if (filters.indoor) {
+      labels.push(filters.indoor === "indoor" ? "Pod dachem" : "Na zewnątrz");
+    }
+    if (filters.distance !== undefined && filters.city) {
+      labels.push(`Do ${filters.distance} km`);
+    }
+    return labels;
+  }, [filters]);
+
   if (activities.length === 0) {
     return (
       <section className="bg-background py-8 md:py-12">
         <div className="container">
-          <div 
-            className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-md mx-auto"
-          >
+          <div className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-md mx-auto">
             <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
-              Żadna z atrakcji nie pasuje do zadanych kryteriów.
+              Żadna atrakcja nie pasuje do Twoich filtrów
             </h2>
-            <p className="text-muted-foreground mb-8">
-              Spróbuj zmienić lub usunąć niektóre filtry, aby zobaczyć więcej propozycji.
+            <p className="text-muted-foreground mb-6">
+              {activeFilterLabels.length > 0
+                ? "Spróbuj usunąć jeden z poniższych filtrów:"
+                : "Spróbuj zmienić lub usunąć niektóre filtry."}
             </p>
-            
-            <div className="flex flex-col sm:flex-row items-center gap-3">
-              <Button
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                className="w-full sm:w-auto"
-              >
+
+            {activeFilterLabels.length > 0 && (
+              <div className="flex flex-wrap justify-center gap-2 mb-8">
+                {activeFilterLabels.map((label) => (
+                  <span
+                    key={label}
+                    className="inline-flex items-center px-3 py-1.5 rounded-full bg-secondary text-secondary-foreground text-sm font-medium border border-border"
+                  >
+                    {label}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {hasActiveFilters && onClearFilters && (
+              <Button onClick={onClearFilters} className="w-full sm:w-auto">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
-                Zmień filtry
+                Wyczyść wszystkie filtry
               </Button>
-              
-              {hasActiveFilters && onClearFilters && (
-                <button
-                  onClick={onClearFilters}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
-                >
-                  Wyczyść wszystkie filtry
-                </button>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </section>
