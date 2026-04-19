@@ -79,6 +79,16 @@ const FilterBar = ({
     return `${n} atrakcji`;
   };
 
+  // Polish grammar helper — returns just the word, without the number
+  const formatAttractionWord = (n: number): string => {
+    if (n === 1) return "atrakcja";
+    const lastTwo = n % 100;
+    const lastOne = n % 10;
+    if (lastTwo >= 12 && lastTwo <= 14) return "atrakcji";
+    if (lastOne >= 2 && lastOne <= 4) return "atrakcje";
+    return "atrakcji";
+  };
+
   // Check if any non-city/distance/sort filter is active
   const hasExtraFilters = Boolean(
     filters.age || (filters.type && filters.type.length > 0) || filters.indoor || filters.price || filters.activityKind || searchQuery.trim()
@@ -135,7 +145,8 @@ const FilterBar = ({
               {/* Results feedback - only when filters active */}
               {hasActiveFilters && (
                 <span className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{filterCounts.filtered}</span> atrakcji
+                  <span className="font-medium text-foreground">{filterCounts.filtered}</span>{" "}
+                  {formatAttractionWord(filterCounts.filtered)}
                 </span>
               )}
             </div>

@@ -64,7 +64,7 @@ export function useActivityFilters() {
       }
       // Set default distance when city is first selected
       if (key === "city" && value !== undefined && prev.distance === undefined) {
-        newFilters.distance = 15; // Default 15 km
+        newFilters.distance = 25; // Default 25 km — captures adjacent towns and suburbs
       }
       return newFilters;
     });
