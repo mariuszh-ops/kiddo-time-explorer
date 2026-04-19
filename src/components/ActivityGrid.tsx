@@ -5,7 +5,7 @@ import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
 import { Button } from "@/components/ui/button";
-import { Activity } from "@/data/activities";
+import { Activity, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 
