@@ -66,7 +66,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
               amenities={a.amenities}
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              {a.distanceKm.toFixed(1)} km stąd
+              {a.distanceKm.toFixed(1)} km od tej atrakcji
             </p>
           </div>
         ))}
