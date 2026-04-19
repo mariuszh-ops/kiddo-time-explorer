@@ -1,28 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities } from "@/data/activities";
-
-const LS_FAVORITES_KEY = "ff_favorites";
-const LS_WANT_TO_VISIT_KEY = "ff_want_to_visit";
-
-function loadFromStorage(key: string): Set<number> {
-  try {
-    const stored = localStorage.getItem(key);
-    if (!stored) return new Set();
-    const parsed = JSON.parse(stored);
-    if (Array.isArray(parsed)) return new Set(parsed);
-    return new Set();
-  } catch {
-    return new Set();
-  }
-}
-
-function saveToStorage(key: string, ids: Set<number>) {
-  try {
-    localStorage.setItem(key, JSON.stringify([...ids]));
-  } catch {
-    // localStorage full or unavailable — silently ignore
-  }
-}
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
@@ -60,15 +38,19 @@ interface SavedActivitiesContextType {
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
 
 export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(() => loadFromStorage(LS_FAVORITES_KEY));
-  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(() => loadFromStorage(LS_WANT_TO_VISIT_KEY));
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
+    () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
+  );
+  const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(
+    () => new Set(getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, []))
+  );
 
   useEffect(() => {
-    saveToStorage(LS_FAVORITES_KEY, favoriteIds);
+    setItem(STORAGE_KEYS.FAVORITES, [...favoriteIds]);
   }, [favoriteIds]);
 
   useEffect(() => {
-    saveToStorage(LS_WANT_TO_VISIT_KEY, wantToVisitIds);
+    setItem(STORAGE_KEYS.WANT_TO_VISIT, [...wantToVisitIds]);
   }, [wantToVisitIds]);
 
   const favorites = getActivities().filter(a => favoriteIds.has(a.id));

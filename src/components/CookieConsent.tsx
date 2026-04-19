@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 
 const CookieConsent = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('ff_cookie_consent');
+    const consent = getRawItem(STORAGE_KEYS.COOKIE_CONSENT);
     if (!consent) {
       const timer = setTimeout(() => setIsVisible(true), 1500);
       return () => clearTimeout(timer);
@@ -15,12 +16,12 @@ const CookieConsent = () => {
   }, []);
 
   const handleAccept = () => {
-    localStorage.setItem('ff_cookie_consent', 'accepted');
+    setRawItem(STORAGE_KEYS.COOKIE_CONSENT, 'accepted');
     setIsVisible(false);
   };
 
   const handleDecline = () => {
-    localStorage.setItem('ff_cookie_consent', 'declined');
+    setRawItem(STORAGE_KEYS.COOKIE_CONSENT, 'declined');
     setIsVisible(false);
   };
 

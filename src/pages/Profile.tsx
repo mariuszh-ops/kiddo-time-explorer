@@ -19,6 +19,7 @@ import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -34,17 +35,10 @@ const Profile = () => {
   };
 
   // Family profile
-  const LS_KEY = "ff_family_profile";
   interface Child { name: string; birthDate: string; }
 
-  const loadChildren = (): Child[] => {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch { return []; }
-  };
+  const loadChildren = (): Child[] =>
+    getItem<Child[]>(STORAGE_KEYS.FAMILY_PROFILE, []);
 
   const [children, setChildren] = useState<Child[]>(loadChildren);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -53,7 +47,7 @@ const Profile = () => {
 
   const saveChildren = useCallback((list: Child[]) => {
     setChildren(list);
-    try { localStorage.setItem(LS_KEY, JSON.stringify(list)); } catch {}
+    setItem(STORAGE_KEYS.FAMILY_PROFILE, list);
   }, []);
 
   const addChild = () => {

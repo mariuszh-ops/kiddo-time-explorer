@@ -49,25 +49,16 @@ import {
 import { Activity, getActivities, setActivities, filterOptions, PRICE_LEVELS } from "@/data/activities";
 import { AMENITIES } from "@/data/amenities";
 import { toast } from "sonner";
-
-const LS_EDITS_KEY = "familyfun_admin_edits";
+import { getItem, setItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 
 type AdminEdits = Record<number, Partial<Activity>>;
 
 function loadEdits(): AdminEdits {
-  try {
-    const raw = localStorage.getItem(LS_EDITS_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
-  } catch {
-    return {};
-  }
+  return getItem<AdminEdits>(STORAGE_KEYS.ADMIN_EDITS, {});
 }
 
 function saveEdits(edits: AdminEdits) {
-  try {
-    localStorage.setItem(LS_EDITS_KEY, JSON.stringify(edits));
-  } catch {}
+  setItem(STORAGE_KEYS.ADMIN_EDITS, edits);
 }
 
 const PAGE_SIZE = 25;
@@ -184,7 +175,7 @@ const ActivityManagement = () => {
 
   const handleReset = () => {
     if (!confirm("Na pewno chcesz zresetować wszystkie lokalne edycje?")) return;
-    localStorage.removeItem(LS_EDITS_KEY);
+    removeItem(STORAGE_KEYS.ADMIN_EDITS);
     setEditsState({});
     // Reload original
     window.location.reload();

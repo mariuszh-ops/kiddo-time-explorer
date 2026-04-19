@@ -4,6 +4,7 @@ import { Compass, X, MapPin, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
+import { setRawItem, STORAGE_KEYS } from "@/lib/storage";
 
 interface OnboardingModalProps {
   onComplete: (selectedCity?: string) => void;
@@ -24,7 +25,7 @@ const OnboardingModal = ({ onComplete }: OnboardingModalProps) => {
   const [selectedCity, setSelectedCity] = useState<string>(enabledCities[0] || "warszawa");
 
   const handleStart = () => {
-    localStorage.setItem("ff_user_city", selectedCity);
+    setRawItem(STORAGE_KEYS.USER_CITY, selectedCity);
     onComplete(selectedCity);
   };
 
