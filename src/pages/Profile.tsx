@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Mail, FileText, Lock, Users, X, Baby, CalendarIcon } from "lucide-react";
+import { LogOut, Heart, MapPin, Star, ChevronRight, PlusCircle, Shield, Mail, FileText, Lock, Users, X, Baby, CalendarIcon, LogIn, User } from "lucide-react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { format, differenceInYears, differenceInMonths } from "date-fns";
@@ -15,16 +15,23 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import SubmitActivityModal from "@/components/SubmitActivityModal";
 import { FEATURES } from "@/lib/featureFlags";
+import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, isLoggedIn, login } = useAuth();
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleAuthAction = () => {
+    login();
+    setIsAuthModalOpen(false);
+  };
 
   // Family profile
   const LS_KEY = "ff_family_profile";
@@ -88,6 +95,40 @@ const Profile = () => {
     { label: "Regulamin", icon: FileText, path: "/regulamin" },
     { label: "Polityka prywatności", icon: Lock, path: "/polityka-prywatnosci" },
   ];
+
+  if (!isLoggedIn) {
+    return (
+      <PageTransition>
+        <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" />
+        <div className="min-h-screen bg-background">
+          <Header />
+          <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
+            <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
+              <User className="w-7 h-7 text-accent-foreground" />
+            </div>
+            <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2">
+              Twój profil rodzinny
+            </h1>
+            <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+              Zaloguj się, żeby zapisywać ulubione miejsca i dodać dzieci do profilu.
+            </p>
+            <Button onClick={() => setIsAuthModalOpen(true)} className="gap-2">
+              <LogIn className="w-4 h-4" />
+              Zaloguj się
+            </Button>
+          </div>
+          <Footer />
+        </div>
+        <AuthRequiredModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onGoogleClick={handleAuthAction}
+          onEmailClick={handleAuthAction}
+          onLoginClick={handleAuthAction}
+        />
+      </PageTransition>
+    );
+  }
 
   return (
     <PageTransition>
