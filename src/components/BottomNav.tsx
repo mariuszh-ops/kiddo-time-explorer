@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Compass, Map, Heart, BookOpen } from "lucide-react";
+import { Compass, Map, Heart, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
 
@@ -37,7 +37,7 @@ const BottomNav = () => {
     { label: "Odkrywaj", icon: Compass, path: "/" },
     { label: "Mapa", icon: Map, path: "MAP_ACTION" },
     { label: "Ulubione", icon: Heart, path: "/my-places" },
-    { label: "Blog", icon: BookOpen, path: "/inspiracje" },
+    { label: "Profil", icon: User, path: "/profile" },
   ];
 
   return (
