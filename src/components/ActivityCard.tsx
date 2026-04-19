@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
+import { Star, Calendar, MapPinned, Navigation, Heart, Camera, Sparkles } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -186,9 +186,12 @@ const ActivityCard = ({
                   </span>
                 </div>
               ) : (
-                <span className="text-xs text-muted-foreground">
-                  Brak ocen
-                </span>
+                <div className="flex items-center gap-1 bg-muted/60 px-2 py-1 rounded-lg">
+                  <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-xs text-muted-foreground font-medium">
+                    Bez ocen Google
+                  </span>
+                </div>
               )}
             </div>
 
