@@ -1,12 +1,19 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
+import { getActivities } from "@/data/activities";
 
 interface HeroSectionProps {
   onExplore: () => void;
 }
 
 const HeroSection = ({ onExplore }: HeroSectionProps) => {
+  const totalCount = getActivities().filter(
+    (a) => FEATURES.ENABLED_CITIES.includes(a.city)
+  ).length;
+  const roundedCount = Math.floor(totalCount / 50) * 50;
+  const displayCount = roundedCount >= 50 ? `${roundedCount}+` : totalCount;
+
   return (
     <section className="md:container md:px-4 md:pt-4">
       <div className="relative min-h-[auto] py-12 md:py-0 md:min-h-[50vh] md:max-h-[55vh] flex items-center md:rounded-2xl overflow-hidden">
@@ -19,7 +26,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
             fetchPriority="high"
             loading="eager"
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
-            className="w-full h-full object-cover object-[75%_25%] md:object-[center_25%]"
+            className="w-full h-full object-cover object-[center_30%] md:object-[center_30%]"
           />
           {/* Gradient overlay - stronger bottom gradient on mobile for text readability */}
           <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/30 to-background/80 md:bg-gradient-to-r md:from-background/60 md:via-background/15 md:to-transparent" />
@@ -43,6 +50,15 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
             >
               Opinie rodziców takich jak Ty
             </p>
+
+            {totalCount > 0 && (
+              <p
+                className="mt-2 text-sm md:text-base text-muted-foreground animate-fade-in"
+                style={{ animationDelay: "0.15s" }}
+              >
+                {displayCount} atrakcji z ocenami Google
+              </p>
+            )}
 
             {/* CTA Button */}
             <div 
