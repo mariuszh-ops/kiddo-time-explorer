@@ -95,11 +95,6 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     return () => observer.disconnect();
   }, [loadMore]);
 
-  // Show error state if there's an error
-  if (hasError && onRetry) {
-    return <ActivityLoadError onRetry={onRetry} />;
-  }
-
   const activeFilterLabels = useMemo(() => {
     const labels: string[] = [];
     if (filters.city) {
@@ -124,6 +119,11 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
     }
     return labels;
   }, [filters]);
+
+  // Show error state if there's an error
+  if (hasError && onRetry) {
+    return <ActivityLoadError onRetry={onRetry} />;
+  }
 
   if (activities.length === 0) {
     return (
