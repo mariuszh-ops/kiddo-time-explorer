@@ -122,11 +122,12 @@ const FilterBar = ({
                   <button
                     onClick={() => onViewModeChange(viewMode === "map" ? "grid" : "map")}
                     className={cn(
-                      "inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border transition-colors active:bg-muted"
+                      "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground transition-colors active:bg-muted"
                     )}
                     aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
                   >
                     {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
+                    <span>{viewMode === "map" ? "Lista" : "Mapa"}</span>
                   </button>
                 )}
               </div>
