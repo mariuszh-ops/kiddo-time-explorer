@@ -22,6 +22,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
+import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -86,7 +87,7 @@ const Index = () => {
   // Onboarding
   const [showOnboarding, setShowOnboarding] = useState(false);
   useEffect(() => {
-    if (FEATURES.ONBOARDING && !localStorage.getItem('ff_onboarding_seen')) {
+    if (FEATURES.ONBOARDING && !getRawItem(STORAGE_KEYS.ONBOARDING_SEEN)) {
       setShowOnboarding(true);
     }
   }, []);
@@ -101,10 +102,10 @@ const Index = () => {
   // }, []);
 
   const handleOnboardingComplete = (selectedCity?: string) => {
-    localStorage.setItem('ff_onboarding_seen', 'true');
+    setRawItem(STORAGE_KEYS.ONBOARDING_SEEN, 'true');
     setShowOnboarding(false);
     if (selectedCity) {
-      localStorage.setItem('ff_user_city', selectedCity);
+      setRawItem(STORAGE_KEYS.USER_CITY, selectedCity);
       updateFilter("city", selectedCity);
       // Scroll to listing
       setTimeout(() => {

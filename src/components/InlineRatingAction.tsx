@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 interface InlineRatingActionProps {
   activityId: number;
@@ -9,21 +10,14 @@ interface InlineRatingActionProps {
   compact?: boolean;
 }
 
-const STORAGE_KEY = "familyfun_user_ratings";
-
 function loadRatings(): Record<string, number> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+  return getItem<Record<string, number>>(STORAGE_KEYS.INLINE_RATINGS, {});
 }
 
 function saveRating(activityId: number, rating: number) {
   const ratings = loadRatings();
   ratings[String(activityId)] = rating;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(ratings));
+  setItem(STORAGE_KEYS.INLINE_RATINGS, ratings);
 }
 
 function getSavedRating(activityId: number): number | null {
