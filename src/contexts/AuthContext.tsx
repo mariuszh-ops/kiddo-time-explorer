@@ -1,51 +1,105 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+
+/**
+ * User object shape. Compatible with typical auth providers (Supabase, Firebase,
+ * Auth0). When swapping to real auth, populate these fields from the provider's
+ * session object.
+ */
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  avatarUrl?: string;
+  createdAt?: string; // ISO date string
+}
 
 interface AuthContextType {
+  // Core state
   isLoggedIn: boolean;
+  user: User | null;
+
+  // Primary API (async — matches Supabase/Firebase/Auth0 patterns)
+  signIn: () => Promise<void>;
+  signOut: () => Promise<void>;
+
+  // Backward compat aliases for existing consumers (login/logout).
+  // New code should prefer signIn/signOut.
   login: () => void;
   logout: () => void;
-  // Demo mode for development/testing
+
+  // Demo mode for development/testing (unchanged behavior)
   isDemoMode: boolean;
   toggleDemoMode: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Check if we're in development mode
 const isDevelopment = import.meta.env.DEV;
 
+/**
+ * Mock user returned by the fake signIn. When real auth is wired in, this
+ * function is replaced by a call to the auth provider's session API.
+ */
+const createMockUser = (): User => ({
+  id: "mock-user-1",
+  email: "anna.kowalska@email.com",
+  name: "Anna Kowalska",
+  avatarUrl: undefined,
+  createdAt: new Date().toISOString(),
+});
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // Default to logged-out state (production-like behavior)
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // Demo mode toggle for testing - only effective in development
+  const [user, setUser] = useState<User | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
 
-  const login = () => setIsLoggedIn(true);
-  const logout = () => {
-    setIsLoggedIn(false);
-    setIsDemoMode(false); // Also disable demo mode on logout
-  };
+  const signIn = useCallback(async (): Promise<void> => {
+    // Simulate network delay — keeps consumer code future-proof
+    await new Promise((resolve) => setTimeout(resolve, 150));
+    setUser(createMockUser());
+  }, []);
 
-  const toggleDemoMode = () => {
-    if (!isDevelopment) return; // Only allow in development
-    setIsDemoMode(prev => {
-      const newValue = !prev;
-      setIsLoggedIn(newValue); // Sync login state with demo mode
-      return newValue;
+  const signOut = useCallback(async (): Promise<void> => {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    setUser(null);
+    setIsDemoMode(false);
+  }, []);
+
+  // Backward-compat: void-returning aliases that fire-and-forget the async API.
+  const login = useCallback(() => {
+    void signIn();
+  }, [signIn]);
+  const logout = useCallback(() => {
+    void signOut();
+  }, [signOut]);
+
+  const toggleDemoMode = useCallback(() => {
+    if (!isDevelopment) return;
+    setIsDemoMode((prev) => {
+      const next = !prev;
+      if (next) {
+        setUser(createMockUser());
+      } else {
+        setUser(null);
+      }
+      return next;
     });
-  };
+  }, []);
 
-  // Effective login state: true if logged in OR demo mode is active
-  const effectiveIsLoggedIn = isLoggedIn || (isDevelopment && isDemoMode);
+  const effectiveIsLoggedIn = user !== null;
 
   return (
-    <AuthContext.Provider value={{ 
-      isLoggedIn: effectiveIsLoggedIn, 
-      login, 
-      logout,
-      isDemoMode: isDevelopment && isDemoMode,
-      toggleDemoMode,
-    }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: effectiveIsLoggedIn,
+        user,
+        signIn,
+        signOut,
+        login,
+        logout,
+        isDemoMode: isDevelopment && isDemoMode,
+        toggleDemoMode,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

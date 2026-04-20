@@ -23,7 +23,7 @@ import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout, isLoggedIn, login } = useAuth();
+  const { logout, isLoggedIn, login, user } = useAuth();
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -74,9 +74,14 @@ const Profile = () => {
     return `${years} lat`;
   };
 
-  const user = {
-    email: "anna.kowalska@email.com",
-    initials: "AK",
+  const getInitials = (u: { name?: string; email: string } | null): string => {
+    if (!u) return "?";
+    if (u.name) {
+      const parts = u.name.trim().split(/\s+/);
+      if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    return u.email.slice(0, 2).toUpperCase();
   };
 
   const handleLogout = () => {
@@ -148,9 +153,12 @@ const Profile = () => {
             {/* User identity */}
             <section className="bg-card rounded-xl p-6 border border-border text-center">
               <div className="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-semibold text-primary">{user.initials}</span>
+                <span className="text-2xl font-semibold text-primary">{getInitials(user)}</span>
               </div>
-              <p className="text-foreground font-medium">{user.email}</p>
+              {user?.name && (
+                <p className="text-foreground font-medium">{user.name}</p>
+              )}
+              <p className="text-sm text-muted-foreground">{user?.email ?? ""}</p>
             </section>
 
             {/* Account summary */}
