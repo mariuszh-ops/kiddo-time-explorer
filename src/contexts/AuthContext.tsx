@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { env } from "@/config/env";
 
 /**
  * User object shape. Compatible with typical auth providers (Supabase, Firebase,
@@ -34,7 +35,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const isDevelopment = import.meta.env.DEV;
+
 
 /**
  * Mock user returned by the fake signIn. When real auth is wired in, this
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [signOut]);
 
   const toggleDemoMode = useCallback(() => {
-    if (!isDevelopment) return;
+    if (!env.isDev) return;
     setIsDemoMode((prev) => {
       const next = !prev;
       if (next) {
@@ -96,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signOut,
         login,
         logout,
-        isDemoMode: isDevelopment && isDemoMode,
+        isDemoMode: env.isDev && isDemoMode,
         toggleDemoMode,
       }}
     >
