@@ -272,6 +272,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                           imageUrl={activity.imageUrl} tags={activity.tags}
                           listType="favorites" onRemove={removeFromFavorites}
                           type={activity.type} slug={activity.slug}
+                          google_rating={activity.google_rating}
+                          google_review_count={activity.google_review_count}
                         />
                       </motion.div>
                     ))}
@@ -306,6 +308,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                           imageUrl={activity.imageUrl} tags={activity.tags}
                           listType="wantToVisit" onRemove={removeFromWantToVisit}
                           type={activity.type} slug={activity.slug}
+                          google_rating={activity.google_rating}
+                          google_review_count={activity.google_review_count}
                         />
                       </motion.div>
                     ))}
