@@ -76,6 +76,33 @@ const Index = () => {
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
 
+  // Scroll listing into view when filters change (not on mount, not on back-navigation)
+  const filtersKey = JSON.stringify({ ...filters, search: searchQuery });
+  const prevFiltersKey = useRef<string | null>(null);
+  useEffect(() => {
+    if (prevFiltersKey.current === null) {
+      // First render — do not scroll, let useScrollPosition handle it
+      prevFiltersKey.current = filtersKey;
+      return;
+    }
+    if (prevFiltersKey.current !== filtersKey) {
+      prevFiltersKey.current = filtersKey;
+      // Only scroll if user is already past the listing (avoid scrolling when near top)
+      if (listingRef.current) {
+        const headerHeight = 56;
+        const rect = listingRef.current.getBoundingClientRect();
+        // If listing is already above viewport, or user scrolled past it
+        if (rect.top < headerHeight) {
+          const elementPosition = rect.top + window.scrollY;
+          window.scrollTo({
+            top: elementPosition - headerHeight,
+            behavior: "smooth",
+          });
+        }
+      }
+    }
+  }, [filtersKey]);
+
   // Top rated activities for homepage recommendations (when no filters active)
   const topRatedActivities = useMemo(() => {
     if (!FEATURES.TOP_RATED_HOMEPAGE || hasActiveFilters) return [];

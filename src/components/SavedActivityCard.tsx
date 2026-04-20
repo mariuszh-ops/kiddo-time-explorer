@@ -32,7 +32,16 @@ interface SavedActivityCardProps {
   onRemove: (id: number) => Promise<void> | void;
   type?: string;
   slug: string;
+  google_rating?: number;
+  google_review_count?: number;
 }
+
+const formatReviewBucket = (count: number): string => {
+  if (count < 50) return "do 50 ocen";
+  if (count < 100) return "50+ ocen";
+  if (count < 1000) return "100+ ocen";
+  return "1000+ ocen";
+};
 
 const SavedActivityCard = ({
   id,
@@ -48,12 +57,13 @@ const SavedActivityCard = ({
   onRemove,
   type = "inne",
   slug,
+  google_rating,
+  google_review_count,
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
   const [isRemoving, setIsRemoving] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [imgSrc, setImgSrc] = useState(imageUrl);
-  const hasReviews = reviewCount > 0;
   const removeLabel = listType === "favorites" ? "Usuń z ulubionych" : "Usuń z listy";
   const fallbackImage = getPlaceholderImage(type, id);
 
@@ -220,26 +230,23 @@ const SavedActivityCard = ({
         <div className="space-y-2">
           {/* Rating or New badge */}
           <div className="flex items-center gap-2">
-            {hasReviews ? (
-              <>
+            {google_rating != null && google_review_count != null ? (
+              <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
                   <Star className="w-4 h-4 fill-primary text-primary" />
-                  <span className="font-bold text-foreground">{rating.toFixed(1)}</span>
+                  <span className="font-bold text-foreground">{google_rating.toFixed(1)}</span>
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  ({reviewCount} opinii)
+                  · {formatReviewBucket(google_review_count)}
                 </span>
-              </>
+              </div>
             ) : (
-              <>
-                <div className="flex items-center gap-1 bg-accent px-2 py-1 rounded-lg">
-                  <Sparkles className="w-4 h-4 text-accent-foreground" />
-                  <span className="font-medium text-accent-foreground text-sm">Nowa</span>
-                </div>
-                <span className="text-xs text-muted-foreground">
-                  Brak opinii
+              <div className="flex items-center gap-1 bg-muted/60 px-2 py-1 rounded-lg">
+                <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground font-medium">
+                  Bez ocen Google
                 </span>
-              </>
+              </div>
             )}
           </div>
 
