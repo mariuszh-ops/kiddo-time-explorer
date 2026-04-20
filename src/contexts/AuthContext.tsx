@@ -74,7 +74,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [signOut]);
 
   const toggleDemoMode = useCallback(() => {
-    if (!isDevelopment) return;
+    if (!env.isDev) return;
     setIsDemoMode((prev) => {
       const next = !prev;
       if (next) {
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signOut,
         login,
         logout,
-        isDemoMode: isDevelopment && isDemoMode,
+        isDemoMode: env.isDev && isDemoMode,
         toggleDemoMode,
       }}
     >
