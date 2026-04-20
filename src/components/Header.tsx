@@ -7,9 +7,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.png";
+import { env } from "@/config/env";
 
-// Check if we're in development mode
-const isDevelopment = import.meta.env.DEV;
 
 const Header = () => {
   const location = useLocation();
@@ -40,7 +39,7 @@ const Header = () => {
           {/* Navigation */}
           <nav className="flex items-center gap-1 md:gap-2">
             {/* Demo Mode Toggle - Development only */}
-            {isDevelopment && (
+            {env.isDev && (
               <div className="flex items-center gap-2 px-2 py-1 mr-2 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-md">
                 <span className="text-xs font-medium text-amber-700 dark:text-amber-400">
                   Demo
