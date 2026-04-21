@@ -21,60 +21,30 @@ const Regulamin = () => {
               Wróć do strony głównej
             </Link>
 
-            <h1 className="text-2xl md:text-3xl font-serif font-bold text-foreground mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-6">
               Regulamin serwisu FamilyFun
             </h1>
 
-            <div className="prose prose-sm max-w-none text-foreground space-y-6">
-              <section>
-                <h2 className="text-lg font-semibold mb-2">1. Definicje</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Serwis FamilyFun (dalej „Serwis") to platforma internetowa umożliwiająca przeglądanie, 
-                  ocenianie i zapisywanie atrakcji rodzinnych w Polsce. Użytkownikiem jest każda osoba 
-                  korzystająca z Serwisu, zarówno zarejestrowana, jak i niezarejestrowana. Administrator 
-                  oznacza zespół zarządzający Serwisem.
-                </p>
-              </section>
+            <p className="text-sm text-muted-foreground italic mb-8">Ostatnia aktualizacja: [data do uzupełnienia]</p>
 
-              <section>
-                <h2 className="text-lg font-semibold mb-2">2. Warunki korzystania</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Korzystanie z Serwisu jest bezpłatne. Rejestracja konta umożliwia zapisywanie ulubionych 
-                  atrakcji, dodawanie ocen i opinii oraz planowanie wizyt. Użytkownik zobowiązuje się do 
-                  korzystania z Serwisu zgodnie z obowiązującym prawem i dobrymi obyczajami. Zabrania się 
-                  publikowania treści obraźliwych, nieprawdziwych lub naruszających prawa osób trzecich.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-lg font-semibold mb-2">3. Zasady zgłaszania atrakcji</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Użytkownicy mogą zgłaszać nowe atrakcje za pomocą formularza „Dodaj nowe miejsce". 
-                  Każde zgłoszenie jest weryfikowane przez zespół redakcyjny przed publikacją. Administrator 
-                  zastrzega sobie prawo do odrzucenia zgłoszenia bez podania przyczyny. Zgłoszone atrakcje 
-                  mogą być edytowane przez redakcję w celu zapewnienia spójności i jakości treści.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-lg font-semibold mb-2">4. Odpowiedzialność</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Serwis dokłada starań, aby prezentowane informacje były aktualne i rzetelne, jednak nie 
-                  ponosi odpowiedzialności za ewentualne nieścisłości w opisach atrakcji, godzinach otwarcia 
-                  czy cenach biletów. Przed wizytą zalecamy sprawdzenie informacji bezpośrednio u organizatora. 
-                  Opinie użytkowników wyrażają ich osobiste doświadczenia i nie stanowią stanowiska Serwisu.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-lg font-semibold mb-2">5. Postanowienia końcowe</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  Administrator zastrzega sobie prawo do zmiany niniejszego regulaminu. O istotnych zmianach 
-                  użytkownicy zostaną poinformowani za pośrednictwem Serwisu. Regulamin wchodzi w życie 
-                  z dniem publikacji. W sprawach nieuregulowanych niniejszym regulaminem zastosowanie mają 
-                  przepisy prawa polskiego.
-                </p>
-              </section>
+            <div className="space-y-6">
+              {[
+                "§1 Postanowienia ogólne",
+                "§2 Definicje",
+                "§3 Zasady korzystania z serwisu",
+                "§4 Konto użytkownika",
+                "§5 Treści użytkowników",
+                "§6 Odpowiedzialność",
+                "§7 Reklamacje",
+                "§8 Postanowienia końcowe",
+              ].map((title) => (
+                <section key={title}>
+                  <h2 className="text-xl font-semibold mt-8 mb-3">{title}</h2>
+                  <p className="text-muted-foreground leading-relaxed mb-4">
+                    [TREŚĆ DO UZUPEŁNIENIA — wymagana konsultacja prawna]
+                  </p>
+                </section>
+              ))}
             </div>
           </div>
         </main>
