@@ -20,10 +20,7 @@ const CommunityNotice = ({ activityTitle }: CommunityNoticeProps) => {
         <div className="flex-1">
           <h3 className="text-sm font-semibold text-foreground mb-1">Tworzymy to razem</h3>
           <p className="text-sm text-muted-foreground leading-relaxed mb-3">
-            Informacje o atrakcjach zbieramy z publicznie dostępnych źródeł, takich jak Google Maps.
-            Nie odwiedziliśmy każdego miejsca osobiście — jeśli zauważysz nieaktualny cennik, złe
-            godziny otwarcia lub brakujące informacje, daj nam znać. Każde zgłoszenie pomaga innym
-            rodzicom lepiej zaplanować rodzinny dzień.
+            Dane zbieramy z publicznych źródeł (m.in. Google Maps) i nie zawsze są aktualne. Widzisz błąd? Daj nam znać — pomożesz innym rodzicom.
           </p>
           <Button
             variant="outline"
