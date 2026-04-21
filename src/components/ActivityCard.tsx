@@ -211,6 +211,10 @@ const ActivityCard = ({
               {title}
             </h3>
 
+            {CATEGORY_LABELS[type] && (
+              <p className="text-sm text-muted-foreground">{CATEGORY_LABELS[type]}</p>
+            )}
+
             <div className="flex items-center gap-2">
               <p className="text-sm text-muted-foreground line-clamp-1 flex-1">
                 {location}
@@ -237,7 +241,7 @@ const ActivityCard = ({
               >
                 {ageRange}
               </Badge>
-              {tags.slice(0, 2).map((tag) => (
+              {tags.filter((tag) => !HIDDEN_TAGS.has(tag)).slice(0, 2).map((tag) => (
                 <Badge
                   key={tag}
                   variant="outline"
