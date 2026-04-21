@@ -14,6 +14,18 @@ import { PRICE_LEVELS } from "@/data/activities";
 import { cn } from "@/lib/utils";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 
+const CATEGORY_LABELS: Record<string, string> = {
+  "sala-zabaw": "Sala zabaw",
+  "plac-zabaw": "Plac zabaw",
+  "park-rozrywki": "Park rozrywki",
+  "muzeum-teatr": "Muzeum / teatr",
+  "sport": "Sport",
+  "zoo": "Zoo",
+  "inne": "Inne",
+};
+
+const HIDDEN_TAGS = new Set(["W pomieszczeniu", "Na zewnątrz"]);
+
 interface ActivityCardProps {
   id: number;
   title: string;
