@@ -7,9 +7,9 @@ export interface Amenity {
 
 export const AMENITIES: Amenity[] = [
   // Dostępność
-  { id: "stroller", label: "Dostępne dla wózków", icon: "Baby", category: "access" },
+  { id: "stroller", label: "Wózki OK", icon: "Baby", category: "access" },
   { id: "parking", label: "Parking", icon: "Car", category: "access" },
-  { id: "accessible", label: "Dostępne dla niepełnosprawnych", icon: "Accessibility", category: "access" },
+  { id: "accessible", label: "Dla niepełnosprawnych", icon: "Accessibility", category: "access" },
   { id: "public-transport", label: "Dobry dojazd komunikacją", icon: "Bus", category: "access" },
 
   // Komfort

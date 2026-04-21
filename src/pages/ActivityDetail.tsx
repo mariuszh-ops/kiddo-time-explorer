@@ -671,18 +671,7 @@ const ActivityDetail = () => {
             <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
               Udogodnienia dla rodzin
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 md:gap-3">
-              {activity.amenities.map((amenityId) => {
-                const amenity = getAmenityById(amenityId);
-                if (!amenity) return null;
-                return (
-                  <div key={amenityId} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-accent/50 min-w-0">
-                    <AmenityIcon name={amenity.icon} className="w-4 h-4 text-primary shrink-0" />
-                    <span className="text-sm text-foreground truncate">{amenity.label}</span>
-                  </div>
-                );
-              })}
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
               {activity.amenities.map((amenityId) => {
                 const amenity = getAmenityById(amenityId);
                 if (!amenity) return null;
