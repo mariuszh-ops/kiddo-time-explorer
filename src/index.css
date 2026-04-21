@@ -114,6 +114,7 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'DM Sans', sans-serif;
+    @apply pb-20 md:pb-0;
   }
 
   h1, h2, h3 {
