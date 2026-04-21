@@ -386,17 +386,18 @@ const ActivityDetail = () => {
             </nav>
             
             {/* Activity title + Google rating inline */}
-            <div className="flex items-start justify-between gap-4 mb-1 md:mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-4 mb-1 md:mb-2">
               <h1 className="text-xl md:text-3xl font-serif text-foreground leading-tight">
                 {activity.title}
               </h1>
               {activity.google_rating && (
-                <div className="shrink-0 flex flex-col items-end gap-0.5">
+                <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
                   <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-primary text-primary" />
+                    <span className="text-sm sm:text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
                   </div>
-                  <span className="text-sm text-foreground">
+                  <span className="text-xs sm:text-sm text-muted-foreground sm:text-foreground">
+                    ·{" "}
                     {(() => {
                       const c = activity.google_review_count || 0;
                       if (c < 50) return "do 50 ocen";
@@ -405,7 +406,7 @@ const ActivityDetail = () => {
                       return "1000+ ocen";
                     })()}
                   </span>
-                  <span className="text-xs text-muted-foreground">Google</span>
+                  <span className="text-xs text-muted-foreground">· Google</span>
                 </div>
               )}
             </div>
@@ -670,7 +671,7 @@ const ActivityDetail = () => {
             <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
               Udogodnienia dla rodzin
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 md:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
               {activity.amenities.map((amenityId) => {
                 const amenity = getAmenityById(amenityId);
                 if (!amenity) return null;
