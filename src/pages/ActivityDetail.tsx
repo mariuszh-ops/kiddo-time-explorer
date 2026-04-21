@@ -391,18 +391,21 @@ const ActivityDetail = () => {
                 {activity.title}
               </h1>
               {activity.google_rating && (
-                <div className="shrink-0 flex items-center gap-1">
-                  <Star className="w-4 h-4 fill-primary text-primary" />
-                  <span className="font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
-                  <span className="text-sm text-muted-foreground">
-                    · {(() => {
+                <div className="shrink-0 flex flex-col items-end gap-0.5">
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <span className="text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                  </div>
+                  <span className="text-sm text-foreground">
+                    {(() => {
                       const c = activity.google_review_count || 0;
                       if (c < 50) return "do 50 ocen";
                       if (c < 100) return "50+ ocen";
                       if (c < 1000) return "100+ ocen";
                       return "1000+ ocen";
-                    })()} · <span className="text-muted-foreground">Google</span>
+                    })()}
                   </span>
+                  <span className="text-xs text-muted-foreground">Google</span>
                 </div>
               )}
             </div>
