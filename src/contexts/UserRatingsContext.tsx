@@ -1,5 +1,30 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities } from "@/data/activities";
+import { getRawItem, setRawItem } from "@/lib/storage";
+
+const STORAGE_KEY = "familyfun_user_ratings";
+
+type StoredRating = { activityId: number; rating: number; review?: string; ratedAt: string };
+
+function loadRatings(): Map<number, UserRating> {
+  try {
+    const raw = getRawItem(STORAGE_KEY);
+    if (!raw) return new Map();
+    const arr: StoredRating[] = JSON.parse(raw);
+    return new Map(arr.map(r => [r.activityId, { ...r, ratedAt: new Date(r.ratedAt) }]));
+  } catch {
+    return new Map();
+  }
+}
+
+function saveRatings(ratings: Map<number, UserRating>) {
+  try {
+    const arr = Array.from(ratings.values());
+    setRawItem(STORAGE_KEY, JSON.stringify(arr));
+  } catch {
+    // localStorage unavailable — silent fail
+  }
+}
 
 export interface UserRating {
   activityId: number;
@@ -26,8 +51,11 @@ interface UserRatingsContextType {
 const UserRatingsContext = createContext<UserRatingsContextType | undefined>(undefined);
 
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
-  // Initialize with some mock data for demo purposes
-  const [ratings, setRatings] = useState<Map<number, UserRating>>(new Map());
+  const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
+
+  useEffect(() => {
+    saveRatings(ratings);
+  }, [ratings]);
 
   const getUserRating = useCallback((activityId: number): UserRating | undefined => {
     return ratings.get(activityId);
