@@ -187,15 +187,6 @@ export function useActivityFilters() {
         return da - db;
       });
 
-      if (typeof window !== "undefined" && result.length > 0) {
-        const fmt = (a: Activity) =>
-          `${a.title} (${a.city}) — ${distanceMap.get(a.id)?.toFixed(2)} km`;
-        // eslint-disable-next-line no-console
-        console.log("[sort:distance-from-center] first 3:", result.slice(0, 3).map(fmt));
-        // eslint-disable-next-line no-console
-        console.log("[sort:distance-from-center] last 3:", result.slice(-3).map(fmt));
-      }
-
       return result;
     }
 
