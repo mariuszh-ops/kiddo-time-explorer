@@ -288,10 +288,8 @@ const ActivityDetail = () => {
         ] as unknown as Record<string, unknown>}
       />
       <main className="min-h-screen bg-background pb-20 sm:pb-8">
-      {/* Desktop: Global header */}
-      <div className="hidden md:block">
-        <Header />
-      </div>
+      {/* Global header — same on mobile and desktop */}
+      <Header />
 
       {/* Sticky header on scroll past gallery */}
       <div
