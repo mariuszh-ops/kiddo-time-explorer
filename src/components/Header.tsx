@@ -32,9 +32,8 @@ const Header = () => {
             <img 
               src={familyFunLogo} 
               alt="FamilyFun" 
-              className="h-9 md:h-10 w-auto object-contain"
+              className="h-9 md:h-11 w-auto object-contain"
             />
-            <span className="ml-2 text-xl md:text-2xl font-bold text-primary">FamilyFun</span>
           </Link>
 
           {/* Navigation */}
