@@ -26,14 +26,15 @@ const Header = () => {
   return (
     <>
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="container flex items-center justify-between h-14 md:h-16">
+        <div className="container flex items-center justify-between h-16 md:h-[72px]">
           {/* Logo */}
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px]">
             <img 
               src={familyFunLogo} 
               alt="FamilyFun" 
-              className="h-10 md:h-11 w-auto object-contain"
+              className="h-9 md:h-10 w-auto object-contain"
             />
+            <span className="ml-2 text-xl md:text-2xl font-bold text-primary">FamilyFun</span>
           </Link>
 
           {/* Navigation */}
