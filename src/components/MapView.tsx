@@ -319,11 +319,16 @@ function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boo
     // Check if all points are identical
     const allSame = coords.every((c) => c[0] === coords[0][0] && c[1] === coords[0][1]);
 
-    if (activities.length === 1 || allSame) {
-      map.setView(coords[0], 13);
-    } else {
-      map.fitBounds(L.latLngBounds(coords), { padding: [50, 50], maxZoom: 14 });
-    }
+    const timeoutId = setTimeout(() => {
+      map.invalidateSize();
+      if (activities.length === 1 || allSame) {
+        map.setView(coords[0], 13, { animate: true });
+      } else {
+        map.fitBounds(L.latLngBounds(coords), { padding: [50, 50], maxZoom: 14, animate: true });
+      }
+    }, 150);
+
+    return () => clearTimeout(timeoutId);
   }, [activities, map, skip]);
 
   return null;
