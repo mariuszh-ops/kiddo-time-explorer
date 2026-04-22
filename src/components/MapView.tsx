@@ -296,19 +296,28 @@ function MapInvalidateSize() {
   return null;
 }
 
-// Fit map bounds to all activity pins — only on initial mount (skip if restoring saved state)
+// Fit map bounds to all activity pins — on mount and whenever the list changes (filter change)
 function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boolean }) {
   const map = useMap();
-  const hasInitialized = useRef(false);
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
-    if (hasInitialized.current || activities.length === 0 || skip) return;
-    hasInitialized.current = true;
+    if (activities.length === 0) return;
+    // On first render, skip if restoring saved map state
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      if (skip) return;
+    }
 
-    const bounds = L.latLngBounds(
-      activities.map((a) => [a.latitude, a.longitude] as [number, number])
-    );
-    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    const coords = activities.map((a) => [a.latitude, a.longitude] as [number, number]);
+    // Check if all points are identical
+    const allSame = coords.every((c) => c[0] === coords[0][0] && c[1] === coords[0][1]);
+
+    if (activities.length === 1 || allSame) {
+      map.setView(coords[0], 13);
+    } else {
+      map.fitBounds(L.latLngBounds(coords), { padding: [50, 50], maxZoom: 14 });
+    }
   }, [activities, map, skip]);
 
   return null;
