@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
 export const FAVORITES_CHIP_KEY = "_favorites";
 
@@ -19,8 +21,66 @@ interface MapCategoryChipsProps {
 }
 
 export default function MapCategoryChips({ selected, onToggle }: MapCategoryChipsProps) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 0);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const ro = new ResizeObserver(updateScrollState);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      ro.disconnect();
+    };
+  }, [updateScrollState]);
+
+  const scroll = (dir: number) => {
+    scrollRef.current?.scrollBy({ left: dir * 200, behavior: "smooth" });
+  };
+
   return (
-    <div className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
+    <div className="relative">
+      {/* Left fade + chevron (desktop only) */}
+      {canScrollLeft && (
+        <>
+          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-background to-transparent z-[1] pointer-events-none" />
+          <button
+            onClick={() => scroll(-1)}
+            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 z-[2] items-center justify-center w-8 h-8 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+            aria-label="Przewiń w lewo"
+          >
+            <ChevronLeft size={16} />
+          </button>
+        </>
+      )}
+
+      {/* Right fade + chevron (desktop only) */}
+      {canScrollRight && (
+        <>
+          <div className="hidden md:block absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-background to-transparent z-[1] pointer-events-none" />
+          <button
+            onClick={() => scroll(1)}
+            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 z-[2] items-center justify-center w-8 h-8 rounded-full bg-white shadow-md hover:bg-gray-50 transition-colors"
+            aria-label="Przewiń w prawo"
+          >
+            <ChevronRight size={16} />
+          </button>
+        </>
+      )}
+
+      <div ref={scrollRef} className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
       {CATEGORIES.map(({ key, label, emoji }) => {
         const isActive = selected.has(key);
         return (
@@ -41,6 +101,7 @@ export default function MapCategoryChips({ selected, onToggle }: MapCategoryChip
           </button>
         );
       })}
+      </div>
     </div>
   );
 }
