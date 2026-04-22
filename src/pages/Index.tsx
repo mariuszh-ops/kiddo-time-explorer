@@ -35,6 +35,11 @@ const Index = () => {
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
+  console.log('[Index] globalFilteredActivities', {
+    count: filteredActivities.length,
+    firstId: filteredActivities[0]?.id
+  });
+
   // View mode: grid or map (sync with URL param from bottom nav)
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "map">(
