@@ -1,0 +1,5577 @@
+[
+  {
+    "id": 101,
+    "latitude": 52.2386,
+    "longitude": 21.0531,
+    "title": "Festiwal Bajek – spektakle plenerowe",
+    "slug": "festiwal-bajek-spektakle-plenerowe",
+    "location": "Warszawa, Park Skaryszewski",
+    "city": "warszawa",
+    "rating": 4.8,
+    "reviewCount": 45,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 91,
+    "imageUrl": "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Kreatywne"
+    ],
+    "isIndoor": false,
+    "type": "inne",
+    "isEvent": true,
+    "eventDate": "15-17 marca 2026",
+    "address": "al. Waszyngtona 10, 03-910 Warszawa",
+    "openingHours": "Zgodnie z programem wydarzenia",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Kilka dni pełnych spektakli plenerowych w klimatycznym parku",
+      "Warsztaty teatralne i animacje dla dzieci w przerwach",
+      "Stoiska z rękodziełem i regionalnymi smakołykami"
+    ],
+    "reviews": [
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 15–25 zł/os., dzieci do 3 lat gratis"
+  },
+  {
+    "id": 102,
+    "latitude": 50.0611,
+    "longitude": 19.9364,
+    "title": "Warsztaty wielkanocne dla dzieci",
+    "slug": "warsztaty-wielkanocne-dla-dzieci",
+    "location": "Kraków, Sukiennice",
+    "city": "krakow",
+    "rating": 4.6,
+    "reviewCount": 23,
+    "ageRange": "4–12 lat",
+    "ageMin": 4,
+    "ageMax": 12,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "isEvent": true,
+    "eventDate": "5 kwietnia 2026",
+    "address": "Rynek Główny 1, 31-042 Kraków",
+    "openingHours": "Zgodnie z programem wydarzenia",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Tworzenie tradycyjnych ozdób wielkanocnych pod okiem instruktorów",
+      "Malowanie pisanek i dekorowanie mazurków",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Udział: 30 zł/dziecko, rodzic gratis"
+  },
+  {
+    "id": 103,
+    "latitude": 51.1059,
+    "longitude": 17.0777,
+    "title": "Nocne zwiedzanie ZOO z latarkami",
+    "slug": "nocne-zwiedzanie-zoo-z-latarkami",
+    "location": "Wrocław, Zoo Wrocław",
+    "city": "wroclaw",
+    "rating": 4.9,
+    "reviewCount": 67,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 88,
+    "imageUrl": "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "isEvent": true,
+    "address": "ul. Wróblewskiego 1-5, 51-618 Wrocław",
+    "openingHours": "Zgodnie z programem wydarzenia",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Nocne zwiedzanie ZOO z profesjonalnym przewodnikiem",
+      "Obserwacja nocnych zachowań zwierząt przy latarkach",
+      "Niezapomniana przygoda dla starszych dzieci i młodzieży"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet: 60 zł/os., dzieci 6-14: 40 zł"
+  },
+  {
+    "id": 104,
+    "latitude": 54.4116,
+    "longitude": 18.5563,
+    "title": "Piknik naukowy – eksperymenty dla dzieci",
+    "slug": "piknik-naukowy-eksperymenty-dla-dzieci",
+    "location": "Gdańsk, Park Oliwski",
+    "city": "gdansk",
+    "rating": 0,
+    "reviewCount": 0,
+    "ageRange": "5–12 lat",
+    "ageMin": 5,
+    "ageMax": 12,
+    "matchPercentage": 82,
+    "imageUrl": "https://images.unsplash.com/photo-1567593810070-7a3d471af022?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "warsztaty",
+    "isEvent": true,
+    "eventDate": "22-23 maja 2026",
+    "address": "ul. Opacka 23, 80-338 Gdańsk",
+    "openingHours": "Zgodnie z programem wydarzenia",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Pokazy eksperymentów fizycznych i chemicznych na żywo",
+      "Warsztaty 'zrób to sam' z prostymi doświadczeniami",
+      "Stoiska organizacji naukowych i edukacyjnych"
+    ],
+    "amenities": [
+      "toilets",
+      "food-onsite",
+      "public-transport",
+      "stroller"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 100,
+    "latitude": 52.2888,
+    "longitude": 20.9525,
+    "title": "Nowy Park Sensoryczny Kraina Zmysłów",
+    "slug": "nowy-park-sensoryczny-kraina-zmyslow",
+    "location": "Warszawa, Bielany",
+    "city": "warszawa",
+    "rating": 0,
+    "reviewCount": 0,
+    "ageRange": "1–6 lat",
+    "ageMin": 1,
+    "ageMax": 6,
+    "matchPercentage": 93,
+    "imageUrl": "https://images.unsplash.com/photo-1544776193-352d25ca82cd?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "plac-zabaw",
+    "address": "ul. Kasprowicza 112, 01-871 Warszawa",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 1,
+    "isRecommended": true,
+    "latitude": 52.2305,
+    "longitude": 21.0651,
+    "title": "Zoo Warszawa – spotkanie z egzotycznymi zwierzętami",
+    "slug": "zoo-warszawa-spotkanie-z-egzotycznymi-zwierzetami",
+    "location": "Warszawa, Praga-Południe",
+    "city": "warszawa",
+    "rating": 4.9,
+    "reviewCount": 328,
+    "ageRange": "2–12 lat",
+    "ageMin": 2,
+    "ageMax": 12,
+    "matchPercentage": 95,
+    "imageUrl": "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",
+    "imageUrls": [
+      "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507666405895-422eee7d517f?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1551316679-9c6ae9dec224?w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1459262838948-3e2de6c1ec80?w=1200&auto=format&fit=crop"
+    ],
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Ratuszowa 1/3, 03-461 Warszawa",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–3 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Rodzice mogą skorzystać z interaktywnych tablic edukacyjnych przy każdym wybiegu",
+      "Dostępna jest strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "website": "https://zoo.waw.pl",
+    "reviews": [
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Dorośli: 40 zł, Dzieci 3-12: 20 zł, do 3 lat gratis"
+  },
+  {
+    "id": 2,
+    "isRecommended": true,
+    "latitude": 52.2224,
+    "longitude": 21.0052,
+    "title": "Centrum Nauki Kopernik – interaktywne wystawy",
+    "slug": "centrum-nauki-kopernik-interaktywne-wystawy",
+    "location": "Warszawa, Śródmieście",
+    "city": "warszawa",
+    "rating": 4.9,
+    "reviewCount": 512,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 92,
+    "imageUrl": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Wybrzeże Kościuszkowskie 20, 00-390 Warszawa",
+    "openingHours": "Wt–Pt: 9:00–18:00, Sob–Nd: 10:00–19:00, Pon: nieczynne",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Ponad 450 interaktywnych stanowisk doświadczalnych na dwóch piętrach",
+      "Planetarium z projekcjami filmów edukacyjnych na kopule",
+      "Warsztaty i pokazy naukowe prowadzone przez animatorów",
+      "Strefa dla najmłodszych 'Bzzz!' z eksponatami sensorycznymi"
+    ],
+    "website": "https://www.kopernik.org.pl",
+    "reviews": [
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet normalny: 33 zł, Ulgowy: 22 zł, Rodzinny: 90 zł"
+  },
+  {
+    "id": 7,
+    "latitude": 52.2374,
+    "longitude": 20.9707,
+    "title": "Muzeum Powstania Warszawskiego",
+    "slug": "muzeum-powstania-warszawskiego",
+    "location": "Warszawa, Wola",
+    "city": "warszawa",
+    "rating": 4.8,
+    "reviewCount": 421,
+    "ageRange": "8–14 lat",
+    "ageMin": 8,
+    "ageMax": 14,
+    "matchPercentage": 76,
+    "imageUrl": "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Grzybowska 79, 00-844 Warszawa",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "website": "https://www.1944.pl",
+    "reviews": [
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 25 zł, Ulgowy: 18 zł, Pon: wstęp wolny"
+  },
+  {
+    "id": 10,
+    "latitude": 52.1905,
+    "longitude": 21.0064,
+    "title": "Kino dla dzieci Cinema City Junior",
+    "slug": "kino-dla-dzieci-cinema-city-junior",
+    "location": "Warszawa, Mokotów",
+    "city": "warszawa",
+    "rating": 4.4,
+    "reviewCount": 234,
+    "ageRange": "3–12 lat",
+    "ageMin": 3,
+    "ageMax": 12,
+    "matchPercentage": 72,
+    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Wołoska 12, 02-675 Warszawa",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 15–25 zł w zależności od seansu"
+  },
+  {
+    "id": 13,
+    "latitude": 52.285,
+    "longitude": 20.7921,
+    "title": "Ścieżka dydaktyczna w Puszczy Kampinoskiej",
+    "slug": "sciezka-dydaktyczna-w-puszczy-kampinoskiej",
+    "location": "Warszawa, okolice",
+    "city": "warszawa",
+    "rating": 4.5,
+    "reviewCount": 145,
+    "ageRange": "4–12 lat",
+    "ageMin": 4,
+    "ageMax": 12,
+    "matchPercentage": 81,
+    "imageUrl": "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "Truskaw, 05-080 Izabelin (wejście od ul. Leśnej)",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "stroller",
+      "shade",
+      "picnic-area"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 18,
+    "latitude": 52.2749,
+    "longitude": 20.9832,
+    "title": "Lekcje gotowania Junior Chef",
+    "slug": "lekcje-gotowania-junior-chef",
+    "location": "Warszawa, Żoliborz",
+    "city": "warszawa",
+    "rating": 4.7,
+    "reviewCount": 134,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 77,
+    "imageUrl": "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Mickiewicza 25/3, 01-551 Warszawa",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Warsztaty: 80–120 zł/dziecko (2h z produktami)"
+  },
+  {
+    "id": 19,
+    "latitude": 52.1924,
+    "longitude": 20.8645,
+    "title": "Park Trampolin Hangar 646",
+    "slug": "park-trampolin-hangar-646",
+    "location": "Warszawa, Ursus",
+    "city": "warszawa",
+    "rating": 4.6,
+    "reviewCount": 287,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 88,
+    "imageUrl": "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Posag 7 Panien 1, 02-495 Warszawa",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 45–65 zł/os., Skarpetki antypoślizgowe: 5 zł"
+  },
+  {
+    "id": 20,
+    "isRecommended": true,
+    "latitude": 52.2373,
+    "longitude": 21.0074,
+    "title": "Łazienki Królewskie – spacer po parku",
+    "slug": "lazienki-krolewskie-spacer-po-parku",
+    "location": "Warszawa, Śródmieście",
+    "city": "warszawa",
+    "rating": 4.8,
+    "reviewCount": 567,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1588714477688-cf28a50e94f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Agrykola 1, 00-460 Warszawa",
+    "openingHours": "Codziennie od świtu do zmierzchu, budynki: Wt–Nd 10:00–16:00",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 21,
+    "latitude": 52.2235,
+    "longitude": 21.0035,
+    "title": "Muzeum POLIN – Historia Żydów Polskich",
+    "slug": "muzeum-polin-historia-zydow-polskich",
+    "location": "Warszawa, Muranów",
+    "city": "warszawa",
+    "rating": 4.7,
+    "reviewCount": 312,
+    "ageRange": "8–14 lat",
+    "ageMin": 8,
+    "ageMax": 14,
+    "matchPercentage": 71,
+    "imageUrl": "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Anielewicza 6, 00-157 Warszawa",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 25 zł, Ulgowy: 15 zł, Śr: wstęp wolny"
+  },
+  {
+    "id": 22,
+    "latitude": 52.3256,
+    "longitude": 21.0017,
+    "title": "Plac zabaw Kolorowe Kredki",
+    "slug": "plac-zabaw-kolorowe-kredki",
+    "location": "Warszawa, Białołęka",
+    "city": "warszawa",
+    "rating": 4.5,
+    "reviewCount": 178,
+    "ageRange": "1–6 lat",
+    "ageMin": 1,
+    "ageMax": 6,
+    "matchPercentage": 89,
+    "imageUrl": "https://images.unsplash.com/photo-1575783970733-1aaedde1db74?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "plac-zabaw",
+    "address": "ul. Skarbka z Gór 28, 03-287 Warszawa",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Kamil J.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 23,
+    "latitude": 52.2399,
+    "longitude": 20.9737,
+    "title": "Ścianka wspinaczkowa Murall",
+    "slug": "scianka-wspinaczkowa-murall",
+    "location": "Warszawa, Wola",
+    "city": "warszawa",
+    "rating": 4.7,
+    "reviewCount": 156,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 79,
+    "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Obozowa 60, 01-161 Warszawa",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 45–65 zł/os., Wypożyczenie sprzętu: 15 zł"
+  },
+  {
+    "id": 24,
+    "latitude": 52.2106,
+    "longitude": 20.9876,
+    "title": "Warsztaty plastyczne Kolorowy Świat",
+    "slug": "warsztaty-plastyczne-kolorowy-swiat",
+    "location": "Warszawa, Ochota",
+    "city": "warszawa",
+    "rating": 4.6,
+    "reviewCount": 89,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 83,
+    "imageUrl": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Grójecka 72, 02-094 Warszawa",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty: 40–60 zł/dziecko (1.5h z materiałami)"
+  },
+  {
+    "id": 25,
+    "latitude": 52.2331,
+    "longitude": 20.9708,
+    "title": "Park Wodny Moczydło",
+    "slug": "park-wodny-moczydlo",
+    "location": "Warszawa, Wola",
+    "city": "warszawa",
+    "rating": 4.3,
+    "reviewCount": 423,
+    "ageRange": "2–12 lat",
+    "ageMin": 2,
+    "ageMax": 12,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Kasprzaka 31A, 01-234 Warszawa",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "accessible",
+      "fenced",
+      "kids-menu"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 20–35 zł/os. w zależności od strefy"
+  },
+  {
+    "id": 26,
+    "latitude": 52.2353,
+    "longitude": 21.0119,
+    "title": "Teatr Lalka – przedstawienia dla dzieci",
+    "slug": "teatr-lalka-przedstawienia-dla-dzieci",
+    "location": "Warszawa, Śródmieście",
+    "city": "warszawa",
+    "rating": 4.8,
+    "reviewCount": 234,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 80,
+    "imageUrl": "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Jagiellońska 26, 03-719 Warszawa",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilety: 20–40 zł w zależności od spektaklu"
+  },
+  {
+    "id": 27,
+    "latitude": 52.2758,
+    "longitude": 21.0512,
+    "title": "Tor kartingowy EF1 Racing",
+    "slug": "tor-kartingowy-ef1-racing",
+    "location": "Warszawa, Targówek",
+    "city": "warszawa",
+    "rating": 4.5,
+    "reviewCount": 167,
+    "ageRange": "7–14 lat",
+    "ageMin": 7,
+    "ageMax": 14,
+    "matchPercentage": 75,
+    "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Odlewnicza 8, 03-231 Warszawa",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Przejazd: 50–80 zł/os. (10-15 min)"
+  },
+  {
+    "id": 28,
+    "latitude": 52.1983,
+    "longitude": 20.9977,
+    "title": "Biblioteka dla Dzieci z kącikiem zabaw",
+    "slug": "biblioteka-dla-dzieci-z-kacikiem-zabaw",
+    "location": "Warszawa, Mokotów",
+    "city": "warszawa",
+    "rating": 4.4,
+    "reviewCount": 98,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 73,
+    "imageUrl": "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Puławska 36, 02-512 Warszawa",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "accessible",
+      "toilets",
+      "wifi",
+      "stroller",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 29,
+    "latitude": 52.1906,
+    "longitude": 21.0016,
+    "title": "Mini golf Pole Mokotowskie",
+    "slug": "mini-golf-pole-mokotowskie",
+    "location": "Warszawa, Mokotów",
+    "city": "warszawa",
+    "rating": 4.3,
+    "reviewCount": 145,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 78,
+    "imageUrl": "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Rokitnicka 20, 02-926 Warszawa",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "toilets",
+      "seating",
+      "food-onsite",
+      "shade"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Gra: 15–25 zł/os."
+  },
+  {
+    "id": 30,
+    "latitude": 52.1533,
+    "longitude": 21.0357,
+    "title": "Warsztaty robotyki dla dzieci RoboLab",
+    "slug": "warsztaty-robotyki-dla-dzieci-robolab",
+    "location": "Warszawa, Ursynów",
+    "city": "warszawa",
+    "rating": 4.8,
+    "reviewCount": 112,
+    "ageRange": "7–14 lat",
+    "ageMin": 7,
+    "ageMax": 14,
+    "matchPercentage": 82,
+    "imageUrl": "https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Kazury 12, 02-795 Warszawa",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Kurs: 60–100 zł/dziecko za zajęcia"
+  },
+  {
+    "id": 3,
+    "latitude": 50.0386,
+    "longitude": 19.9464,
+    "title": "Ogród Botaniczny – spacer wśród natury",
+    "slug": "ogrod-botaniczny-spacer-wsrod-natury",
+    "location": "Kraków, Podgórze",
+    "city": "krakow",
+    "rating": 4.7,
+    "reviewCount": 189,
+    "ageRange": "0–10 lat",
+    "ageMin": 0,
+    "ageMax": 10,
+    "matchPercentage": 88,
+    "imageUrl": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Mikołaja Kopernika 27, 31-501 Kraków",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 15 zł, Ulgowy: 8 zł, do 4 lat gratis"
+  },
+  {
+    "id": 9,
+    "latitude": 50.0822,
+    "longitude": 19.9178,
+    "title": "Farma edukacyjna Koziołek",
+    "slug": "farma-edukacyjna-koziolek",
+    "location": "Kraków, okolice",
+    "city": "krakow",
+    "rating": 4.7,
+    "reviewCount": 167,
+    "ageRange": "2–8 lat",
+    "ageMin": 2,
+    "ageMax": 8,
+    "matchPercentage": 87,
+    "imageUrl": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Polna 15, 32-087 Zielonki",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "stroller",
+      "toilets",
+      "picnic-area",
+      "fenced",
+      "food-onsite",
+      "shade"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Wstęp: 20 zł/os., Dzieci do 3 lat: gratis, Karmienie zwierząt: 10 zł"
+  },
+  {
+    "id": 14,
+    "latitude": 50.0479,
+    "longitude": 19.9404,
+    "title": "Warsztaty cukiernicze Słodkie Marzenia",
+    "slug": "warsztaty-cukiernicze-slodkie-marzenia",
+    "location": "Kraków, Kazimierz",
+    "city": "krakow",
+    "rating": 4.9,
+    "reviewCount": 123,
+    "ageRange": "4–10 lat",
+    "ageMin": 4,
+    "ageMax": 10,
+    "matchPercentage": 91,
+    "imageUrl": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Józefa 12, 31-056 Kraków",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Warsztaty: 70–90 zł/dziecko (2h ze słodkościami)"
+  },
+  {
+    "id": 31,
+    "latitude": 49.9856,
+    "longitude": 20.0666,
+    "title": "Kopalnia Soli Wieliczka – trasa dla rodzin",
+    "slug": "kopalnia-soli-wieliczka-trasa-dla-rodzin",
+    "location": "Wieliczka, okolice Krakowa",
+    "city": "krakow",
+    "rating": 4.9,
+    "reviewCount": 678,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 94,
+    "imageUrl": "https://images.unsplash.com/photo-1504699439244-a03cab2a7e27?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Daniłowicza 10, 32-020 Wieliczka",
+    "openingHours": "Codziennie: 7:30–19:30 (ostatnie wejście o 17:30)",
+    "estimatedTime": "2–3 godziny",
+    "experiencePoints": [
+      "Trasa turystyczna prowadzi przez zabytkowe komory solne i kaplice",
+      "Podziemne jezioro i spektakularne rzeźby solne",
+      "Specjalna trasa rodzinna z quizem i grą edukacyjną dla dzieci",
+      "Stała temperatura 14°C — warto zabrać ciepłą bluzę"
+    ],
+    "website": "https://www.wieliczka.eu",
+    "reviews": [
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "accessible",
+      "food-onsite",
+      "public-transport",
+      "changing-table",
+      "first-aid"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Trasa rodzinna: Dorośli 89 zł, Dzieci 4-14: 69 zł"
+  },
+  {
+    "id": 32,
+    "latitude": 50.0724,
+    "longitude": 20.0417,
+    "title": "Ogród Doświadczeń im. Cystersów",
+    "slug": "ogrod-doswiadczen-im-cystersow",
+    "location": "Kraków, Nowa Huta",
+    "city": "krakow",
+    "rating": 4.7,
+    "reviewCount": 234,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 89,
+    "imageUrl": "https://images.unsplash.com/photo-1567593810070-7a3d471af022?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "al. Pokoju 68, 31-580 Kraków",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "toilets",
+      "parking",
+      "stroller",
+      "seating"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 33,
+    "latitude": 50.0697,
+    "longitude": 20.0137,
+    "title": "Aquapark Kraków – wodna zabawa",
+    "slug": "aquapark-krakow-wodna-zabawa",
+    "location": "Kraków, Czyżyny",
+    "city": "krakow",
+    "rating": 4.5,
+    "reviewCount": 456,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 90,
+    "imageUrl": "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Dobrego Pasterza 126, 31-416 Kraków",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "website": "https://www.parkwodny.pl",
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet: 45–75 zł/os. w zależności od strefy i czasu"
+  },
+  {
+    "id": 34,
+    "latitude": 50.0696,
+    "longitude": 20.0081,
+    "title": "Muzeum Lotnictwa Polskiego",
+    "slug": "muzeum-lotnictwa-polskiego",
+    "location": "Kraków, Czyżyny",
+    "city": "krakow",
+    "rating": 4.6,
+    "reviewCount": 289,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 77,
+    "imageUrl": "https://images.unsplash.com/photo-1559066653-edfd1e6ff49a?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "al. Jana Pawła II 39, 31-864 Kraków",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 17 zł, Ulgowy: 9 zł, Wt: wstęp wolny"
+  },
+  {
+    "id": 35,
+    "latitude": 50.0693,
+    "longitude": 19.9392,
+    "title": "Smocza Jama pod Wawelem",
+    "slug": "smocza-jama-pod-wawelem",
+    "location": "Kraków, Stare Miasto",
+    "city": "krakow",
+    "rating": 4.5,
+    "reviewCount": 512,
+    "ageRange": "3–12 lat",
+    "ageMin": 3,
+    "ageMax": 12,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1558424871-c0cc9e5e5b75?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "inne",
+    "address": "ul. Smocza 2, 30-001 Kraków",
+    "openingHours": "Kwiecień–Październik: Pon–Nd 10:00–18:00",
+    "estimatedTime": "30–45 minut",
+    "experiencePoints": [
+      "Krótkie, ale ekscytujące wejście do legendarnej smoczej jamy",
+      "Dzieci poznają legendę o Smoku Wawelskim",
+      "Pomnik ziejącego ogniem smoka tuż przy wyjściu"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "stroller"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 5 zł/os."
+  },
+  {
+    "id": 36,
+    "latitude": 50.0589,
+    "longitude": 19.913,
+    "title": "Park linowy Kraków",
+    "slug": "park-linowy-krakow",
+    "location": "Kraków, Zwierzyniec",
+    "city": "krakow",
+    "rating": 4.6,
+    "reviewCount": 198,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 81,
+    "imageUrl": "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Na Błonie 1, 30-147 Kraków",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–70 zł/os. w zależności od trasy"
+  },
+  {
+    "id": 37,
+    "latitude": 50.067,
+    "longitude": 19.9414,
+    "title": "Teatr Groteska – spektakle dla najmłodszych",
+    "slug": "teatr-groteska-spektakle-dla-najmlodszych",
+    "location": "Kraków, Stare Miasto",
+    "city": "krakow",
+    "rating": 4.8,
+    "reviewCount": 167,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 84,
+    "imageUrl": "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Skarbowa 2, 31-121 Kraków",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Michał R.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilety: 25–40 zł w zależności od spektaklu"
+  },
+  {
+    "id": 38,
+    "latitude": 50.0257,
+    "longitude": 19.9325,
+    "title": "Zoo Kraków – Ogród Zoologiczny",
+    "slug": "zoo-krakow-ogrod-zoologiczny",
+    "location": "Kraków, Łagiewniki",
+    "city": "krakow",
+    "rating": 4.6,
+    "reviewCount": 345,
+    "ageRange": "2–12 lat",
+    "ageMin": 2,
+    "ageMax": 12,
+    "matchPercentage": 92,
+    "imageUrl": "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Kasy Oszczędności Miasta Krakowa 14, 30-382 Kraków",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Dorośli: 25 zł, Dzieci 3-14: 15 zł, do 3 lat gratis"
+  },
+  {
+    "id": 39,
+    "latitude": 50.042,
+    "longitude": 19.9463,
+    "title": "Sala zabaw Bajkolandia",
+    "slug": "sala-zabaw-bajkolandia",
+    "location": "Kraków, Podgórze",
+    "city": "krakow",
+    "rating": 4.4,
+    "reviewCount": 234,
+    "ageRange": "1–7 lat",
+    "ageMin": 1,
+    "ageMax": 7,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1566454725588-b92fe3dd96f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "plac-zabaw",
+    "address": "ul. Limanowskiego 16, 30-551 Kraków",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 35–55 zł/dziecko (2h), Dorosły opiekun: gratis"
+  },
+  {
+    "id": 40,
+    "latitude": 50.0454,
+    "longitude": 19.9521,
+    "title": "Muzeum Inżynierii Miejskiej",
+    "slug": "muzeum-inzynierii-miejskiej",
+    "location": "Kraków, Kazimierz",
+    "city": "krakow",
+    "rating": 4.5,
+    "reviewCount": 178,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 74,
+    "imageUrl": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Św. Wawrzyńca 15, 31-060 Kraków",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 12 zł, Ulgowy: 8 zł"
+  },
+  {
+    "id": 41,
+    "latitude": 50.046,
+    "longitude": 19.917,
+    "title": "Warsztaty garncarskie Glina",
+    "slug": "warsztaty-garncarskie-glina",
+    "location": "Kraków, Dębniki",
+    "city": "krakow",
+    "rating": 4.7,
+    "reviewCount": 87,
+    "ageRange": "5–12 lat",
+    "ageMin": 5,
+    "ageMax": 12,
+    "matchPercentage": 79,
+    "imageUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Tyniecka 40, 30-319 Kraków",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty: 50–70 zł/os. (1.5h z materiałami)"
+  },
+  {
+    "id": 42,
+    "latitude": 50.0725,
+    "longitude": 19.9283,
+    "title": "Park Jordana – historyczny plac zabaw",
+    "slug": "park-jordana-historyczny-plac-zabaw",
+    "location": "Kraków, Krowodrza",
+    "city": "krakow",
+    "rating": 4.4,
+    "reviewCount": 312,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 83,
+    "imageUrl": "https://images.unsplash.com/photo-1564429238535-9ecad21ab67c?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "plac-zabaw",
+    "address": "al. 3 Maja 11, 30-062 Kraków",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 43,
+    "latitude": 50.0866,
+    "longitude": 19.9093,
+    "title": "Kręgielnia Family Bowl",
+    "slug": "kregielnia-family-bowl",
+    "location": "Kraków, Bronowice",
+    "city": "krakow",
+    "rating": 4.3,
+    "reviewCount": 156,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 76,
+    "imageUrl": "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Armii Krajowej 11, 30-150 Kraków",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Gra: 20–30 zł/os., Buty: 5 zł"
+  },
+  {
+    "id": 44,
+    "latitude": 50.0577,
+    "longitude": 19.9329,
+    "title": "Escape Room dla dzieci Enigma Kids",
+    "slug": "escape-room-dla-dzieci-enigma-kids",
+    "location": "Kraków, Stare Miasto",
+    "city": "krakow",
+    "rating": 4.7,
+    "reviewCount": 78,
+    "ageRange": "8–14 lat",
+    "ageMin": 8,
+    "ageMax": 14,
+    "matchPercentage": 72,
+    "imageUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Logiczne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Floriańska 34, 31-021 Kraków",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "parking"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Pokój: 60–90 zł/os. (grupa 2-5 osób)"
+  },
+  {
+    "id": 45,
+    "latitude": 50.0625,
+    "longitude": 19.9332,
+    "title": "Planty Krakowskie – spacer z dziećmi",
+    "slug": "planty-krakowskie-spacer-z-dziecmi",
+    "location": "Kraków, Stare Miasto",
+    "city": "krakow",
+    "rating": 4.6,
+    "reviewCount": 423,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 87,
+    "imageUrl": "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "Planty, 31-001 Kraków",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 4,
+    "latitude": 51.1114,
+    "longitude": 17.0364,
+    "title": "Sala zabaw Kraina Malucha",
+    "slug": "sala-zabaw-kraina-malucha",
+    "location": "Wrocław, Stare Miasto",
+    "city": "wroclaw",
+    "rating": 4.8,
+    "reviewCount": 245,
+    "ageRange": "1–6 lat",
+    "ageMin": 1,
+    "ageMax": 6,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1566454725588-b92fe3dd96f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "plac-zabaw",
+    "address": "ul. Świdnicka 38, 50-068 Wrocław",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Natalia F.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 35–50 zł/dziecko (2h), Dorosły opiekun: gratis"
+  },
+  {
+    "id": 8,
+    "latitude": 51.0934,
+    "longitude": 16.9955,
+    "title": "Aquapark Wrocław – baseny i zjeżdżalnie",
+    "slug": "aquapark-wroclaw-baseny-i-zjezdzalnie",
+    "location": "Wrocław, Fabryczna",
+    "city": "wroclaw",
+    "rating": 4.5,
+    "reviewCount": 389,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 90,
+    "imageUrl": "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Borowska 99, 50-558 Wrocław",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet: 45–75 zł/os. w zależności od strefy i czasu"
+  },
+  {
+    "id": 15,
+    "latitude": 51.123,
+    "longitude": 17.0452,
+    "title": "Muzeum Zabawek i Zabawy",
+    "slug": "muzeum-zabawek-i-zabawy",
+    "location": "Wrocław, Ostrów Tumski",
+    "city": "wroclaw",
+    "rating": 4.6,
+    "reviewCount": 187,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1558060370-d644479cb6f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Katedralna 8, 50-328 Wrocław",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 15 zł, Ulgowy: 10 zł"
+  },
+  {
+    "id": 46,
+    "latitude": 51.0985,
+    "longitude": 17.0728,
+    "title": "Zoo Wrocław – największe w Polsce",
+    "slug": "zoo-wroclaw-najwieksze-w-polsce",
+    "location": "Wrocław, Biskupin",
+    "city": "wroclaw",
+    "rating": 4.8,
+    "reviewCount": 567,
+    "ageRange": "2–14 lat",
+    "ageMin": 2,
+    "ageMax": 14,
+    "matchPercentage": 95,
+    "imageUrl": "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Wróblewskiego 1-5, 51-618 Wrocław",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "website": "https://zoo.wroclaw.pl",
+    "reviews": [
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Dorośli: 50 zł, Dzieci 3-14: 30 zł, do 3 lat gratis"
+  },
+  {
+    "id": 47,
+    "latitude": 51.1038,
+    "longitude": 17.042,
+    "title": "Hydropolis – Centrum Wiedzy o Wodzie",
+    "slug": "hydropolis-centrum-wiedzy-o-wodzie",
+    "location": "Wrocław, Śródmieście",
+    "city": "wroclaw",
+    "rating": 4.7,
+    "reviewCount": 312,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 84,
+    "imageUrl": "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Na Grobli 17, 50-421 Wrocław",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "website": "https://hydropolis.wroc.pl",
+    "reviews": [
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 27 zł, Ulgowy: 18 zł, Rodzinny: 70 zł"
+  },
+  {
+    "id": 48,
+    "latitude": 51.1147,
+    "longitude": 17.0288,
+    "title": "Kolejkowo – makiety kolejowe",
+    "slug": "kolejkowo-makiety-kolejowe",
+    "location": "Wrocław, Stare Miasto",
+    "city": "wroclaw",
+    "rating": 4.6,
+    "reviewCount": 234,
+    "ageRange": "3–12 lat",
+    "ageMin": 3,
+    "ageMax": 12,
+    "matchPercentage": 81,
+    "imageUrl": "https://images.unsplash.com/photo-1527190497250-85e3a7d39cb1?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Świdnicka 44, 50-024 Wrocław",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 25 zł, Ulgowy: 18 zł, Rodzinny: 65 zł"
+  },
+  {
+    "id": 49,
+    "latitude": 51.103,
+    "longitude": 17.0381,
+    "title": "Park Szczytnicki – japoński ogród",
+    "slug": "park-szczytnicki-japonski-ogrod",
+    "location": "Wrocław, Śródmieście",
+    "city": "wroclaw",
+    "rating": 4.7,
+    "reviewCount": 378,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 82,
+    "imageUrl": "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "Park Szczytnicki, 51-631 Wrocław",
+    "openingHours": "Codziennie: 6:00–21:00",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Natalia F.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 50,
+    "latitude": 51.0929,
+    "longitude": 17.0355,
+    "title": "Sky Tower – punkt widokowy",
+    "slug": "sky-tower-punkt-widokowy",
+    "location": "Wrocław, Krzyki",
+    "city": "wroclaw",
+    "rating": 4.4,
+    "reviewCount": 289,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 73,
+    "imageUrl": "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Powstańców Śląskich 95, 53-332 Wrocław",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "accessible",
+      "toilets",
+      "parking"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 18 zł/os., Dzieci do 6 lat: gratis"
+  },
+  {
+    "id": 51,
+    "latitude": 51.1025,
+    "longitude": 17.0058,
+    "title": "Park trampolin Jump City",
+    "slug": "park-trampolin-jump-city",
+    "location": "Wrocław, Fabryczna",
+    "city": "wroclaw",
+    "rating": 4.5,
+    "reviewCount": 267,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 87,
+    "imageUrl": "https://images.unsplash.com/photo-1630420597913-b7c81183d3f6?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Braniborska 14, 53-680 Wrocław",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–60 zł/os., Skarpetki: 5 zł"
+  },
+  {
+    "id": 52,
+    "latitude": 51.1022,
+    "longitude": 17.0435,
+    "title": "Hala Stulecia – spacer i fontanna",
+    "slug": "hala-stulecia-spacer-i-fontanna",
+    "location": "Wrocław, Śródmieście",
+    "city": "wroclaw",
+    "rating": 4.5,
+    "reviewCount": 345,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 78,
+    "imageUrl": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Wystawowa 1, 51-618 Wrocław",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "public-transport",
+      "toilets",
+      "seating",
+      "shade",
+      "stroller"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 53,
+    "latitude": 51.0879,
+    "longitude": 17.0356,
+    "title": "Warsztaty naukowe Eksperymentarium",
+    "slug": "warsztaty-naukowe-eksperymentarium",
+    "location": "Wrocław, Krzyki",
+    "city": "wroclaw",
+    "rating": 4.7,
+    "reviewCount": 145,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 80,
+    "imageUrl": "https://images.unsplash.com/photo-1567593810070-7a3d471af022?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Grabiszyńska 163, 53-439 Wrocław",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty: 35–55 zł/dziecko (1.5h)"
+  },
+  {
+    "id": 54,
+    "latitude": 51.1063,
+    "longitude": 17.0323,
+    "title": "Kino Nowe Horyzonty dla dzieci",
+    "slug": "kino-nowe-horyzonty-dla-dzieci",
+    "location": "Wrocław, Stare Miasto",
+    "city": "wroclaw",
+    "rating": 4.6,
+    "reviewCount": 178,
+    "ageRange": "4–12 lat",
+    "ageMin": 4,
+    "ageMax": 12,
+    "matchPercentage": 74,
+    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Kazimierza Wielkiego 19a, 50-077 Wrocław",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 15–22 zł w zależności od seansu"
+  },
+  {
+    "id": 55,
+    "latitude": 51.0988,
+    "longitude": 17.079,
+    "title": "Plac zabaw Wzgórze Partyzantów",
+    "slug": "plac-zabaw-wzgorze-partyzantow",
+    "location": "Wrocław, Biskupin",
+    "city": "wroclaw",
+    "rating": 4.4,
+    "reviewCount": 234,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1575783970733-1aaedde1db74?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "plac-zabaw",
+    "address": "ul. Paderewskiego 35, 51-612 Wrocław",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Natalia F.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 56,
+    "latitude": 51.0843,
+    "longitude": 17.0423,
+    "title": "Warsztaty kulinarne MiniChef",
+    "slug": "warsztaty-kulinarne-minichef",
+    "location": "Wrocław, Krzyki",
+    "city": "wroclaw",
+    "rating": 4.8,
+    "reviewCount": 98,
+    "ageRange": "5–12 lat",
+    "ageMin": 5,
+    "ageMax": 12,
+    "matchPercentage": 83,
+    "imageUrl": "https://images.unsplash.com/photo-1507048331197-7d4ac70811cf?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Sudecka 100, 53-129 Wrocław",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Warsztaty: 75–100 zł/dziecko (2h z produktami)"
+  },
+  {
+    "id": 57,
+    "latitude": 51.151,
+    "longitude": 17.0612,
+    "title": "Ścianka wspinaczkowa Climb Up",
+    "slug": "scianka-wspinaczkowa-climb-up",
+    "location": "Wrocław, Psie Pole",
+    "city": "wroclaw",
+    "rating": 4.5,
+    "reviewCount": 134,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 77,
+    "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Bierutowska 63, 51-317 Wrocław",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–60 zł/os., Wypożyczenie sprzętu: 15 zł"
+  },
+  {
+    "id": 58,
+    "latitude": 51.11,
+    "longitude": 17.0249,
+    "title": "Teatr Capitol – musicale dla rodzin",
+    "slug": "teatr-capitol-musicale-dla-rodzin",
+    "location": "Wrocław, Stare Miasto",
+    "city": "wroclaw",
+    "rating": 4.7,
+    "reviewCount": 189,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 76,
+    "imageUrl": "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Piłsudskiego 67, 50-019 Wrocław",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilety: 30–60 zł w zależności od spektaklu"
+  },
+  {
+    "id": 59,
+    "latitude": 51.0916,
+    "longitude": 17.0409,
+    "title": "Mini Zoo w Parku Południowym",
+    "slug": "mini-zoo-w-parku-poludniowym",
+    "location": "Wrocław, Krzyki",
+    "city": "wroclaw",
+    "rating": 4.3,
+    "reviewCount": 256,
+    "ageRange": "1–8 lat",
+    "ageMin": 1,
+    "ageMax": 8,
+    "matchPercentage": 88,
+    "imageUrl": "https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Świdnicka 12a, 50-067 Wrocław",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "reviews": [
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Wstęp: 12 zł/os., Dzieci do 3 lat: gratis"
+  },
+  {
+    "id": 60,
+    "latitude": 51.0918,
+    "longitude": 17.0022,
+    "title": "Laser Tag Arena",
+    "slug": "laser-tag-arena",
+    "location": "Wrocław, Fabryczna",
+    "city": "wroclaw",
+    "rating": 4.6,
+    "reviewCount": 167,
+    "ageRange": "7–14 lat",
+    "ageMin": 7,
+    "ageMax": 14,
+    "matchPercentage": 79,
+    "imageUrl": "https://images.unsplash.com/photo-1558008258-3256797b43f3?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Legnicka 58, 54-204 Wrocław",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Gra: 30–45 zł/os. (30 min)"
+  },
+  {
+    "id": 5,
+    "latitude": 54.4117,
+    "longitude": 18.5544,
+    "title": "Warsztaty ceramiczne dla dzieci",
+    "slug": "warsztaty-ceramiczne-dla-dzieci",
+    "location": "Gdańsk, Oliwa",
+    "city": "gdansk",
+    "rating": 4.8,
+    "reviewCount": 156,
+    "ageRange": "5–12 lat",
+    "ageMin": 5,
+    "ageMax": 12,
+    "matchPercentage": 78,
+    "imageUrl": "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Opacka 12, 80-338 Gdańsk",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty: 45–65 zł/dziecko (1.5h z materiałami)"
+  },
+  {
+    "id": 11,
+    "latitude": 54.3992,
+    "longitude": 18.5906,
+    "title": "Trampoliny Jump World",
+    "slug": "trampoliny-jump-world",
+    "location": "Gdańsk, Przymorze",
+    "city": "gdansk",
+    "rating": 4.6,
+    "reviewCount": 312,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 84,
+    "imageUrl": "https://images.unsplash.com/photo-1630420597913-b7c81183d3f6?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Kołobrzeska 41, 80-391 Gdańsk",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–55 zł/os., Skarpetki: 5 zł"
+  },
+  {
+    "id": 16,
+    "latitude": 54.4095,
+    "longitude": 18.6005,
+    "title": "Plac zabaw wodny Fala",
+    "slug": "plac-zabaw-wodny-fala",
+    "location": "Gdańsk, Brzeźno",
+    "city": "gdansk",
+    "rating": 4.4,
+    "reviewCount": 276,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 83,
+    "imageUrl": "https://images.unsplash.com/photo-1576610616656-d3aa5d1f4534?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "plac-zabaw",
+    "address": "ul. Jantarowa 2, 80-288 Gdańsk",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 61,
+    "latitude": 54.402,
+    "longitude": 18.5572,
+    "title": "Zoo Gdańsk Oliwa",
+    "slug": "zoo-gdansk-oliwa",
+    "location": "Gdańsk, Oliwa",
+    "city": "gdansk",
+    "rating": 4.7,
+    "reviewCount": 423,
+    "ageRange": "2–12 lat",
+    "ageMin": 2,
+    "ageMax": 12,
+    "matchPercentage": 93,
+    "imageUrl": "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Karwieńska 3, 80-328 Gdańsk",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Dorośli: 20 zł, Dzieci 3-14: 12 zł, do 3 lat gratis"
+  },
+  {
+    "id": 62,
+    "latitude": 54.3473,
+    "longitude": 18.6569,
+    "title": "Muzeum II Wojny Światowej",
+    "slug": "muzeum-ii-wojny-swiatowej",
+    "location": "Gdańsk, Śródmieście",
+    "city": "gdansk",
+    "rating": 4.8,
+    "reviewCount": 567,
+    "ageRange": "10–14 lat",
+    "ageMin": 10,
+    "ageMax": 14,
+    "matchPercentage": 69,
+    "imageUrl": "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "pl. Władysława Bartoszewskiego 1, 80-862 Gdańsk",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "website": "https://muzeum1939.pl",
+    "reviews": [
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 23 zł, Ulgowy: 14 zł, Wt: wstęp wolny"
+  },
+  {
+    "id": 63,
+    "latitude": 54.3641,
+    "longitude": 18.6473,
+    "title": "Centrum Hewelianum – nauka przez zabawę",
+    "slug": "centrum-hewelianum-nauka-przez-zabawe",
+    "location": "Gdańsk, Góra Gradowa",
+    "city": "gdansk",
+    "rating": 4.7,
+    "reviewCount": 289,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Gradowa 6, 80-802 Gdańsk",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 20 zł, Ulgowy: 14 zł, Rodzinny: 50 zł"
+  },
+  {
+    "id": 64,
+    "latitude": 54.3669,
+    "longitude": 18.7029,
+    "title": "Plaża Stogi – zabawa na piasku",
+    "slug": "plaza-stogi-zabawa-na-piasku",
+    "location": "Gdańsk, Stogi",
+    "city": "gdansk",
+    "rating": 4.5,
+    "reviewCount": 456,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 91,
+    "imageUrl": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Nowotna 1, 80-656 Gdańsk",
+    "openingHours": "Dostępne całodobowo (sezon kąpielowy: czerwiec–wrzesień)",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "food-onsite",
+      "seating",
+      "shade"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 65,
+    "latitude": 54.354,
+    "longitude": 18.6602,
+    "title": "Żuraw Gdański – Muzeum Morskie",
+    "slug": "zuraw-gdanski-muzeum-morskie",
+    "location": "Gdańsk, Główne Miasto",
+    "city": "gdansk",
+    "rating": 4.5,
+    "reviewCount": 234,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 75,
+    "imageUrl": "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Szeroka 67/68, 80-835 Gdańsk",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 18 zł, Ulgowy: 12 zł"
+  },
+  {
+    "id": 66,
+    "latitude": 54.4369,
+    "longitude": 18.5599,
+    "title": "Aquapark Sopot",
+    "slug": "aquapark-sopot",
+    "location": "Sopot, okolice Gdańska",
+    "city": "gdansk",
+    "rating": 4.6,
+    "reviewCount": 378,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 89,
+    "imageUrl": "https://images.unsplash.com/photo-1530549387789-4c1017266635?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Zamkowa Góra 3-5, 81-713 Sopot",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet: 50–80 zł/os. w zależności od strefy i czasu"
+  },
+  {
+    "id": 67,
+    "latitude": 54.4031,
+    "longitude": 18.5642,
+    "title": "Park Oliwski – spacer i zabawa",
+    "slug": "park-oliwski-spacer-i-zabawa",
+    "location": "Gdańsk, Oliwa",
+    "city": "gdansk",
+    "rating": 4.6,
+    "reviewCount": 345,
+    "ageRange": "0–12 lat",
+    "ageMin": 0,
+    "ageMax": 12,
+    "matchPercentage": 84,
+    "imageUrl": "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Opacka 1, 80-338 Gdańsk",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 68,
+    "latitude": 54.3863,
+    "longitude": 18.5891,
+    "title": "Sala zabaw Magiczny Zamek",
+    "slug": "sala-zabaw-magiczny-zamek",
+    "location": "Gdańsk, Wrzeszcz",
+    "city": "gdansk",
+    "rating": 4.5,
+    "reviewCount": 198,
+    "ageRange": "1–7 lat",
+    "ageMin": 1,
+    "ageMax": 7,
+    "matchPercentage": 87,
+    "imageUrl": "https://images.unsplash.com/photo-1566454725588-b92fe3dd96f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "plac-zabaw",
+    "address": "ul. Grunwaldzka 82, 80-244 Gdańsk",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 35–50 zł/dziecko (2h), Dorosły opiekun: gratis"
+  },
+  {
+    "id": 69,
+    "latitude": 54.3476,
+    "longitude": 18.6538,
+    "title": "Muzeum Bursztynu",
+    "slug": "muzeum-bursztynu",
+    "location": "Gdańsk, Główne Miasto",
+    "city": "gdansk",
+    "rating": 4.4,
+    "reviewCount": 267,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 71,
+    "imageUrl": "https://images.unsplash.com/photo-1558424871-c0cc9e5e5b75?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Targ Węglowy 26, 80-836 Gdańsk",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 15 zł, Ulgowy: 10 zł"
+  },
+  {
+    "id": 70,
+    "latitude": 54.4387,
+    "longitude": 18.5637,
+    "title": "Molo w Sopocie – spacer nad morzem",
+    "slug": "molo-w-sopocie-spacer-nad-morzem",
+    "location": "Sopot, okolice Gdańska",
+    "city": "gdansk",
+    "rating": 4.7,
+    "reviewCount": 534,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 80,
+    "imageUrl": "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "al. Wojska Polskiego 11, 81-769 Sopot",
+    "openingHours": "Codziennie: 6:00–23:00 (bilet wstępu)",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "food-onsite",
+      "seating",
+      "shade"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 71,
+    "latitude": 54.3808,
+    "longitude": 18.5904,
+    "title": "Warsztaty malarskie Kolorowy Pędzel",
+    "slug": "warsztaty-malarskie-kolorowy-pedzel",
+    "location": "Gdańsk, Wrzeszcz",
+    "city": "gdansk",
+    "rating": 4.6,
+    "reviewCount": 89,
+    "ageRange": "4–12 lat",
+    "ageMin": 4,
+    "ageMax": 12,
+    "matchPercentage": 82,
+    "imageUrl": "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Wajdeloty 17, 80-437 Gdańsk",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty: 40–60 zł/dziecko (1.5h z materiałami)"
+  },
+  {
+    "id": 72,
+    "latitude": 54.4106,
+    "longitude": 18.5637,
+    "title": "Tor saneczkowy Góra Pachołek",
+    "slug": "tor-saneczkowy-gora-pacholek",
+    "location": "Gdańsk, Oliwa",
+    "city": "gdansk",
+    "rating": 4.4,
+    "reviewCount": 156,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 78,
+    "imageUrl": "https://images.unsplash.com/photo-1551524559-8af4e6624178?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Spacerowa 1, 80-330 Gdańsk",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 73,
+    "latitude": 54.3772,
+    "longitude": 18.592,
+    "title": "Teatr Miniatura – bajki dla dzieci",
+    "slug": "teatr-miniatura-bajki-dla-dzieci",
+    "location": "Gdańsk, Wrzeszcz",
+    "city": "gdansk",
+    "rating": 4.7,
+    "reviewCount": 178,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 83,
+    "imageUrl": "https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Grunwaldzka 16, 80-236 Gdańsk",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilety: 20–35 zł w zależności od spektaklu"
+  },
+  {
+    "id": 74,
+    "latitude": 54.3559,
+    "longitude": 18.6554,
+    "title": "Rejs statkiem po Motławie",
+    "slug": "rejs-statkiem-po-motlawie",
+    "location": "Gdańsk, Główne Miasto",
+    "city": "gdansk",
+    "rating": 4.5,
+    "reviewCount": 234,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 79,
+    "imageUrl": "https://images.unsplash.com/photo-1520871391690-c1e7bb527f3d?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "inne",
+    "address": "ul. Długie Pobrzeże 1, 80-888 Gdańsk",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–1.5 godziny",
+    "experiencePoints": [
+      "Rejs widokowy po historycznej Motławie",
+      "Widok na Żuraw, Wyspę Spichrzów i Stare Miasto z wody",
+      "Rejsy trwają ok. 45 minut z komentarzem przewodnika"
+    ],
+    "reviews": [
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "toilets",
+      "public-transport",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Rejs: 25–40 zł/os., Dzieci do 4 lat: gratis"
+  },
+  {
+    "id": 75,
+    "latitude": 54.394,
+    "longitude": 18.5903,
+    "title": "Bowling City Family",
+    "slug": "bowling-city-family",
+    "location": "Gdańsk, Przymorze",
+    "city": "gdansk",
+    "rating": 4.3,
+    "reviewCount": 145,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 74,
+    "imageUrl": "https://images.unsplash.com/photo-1545232979-8bf68ee9b1af?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Kołobrzeska 41, 80-391 Gdańsk",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Joanna P.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Gra: 15–25 zł/os."
+  },
+  {
+    "id": 6,
+    "latitude": 52.4139,
+    "longitude": 16.8956,
+    "title": "Park linowy Adventure Park",
+    "slug": "park-linowy-adventure-park",
+    "location": "Poznań, Jeżyce",
+    "city": "poznan",
+    "rating": 4.6,
+    "reviewCount": 203,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 82,
+    "imageUrl": "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Kościelna 37, 60-537 Poznań",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Agnieszka Z.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Paweł B.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–70 zł/os. w zależności od trasy"
+  },
+  {
+    "id": 12,
+    "latitude": 52.4054,
+    "longitude": 16.9264,
+    "title": "Planetarium i Obserwatorium",
+    "slug": "planetarium-i-obserwatorium",
+    "location": "Poznań, Śródmieście",
+    "city": "poznan",
+    "rating": 4.7,
+    "reviewCount": 198,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 79,
+    "imageUrl": "https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "ul. Fredry 5, 61-701 Poznań",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Kamil J.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "accessible",
+      "toilets",
+      "parking"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 18 zł, Ulgowy: 12 zł"
+  },
+  {
+    "id": 17,
+    "latitude": 52.4017,
+    "longitude": 16.9255,
+    "title": "Escape Room dla dzieci Mystery Kids",
+    "slug": "escape-room-dla-dzieci-mystery-kids",
+    "location": "Poznań, Centrum",
+    "city": "poznan",
+    "rating": 4.8,
+    "reviewCount": 98,
+    "ageRange": "7–14 lat",
+    "ageMin": 7,
+    "ageMax": 14,
+    "matchPercentage": 74,
+    "imageUrl": "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Logiczne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Św. Marcin 66/72, 61-807 Poznań",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "parking"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Pokój: 50–80 zł/os. (grupa 2-5 osób)"
+  },
+  {
+    "id": 76,
+    "latitude": 52.4131,
+    "longitude": 16.9021,
+    "title": "Stare Zoo Poznań",
+    "slug": "stare-zoo-poznan",
+    "location": "Poznań, Jeżyce",
+    "city": "poznan",
+    "rating": 4.6,
+    "reviewCount": 345,
+    "ageRange": "2–12 lat",
+    "ageMin": 2,
+    "ageMax": 12,
+    "matchPercentage": 91,
+    "imageUrl": "https://images.unsplash.com/photo-1474511320723-9a56873571b7?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Zwierzyniecka 19, 60-814 Poznań",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "reviews": [
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Dorośli: 15 zł, Dzieci 3-14: 10 zł, do 3 lat gratis"
+  },
+  {
+    "id": 77,
+    "latitude": 52.3907,
+    "longitude": 16.9665,
+    "title": "Nowe Zoo – Ogród Zoologiczny",
+    "slug": "nowe-zoo-ogrod-zoologiczny",
+    "location": "Poznań, Nowe Miasto",
+    "city": "poznan",
+    "rating": 4.7,
+    "reviewCount": 412,
+    "ageRange": "2–14 lat",
+    "ageMin": 2,
+    "ageMax": 14,
+    "matchPercentage": 94,
+    "imageUrl": "https://images.unsplash.com/photo-1551969014-7d2c4cddf0b6?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Edukacyjne"
+    ],
+    "isIndoor": false,
+    "type": "zoo",
+    "address": "ul. Krańcowa 81, 61-048 Poznań",
+    "openingHours": "Pon–Nd: 9:00–18:00 (sezon letni), 9:00–16:00 (sezon zimowy)",
+    "estimatedTime": "2–4 godziny",
+    "experiencePoints": [
+      "Dzieci obserwują zwierzęta z różnych kontynentów w naturalnych wybiegach",
+      "Dostępne tablice edukacyjne i quizy przyrodnicze przy każdym wybiegu",
+      "Strefa malucha z łagodnymi zwierzętami do głaskania",
+      "Na terenie znajdują się place zabaw i strefy piknikowe"
+    ],
+    "website": "https://zoo.poznan.pl",
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Dzieci były zachwycone! Zwierzęta blisko, dużo do zobaczenia. Wróciliśmy po 3 godzinach zmęczeni, ale szczęśliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Bardzo fajne miejsce na rodzinny spacer. Dużo cienia i ławek do odpoczynku. Polecam zabrać prowiant.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Świetna atrakcja, choć w weekendy bywa tłoczno. Warto przyjść w tygodniu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "parking",
+      "toilets",
+      "food-onsite",
+      "shade",
+      "playground",
+      "fenced",
+      "seating"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Dorośli: 30 zł, Dzieci 3-14: 18 zł, do 3 lat gratis"
+  },
+  {
+    "id": 78,
+    "latitude": 52.4078,
+    "longitude": 16.9631,
+    "title": "Termy Maltańskie",
+    "slug": "termy-maltanskie",
+    "location": "Poznań, Malta",
+    "city": "poznan",
+    "rating": 4.6,
+    "reviewCount": 389,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 88,
+    "imageUrl": "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Termalna 1, 61-028 Poznań",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "website": "https://www.termymaltanskie.com.pl",
+    "reviews": [
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "accessible",
+      "fenced",
+      "kids-menu"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Bilet: 55–85 zł/os. w zależności od pakietu"
+  },
+  {
+    "id": 79,
+    "latitude": 52.4043,
+    "longitude": 16.9367,
+    "title": "Muzeum Rogalowe – wypieki i zabawa",
+    "slug": "muzeum-rogalowe-wypieki-i-zabawa",
+    "location": "Poznań, Stary Rynek",
+    "city": "poznan",
+    "rating": 4.8,
+    "reviewCount": 234,
+    "ageRange": "4–12 lat",
+    "ageMin": 4,
+    "ageMax": 12,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1551024601-bec78aea704b?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Kreatywne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Klasztorna 23, 61-779 Poznań",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "website": "https://rogalowemuzeum.pl",
+    "reviews": [
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 5,
+        "text": "Doskonała organizacja, małe grupy. Instruktor poświęcał uwagę każdemu dziecku.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Kreatywna zabawa i edukacja w jednym. Na pewno wrócimy na kolejne zajęcia.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Warsztaty z wypiekiem rogala: 25 zł/os."
+  },
+  {
+    "id": 80,
+    "latitude": 52.4254,
+    "longitude": 16.9191,
+    "title": "Park Cytadela – piknik i zabawa",
+    "slug": "park-cytadela-piknik-i-zabawa",
+    "location": "Poznań, Winogrady",
+    "city": "poznan",
+    "rating": 4.5,
+    "reviewCount": 456,
+    "ageRange": "0–14 lat",
+    "ageMin": 0,
+    "ageMax": 14,
+    "matchPercentage": 85,
+    "imageUrl": "https://images.unsplash.com/photo-1519331379826-f10be5486c6f?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "al. Armii Poznań 1, 61-693 Poznań",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Magda T.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 81,
+    "latitude": 52.409,
+    "longitude": 16.9711,
+    "title": "Kolejka Parkowa Maltanka",
+    "slug": "kolejka-parkowa-maltanka",
+    "location": "Poznań, Malta",
+    "city": "poznan",
+    "rating": 4.6,
+    "reviewCount": 289,
+    "ageRange": "2–10 lat",
+    "ageMin": 2,
+    "ageMax": 10,
+    "matchPercentage": 87,
+    "imageUrl": "https://images.unsplash.com/photo-1527190497250-85e3a7d39cb1?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "inne",
+    "address": "ul. Jana Pawła II 6, 61-139 Poznań",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Robert G.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "seating",
+      "shade",
+      "picnic-area",
+      "toilets",
+      "public-transport"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Przejazd: 12 zł/os., Dzieci do 3 lat: gratis"
+  },
+  {
+    "id": 82,
+    "latitude": 52.4056,
+    "longitude": 16.9346,
+    "title": "Stary Browar – kino familijne",
+    "slug": "stary-browar-kino-familijne",
+    "location": "Poznań, Centrum",
+    "city": "poznan",
+    "rating": 4.4,
+    "reviewCount": 178,
+    "ageRange": "4–14 lat",
+    "ageMin": 4,
+    "ageMax": 14,
+    "matchPercentage": 72,
+    "imageUrl": "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Półwiejska 42, 61-888 Poznań",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Łukasz C.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet: 15–25 zł w zależności od seansu"
+  },
+  {
+    "id": 83,
+    "latitude": 52.4069,
+    "longitude": 16.965,
+    "title": "Tor kajakowy Malta",
+    "slug": "tor-kajakowy-malta",
+    "location": "Poznań, Malta",
+    "city": "poznan",
+    "rating": 4.5,
+    "reviewCount": 167,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 77,
+    "imageUrl": "https://images.unsplash.com/photo-1520871391690-c1e7bb527f3d?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Aktywne"
+    ],
+    "isIndoor": false,
+    "type": "sport",
+    "address": "ul. Wiankowa 3, 61-131 Poznań",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Ewa S.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Wypożyczenie kajaka: 30–50 zł/h"
+  },
+  {
+    "id": 84,
+    "latitude": 52.3996,
+    "longitude": 16.9289,
+    "title": "Muzeum Narodowe – warsztaty dla dzieci",
+    "slug": "muzeum-narodowe-warsztaty-dla-dzieci",
+    "location": "Poznań, Centrum",
+    "city": "poznan",
+    "rating": 4.5,
+    "reviewCount": 145,
+    "ageRange": "5–14 lat",
+    "ageMin": 5,
+    "ageMax": 14,
+    "matchPercentage": 73,
+    "imageUrl": "https://images.unsplash.com/photo-1566127444979-b3d2b654e3d7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "muzeum",
+    "address": "al. Marcinkowskiego 9, 61-745 Poznań",
+    "openingHours": "Wt–Nd: 10:00–18:00, Pon: nieczynne",
+    "estimatedTime": "1.5–3 godziny",
+    "experiencePoints": [
+      "Interaktywne wystawy angażujące wszystkie zmysły",
+      "Warsztaty edukacyjne dostosowane do różnych grup wiekowych",
+      "Przewodniki i materiały przygotowane specjalnie dla rodzin z dziećmi",
+      "Strefy odpoczynku dla rodziców z widokiem na ekspozycję"
+    ],
+    "reviews": [
+      {
+        "author": "Piotr L.",
+        "rating": 5,
+        "text": "Interaktywne wystawy naprawdę angażują dzieci. Mój 7-latek nie chciał wychodzić!",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kasia D.",
+        "rating": 5,
+        "text": "Bardzo dobrze przygotowane dla rodzin. Są przewodniki dla dzieci i warsztaty w weekendy.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Bartek N.",
+        "rating": 4,
+        "text": "Ciekawe eksponaty, ale młodsze dzieci (poniżej 5 lat) mogą się nudzić. Dla starszych super.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 15 zł, Ulgowy: 10 zł, Sob: wstęp wolny"
+  },
+  {
+    "id": 85,
+    "latitude": 52.3938,
+    "longitude": 16.8895,
+    "title": "Sala zabaw Fikoland",
+    "slug": "sala-zabaw-fikoland",
+    "location": "Poznań, Grunwald",
+    "city": "poznan",
+    "rating": 4.4,
+    "reviewCount": 223,
+    "ageRange": "1–8 lat",
+    "ageMin": 1,
+    "ageMax": 8,
+    "matchPercentage": 86,
+    "imageUrl": "https://images.unsplash.com/photo-1566454725588-b92fe3dd96f7?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "plac-zabaw",
+    "address": "ul. Grunwaldzka 182, 60-166 Poznań",
+    "openingHours": "Codziennie: 8:00–20:00",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Bezpieczna nawierzchnia amortyzująca upadki",
+      "Oddzielne strefy dla maluchów i starszych dzieci",
+      "Regularne kontrole bezpieczeństwa i czystości",
+      "Ławki i zadaszenia dla opiekunów"
+    ],
+    "reviews": [
+      {
+        "author": "Joanna P.",
+        "rating": 5,
+        "text": "Bezpieczny, czysty i dobrze utrzymany plac zabaw. Dzieci mogą się tu bawić godzinami.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Michał R.",
+        "rating": 4,
+        "text": "Fajne urządzenia dla różnych grup wiekowych. Jest też strefa dla maluszków.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Agnieszka Z.",
+        "rating": 4,
+        "text": "Spędziliśmy tu całe popołudnie. Jedyny minus — brak toalety w pobliżu.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 30–50 zł/dziecko (2h), Dorosły opiekun: gratis"
+  },
+  {
+    "id": 86,
+    "latitude": 52.3937,
+    "longitude": 16.9328,
+    "title": "Warsztaty programowania CodeKids",
+    "slug": "warsztaty-programowania-codekids",
+    "location": "Poznań, Wilda",
+    "city": "poznan",
+    "rating": 4.7,
+    "reviewCount": 87,
+    "ageRange": "7–14 lat",
+    "ageMin": 7,
+    "ageMax": 14,
+    "matchPercentage": 75,
+    "imageUrl": "https://images.unsplash.com/photo-1535378620166-273708d44e4c?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "warsztaty",
+    "address": "ul. Wierzbięcice 18, 61-568 Poznań",
+    "openingHours": "Wg harmonogramu zajęć — sprawdź na stronie",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Zajęcia prowadzone przez doświadczonych instruktorów",
+      "Wszystkie materiały i narzędzia w cenie warsztatu",
+      "Małe grupy zapewniające indywidualną uwagę",
+      "Dzieci zabierają swoje prace do domu"
+    ],
+    "reviews": [
+      {
+        "author": "Paweł B.",
+        "rating": 5,
+        "text": "Warsztaty prowadzone z pasją. Dzieci wróciły dumne ze swoich prac!",
+        "date": "2 tygodnie temu"
+      }
+    ],
+    "amenities": [
+      "public-transport",
+      "toilets",
+      "accessible",
+      "wifi"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Kurs: 60–100 zł/dziecko za zajęcia"
+  },
+  {
+    "id": 87,
+    "latitude": 52.4427,
+    "longitude": 16.8986,
+    "title": "Park Sołacki – spacer i plac zabaw",
+    "slug": "park-solacki-spacer-i-plac-zabaw",
+    "location": "Poznań, Sołacz",
+    "city": "poznan",
+    "rating": 4.5,
+    "reviewCount": 312,
+    "ageRange": "0–10 lat",
+    "ageMin": 0,
+    "ageMax": 10,
+    "matchPercentage": 84,
+    "imageUrl": "https://images.unsplash.com/photo-1564429238535-9ecad21ab67c?w=800&auto=format&fit=crop",
+    "tags": [
+      "Na zewnątrz",
+      "Spokojne"
+    ],
+    "isIndoor": false,
+    "type": "park",
+    "address": "ul. Sołacka 1, 60-163 Poznań",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Magda T.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Kamil J.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Natalia F.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "stroller",
+      "fenced",
+      "shade",
+      "seating",
+      "playground",
+      "toilets",
+      "changing-table"
+    ],
+    "priceLevel": 0
+  },
+  {
+    "id": 88,
+    "latitude": 52.3884,
+    "longitude": 16.9274,
+    "title": "Ścianka wspinaczkowa Rock Zone",
+    "slug": "scianka-wspinaczkowa-rock-zone",
+    "location": "Poznań, Wilda",
+    "city": "poznan",
+    "rating": 4.6,
+    "reviewCount": 134,
+    "ageRange": "6–14 lat",
+    "ageMin": 6,
+    "ageMax": 14,
+    "matchPercentage": 78,
+    "imageUrl": "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Aktywne"
+    ],
+    "isIndoor": true,
+    "type": "sport",
+    "address": "ul. Wierzbięcice 34, 61-569 Poznań",
+    "openingHours": "Pon–Pt: 10:00–21:00, Sob–Nd: 9:00–20:00",
+    "estimatedTime": "1.5–2.5 godziny",
+    "experiencePoints": [
+      "Profesjonalny sprzęt dostosowany do dzieci",
+      "Wykwalifikowani instruktorzy dbający o bezpieczeństwo",
+      "Zajęcia w grupach wiekowych dla optymalnej zabawy",
+      "Szatnie i zaplecze sanitarne dla rodzin"
+    ],
+    "reviews": [
+      {
+        "author": "Robert G.",
+        "rating": 5,
+        "text": "Dzieci się świetnie bawiły! Instruktorzy bardzo pomocni i cierpliwi.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Aleksandra H.",
+        "rating": 4,
+        "text": "Profesjonalne podejście do bezpieczeństwa. Sprzęt w dobrym stanie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Łukasz C.",
+        "rating": 5,
+        "text": "Świetna zabawa dla aktywnych dzieci. Warto zarezerwować termin wcześniej.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "parking",
+      "toilets",
+      "changing-table",
+      "food-onsite",
+      "fenced"
+    ],
+    "priceLevel": 2,
+    "priceNote": "Wejście: 40–55 zł/os., Wypożyczenie sprzętu: 15 zł"
+  },
+  {
+    "id": 89,
+    "latitude": 52.4118,
+    "longitude": 16.926,
+    "title": "Teatr Animacji – spektakle lalkowe",
+    "slug": "teatr-animacji-spektakle-lalkowe",
+    "location": "Poznań, Centrum",
+    "city": "poznan",
+    "rating": 4.7,
+    "reviewCount": 156,
+    "ageRange": "3–10 lat",
+    "ageMin": 3,
+    "ageMax": 10,
+    "matchPercentage": 81,
+    "imageUrl": "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Spokojne"
+    ],
+    "isIndoor": true,
+    "type": "inne",
+    "address": "ul. Niezłomnych 1E, 61-894 Poznań",
+    "openingHours": "Sprawdź godziny na stronie organizatora",
+    "estimatedTime": "1–2 godziny",
+    "experiencePoints": [
+      "Atrakcja dostosowana do różnych grup wiekowych",
+      "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
+      "Możliwość wspólnej zabawy całą rodziną"
+    ],
+    "reviews": [
+      {
+        "author": "Monika O.",
+        "rating": 4,
+        "text": "Miło spędzony czas z rodziną. Polecam jako alternatywę na deszczowy dzień.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Anna M.",
+        "rating": 4,
+        "text": "Fajne miejsce, dzieci dobrze się bawiły. Warto sprawdzić aktualne godziny na stronie.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Tomek K.",
+        "rating": 5,
+        "text": "Ciekawa atrakcja, zwłaszcza dla dzieci w wieku 5-10 lat. Spędziliśmy tu prawie 2 godziny.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "public-transport",
+      "changing-table",
+      "food-onsite"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilety: 20–35 zł w zależności od spektaklu"
+  },
+  {
+    "id": 90,
+    "latitude": 52.415,
+    "longitude": 16.8992,
+    "title": "Palmiarnia Poznańska",
+    "slug": "palmiarnia-poznanska",
+    "location": "Poznań, Jeżyce",
+    "city": "poznan",
+    "rating": 4.4,
+    "reviewCount": 267,
+    "ageRange": "3–14 lat",
+    "ageMin": 3,
+    "ageMax": 14,
+    "matchPercentage": 76,
+    "imageUrl": "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=800&auto=format&fit=crop",
+    "tags": [
+      "W pomieszczeniu",
+      "Edukacyjne"
+    ],
+    "isIndoor": true,
+    "type": "park",
+    "address": "ul. Matejki 18, 60-767 Poznań",
+    "openingHours": "Dostępne całodobowo",
+    "estimatedTime": "1–3 godziny",
+    "experiencePoints": [
+      "Malownicze ścieżki spacerowe wśród zieleni",
+      "Miejsca do odpoczynku z ławkami i altankami",
+      "Możliwość obserwowania przyrody i ptaków",
+      "Bezpieczne alejki do jazdy na rowerze i hulajnodze"
+    ],
+    "reviews": [
+      {
+        "author": "Ewa S.",
+        "rating": 5,
+        "text": "Piękne miejsce na rodzinny spacer. Mnóstwo zieleni i przestrzeni do biegania.",
+        "date": "2 tygodnie temu"
+      },
+      {
+        "author": "Marta W.",
+        "rating": 4,
+        "text": "Idealny na weekendowy piknik z dziećmi. Są place zabaw i ścieżki rowerowe.",
+        "date": "1 miesiąc temu"
+      },
+      {
+        "author": "Piotr L.",
+        "rating": 4,
+        "text": "Spokojne miejsce, dobre na spacer z wózkiem. Alejki szerokie i zadbane.",
+        "date": "2 miesiące temu"
+      }
+    ],
+    "amenities": [
+      "accessible",
+      "toilets",
+      "food-onsite",
+      "changing-table",
+      "public-transport",
+      "wifi"
+    ],
+    "priceLevel": 1,
+    "priceNote": "Bilet normalny: 12 zł, Ulgowy: 8 zł, Śr: wstęp wolny"
+  }
+]
