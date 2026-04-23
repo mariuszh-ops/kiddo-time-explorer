@@ -1,8 +1,7 @@
 import { Activity } from "./activities";
+import data from "./fallbackActivities.json";
 
-export const fallbackActivities: Activity[] = [
-  {
-    "id": 101,
+export const fallbackActivities: Activity[] = data as Activity[];
     "latitude": 52.2386,
     "longitude": 21.0531,
     "title": "Festiwal Bajek – spektakle plenerowe",
