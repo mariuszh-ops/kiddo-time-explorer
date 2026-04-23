@@ -39,14 +39,18 @@
       }
     ],
     "amenities": [
-      "accessible",
-      "toilets",
-      "public-transport",
-      "changing-table",
-      "food-onsite"
+      "toalety",
+      "jedzenie-na-miejscu",
+      "dostep-niepełnosprawni",
+      "przewijalnia"
     ],
     "priceLevel": 1,
-    "priceNote": "Bilet: 15–25 zł/os., dzieci do 3 lat gratis"
+    "priceNote": "Bilet: 15–25 zł/os., dzieci do 3 lat gratis",
+    "coordinates": {
+      "lat": 52.2386,
+      "lng": 21.0531
+    },
+    "description": "Magiczny festiwal teatralny w plenerze, gdzie dzieci oglądają bajki w wykonaniu aktorów. Spektakle odbywają się na polanie w Parku Skaryszewskim, a po przedstawieniach czekają warsztaty plastyczne."
   },
   {
     "id": 102,
@@ -88,13 +92,17 @@
       }
     ],
     "amenities": [
-      "public-transport",
-      "toilets",
-      "accessible",
+      "toalety",
+      "dostep-niepełnosprawni",
       "wifi"
     ],
     "priceLevel": 1,
-    "priceNote": "Udział: 30 zł/dziecko, rodzic gratis"
+    "priceNote": "Udział: 30 zł/dziecko, rodzic gratis",
+    "coordinates": {
+      "lat": 50.0611,
+      "lng": 19.9364
+    },
+    "description": "Kreatywne warsztaty wielkanocne w sercu Krakowa, podczas których dzieci tworzą ozdoby, malują pisanki i poznają tradycje świąteczne. Każde dziecko zabiera swoje prace do domu."
   },
   {
     "id": 103,
@@ -135,17 +143,21 @@
       }
     ],
     "amenities": [
-      "stroller",
       "parking",
-      "toilets",
-      "food-onsite",
-      "shade",
-      "playground",
-      "fenced",
-      "seating"
+      "plac-zabaw",
+      "jedzenie-na-miejscu",
+      "wozki-ok",
+      "toalety",
+      "cien-zadaszenie",
+      "ogrodzone"
     ],
     "priceLevel": 2,
-    "priceNote": "Bilet: 60 zł/os., dzieci 6-14: 40 zł"
+    "priceNote": "Bilet: 60 zł/os., dzieci 6-14: 40 zł",
+    "coordinates": {
+      "lat": 51.1059,
+      "lng": 17.0777
+    },
+    "description": "Niezapomniana przygoda nocnego zwiedzania wrocławskiego ZOO z latarkami. Dzieci obserwują zwierzęta aktywne po zmroku i słuchają opowieści przewodników o ich nocnych zwyczajach."
   },
   {
     "id": 104,

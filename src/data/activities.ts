@@ -35,6 +35,8 @@ export interface Activity {
   googlePlaceId?: string;
   google_rating?: number;
   google_review_count?: number;
+  coordinates?: { lat: number; lng: number };
+  description?: string;
 }
 
 export const PRICE_LEVELS = {
