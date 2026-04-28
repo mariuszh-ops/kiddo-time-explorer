@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:slugs": "node scripts/validate-slugs.js",
+    "report:slugs": "node scripts/report-slugs.js",
     "prebuild": "node scripts/validate-slugs.js",
     "postbuild": "npx tsx scripts/generate-sitemap.js"
   },
