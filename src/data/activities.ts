@@ -65,6 +65,7 @@ export async function loadActivities(): Promise<Activity[]> {
     _activities = fallbackActivities.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
   }
+  _invalidateLookups();
   return _activities;
 }
 
@@ -77,11 +78,77 @@ export function getActivities(): Activity[] {
 export function setActivities(data: Activity[]) {
   _activities = data;
   _loaded = true;
+  _invalidateLookups();
 }
 
 // Backward compatibility — same reference as getActivities()
 // Components should migrate to getActivities() over time
 export { _activities as mockActivities };
+
+// --- Lookup maps: id ↔ slug ↔ activity ---
+// Built lazily and cached. Cache is invalidated whenever the dataset changes
+// (loadActivities / setActivities). Routing nadal działa po `id` — te mapy
+// służą tylko jako wygodny most między id i slug.
+
+let _slugById: Map<number, string> | null = null;
+let _idBySlug: Map<string, number> | null = null;
+let _activityBySlug: Map<string, Activity> | null = null;
+let _activityById: Map<number, Activity> | null = null;
+
+function _invalidateLookups() {
+  _slugById = null;
+  _idBySlug = null;
+  _activityBySlug = null;
+  _activityById = null;
+}
+
+function _buildLookups() {
+  _slugById = new Map();
+  _idBySlug = new Map();
+  _activityBySlug = new Map();
+  _activityById = new Map();
+  for (const a of _activities) {
+    _slugById.set(a.id, a.slug);
+    _activityById.set(a.id, a);
+    if (a.slug) {
+      _idBySlug.set(a.slug, a.id);
+      _activityBySlug.set(a.slug, a);
+    }
+  }
+}
+
+/** Map: activity id → slug (rebuilt when data changes). */
+export function getSlugById(): ReadonlyMap<number, string> {
+  if (!_slugById) _buildLookups();
+  return _slugById!;
+}
+
+/** Map: slug → activity id. */
+export function getIdBySlug(): ReadonlyMap<string, number> {
+  if (!_idBySlug) _buildLookups();
+  return _idBySlug!;
+}
+
+/** Lookup by id (O(1)). */
+export function getActivityById(id: number): Activity | undefined {
+  if (!_activityById) _buildLookups();
+  return _activityById!.get(id);
+}
+
+/** Lookup by slug (O(1)). */
+export function getActivityBySlug(slug: string): Activity | undefined {
+  if (!_activityBySlug) _buildLookups();
+  return _activityBySlug!.get(slug);
+}
+
+/** Convenience helpers — return undefined if the source key is unknown. */
+export function slugFromId(id: number): string | undefined {
+  return getSlugById().get(id);
+}
+
+export function idFromSlug(slug: string): number | undefined {
+  return getIdBySlug().get(slug);
+}
 
 // Filter options with counts
 export const filterOptions = {
