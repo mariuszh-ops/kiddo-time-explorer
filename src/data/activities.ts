@@ -65,6 +65,7 @@ export async function loadActivities(): Promise<Activity[]> {
     _activities = fallbackActivities.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
   }
+  _invalidateLookups();
   return _activities;
 }
 
