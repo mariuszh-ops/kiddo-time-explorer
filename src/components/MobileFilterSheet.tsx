@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { X, Search, MapPin } from "lucide-react";
-import { Filters } from "@/hooks/useActivityFilters";
+import { Filters } from "@/hooks/useActivityFilters"; 
+import { getActivities } from "@/data/activities";
+import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
 interface FilterOption {
@@ -125,6 +126,7 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
+  const activities = useMemo(() => getActivities(), []);
   const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
@@ -164,29 +166,13 @@ const MobileFilterSheet = ({
 
         {/* Scrollable content */}
         <ScrollArea className="flex-1 px-4">
-          {/* Search input */}
-          {/* TODO: Gdy FEATURES.SEARCH_AUTOCOMPLETE === true, zamień na SearchAutocomplete komponent
-              z dropdownem matchujących atrakcji. Dane lokalne, filtrowanie instant.
-              Kliknięcie wyniku → nawigacja do /atrakcje/:slug */}
+          {/* Search autocomplete */}
           <div className="py-4 border-b border-border">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <input
-                type="text"
-                value={localSearch}
-                onChange={(e) => setLocalSearch(e.target.value)}
-                placeholder="Szukaj aktywności..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl text-base bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              />
-              {localSearch && (
-                <button
-                  onClick={() => setLocalSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
-                >
-                  <X className="w-4 h-4 text-muted-foreground" />
-                </button>
-              )}
-            </div>
+            <SearchAutocomplete
+              activities={activities}
+              searchQuery={localSearch}
+              onSearchChange={setLocalSearch}
+            />
           </div>
 
           {/* City filter — shown only when multiple cities enabled */}
