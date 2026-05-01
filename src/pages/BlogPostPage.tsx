@@ -75,6 +75,7 @@ const BlogPostPage = () => {
         path={`/inspiracje/${post.slug}`}
         image={post.imageUrl}
         type="article"
+        publishedTime={post.publishedAt}
       />
       <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />

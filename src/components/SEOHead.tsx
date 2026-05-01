@@ -8,11 +8,28 @@ interface SEOHeadProps {
   description: string;
   path: string;
   image?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   type?: "website" | "article";
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
-const SEOHead = ({ title, description, path, image, type = "website", jsonLd }: SEOHeadProps) => {
+const SEOHead = ({
+  title,
+  description,
+  path,
+  image,
+  imageWidth,
+  imageHeight,
+  type = "website",
+  jsonLd,
+  noindex = false,
+  publishedTime,
+  modifiedTime,
+}: SEOHeadProps) => {
   const fullTitle = `${title} | ${SITE_NAME}`;
   const canonicalUrl = `${BASE_URL}${path}`;
 
@@ -29,6 +46,28 @@ const SEOHead = ({ title, description, path, image, type = "website", jsonLd }: 
       <meta property="og:locale" content="pl_PL" />
       <meta property="og:site_name" content={SITE_NAME} />
       {image && <meta property="og:image" content={image} />}
+
+      {image && (
+        <>
+          <meta property="og:image:width" content={String(imageWidth ?? 1200)} />
+          <meta property="og:image:height" content={String(imageHeight ?? 630)} />
+          <meta property="og:image:alt" content={title} />
+        </>
+      )}
+
+      <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+      <meta name="twitter:title" content={title} />
+      <meta name="twitter:description" content={description} />
+      {image && <meta name="twitter:image" content={image} />}
+
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+      {type === "article" && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {type === "article" && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
 
       {jsonLd && (
         Array.isArray(jsonLd)

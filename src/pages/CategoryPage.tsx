@@ -105,6 +105,7 @@ const CategoryPage = () => {
         title={resolvedTitle.replace(" | FamilyFun", "")}
         description={resolvedDescription}
         path={path}
+        image={activities[0]?.imageUrl}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <Header />

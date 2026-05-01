@@ -98,7 +98,7 @@ const Profile = () => {
   if (!isLoggedIn) {
     return (
       <PageTransition>
-        <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" />
+        <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" noindex />
         <div className="min-h-screen bg-background">
           <Header />
           <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
@@ -131,7 +131,7 @@ const Profile = () => {
 
   return (
     <PageTransition>
-      <SEOHead title="Profil" description="Zarządzaj swoim profilem FamilyFun." path="/profile" />
+      <SEOHead title="Profil" description="Zarządzaj swoim profilem FamilyFun." path="/profile" noindex />
       <div className="min-h-screen bg-background">
         <Header />
 

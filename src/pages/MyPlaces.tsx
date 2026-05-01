@@ -112,7 +112,7 @@ const MyPlaces = () => {
   if (!isLoggedIn) {
     return (
       <PageTransition>
-        <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" />
+        <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
         <div className="min-h-screen bg-background">
           <Header />
           <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
@@ -166,7 +166,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
 
   return (
     <PageTransition>
-      <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" />
+      <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
       <div className="min-h-screen bg-background">
       <Header />
 

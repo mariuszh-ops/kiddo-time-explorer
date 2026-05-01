@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { 
   ArrowLeft, 
   Upload, 
@@ -419,6 +420,12 @@ const Admin = () => {
   return (
     <PageTransition>
       <div className="min-h-screen bg-muted/30">
+        <SEOHead
+          title="Panel administratora"
+          description="Panel administratora FamilyFun"
+          path="/admin"
+          noindex
+        />
         {/* Admin Header */}
         <header className="bg-card border-b border-border sticky top-0 z-40">
           <div className="container py-4">
