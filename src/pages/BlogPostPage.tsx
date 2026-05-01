@@ -36,6 +36,65 @@ const BlogPostPage = () => {
         .slice(0, 3)
     : [];
 
+  const BASE_URL = "https://familyfun.pl";
+
+  // JSON-LD: Article + BreadcrumbList (rich snippets w Google)
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.imageUrl,
+    "datePublished": post.publishedAt,
+    "author": {
+      "@type": "Organization",
+      "name": "FamilyFun",
+      "url": BASE_URL,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "FamilyFun",
+      "url": BASE_URL,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${BASE_URL}/og-image.png`,
+      },
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${BASE_URL}/inspiracje/${post.slug}`,
+    },
+    ...(post.readTimeMinutes ? {
+      "timeRequired": `PT${post.readTimeMinutes}M`,
+    } : {}),
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Strona główna",
+        "item": `${BASE_URL}/`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Inspiracje",
+        "item": `${BASE_URL}/inspiracje`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+      },
+    ],
+  };
+
+  const combinedJsonLd = [articleJsonLd, breadcrumbJsonLd];
+
   // Simple markdown-like rendering (headers and paragraphs)
   const renderContent = (content: string) => {
     return content.split("\n").map((line, i) => {
@@ -76,6 +135,7 @@ const BlogPostPage = () => {
         image={post.imageUrl}
         type="article"
         publishedTime={post.publishedAt}
+        jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
