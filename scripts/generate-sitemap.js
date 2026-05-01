@@ -11,8 +11,10 @@ import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Shim import.meta.env for Vite source files imported outside Vite
-if (!import.meta.env) {
-  import.meta.env = { DEV: false, PROD: true, MODE: 'production', SSR: false };
+if (import.meta.env === undefined) {
+  import.meta.env = { DEV: false, PROD: true, MODE: 'production', SSR: false, BASE_URL: '/' };
+} else if (import.meta.env.DEV === undefined) {
+  Object.assign(import.meta.env, { DEV: false, PROD: true, MODE: 'production', SSR: false, BASE_URL: '/' });
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
