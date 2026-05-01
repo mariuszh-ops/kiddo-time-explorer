@@ -10,10 +10,7 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
-// Shim import.meta.env for Vite source files imported outside Vite
-if (!import.meta.env) {
-  import.meta.env = { DEV: false, PROD: true, MODE: 'production', SSR: false };
-}
+// Note: env shim is handled in src/config/env.ts itself
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
