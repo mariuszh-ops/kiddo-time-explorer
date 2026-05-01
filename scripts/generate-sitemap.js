@@ -10,6 +10,11 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+// Shim import.meta.env for Vite source files imported outside Vite
+if (!import.meta.env) {
+  import.meta.env = { DEV: false, PROD: true, MODE: 'production', SSR: false };
+}
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const BASE_URL = 'https://familyfun.pl';

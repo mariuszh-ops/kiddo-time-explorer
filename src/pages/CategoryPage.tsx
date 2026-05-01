@@ -1,9 +1,9 @@
 import { useParams, Link, Navigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useMemo, useState, lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
-import MapView from "@/components/MapView";
+const MapView = lazy(() => import("@/components/MapView"));
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { getActivities, filterOptions } from "@/data/activities";
@@ -174,7 +174,9 @@ const CategoryPage = () => {
 
           {/* Activity Grid or Map */}
           {FEATURES.MAP_VIEW && viewMode === "map" ? (
-            <MapView activities={activities} filters={{ city: citySlug }} />
+            <Suspense fallback={<div className="h-[60vh] bg-muted animate-pulse rounded-lg" />}>
+              <MapView activities={activities} filters={{ city: citySlug }} />
+            </Suspense>
           ) : (
             <ActivityGrid
               activities={activities}
