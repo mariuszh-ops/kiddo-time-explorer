@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 export interface ActivitySubmission {
   id: string;
@@ -31,7 +32,13 @@ interface SubmissionsContextType {
 const SubmissionsContext = createContext<SubmissionsContextType | undefined>(undefined);
 
 export const SubmissionsProvider = ({ children }: { children: ReactNode }) => {
-  const [submissions, setSubmissions] = useState<ActivitySubmission[]>([]);
+  const [submissions, setSubmissions] = useState<ActivitySubmission[]>(
+    () => getItem<ActivitySubmission[]>(STORAGE_KEYS.SUBMISSIONS, [])
+  );
+
+  useEffect(() => {
+    setItem(STORAGE_KEYS.SUBMISSIONS, submissions);
+  }, [submissions]);
 
   const addSubmission = useCallback((sub: Omit<ActivitySubmission, "id" | "submittedAt" | "status">) => {
     const newSub: ActivitySubmission = {
