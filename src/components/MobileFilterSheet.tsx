@@ -8,6 +8,7 @@ import { Filters } from "@/hooks/useActivityFilters";
 import { getActivities } from "@/data/activities";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
 interface FilterOption {
