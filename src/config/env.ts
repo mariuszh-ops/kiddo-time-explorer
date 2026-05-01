@@ -1,3 +1,6 @@
+// Guard for non-Vite environments (e.g. postbuild scripts using tsx)
+const metaEnv: Record<string, string | boolean | undefined> = (typeof import.meta !== 'undefined' && import.meta.env) || {};
+
 /**
  * Environment configuration — single source of truth for env vars.
  *
@@ -45,27 +48,27 @@ function boolEnv(value: string | undefined, defaultValue = false): boolean {
  */
 export const env = {
   // Runtime environment (Vite built-ins)
-  isDev: import.meta.env.DEV,
-  isProd: import.meta.env.PROD,
-  mode: import.meta.env.MODE,
+  isDev: metaEnv.DEV as boolean ?? false,
+  isProd: metaEnv.PROD as boolean ?? true,
+  mode: (metaEnv.MODE as string) ?? 'production',
 
   // App metadata — optional, used for SEO/OG/Schema.org
-  siteUrl: optionalEnv(import.meta.env.VITE_SITE_URL) ?? "https://familyfun.pl",
+  siteUrl: optionalEnv(metaEnv.VITE_SITE_URL as string) ?? "https://familyfun.pl",
 
   // Analytics — optional, app runs fine without them
-  plausibleDomain: optionalEnv(import.meta.env.VITE_PLAUSIBLE_DOMAIN),
-  gtmId: optionalEnv(import.meta.env.VITE_GTM_ID),
+  plausibleDomain: optionalEnv(metaEnv.VITE_PLAUSIBLE_DOMAIN as string),
+  gtmId: optionalEnv(metaEnv.VITE_GTM_ID as string),
 
   // Backend — optional until Supabase is wired in
-  supabaseUrl: optionalEnv(import.meta.env.VITE_SUPABASE_URL),
-  supabaseAnonKey: optionalEnv(import.meta.env.VITE_SUPABASE_ANON_KEY),
+  supabaseUrl: optionalEnv(metaEnv.VITE_SUPABASE_URL as string),
+  supabaseAnonKey: optionalEnv(metaEnv.VITE_SUPABASE_ANON_KEY as string),
 
   // Observability — optional
-  sentryDsn: optionalEnv(import.meta.env.VITE_SENTRY_DSN),
+  sentryDsn: optionalEnv(metaEnv.VITE_SENTRY_DSN as string),
 
   // Feature flag overrides — used during testing to enable features per-environment
   // without touching featureFlags.ts
-  enableOnboarding: boolEnv(import.meta.env.VITE_ENABLE_ONBOARDING, false),
+  enableOnboarding: boolEnv(metaEnv.VITE_ENABLE_ONBOARDING as string, false),
 } as const;
 
 /**
