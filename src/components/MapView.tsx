@@ -302,12 +302,6 @@ function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boo
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    console.log('[fitBounds] effect triggered', {
-      activitiesCount: activities.length,
-      skip,
-      isFirstRender: isFirstRender.current,
-      firstCoord: activities[0] ? [activities[0].latitude, activities[0].longitude] : null
-    });
     if (activities.length === 0) return;
     // On first render, skip if restoring saved map state
     if (isFirstRender.current) {
@@ -486,11 +480,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     }
     return result;
   }, [activities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
-
-  console.log('[MapView] filteredActivities changed', {
-    count: filteredActivities.length,
-    firstId: filteredActivities[0]?.id
-  });
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
