@@ -104,4 +104,5 @@ export const STORAGE_KEYS = {
   COOKIE_CONSENT: "ff_cookie_consent",
   INLINE_RATINGS: "ff_inline_ratings",
   ADMIN_EDITS: "ff_admin_edits",
+  SUBMISSIONS: "ff_submissions",
 } as const;
