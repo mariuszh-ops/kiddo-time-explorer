@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/comp
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { X, Search, MapPin } from "lucide-react";
+import { X, MapPin } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
 import { getActivities } from "@/data/activities";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
