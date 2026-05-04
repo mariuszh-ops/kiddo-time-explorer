@@ -28,11 +28,11 @@ const Header = () => {
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container flex items-center justify-between h-16 md:h-[72px]">
           {/* Logo */}
-          <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px]">
+          <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px] -ml-3 md:-ml-4">
             <img 
               src={familyFunLogo} 
               alt="FamilyFun" 
-              className="h-9 md:h-11 w-auto object-contain"
+              className="h-[120px] md:h-[150px] w-auto object-contain"
             />
           </Link>
 
