@@ -16,7 +16,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
   return (
     <section className="md:container md:px-4 md:pt-4">
-      <div className="relative min-h-[auto] py-12 md:py-0 md:min-h-[50vh] md:max-h-[55vh] flex items-center md:rounded-2xl overflow-hidden">
+      <div className="relative min-h-[auto] py-10 sm:py-12 md:py-0 md:min-h-[50vh] md:max-h-[55vh] flex items-center md:rounded-2xl overflow-hidden">
         {/* Background image */}
         <div className="absolute inset-0 bg-[#8B7355]">
           <img
@@ -33,10 +33,10 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 container md:px-8 lg:px-12">
+        <div className="relative z-10 container px-5 sm:px-6 md:px-8 lg:px-12">
           <div className="max-w-xl md:max-w-[45%] lg:max-w-xl lg:!max-w-[45%]">
             {/* Headline */}
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground leading-tight text-balance animate-fade-in">
+            <h1 className="font-serif text-[28px] leading-[1.15] xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl md:leading-tight text-foreground text-balance animate-fade-in">
               {FEATURES.ENABLED_CITIES.length > 1
                 ? "Sprawdzone pomysły na wspólny czas z dzieckiem"
                 : "Sprawdzone pomysły na wspólny czas z dzieckiem w Warszawie"
@@ -45,7 +45,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
             {/* Subheadline */}
             <p 
-              className="mt-5 md:mt-6 text-lg md:text-xl text-muted-foreground animate-fade-in"
+              className="mt-4 sm:mt-5 md:mt-6 text-base sm:text-lg md:text-xl text-muted-foreground animate-fade-in"
               style={{ animationDelay: "0.1s" }}
             >
               Opinie rodziców takich jak Ty
@@ -53,7 +53,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
             {totalCount > 0 && (
               <p
-                className="mt-2 text-sm md:text-base text-muted-foreground animate-fade-in"
+                className="mt-1.5 sm:mt-2 text-sm md:text-base text-muted-foreground animate-fade-in"
                 style={{ animationDelay: "0.15s" }}
               >
                 {displayCount} atrakcji z ocenami Google
@@ -62,7 +62,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
             {/* CTA Button */}
             <div 
-              className="mt-8 md:mt-10 animate-fade-in"
+              className="mt-6 sm:mt-8 md:mt-10 animate-fade-in"
               style={{ animationDelay: "0.2s" }}
             >
               <Button 
