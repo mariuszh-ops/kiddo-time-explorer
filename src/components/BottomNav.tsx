@@ -1,11 +1,35 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Compass, Heart, User } from "lucide-react";
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = navRef.current;
+    const root = document.documentElement;
+    if (!el) {
+      root.style.setProperty("--bottom-nav-h", "0px");
+      return;
+    }
+    const setVar = () => {
+      const h = el.getBoundingClientRect().height;
+      root.style.setProperty("--bottom-nav-h", `${Math.round(h)}px`);
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    window.addEventListener("orientationchange", setVar);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("orientationchange", setVar);
+      root.style.setProperty("--bottom-nav-h", "0px");
+    };
+  }, [location.pathname]);
 
   // Hide on admin page
   if (location.pathname.startsWith("/admin")) return null;
@@ -34,6 +58,7 @@ const BottomNav = () => {
 
   return (
     <nav
+      ref={navRef}
       className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden bg-background shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
       style={{
         height: 'calc(64px + env(safe-area-inset-bottom, 0px))',

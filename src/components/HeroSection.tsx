@@ -19,9 +19,10 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
       <div
         className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh]"
         style={{
-          // On mobile, cap hero height so the CTA is always above the fold:
-          // viewport - header (56) - bottom nav (~64) - small buffer
-          maxHeight: 'calc(100svh - 140px)',
+          // Cap mobile hero height using REAL measured header + bottom nav heights
+          // (set by Header.tsx and BottomNav.tsx as CSS vars) plus a 16px buffer.
+          maxHeight:
+            'calc(100svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px)',
         }}
       >
         {/* Background image */}
