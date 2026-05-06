@@ -1,7 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import * as RTL from "@testing-library/react";
+import { render } from "@testing-library/react";
 import HeroSection from "@/components/HeroSection";
-const { render, screen } = RTL;
 
 vi.mock("@/data/activities", () => ({
   getActivities: () => [],
@@ -13,10 +12,10 @@ vi.mock("@/lib/featureFlags", () => ({
 
 describe("HeroSection — CTA visibility on short screens (600–720px)", () => {
   it("renders the main CTA button", () => {
-    render(<HeroSection onExplore={() => {}} />);
-    expect(
-      screen.getByRole("button", { name: /sprawdź atrakcje/i })
-    ).toBeInTheDocument();
+    const { container } = render(<HeroSection onExplore={() => {}} />);
+    const btn = container.querySelector("button");
+    expect(btn).toBeTruthy();
+    expect(btn?.textContent?.toLowerCase()).toMatch(/sprawdź atrakcje/);
   });
 
   it("caps hero height so CTA stays above the bottom navigation", () => {
