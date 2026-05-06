@@ -19,16 +19,30 @@ const Header = () => {
   useEffect(() => {
     const el = headerRef.current;
     if (!el) return;
+    const FALLBACK = window.matchMedia("(min-width: 768px)").matches ? 88 : 72;
     const setVar = () => {
-      const h = el.getBoundingClientRect().height;
+      const h = el.getBoundingClientRect().height || FALLBACK;
       document.documentElement.style.setProperty("--header-h", `${Math.round(h)}px`);
     };
     setVar();
-    const ro = new ResizeObserver(setVar);
-    ro.observe(el);
+
+    const hasRO = typeof window !== "undefined" && "ResizeObserver" in window;
+    let ro: ResizeObserver | undefined;
+    if (hasRO) {
+      try {
+        ro = new ResizeObserver(setVar);
+        ro.observe(el);
+      } catch {
+        ro = undefined;
+      }
+    }
+    // Always listen to viewport changes — covers RO-less browsers and
+    // breakpoint-driven header height changes.
+    window.addEventListener("resize", setVar);
     window.addEventListener("orientationchange", setVar);
     return () => {
-      ro.disconnect();
+      ro?.disconnect();
+      window.removeEventListener("resize", setVar);
       window.removeEventListener("orientationchange", setVar);
     };
   }, []);

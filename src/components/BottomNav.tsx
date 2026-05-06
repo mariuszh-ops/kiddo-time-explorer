@@ -12,22 +12,39 @@ const BottomNav = () => {
   useEffect(() => {
     const el = navRef.current;
     const root = document.documentElement;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const FALLBACK = isMobile ? 64 : 0;
     if (!el) {
-      root.style.setProperty("--bottom-nav-h", "0px");
+      root.style.setProperty("--bottom-nav-h", `${FALLBACK}px`);
       return;
     }
     const setVar = () => {
-      const h = el.getBoundingClientRect().height;
+      const h = el.getBoundingClientRect().height || FALLBACK;
       root.style.setProperty("--bottom-nav-h", `${Math.round(h)}px`);
     };
     setVar();
-    const ro = new ResizeObserver(setVar);
-    ro.observe(el);
+
+    const hasRO = typeof window !== "undefined" && "ResizeObserver" in window;
+    let ro: ResizeObserver | undefined;
+    if (hasRO) {
+      try {
+        ro = new ResizeObserver(setVar);
+        ro.observe(el);
+      } catch {
+        ro = undefined;
+      }
+    }
+    window.addEventListener("resize", setVar);
     window.addEventListener("orientationchange", setVar);
     return () => {
-      ro.disconnect();
+      ro?.disconnect();
+      window.removeEventListener("resize", setVar);
       window.removeEventListener("orientationchange", setVar);
-      root.style.setProperty("--bottom-nav-h", "0px");
+      // Reset to media-query default (desktop = 0, mobile fallback = 64)
+      root.style.setProperty(
+        "--bottom-nav-h",
+        window.matchMedia("(min-width: 768px)").matches ? "0px" : `${FALLBACK}px`
+      );
     };
   }, [location.pathname]);
 
