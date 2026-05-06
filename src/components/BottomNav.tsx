@@ -3,6 +3,7 @@ import { Compass, Heart, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
+import { env } from "@/config/env";
 
 const BottomNav = () => {
   const location = useLocation();
@@ -32,7 +33,18 @@ const BottomNav = () => {
         ro.observe(el);
       } catch {
         ro = undefined;
+        if (env.isDev) {
+          console.info(
+            "[FamilyFun] BottomNav: ResizeObserver threw, using resize/orientationchange fallback. --bottom-nav-h =",
+            `${FALLBACK}px`
+          );
+        }
       }
+    } else if (env.isDev) {
+      console.info(
+        "[FamilyFun] BottomNav: ResizeObserver unavailable, using resize/orientationchange fallback. --bottom-nav-h =",
+        `${FALLBACK}px`
+      );
     }
     window.addEventListener("resize", setVar);
     window.addEventListener("orientationchange", setVar);
