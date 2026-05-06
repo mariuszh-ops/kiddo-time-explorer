@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.png";
 import { env } from "@/config/env";
@@ -14,7 +14,25 @@ const Header = () => {
   const location = useLocation();
   const { isLoggedIn, login, isDemoMode, toggleDemoMode } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const setVar = () => {
+      const h = el.getBoundingClientRect().height;
+      document.documentElement.style.setProperty("--header-h", `${Math.round(h)}px`);
+    };
+    setVar();
+    const ro = new ResizeObserver(setVar);
+    ro.observe(el);
+    window.addEventListener("orientationchange", setVar);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("orientationchange", setVar);
+    };
+  }, []);
+
   const isActive = (path: string) => location.pathname === path;
 
   const handleAuthAction = () => {
@@ -25,7 +43,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <header ref={headerRef} className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="container flex items-center justify-between h-[72px] md:h-[88px]">
           {/* Logo */}
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px] -ml-2 md:-ml-3">
