@@ -34,7 +34,17 @@ const Header = () => {
         ro.observe(el);
       } catch {
         ro = undefined;
+        if (env.isDev) {
+          console.info(
+            "[FamilyFun] Header: ResizeObserver threw, falling back to resize/orientationchange listeners."
+          );
+        }
       }
+    } else if (env.isDev) {
+      console.info(
+        "[FamilyFun] Header: ResizeObserver unavailable, using resize/orientationchange fallback. --header-h defaults to",
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h").trim() || "72px"
+      );
     }
     // Always listen to viewport changes — covers RO-less browsers and
     // breakpoint-driven header height changes.
