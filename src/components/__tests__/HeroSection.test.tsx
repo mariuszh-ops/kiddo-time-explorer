@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import * as RTL from "@testing-library/react";
 import HeroSection from "@/components/HeroSection";
+const { render, screen } = RTL;
 
 vi.mock("@/data/activities", () => ({
   getActivities: () => [],
