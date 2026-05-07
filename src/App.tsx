@@ -34,6 +34,7 @@ import BlogPostPage from "./pages/BlogPostPage";
 import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
+import LayoutDiagnostics from "./components/LayoutDiagnostics";
 
 const queryClient = new QueryClient();
 
@@ -110,6 +111,7 @@ const App = () => {
                       <BottomNav />
                       <SubmitActivityFAB />
                       <CookieConsent />
+                      <LayoutDiagnostics />
                     </BrowserRouter>
                   </TooltipProvider>
                 </SubmissionsProvider>

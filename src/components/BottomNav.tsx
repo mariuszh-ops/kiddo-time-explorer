@@ -27,12 +27,19 @@ const BottomNav = () => {
 
     const hasRO = typeof window !== "undefined" && "ResizeObserver" in window;
     let ro: ResizeObserver | undefined;
+    const markSource = (s: "resize-observer" | "fallback") => {
+      if (typeof window === "undefined") return;
+      window.__ffLayoutSource = window.__ffLayoutSource || {};
+      window.__ffLayoutSource.bottomNav = s;
+    };
     if (hasRO) {
       try {
         ro = new ResizeObserver(setVar);
         ro.observe(el);
+        markSource("resize-observer");
       } catch {
         ro = undefined;
+        markSource("fallback");
         if (env.isDev) {
           console.info(
             "[FamilyFun] BottomNav: ResizeObserver threw, using resize/orientationchange fallback. --bottom-nav-h =",
@@ -40,11 +47,14 @@ const BottomNav = () => {
           );
         }
       }
-    } else if (env.isDev) {
-      console.info(
-        "[FamilyFun] BottomNav: ResizeObserver unavailable, using resize/orientationchange fallback. --bottom-nav-h =",
-        `${FALLBACK}px`
-      );
+    } else {
+      markSource("fallback");
+      if (env.isDev) {
+        console.info(
+          "[FamilyFun] BottomNav: ResizeObserver unavailable, using resize/orientationchange fallback. --bottom-nav-h =",
+          `${FALLBACK}px`
+        );
+      }
     }
     window.addEventListener("resize", setVar);
     window.addEventListener("orientationchange", setVar);

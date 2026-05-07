@@ -28,23 +28,33 @@ const Header = () => {
 
     const hasRO = typeof window !== "undefined" && "ResizeObserver" in window;
     let ro: ResizeObserver | undefined;
+    const markSource = (s: "resize-observer" | "fallback") => {
+      if (typeof window === "undefined") return;
+      window.__ffLayoutSource = window.__ffLayoutSource || {};
+      window.__ffLayoutSource.header = s;
+    };
     if (hasRO) {
       try {
         ro = new ResizeObserver(setVar);
         ro.observe(el);
+        markSource("resize-observer");
       } catch {
         ro = undefined;
+        markSource("fallback");
         if (env.isDev) {
           console.info(
             "[FamilyFun] Header: ResizeObserver threw, falling back to resize/orientationchange listeners."
           );
         }
       }
-    } else if (env.isDev) {
-      console.info(
-        "[FamilyFun] Header: ResizeObserver unavailable, using resize/orientationchange fallback. --header-h defaults to",
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h").trim() || "72px"
-      );
+    } else {
+      markSource("fallback");
+      if (env.isDev) {
+        console.info(
+          "[FamilyFun] Header: ResizeObserver unavailable, using resize/orientationchange fallback. --header-h defaults to",
+          getComputedStyle(document.documentElement).getPropertyValue("--header-h").trim() || "72px"
+        );
+      }
     }
     // Always listen to viewport changes — covers RO-less browsers and
     // breakpoint-driven header height changes.
