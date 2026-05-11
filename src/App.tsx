@@ -16,6 +16,7 @@ import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
+import DataLoadError from "@/components/DataLoadError";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import ActivityDetailRedirect from "./pages/ActivityDetailRedirect";
@@ -83,14 +84,20 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => {
-  const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataStatus, setDataStatus] = useState<"loading" | "success" | "error">("loading");
 
   useEffect(() => {
-    loadActivities().then(() => setDataLoaded(true));
+    loadActivities()
+      .then(() => setDataStatus("success"))
+      .catch(() => setDataStatus("error"));
   }, []);
 
-  if (!dataLoaded) {
+  if (dataStatus === "loading") {
     return <HomeSkeleton />;
+  }
+
+  if (dataStatus === "error") {
+    return <DataLoadError />;
   }
 
   return (
