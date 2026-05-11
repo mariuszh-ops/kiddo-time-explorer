@@ -61,12 +61,12 @@ export async function loadActivities(): Promise<Activity[]> {
     const data: Activity[] = await response.json();
     _activities = data.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
+    _invalidateLookups();
+    return _activities;
   } catch (err) {
-    _activities = fallbackActivities.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
-    _loaded = true;
+    console.error("[ActivitiesLoader] Failed to load /data/activities.json:", err);
+    throw err instanceof Error ? err : new Error(String(err));
   }
-  _invalidateLookups();
-  return _activities;
 }
 
 /** Synchronous getter — returns loaded activities (fallback if not yet loaded) */
