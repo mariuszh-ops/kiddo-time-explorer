@@ -161,6 +161,15 @@ const Index = () => {
     }
   }, []);
 
+  // Reset all filters but keep the selected city
+  const clearFiltersKeepCity = useCallback(() => {
+    setSearchQuery("");
+    updateFilter("age", undefined);
+    updateFilter("type", []);
+    updateFilter("indoor", undefined);
+    updateFilter("distance", undefined);
+  }, [setSearchQuery, updateFilter]);
+
   return (
     <PageTransition>
       <SEOHead
@@ -243,6 +252,7 @@ const Index = () => {
           activities={filteredActivities} 
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearAllFilters}
+          onClearFiltersKeepCity={clearFiltersKeepCity}
           filters={filters}
         />
       ) : (
