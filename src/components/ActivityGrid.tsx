@@ -4,6 +4,7 @@ import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
 import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
+import EmptyFilterState from "@/components/EmptyFilterState";
 import { Button } from "@/components/ui/button";
 import { Activity, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
@@ -13,6 +14,7 @@ export interface ActivityGridProps {
   activities: Activity[];
   hasActiveFilters?: boolean;
   onClearFilters?: () => void;
+  onClearFiltersKeepCity?: () => void;
   isLoading?: boolean;
   hasError?: boolean;
   onRetry?: () => void;
@@ -41,7 +43,7 @@ const useGridCols = () => {
 const roundUp = (n: number, cols: number, max: number) =>
   Math.min(Math.ceil(n / cols) * cols, max);
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading, hasError, onRetry, filters = {}, mapReturnAction }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFiltersKeepCity, isLoading, hasError, onRetry, filters = {}, mapReturnAction }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
@@ -126,6 +128,18 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, isLoading,
   }
 
   if (activities.length === 0) {
+    // Active-filters empty state — only when not loading
+    if (hasActiveFilters && !isLoading) {
+      return (
+        <section className="bg-background py-8 md:py-12">
+          <div className="container">
+            <EmptyFilterState
+              onClearFilters={onClearFiltersKeepCity ?? onClearFilters ?? (() => {})}
+            />
+          </div>
+        </section>
+      );
+    }
     return (
       <section className="bg-background py-8 md:py-12">
         <div className="container">
