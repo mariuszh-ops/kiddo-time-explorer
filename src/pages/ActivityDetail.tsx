@@ -45,6 +45,8 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import InlineRatingAction from "@/components/InlineRatingAction";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
+import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
+import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -99,7 +101,9 @@ const ActivityDetail = () => {
   
   const { share } = useShare();
 
-  const activity = getActivities().find((a) => a.slug === slug) || getActivities().find((a) => a.id === Number(slug));
+  const allActivities = getActivities();
+  const activitiesLoaded = allActivities.length > 0;
+  const activity = allActivities.find((a) => a.slug === slug) || allActivities.find((a) => a.id === Number(slug));
   const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
@@ -210,17 +214,14 @@ const ActivityDetail = () => {
 
   // activity lookup moved above
   
+  // Activities still loading → mirror final layout with a skeleton (no white screen, no jump).
+  if (!activitiesLoaded) {
+    return <ActivityDetailSkeleton />;
+  }
+
+  // Activities loaded but slug doesn't match → real 404, do not loop on the skeleton.
   if (!activity) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-serif text-foreground mb-4">Nie znaleziono aktywności</h1>
-          <Link to="/">
-            <Button variant="outline">Wróć do listy</Button>
-          </Link>
-        </div>
-      </main>
-    );
+    return <NotFound />;
   }
 
   const details = {
