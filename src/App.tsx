@@ -117,7 +117,7 @@ const App = () => {
                       <AnimatedRoutes />
                       <BottomNav />
                       <SubmitActivityFAB />
-                      <CookieConsent />
+                      {FEATURES.COOKIE_CONSENT && <CookieConsent />}
                       <LayoutDiagnostics />
                     </BrowserRouter>
                   </TooltipProvider>
