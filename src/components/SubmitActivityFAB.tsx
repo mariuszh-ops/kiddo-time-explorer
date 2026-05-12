@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Plus } from "lucide-react";
@@ -24,7 +25,7 @@ const SubmitActivityFAB = () => {
   return (
     <>
       <button
-        onClick={() => setIsModalOpen(true)}
+        onClick={() => { trackEvent("submit_open", { source: "fab" }); setIsModalOpen(true); }}
         className="fixed right-6 z-50 group flex items-center justify-center rounded-full bg-[hsl(var(--primary))] text-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.2)] active:scale-95 transition-all duration-200 bottom-20 md:bottom-6 h-14 w-14 md:hover:w-[180px] md:hover:rounded-full overflow-hidden"
         aria-label="Dodaj nowe miejsce"
       >

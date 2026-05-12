@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera, Sparkles } from "lucide-react";
@@ -98,6 +99,7 @@ const ActivityCard = ({
   }, [imgSrc, fallbackImage]);
 
   const handleClick = useCallback(() => {
+    trackEvent("activity_card_click", { activityId: id, slug });
     // Use window.location.pathname to avoid subscribing to router context
     saveScrollPositionForPath(window.location.pathname);
   }, []);
@@ -112,6 +114,7 @@ const ActivityCard = ({
     }
 
     const newState = await toggleFavorite(id);
+    trackEvent("favorite_toggle", { activityId: id, state: newState ? "add" : "remove" });
     if (newState) {
       setJustToggled(true);
       setTimeout(() => setJustToggled(false), 300);
