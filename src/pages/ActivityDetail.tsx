@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { cityLabels } from "@/data/categoryPages";
@@ -206,6 +207,9 @@ const ActivityDetail = () => {
       text: `Sprawdź "${activity.title}" na FamilyFun — ${activity.location}`,
       url: window.location.href,
     });
+    if (result) {
+      trackEvent("share", { activityId: activity.id, channel: result });
+    }
     if (result === 'clipboard') {
       toast.success("Link skopiowany do schowka", { duration: 2000 });
     }
