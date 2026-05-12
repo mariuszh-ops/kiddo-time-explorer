@@ -12,6 +12,7 @@ export const FEATURES = {
   SEARCH_AUTOCOMPLETE: true,  // Dropdown z podpowiedziami w wyszukiwarce — aktywny
   ENABLED_CITIES: ["warszawa", "krakow", "wroclaw", "trojmiasto", "poznan", "slask", "lodz"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
+  COOKIE_CONSENT: false,      // Baner cookies — wyłączony, bo Plausible nie używa cookies. Włączyć gdy dołożymy GA4 / Meta Pixel.
   ONBOARDING: env.enableOnboarding,    // Welcome screen dla nowych użytkowników — kontrolowane przez VITE_ENABLE_ONBOARDING
   COLLECTIONS: false,         // Nazwane kolekcje atrakcji — wyłączone w MVP (wymaga backendu do persystencji)
   SOCIAL_PROOF: false,        // Social proof ("Często wybierane") — bannery i badge'e — wyłączone w MVP
