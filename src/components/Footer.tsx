@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook } from "lucide-react";
@@ -29,7 +30,7 @@ const Footer = () => {
                 Polityka prywatności
               </Link>
               <button
-                onClick={() => setSubmitOpen(true)}
+                onClick={() => { trackEvent("submit_open", { source: "footer" }); setSubmitOpen(true); }}
                 className="hover:text-foreground transition-colors"
               >
                 Dodaj atrakcję

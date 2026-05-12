@@ -1,3 +1,4 @@
+import { trackEvent } from "@/lib/analytics";
 import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
 import MapViewSkeleton from "@/components/MapViewSkeleton";
 import { useSearchParams } from "react-router-dom";
@@ -298,6 +299,7 @@ const Index = () => {
           <DiscoverSections 
             activities={filteredActivities}
             onSelectCity={(city) => {
+              trackEvent("filter_city", { city, source: "discover" });
               updateFilter("city", city);
               if (listingRef.current) {
                 const headerHeight = 56;
@@ -306,6 +308,7 @@ const Index = () => {
               }
             }}
             onSelectCategory={(type) => {
+              trackEvent("filter_type", { type, source: "discover" });
               toggleArrayFilter("type", type);
               if (listingRef.current) {
                 const headerHeight = 56;

@@ -151,6 +151,8 @@ const ActivityDetail = () => {
     try {
       const newState = await toggleFavorite(activityId);
       
+      trackEvent("favorite_toggle", { activityId, state: newState ? "add" : "remove" });
+      
       // Subtle toast feedback
       if (newState) {
         toast.success("Dodano do ulubionych", {
