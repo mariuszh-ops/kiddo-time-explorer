@@ -63,7 +63,7 @@ const AnimatedRoutes = () => {
             <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
             <Route path="/my-places" element={<MyPlaces />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/admin" element={<Admin />} />
+            {import.meta.env.DEV && <Route path="/admin" element={<Admin />} />}
             <Route path="/regulamin" element={<Regulamin />} />
             <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
             <Route path="/kontakt" element={<Kontakt />} />
