@@ -89,13 +89,13 @@ ${urls.map(u => `  <url>
   </url>`).join('\n')}
 </urlset>`;
 
-  // Write to dist/
-  const distDir = resolve(ROOT, 'dist');
-  if (!existsSync(distDir)) {
-    mkdirSync(distDir, { recursive: true });
+  // Write to public/ so Vite serves it in dev and copies to dist/ on build
+  const publicDir = resolve(ROOT, 'public');
+  if (!existsSync(publicDir)) {
+    mkdirSync(publicDir, { recursive: true });
   }
-  writeFileSync(resolve(distDir, 'sitemap.xml'), xml, 'utf-8');
-  console.log(`✅ Sitemap generated with ${urls.length} URLs → dist/sitemap.xml`);
+  writeFileSync(resolve(publicDir, 'sitemap.xml'), xml, 'utf-8');
+  console.log(`✅ Sitemap generated with ${urls.length} URLs → public/sitemap.xml`);
 }
 
 main();
