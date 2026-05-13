@@ -1,0 +1,24 @@
+# FamilyFun
+
+> Sprawdzone atrakcje dla rodzin z dziećmi w Polsce — opinie rodziców, mapa, filtry po wieku, lokalizacji i kategorii.
+
+FamilyFun pomaga rodzicom znaleźć miejsca przyjazne dzieciom: sale zabaw, place zabaw, parki rozrywki, muzea, atrakcje sportowe i ZOO. Dane pochodzą z otwartych źródeł oraz zgłoszeń od społeczności.
+
+## Pages
+
+- [Strona główna](/): Wyszukiwarka i mapa atrakcji dla rodzin z dziećmi.
+- [Atrakcje w Warszawie](/atrakcje/warszawa): Wszystkie atrakcje rodzinne w Warszawie.
+- [Sale zabaw w Warszawie](/atrakcje/warszawa/sala-zabaw): Kryte place i sale zabaw dla dzieci.
+- [Place zabaw w Warszawie](/atrakcje/warszawa/plac-zabaw): Plenerowe place zabaw.
+- [Parki rozrywki w Warszawie](/atrakcje/warszawa/park-rozrywki): Parki rozrywki i parki tematyczne.
+- [Muzea i teatry w Warszawie](/atrakcje/warszawa/muzeum-teatr): Atrakcje edukacyjne i kulturalne dla dzieci.
+- [Atrakcje sportowe w Warszawie](/atrakcje/warszawa/sport): Aktywności sportowe dla rodzin.
+- [ZOO w Warszawie](/atrakcje/warszawa/zoo): Ogrody zoologiczne i kontakt ze zwierzętami.
+- [Inspiracje](/inspiracje): Blog z poradami i pomysłami na czas z dzieckiem.
+
+## Optional
+
+- [O nas](/o-nas): Kim jesteśmy i jak powstał FamilyFun.
+- [Kontakt](/kontakt): Skontaktuj się z zespołem.
+- [Regulamin](/regulamin): Zasady korzystania z serwisu.
+- [Polityka prywatności](/polityka-prywatnosci): Jak przetwarzamy dane.
