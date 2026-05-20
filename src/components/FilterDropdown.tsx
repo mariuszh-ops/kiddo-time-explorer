@@ -138,7 +138,7 @@ const FilterDropdown = ({
           disabled
             ? "bg-muted text-muted-foreground border-border cursor-not-allowed opacity-60 transition-all duration-150 ease-in-out"
             : selectedValue
-              ? "bg-primary text-primary-foreground border-primary font-semibold"
+              ? "bg-primary/10 text-primary border-primary"
               : "bg-background text-foreground border-border hover:border-primary/50 hover:bg-accent"
         )}
       >
