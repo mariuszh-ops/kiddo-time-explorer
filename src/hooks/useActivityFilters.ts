@@ -81,7 +81,7 @@ export function useActivityFilters() {
       if (next.length === 0) {
         delete newFilters[key];
       } else {
-        // @ts-expect-error
+        // @ts-expect-error - array values
         newFilters[key] = next;
       }
       return newFilters;
