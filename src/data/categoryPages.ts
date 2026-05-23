@@ -130,7 +130,7 @@ export function getCategoryActivities(activities: Activity[], citySlug: string, 
   const config = getCategoryConfig(categorySlug);
   if (!config) return [];
   
-  let result = activities.filter(a => config.filterFn(a, citySlug));
+  const result = activities.filter(a => config.filterFn(a, citySlug));
   
   // "na-weekend" sorts by rating desc
   if (categorySlug === "na-weekend") {
