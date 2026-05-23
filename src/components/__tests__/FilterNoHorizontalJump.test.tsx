@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import FilterDropdown from "@/components/FilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 
@@ -82,6 +83,7 @@ describe("Filter no-horizontal-jump on 375px hard refresh", () => {
   it("MobileFilterSheet at 375px slides from the bottom only (no left/right slide)", () => {
     const noop = () => {};
     render(
+      <MemoryRouter>
       <MobileFilterSheet
         isOpen
         onClose={noop}
@@ -104,6 +106,7 @@ describe("Filter no-horizontal-jump on 375px hard refresh", () => {
         onToggleTypeFilter={noop}
         onClearAll={noop}
       />
+      </MemoryRouter>
     );
 
     // Radix sheet content is rendered via portal with data-state="open"
