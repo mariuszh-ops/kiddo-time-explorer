@@ -84,27 +84,6 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               </Button>
             </div>
 
-            {/* Trust indicator - hidden for MVP */}
-            {false && (
-            <div 
-              className="mt-8 flex items-center gap-3 animate-fade-in"
-              style={{ animationDelay: "0.3s" }}
-            >
-              <div className="flex -space-x-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full bg-secondary border-2 border-background flex items-center justify-center text-xs font-medium text-secondary-foreground"
-                  >
-                    {["A", "M", "K", "P"][i - 1]}
-                  </div>
-                ))}
-              </div>
-              <span className="text-sm text-muted-foreground">
-                +2500 rodziców korzysta z FamilyFun
-              </span>
-            </div>
-            )}
           </div>
         </div>
       </div>

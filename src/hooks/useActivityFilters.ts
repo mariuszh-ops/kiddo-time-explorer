@@ -55,7 +55,7 @@ export function useActivityFilters() {
       if (value === undefined || (Array.isArray(value) && value.length === 0)) {
         delete newFilters[key];
       } else {
-        // @ts-ignore - we handle string, string[], and number values
+        // @ts-expect-error - we handle string, string[], and number values
         newFilters[key] = value;
       }
       // Clear distance filter when city is cleared
@@ -81,7 +81,7 @@ export function useActivityFilters() {
       if (next.length === 0) {
         delete newFilters[key];
       } else {
-        // @ts-ignore
+        // @ts-expect-error - array values
         newFilters[key] = next;
       }
       return newFilters;
