@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { 
   ArrowLeft, 
@@ -52,6 +52,7 @@ import { Activity, getActivities, setActivities, filterOptions } from "@/data/ac
 import { useSubmissions, ActivitySubmission } from "@/contexts/SubmissionsContext";
 import { AMENITIES } from "@/data/amenities";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 // CSV Schema definition
 const csvSchema = {
@@ -346,6 +347,13 @@ const SubmissionCard = ({ submission }: { submission: ActivitySubmission }) => {
 };
 
 const Admin = () => {
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLoggedIn) navigate("/", { replace: true });
+  }, [isLoggedIn, navigate]);
+
   const [copiedCSV, setCopiedCSV] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [importData, setImportData] = useState<Activity[] | null>(null);
