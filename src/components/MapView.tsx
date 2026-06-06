@@ -645,6 +645,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           zoom={initialZoom}
           className="w-full h-full z-0"
           style={{ height: '100%', width: '100%' }}
+          zoomControl={false}
           attributionControl={true}
         >
           <TileLayer
@@ -664,6 +665,26 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
         {/* Count label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
           {displayedActivities.length} atrakcji w widoku
+        </div>
+
+        {/* Accessible custom zoom controls */}
+        <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+          <button
+            type="button"
+            aria-label="Przybliż mapę"
+            onClick={() => mapInstanceRef.current?.zoomIn()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            aria-label="Oddal mapę"
+            onClick={() => mapInstanceRef.current?.zoomOut()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            −
+          </button>
         </div>
       </div>
     </div>
