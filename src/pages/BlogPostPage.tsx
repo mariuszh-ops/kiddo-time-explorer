@@ -144,9 +144,9 @@ const BlogPostPage = () => {
             {/* Breadcrumbs - desktop */}
             <nav className="hidden md:flex items-center gap-1.5 text-sm mb-6" aria-label="breadcrumb">
               <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
               <Link to="/inspiracje" className="text-muted-foreground hover:text-foreground transition-colors">Inspiracje</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-foreground font-medium truncate max-w-[400px]">{post.title}</span>
             </nav>
 

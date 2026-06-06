@@ -223,7 +223,7 @@ const ActivityCard = ({
                 {location}
               </p>
               {distanceKm != null && (
-                <span className="flex items-center gap-0.5 text-xs text-muted-foreground/70 whitespace-nowrap">
+                <span className="flex items-center gap-0.5 text-xs text-muted-foreground whitespace-nowrap">
                   <Navigation className="w-3 h-3" />
                   ~{distanceKm.toFixed(1)} km
                 </span>
@@ -231,7 +231,7 @@ const ActivityCard = ({
             </div>
 
             {FEATURES.EVENTS && isEvent && eventDate && (
-              <p className="flex items-center gap-1 text-xs text-amber-600">
+              <p className="flex items-center gap-1 text-xs text-amber-700">
                 <Calendar className="w-3 h-3" />
                 {eventDate}
               </p>
@@ -257,7 +257,7 @@ const ActivityCard = ({
 
 
             {socialProofBadge && (
-              <p className="text-xs text-muted-foreground/80 mt-1.5 italic">
+              <p className="text-xs text-muted-foreground mt-1.5 italic">
                 {socialProofBadge}
               </p>
             )}
