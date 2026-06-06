@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 
@@ -33,6 +33,15 @@ const nearbyPinIcon = L.divIcon({
   iconSize: [10, 10],
   iconAnchor: [5, 5],
 });
+
+function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
+  const map = useMap();
+  useEffect(() => {
+    mapRef.current = map;
+    return () => { mapRef.current = null; };
+  }, [map, mapRef]);
+  return null;
+}
 
 function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps) {
   const map = useMap();
@@ -82,24 +91,44 @@ const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps
   if (nearbyActivities.length === 0) return null;
 
   const center: [number, number] = [currentActivity.latitude, currentActivity.longitude];
+  const mapRef = useRef<L.Map | null>(null);
 
   return (
-    <div className="mt-4 h-[200px] md:h-[250px] rounded-xl overflow-hidden shadow-sm">
+    <div className="mt-4 h-[200px] md:h-[250px] rounded-xl overflow-hidden shadow-sm relative">
       <MapContainer
         center={center}
         zoom={12}
         className="w-full h-full z-0"
         scrollWheelZoom={false}
         dragging={true}
-        zoomControl={true}
+        zoomControl={false}
         attributionControl={true}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
+        <MapRefCapture mapRef={mapRef} />
         <FitAndMarkers currentActivity={currentActivity} nearbyActivities={nearbyActivities} />
       </MapContainer>
+      <div className="absolute top-2 right-2 z-[400] flex flex-col gap-1">
+        <button
+          type="button"
+          aria-label="Przybliż mapę"
+          onClick={() => mapRef.current?.zoomIn()}
+          className="w-8 h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          aria-label="Oddal mapę"
+          onClick={() => mapRef.current?.zoomOut()}
+          className="w-8 h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
+        >
+          −
+        </button>
+      </div>
     </div>
   );
 };
