@@ -382,11 +382,11 @@ const ActivityDetail = () => {
             {/* Desktop: Breadcrumbs */}
             <nav className="hidden md:flex items-center gap-1.5 text-sm mb-4" aria-label="breadcrumb">
               <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
               <Link to={`/atrakcje/${activity.city}`} className="text-muted-foreground hover:text-foreground transition-colors">
                 {cityLabels[activity.city]?.nominative || activity.city}
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60" />
+              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
               <span className="text-foreground font-medium truncate max-w-[300px]">{activity.title}</span>
             </nav>
             
