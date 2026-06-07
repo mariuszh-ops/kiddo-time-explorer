@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Compass, Heart, User } from "lucide-react";
+import { Compass, Heart, Map, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
 import { env } from "@/config/env";
+
 
 const BottomNav = () => {
   const location = useLocation();
