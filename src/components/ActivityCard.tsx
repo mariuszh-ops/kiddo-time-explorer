@@ -48,6 +48,7 @@ interface ActivityCardProps {
   isRecommended?: boolean;
   google_rating?: number;
   google_review_count?: number;
+  priority?: boolean;
 }
 
 const formatReviewBucket = (count: number): string => {
@@ -78,6 +79,7 @@ const ActivityCard = ({
   isRecommended,
   google_rating,
   google_review_count,
+  priority = false,
 }: ActivityCardProps) => {
   const { isLoggedIn, login } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
@@ -144,6 +146,7 @@ const ActivityCard = ({
                 categoryColor={getCategoryPlaceholderColor(type)}
                 className="w-full h-full object-cover transition-transform duration-200 ease-out [@media(hover:hover)]:group-hover:scale-[1.03]"
                 onError={handleImageError}
+                priority={priority}
               />
             )}
 

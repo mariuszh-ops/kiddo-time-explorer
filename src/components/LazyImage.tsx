@@ -28,6 +28,7 @@ interface LazyImageProps {
   className?: string;
   categoryColor?: string;
   onError?: () => void;
+  priority?: boolean;
 }
 
 const LazyImage = memo(({
@@ -36,6 +37,7 @@ const LazyImage = memo(({
   className,
   categoryColor = DEFAULT_COLOR,
   onError,
+  priority = false,
 }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(() => loadedImages.has(src));
 
@@ -59,8 +61,9 @@ const LazyImage = memo(({
       <img
         src={src}
         alt={alt}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
         decoding="async"
+        fetchPriority={priority ? "high" : "auto"}
         className={cn(
           "transition-opacity duration-300",
           isLoaded ? "opacity-100" : "opacity-0",

@@ -222,7 +222,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
         <div 
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6"
         >
-            {visibleActivities.map((activity) => (
+            {visibleActivities.map((activity, index) => (
               <div
                 key={activity.id}
               >
@@ -247,6 +247,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
                   isRecommended={activity.isRecommended}
                   google_rating={activity.google_rating}
                   google_review_count={activity.google_review_count}
+                  priority={index < 3}
                 />
               </div>
             ))}
