@@ -113,35 +113,52 @@ const BottomNav = () => {
       }}
     >
       {navItems.map((item) => {
-        const active = item.path === "/"
-          ? isActive("/")
-          : isActive(item.path);
+        const active = item.isMap
+          ? isMapView
+          : item.path === "/"
+            ? isActive("/") && !isMapView
+            : isActive(item.path);
         const Icon = item.icon;
 
         const itemClasses = cn(
-          "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
+          "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 min-h-[44px]",
           active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
         );
 
-          // Odkrywaj: always navigate to list view
-          if (item.path === "/") {
-            return (
-              <button
-                key={item.label}
-                onClick={handleDiscoverClick}
-                className={itemClasses}
-              >
-                <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
-                <span className="text-[10px] leading-none font-medium">{item.label}</span>
-              </button>
-            );
-          }
+        if (item.path === "/" && !item.isMap) {
+          return (
+            <button
+              key={item.label}
+              onClick={handleDiscoverClick}
+              className={itemClasses}
+              aria-label={item.label}
+            >
+              <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+            </button>
+          );
+        }
+
+        if (item.isMap) {
+          return (
+            <button
+              key={item.label}
+              onClick={handleMapClick}
+              className={itemClasses}
+              aria-label={item.label}
+            >
+              <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+            </button>
+          );
+        }
 
         return (
           <Link
             key={item.label}
             to={item.path}
             className={itemClasses}
+            aria-label={item.label}
           >
             <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
             <span className="text-[10px] leading-none font-medium">{item.label}</span>
