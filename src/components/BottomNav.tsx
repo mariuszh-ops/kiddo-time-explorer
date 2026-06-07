@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Compass, Heart, User } from "lucide-react";
+import { Compass, Heart, Map, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { FEATURES } from "@/lib/featureFlags";
 import { env } from "@/config/env";
+
 
 const BottomNav = () => {
   const location = useLocation();
@@ -83,16 +84,23 @@ const BottomNav = () => {
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
   const isActive = (path: string) => location.pathname === path;
+  const isMapView = location.search.includes("view=map");
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate("/", { replace: true });
   };
 
+  const handleMapClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate("/?view=map", { replace: true });
+  };
+
   const navItems = [
-    { label: "Odkrywaj", icon: Compass, path: "/" },
-    { label: "Moje", icon: Heart, path: "/my-places" },
-    { label: "Profil", icon: User, path: "/profile" },
+    { label: "Odkrywaj", icon: Compass, path: "/", isMap: false },
+    { label: "Mapa", icon: Map, path: "/", isMap: true },
+    { label: "Moje", icon: Heart, path: "/my-places", isMap: false },
+    { label: "Profil", icon: User, path: "/profile", isMap: false },
   ];
 
   return (
@@ -105,35 +113,52 @@ const BottomNav = () => {
       }}
     >
       {navItems.map((item) => {
-        const active = item.path === "/"
-          ? isActive("/")
-          : isActive(item.path);
+        const active = item.isMap
+          ? isMapView
+          : item.path === "/"
+            ? isActive("/") && !isMapView
+            : isActive(item.path);
         const Icon = item.icon;
 
         const itemClasses = cn(
-          "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95",
+          "flex-1 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95 min-h-[44px]",
           active ? "text-[hsl(var(--primary))]" : "text-muted-foreground"
         );
 
-          // Odkrywaj: always navigate to list view
-          if (item.path === "/") {
-            return (
-              <button
-                key={item.label}
-                onClick={handleDiscoverClick}
-                className={itemClasses}
-              >
-                <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
-                <span className="text-[10px] leading-none font-medium">{item.label}</span>
-              </button>
-            );
-          }
+        if (item.path === "/" && !item.isMap) {
+          return (
+            <button
+              key={item.label}
+              onClick={handleDiscoverClick}
+              className={itemClasses}
+              aria-label={item.label}
+            >
+              <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+            </button>
+          );
+        }
+
+        if (item.isMap) {
+          return (
+            <button
+              key={item.label}
+              onClick={handleMapClick}
+              className={itemClasses}
+              aria-label={item.label}
+            >
+              <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
+              <span className="text-[10px] leading-none font-medium">{item.label}</span>
+            </button>
+          );
+        }
 
         return (
           <Link
             key={item.label}
             to={item.path}
             className={itemClasses}
+            aria-label={item.label}
           >
             <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
             <span className="text-[10px] leading-none font-medium">{item.label}</span>
