@@ -84,16 +84,23 @@ const BottomNav = () => {
   if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
 
   const isActive = (path: string) => location.pathname === path;
+  const isMapView = location.search.includes("view=map");
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
     e.preventDefault();
     navigate("/", { replace: true });
   };
 
+  const handleMapClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate("/?view=map", { replace: true });
+  };
+
   const navItems = [
-    { label: "Odkrywaj", icon: Compass, path: "/" },
-    { label: "Moje", icon: Heart, path: "/my-places" },
-    { label: "Profil", icon: User, path: "/profile" },
+    { label: "Odkrywaj", icon: Compass, path: "/", isMap: false },
+    { label: "Mapa", icon: Map, path: "/", isMap: true },
+    { label: "Moje", icon: Heart, path: "/my-places", isMap: false },
+    { label: "Profil", icon: User, path: "/profile", isMap: false },
   ];
 
   return (
