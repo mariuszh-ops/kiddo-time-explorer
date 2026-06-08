@@ -3,6 +3,7 @@ import { useMemo, useState, lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
+import { Button } from "@/components/ui/button";
 const MapView = lazy(() => import("@/components/MapView"));
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
