@@ -94,11 +94,11 @@ const CategoryPage = () => {
 
   const breadcrumbItems = [
     { name: "Strona główna", url: `${BASE_URL}/` },
-    { name: cityLabel.nominative, url: `${BASE_URL}/atrakcje/${citySlug}` },
+    { name: effectiveCityLabel.nominative, url: `${BASE_URL}/atrakcje/${citySlug}` },
   ];
-  if (categorySlug && config.slug) {
+  if (categorySlug && effectiveConfig.slug) {
     breadcrumbItems.push({
-      name: config.label,
+      name: effectiveConfig.label,
       url: `${BASE_URL}${path}`,
     });
   }
@@ -147,14 +147,14 @@ const CategoryPage = () => {
                     <BreadcrumbCategoryDropdown
                       citySlug={citySlug!}
                       activeCategorySlug={categorySlug}
-                      currentLabel={filterOptions.type.find(t => t.value === categorySlug)?.label ?? config.label}
+                      currentLabel={filterOptions.type.find(t => t.value === categorySlug)?.label ?? effectiveConfig.label}
                     />
                   </BreadcrumbItem>
                 </>
               ) : (
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-muted-foreground font-medium">
-                    {cityLabel.nominative}
+                    {effectiveCityLabel.nominative}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               )}
@@ -171,34 +171,51 @@ const CategoryPage = () => {
             </p>
           </div>
 
-          {/* View toggle */}
-          {FEATURES.MAP_VIEW && (
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setViewMode("grid")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
-              >
-                Lista
-              </button>
-              <button
-                onClick={() => setViewMode("map")}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
-              >
-                Mapa
-              </button>
+          {/* Empty state */}
+          {isEmpty ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+              <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
+                Brak atrakcji w tej kategorii
+              </h2>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                Nie mamy jeszcze atrakcji dla wybranych filtrów. Spróbuj innej kategorii lub zmień miasto.
+              </p>
+              <Button asChild>
+                <Link to="/">Wróć na stronę główną</Link>
+              </Button>
             </div>
-          )}
-
-          {/* Activity Grid or Map */}
-          {FEATURES.MAP_VIEW && viewMode === "map" ? (
-            <Suspense fallback={<div className="h-[60vh] bg-muted animate-pulse rounded-lg" />}>
-              <MapView activities={activities} filters={{ city: citySlug }} />
-            </Suspense>
           ) : (
-            <ActivityGrid
-              activities={activities}
-              hasActiveFilters={false}
-            />
+            <>
+              {/* View toggle */}
+              {FEATURES.MAP_VIEW && (
+                <div className="flex gap-2 mb-4">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+                  >
+                    Lista
+                  </button>
+                  <button
+                    onClick={() => setViewMode("map")}
+                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+                  >
+                    Mapa
+                  </button>
+                </div>
+              )}
+
+              {/* Activity Grid or Map */}
+              {FEATURES.MAP_VIEW && viewMode === "map" ? (
+                <Suspense fallback={<div className="h-[60vh] bg-muted animate-pulse rounded-lg" />}>
+                  <MapView activities={activities} filters={{ city: citySlug }} />
+                </Suspense>
+              ) : (
+                <ActivityGrid
+                  activities={activities}
+                  hasActiveFilters={false}
+                />
+              )}
+            </>
           )}
         </div>
       </main>
