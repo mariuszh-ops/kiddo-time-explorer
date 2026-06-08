@@ -41,6 +41,12 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
       .slice(0, 6);
   }, [activities]);
 
+  const featuredActivities = useMemo(() => {
+    return [...activities]
+      .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
+      .slice(0, 10);
+  }, [activities]);
+
   const cityCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const a of activities) {
@@ -150,6 +156,44 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
           })}
         </div>
       </section>
+
+      {/* Section 3.5: Featured places */}
+      {featuredActivities.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="🏆" title="Polecane miejsca" subtitle="Najlepiej oceniane atrakcje przez rodziców" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {featuredActivities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                id={activity.id}
+                title={activity.title}
+                location={activity.location}
+                rating={activity.rating}
+                reviewCount={activity.reviewCount}
+                ageRange={activity.ageRange}
+                matchPercentage={activity.matchPercentage}
+                imageUrl={activity.imageUrl}
+                tags={activity.tags}
+                type={activity.type}
+                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
+                eventDate={activity.eventDate}
+                slug={activity.slug}
+                amenities={activity.amenities}
+                priceLevel={activity.priceLevel}
+                isRecommended={activity.isRecommended}
+              />
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              to="/atrakcje/warszawa"
+              className="inline-flex items-center justify-center rounded-full border border-border bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+            >
+              Zobacz wszystkie atrakcje
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Section 4: Blog */}
       {FEATURES.BLOG && blogPosts.length > 0 && (
