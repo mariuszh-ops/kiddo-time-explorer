@@ -48,15 +48,31 @@ const CategoryPage = () => {
     return getCategoryActivities(base, citySlug, categorySlug);
   }, [citySlug, categorySlug, config]);
 
-  // If citySlug is not a valid city, render nothing — let React Router fall through to ActivityDetail
-  if (!isValidCity || !config || !cityLabel) {
-    return null;
-  }
+  // Fallback config / cityLabel so we never render a completely blank page
+  const effectiveConfig = config ?? {
+    slug: categorySlug || "",
+    emoji: "📍",
+    label: categorySlug
+      ? categorySlug.charAt(0).toUpperCase() + categorySlug.slice(1)
+      : "Atrakcje",
+    seoTitle: "Atrakcje dla dzieci {city} — FamilyFun",
+    seoDescription: "Odkryj atrakcje dla dzieci {city}.",
+    h1: "Atrakcje dla dzieci {city}",
+    description: "Sprawdzone miejsca na wspólny czas z dzieckiem {city}.",
+    filterFn: () => false,
+  };
 
-  const resolvedTitle = resolveCityText(config.seoTitle, citySlug!);
-  const resolvedDescription = resolveCityText(config.seoDescription, citySlug!);
-  const resolvedH1 = resolveCityText(config.h1, citySlug!);
-  const resolvedBodyDescription = resolveCityText(config.description, citySlug!);
+  const effectiveCityLabel = cityLabel ?? {
+    nominative: citySlug || "To miasto",
+    locative: citySlug || "tym mieście",
+  };
+
+  const isEmpty = activities.length === 0;
+
+  const resolvedTitle = resolveCityText(effectiveConfig.seoTitle, citySlug || "");
+  const resolvedDescription = resolveCityText(effectiveConfig.seoDescription, citySlug || "");
+  const resolvedH1 = resolveCityText(effectiveConfig.h1, citySlug || "");
+  const resolvedBodyDescription = resolveCityText(effectiveConfig.description, citySlug || "");
 
   const path = categorySlug
     ? `/atrakcje/${citySlug}/${categorySlug}`
