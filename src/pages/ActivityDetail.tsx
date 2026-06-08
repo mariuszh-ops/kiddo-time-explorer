@@ -327,6 +327,19 @@ const ActivityDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              onClick={handleWantToVisitClick}
+              size="sm"
+              variant={wantToVisit ? "default" : "default"}
+              className="h-9 px-3 text-xs sm:text-sm"
+              disabled={isProcessing !== null}
+            >
+              {wantToVisit ? (
+                <><Check className="w-3.5 h-3.5 mr-1" />Na liście</>
+              ) : (
+                "Chcę odwiedzić"
+              )}
+            </Button>
             <button
               onClick={handleFavoriteClick}
               className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
@@ -339,7 +352,7 @@ const ActivityDetail = () => {
             </button>
             <button
               onClick={handleShare}
-              className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+              className="hidden sm:flex w-9 h-9 rounded-full hover:bg-muted items-center justify-center transition-colors"
               aria-label="Udostępnij"
             >
               <Share2 className="w-5 h-5 text-foreground" />
