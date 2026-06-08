@@ -41,6 +41,12 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
       .slice(0, 6);
   }, [activities]);
 
+  const featuredActivities = useMemo(() => {
+    return [...activities]
+      .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
+      .slice(0, 10);
+  }, [activities]);
+
   const cityCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     for (const a of activities) {
