@@ -95,35 +95,66 @@ const BlogPostPage = () => {
 
   const combinedJsonLd = [articleJsonLd, breadcrumbJsonLd];
 
-  // Simple markdown-like rendering (headers and paragraphs)
   const renderContent = (content: string) => {
-    return content.split("\n").map((line, i) => {
-      const trimmed = line.trim();
-      if (!trimmed) return <br key={i} />;
-      if (trimmed.startsWith("## "))
-        return (
-          <h2 key={i} className="text-lg font-semibold text-foreground mt-6 mb-2">
+    const lines = content.split("\n");
+    const elements: React.ReactNode[] = [];
+    let listItems: React.ReactNode[] = [];
+    let key = 0;
+
+    const flushList = () => {
+      if (listItems.length > 0) {
+        elements.push(
+          <ul key={`list-${key++}`} className="list-disc pl-5 space-y-1 my-2">
+            {listItems}
+          </ul>
+        );
+        listItems = [];
+      }
+    };
+
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (!trimmed) {
+        flushList();
+        elements.push(<br key={`br-${key++}`} />);
+        continue;
+      }
+      if (trimmed.startsWith("## ")) {
+        flushList();
+        elements.push(
+          <h2 key={`h2-${key++}`} className="text-lg font-semibold text-foreground mt-6 mb-2">
             {trimmed.slice(3)}
           </h2>
         );
-      if (trimmed.startsWith("# "))
-        return (
-          <h1 key={i} className="text-xl font-serif font-semibold text-foreground mt-4 mb-3">
+        continue;
+      }
+      if (trimmed.startsWith("# ")) {
+        flushList();
+        elements.push(
+          <h1 key={`h1-${key++}`} className="text-xl font-serif font-semibold text-foreground mt-4 mb-3">
             {trimmed.slice(2)}
           </h1>
         );
-      if (trimmed.startsWith("- "))
-        return (
-          <li key={i} className="text-foreground/90 ml-4 list-disc">
+        continue;
+      }
+      if (trimmed.startsWith("- ")) {
+        listItems.push(
+          <li key={`li-${key++}`} className="text-foreground/90">
             {trimmed.slice(2)}
           </li>
         );
-      return (
-        <p key={i} className="text-foreground/90 leading-relaxed mb-2">
+        continue;
+      }
+      flushList();
+      elements.push(
+        <p key={`p-${key++}`} className="text-foreground/90 leading-relaxed mb-2">
           {trimmed}
         </p>
       );
-    });
+    }
+
+    flushList();
+    return elements;
   };
 
   return (
