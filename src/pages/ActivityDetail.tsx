@@ -531,7 +531,7 @@ const ActivityDetail = () => {
                   onClick={handleShare}
                   variant="outline"
                   size={isMobile ? "lg" : "default"}
-                  className="hidden sm:flex"
+                  className="flex-1"
                 >
                   <Share2 className="w-4 h-4 mr-2" />
                   Udostępnij
