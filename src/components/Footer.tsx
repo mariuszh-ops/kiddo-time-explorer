@@ -16,7 +16,7 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
             </p>
-            <div className="flex gap-6 text-sm text-muted-foreground">
+            <nav aria-label="Stopka" className="flex gap-6 text-sm text-muted-foreground">
               <Link to="/o-nas" className="hover:text-foreground transition-colors">
                 O nas
               </Link>
@@ -40,7 +40,7 @@ const Footer = () => {
                   Inspiracje
                 </Link>
               )}
-            </div>
+            </nav>
             {FEATURES.SOCIAL_LINKS && (
               <div className="flex items-center gap-4">
                 <a href="https://instagram.com/familyfun.pl" target="_blank" rel="noopener noreferrer"

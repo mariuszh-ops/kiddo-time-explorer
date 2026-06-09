@@ -89,7 +89,7 @@ const Header = () => {
           </Link>
 
           {/* Navigation */}
-          <nav className="flex items-center gap-1 md:gap-2">
+          <nav aria-label="Główna nawigacja" className="flex items-center gap-1 md:gap-2">
             {/* Demo Mode Toggle - Development only */}
             {env.isDev && (
               <div className="flex items-center gap-2 px-2 py-1 mr-2 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-md">
