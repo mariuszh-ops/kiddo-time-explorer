@@ -33,7 +33,7 @@ const Kontakt = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3">Email</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  <a href="mailto:kontakt@familyfun.pl" className="text-primary hover:underline">kontakt@familyfun.pl</a>
+                  <a href="mailto:kontakt@familyfun.pl" className="text-primary underline hover:underline">kontakt@familyfun.pl</a>
                 </p>
               </section>
 
@@ -41,7 +41,7 @@ const Kontakt = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3">Współpraca biznesowa</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   Reprezentujesz organizatora wydarzeń lub atrakcję? Skontaktuj się:{" "}
-                  <a href="mailto:partner@familyfun.pl" className="text-primary hover:underline">partner@familyfun.pl</a>
+                  <a href="mailto:partner@familyfun.pl" className="text-primary underline hover:underline">partner@familyfun.pl</a>
                 </p>
               </section>
 
@@ -49,7 +49,7 @@ const Kontakt = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3">Zgłoś problem</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   Znalazłeś błąd lub nieaktualną informację? Napisz na:{" "}
-                  <a href="mailto:bugs@familyfun.pl" className="text-primary hover:underline">bugs@familyfun.pl</a>
+                  <a href="mailto:bugs@familyfun.pl" className="text-primary underline hover:underline">bugs@familyfun.pl</a>
                 </p>
               </section>
             </div>
