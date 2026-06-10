@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { env } from "@/config/env";
 
 /**
@@ -35,33 +36,48 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-
-
-/**
- * Mock user returned by the fake signIn. When real auth is wired in, this
- * function is replaced by a call to the auth provider's session API.
- */
-const createMockUser = (): User => ({
-  id: "mock-user-1",
-  email: "anna.kowalska@email.com",
-  name: "Anna Kowalska",
-  avatarUrl: undefined,
-  createdAt: new Date().toISOString(),
-});
+const mapSupabaseUser = (sessionUser: any): User | null => {
+  if (!sessionUser) return null;
+  return {
+    id: sessionUser.id,
+    email: sessionUser.email ?? "",
+    name: sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || undefined,
+    avatarUrl: sessionUser.user_metadata?.avatar_url || undefined,
+    createdAt: sessionUser.created_at,
+  };
+};
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+
+  // Listen to real Supabase auth state
+  useEffect(() => {
+    const getSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      setUser(mapSupabaseUser(data.session?.user ?? null));
+      setIsReady(true);
+    };
+    getSession();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(mapSupabaseUser(session?.user ?? null));
+    });
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
+  }, []);
 
   const signIn = useCallback(async (): Promise<void> => {
-    // Simulate network delay — keeps consumer code future-proof
+    // Keep backward-compat mock sign-in for non-OAuth flows (email etc)
     await new Promise((resolve) => setTimeout(resolve, 150));
-    setUser(createMockUser());
+    // In real usage consumers call lovable.auth.signInWithOAuth; this is a no-op fallback.
   }, []);
 
   const signOut = useCallback(async (): Promise<void> => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-    setUser(null);
+    await supabase.auth.signOut();
     setIsDemoMode(false);
   }, []);
 
@@ -78,7 +94,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsDemoMode((prev) => {
       const next = !prev;
       if (next) {
-        setUser(createMockUser());
+        // Demo mode still uses mock user locally
+        setUser({
+          id: "mock-user-1",
+          email: "anna.kowalska@email.com",
+          name: "Anna Kowalska",
+          createdAt: new Date().toISOString(),
+        });
       } else {
         setUser(null);
       }
