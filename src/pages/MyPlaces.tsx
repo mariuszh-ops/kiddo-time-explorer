@@ -109,6 +109,18 @@ const MyPlaces = () => {
     setIsAuthModalOpen(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.href,
+    });
+    if (result.error) {
+      console.error("Google sign-in error:", result.error);
+    }
+    if (result.redirected) {
+      return;
+    }
+  };
+
   // Logged-out empty state
   if (!isLoggedIn) {
     return (
