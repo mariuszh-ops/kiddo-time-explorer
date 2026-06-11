@@ -588,6 +588,26 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           Lista · {displayedActivities.length}
         </button>
 
+        {/* Accessible custom zoom controls (mobile) */}
+        <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+          <button
+            type="button"
+            aria-label="Przybliż mapę"
+            onClick={() => mapInstanceRef.current?.zoomIn()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            aria-label="Oddal mapę"
+            onClick={() => mapInstanceRef.current?.zoomOut()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            −
+          </button>
+        </div>
+
         {/* Draggable bottom sheet */}
         <MapBottomSheet
           visibleActivities={displayedActivities}
