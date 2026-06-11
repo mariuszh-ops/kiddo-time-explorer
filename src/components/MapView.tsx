@@ -172,6 +172,9 @@ function ClusteredMarkers({
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
         icon: createPinIcon(activity.rating, activity.type, false, false, isFavorite(activity.id)),
+        title: activity.title,
+        alt: activity.title,
+        keyboard: true,
       }).bindPopup(createPopupContent(activity), {
         maxWidth: 240,
         className: "custom-map-popup",
