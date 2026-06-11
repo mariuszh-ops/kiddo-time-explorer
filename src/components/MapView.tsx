@@ -172,6 +172,9 @@ function ClusteredMarkers({
     activities.forEach((activity) => {
       const marker = L.marker([activity.latitude, activity.longitude], {
         icon: createPinIcon(activity.rating, activity.type, false, false, isFavorite(activity.id)),
+        title: activity.title,
+        alt: activity.title,
+        keyboard: true,
       }).bindPopup(createPopupContent(activity), {
         maxWidth: 240,
         className: "custom-map-popup",
@@ -584,6 +587,26 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <LayoutGrid className="w-4 h-4" />
           Lista · {displayedActivities.length}
         </button>
+
+        {/* Accessible custom zoom controls (mobile) */}
+        <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+          <button
+            type="button"
+            aria-label="Przybliż mapę"
+            onClick={() => mapInstanceRef.current?.zoomIn()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            aria-label="Oddal mapę"
+            onClick={() => mapInstanceRef.current?.zoomOut()}
+            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          >
+            −
+          </button>
+        </div>
 
         {/* Draggable bottom sheet */}
         <MapBottomSheet
