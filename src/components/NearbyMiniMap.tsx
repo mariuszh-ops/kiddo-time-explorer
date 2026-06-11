@@ -56,7 +56,7 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
 
     const currentMarker = L.marker(
       [currentActivity.latitude, currentActivity.longitude],
-      { icon: currentPinIcon, zIndexOffset: 1000 }
+      { icon: currentPinIcon, zIndexOffset: 1000, title: currentActivity.title, alt: currentActivity.title }
     ).addTo(map);
     currentMarker.bindPopup(
       `<div style="text-align:center;padding:2px 4px;"><strong style="font-size:13px;">${currentActivity.title}</strong></div>`,
@@ -66,6 +66,8 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
     const markers = nearbyActivities.map((item) => {
       const marker = L.marker([item.latitude, item.longitude], {
         icon: nearbyPinIcon,
+        title: item.title,
+        alt: item.title,
       }).addTo(map);
       marker.bindPopup(
         `<div style="padding:2px 4px;min-width:120px;">
