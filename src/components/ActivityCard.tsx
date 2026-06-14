@@ -213,7 +213,7 @@ const ActivityCard = ({
               )}
             </div>
 
-            <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
               {title}
             </h3>
 

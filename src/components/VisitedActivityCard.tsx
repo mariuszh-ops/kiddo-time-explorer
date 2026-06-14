@@ -39,7 +39,7 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
         <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
           <div>
             {/* Title */}
-            <h3 className="font-medium text-foreground text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors">
+            <h3 className="font-medium text-gray-800 text-sm md:text-base line-clamp-2 group-hover:text-primary transition-colors">
               {activity.title}
             </h3>
             
