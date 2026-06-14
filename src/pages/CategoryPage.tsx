@@ -210,10 +210,13 @@ const CategoryPage = () => {
                   <MapView activities={activities} filters={{ city: citySlug }} />
                 </Suspense>
               ) : (
-                <ActivityGrid
-                  activities={activities}
-                  hasActiveFilters={false}
-                />
+                <>
+                  <h2 className="sr-only">Lista atrakcji</h2>
+                  <ActivityGrid
+                    activities={activities}
+                    hasActiveFilters={false}
+                  />
+                </>
               )}
             </>
           )}
