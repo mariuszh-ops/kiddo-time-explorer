@@ -28,7 +28,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
               {post.readTimeMinutes} min
             </span>
           </div>
-          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
             {post.title}
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-2">
