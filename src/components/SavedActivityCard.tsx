@@ -251,7 +251,7 @@ const SavedActivityCard = ({
           </div>
 
           {/* Title */}
-          <h3 className="font-semibold text-foreground leading-snug line-clamp-2 group-hover:text-primary transition-colors text-sm md:text-base break-words">
+          <h3 className="font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-primary transition-colors text-sm md:text-base break-words">
             {title}
           </h3>
 
