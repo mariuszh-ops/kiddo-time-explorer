@@ -114,7 +114,7 @@ const Profile = () => {
         <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" noindex />
         <div className="min-h-screen bg-background">
           <Header />
-          <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
+          <main className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
             <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
               <User className="w-7 h-7 text-accent-foreground" />
             </div>
@@ -143,7 +143,7 @@ const Profile = () => {
                 Zaloguj się
               </Button>
             </div>
-          </div>
+          </main>
           <Footer />
         </div>
         <AuthRequiredModal

@@ -128,7 +128,7 @@ const MyPlaces = () => {
         <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
         <div className="min-h-screen bg-background">
           <Header />
-          <div className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
+          <main className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
             <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
               <Heart className="w-7 h-7 text-accent-foreground" />
             </div>
@@ -157,7 +157,7 @@ const MyPlaces = () => {
                 Zaloguj się
               </Button>
             </div>
-          </div>
+          </main>
           <Footer />
         </div>
         <AuthRequiredModal
