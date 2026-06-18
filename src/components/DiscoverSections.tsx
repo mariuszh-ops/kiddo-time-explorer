@@ -71,11 +71,11 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
                 return isEmpty ? (
                   <div
                     key={city.value}
-                    className="relative overflow-hidden rounded-xl border border-border p-5 text-left opacity-50 cursor-default"
+                    className="relative overflow-hidden rounded-xl border border-border/70 p-5 text-left cursor-default"
                     style={{ backgroundColor: city.bg }}
                   >
-                    <span className="text-3xl mb-2 block">{city.emoji}</span>
-                    <h3 className="font-semibold text-foreground">{city.label}</h3>
+                    <span className="text-3xl mb-2 block opacity-60">{city.emoji}</span>
+                    <h3 className="font-semibold text-gray-800">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">Wkrótce</p>
                   </div>
                 ) : (
@@ -86,7 +86,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
                     style={{ backgroundColor: city.bg }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
-                    <h3 className="font-semibold text-foreground">{city.label}</h3>
+                    <h3 className="font-semibold text-gray-800">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
                     </p>
@@ -140,14 +140,14 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
                 key={opt.value}
                 onClick={count > 0 ? () => onSelectCategory?.(opt.value) : undefined}
                 disabled={count === 0}
-                className={cn(
-                  "group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all",
+                  className={cn(
+                   "group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all",
                   count > 0
                     ? "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                    : "opacity-50 cursor-default"
+                     : "cursor-default"
                 )}
               >
-                <h3 className="font-semibold text-foreground text-sm">{opt.label}</h3>
+                <h3 className="font-semibold text-gray-800 text-sm">{opt.label}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {count > 0 ? `${count} atrakcji` : "Wkrótce"}
                 </p>
