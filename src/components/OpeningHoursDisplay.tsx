@@ -40,7 +40,7 @@ const OpeningHoursDisplay = ({ hours }: OpeningHoursDisplayProps) => {
             <span className={isToday ? "font-semibold text-foreground" : "text-muted-foreground"}>
               {DAY_ABBREV[day] || day}
             </span>
-            <span className={isToday ? "font-semibold text-foreground" : isClosed ? "text-destructive/70" : "text-muted-foreground"}>
+            <span className={isToday ? "font-semibold text-foreground" : isClosed ? "font-medium text-[#b91c1c]" : "text-muted-foreground"}>
               {time || "—"}
             </span>
           </div>
