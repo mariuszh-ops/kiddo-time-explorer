@@ -24,6 +24,7 @@ import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import DecisionChips from "@/components/DecisionChips";
 import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
+import HomeSearch from "@/components/HomeSearch";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -258,6 +259,8 @@ const Index = () => {
         />
       ) : (
         <>
+          {/* Prominent search field above city tiles */}
+          <HomeSearch />
           {/* Top rated recommendations when no filters active */}
           {FEATURES.TOP_RATED_HOMEPAGE && topRatedActivities.length > 0 && (
             <section className="bg-background py-6 md:py-10">
