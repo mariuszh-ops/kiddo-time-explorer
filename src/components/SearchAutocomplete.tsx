@@ -177,6 +177,14 @@ const SearchAutocomplete = ({
         <input
           ref={inputRef}
           type="text"
+          role="combobox"
+          aria-label="Szukaj atrakcji"
+          aria-expanded={showDropdown}
+          aria-autocomplete="list"
+          aria-controls="search-autocomplete-listbox"
+          aria-activedescendant={
+            showDropdown && selectedIndex >= 0 ? `search-option-${selectedIndex}` : undefined
+          }
           value={inputValue}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
@@ -188,6 +196,7 @@ const SearchAutocomplete = ({
         {inputValue && (
           <button
             onClick={handleClear}
+            aria-label="Wyczyść wyszukiwanie"
             className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
           >
             <X className="w-3.5 h-3.5 text-muted-foreground" />
