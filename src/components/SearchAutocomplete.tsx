@@ -177,6 +177,14 @@ const SearchAutocomplete = ({
         <input
           ref={inputRef}
           type="text"
+          role="combobox"
+          aria-label="Szukaj atrakcji"
+          aria-expanded={showDropdown}
+          aria-autocomplete="list"
+          aria-controls="search-autocomplete-listbox"
+          aria-activedescendant={
+            showDropdown && selectedIndex >= 0 ? `search-option-${selectedIndex}` : undefined
+          }
           value={inputValue}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
@@ -188,6 +196,7 @@ const SearchAutocomplete = ({
         {inputValue && (
           <button
             onClick={handleClear}
+            aria-label="Wyczyść wyszukiwanie"
             className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
           >
             <X className="w-3.5 h-3.5 text-muted-foreground" />
@@ -198,6 +207,8 @@ const SearchAutocomplete = ({
       {/* Dropdown */}
       {showDropdown && (
         <div
+          id="search-autocomplete-listbox"
+          role="listbox"
           className="absolute top-full left-0 mt-1 bg-popover border border-border overflow-y-auto min-w-[320px] z-50"
           style={{
             borderRadius: "12px",
@@ -231,6 +242,9 @@ const SearchAutocomplete = ({
                   {matchingActivities.map((activity, i) => (
                     <button
                       key={activity.id}
+                      id={`search-option-${i}`}
+                      role="option"
+                      aria-selected={selectedIndex === i}
                       onClick={() => handleSelect(i)}
                       onMouseEnter={() => setSelectedIndex(i)}
                       className="w-full flex items-center gap-3 text-left transition-colors"
@@ -270,6 +284,9 @@ const SearchAutocomplete = ({
                     return (
                       <button
                         key={cat.path}
+                        id={`search-option-${globalIndex}`}
+                        role="option"
+                        aria-selected={selectedIndex === globalIndex}
                         onClick={() => handleSelect(globalIndex)}
                         onMouseEnter={() => setSelectedIndex(globalIndex)}
                         className="w-full flex items-center gap-3 text-left transition-colors"
