@@ -57,7 +57,45 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
 
   return (
     <div className="bg-background">
-      {/* Section 1: Discover by City */}
+      {/* Section 1: Featured places — raised above city tiles so real cards appear first */}
+      {featuredActivities.length > 0 && (
+        <section className="container py-6 md:py-8 border-b border-border/30">
+          <SectionHeader emoji="🏆" title="Polecane miejsca" subtitle="Najlepiej oceniane atrakcje przez rodziców" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {featuredActivities.map((activity) => (
+              <ActivityCard
+                key={activity.id}
+                id={activity.id}
+                title={activity.title}
+                location={activity.location}
+                rating={activity.rating}
+                reviewCount={activity.reviewCount}
+                ageRange={activity.ageRange}
+                matchPercentage={activity.matchPercentage}
+                imageUrl={activity.imageUrl}
+                tags={activity.tags}
+                type={activity.type}
+                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
+                eventDate={activity.eventDate}
+                slug={activity.slug}
+                amenities={activity.amenities}
+                priceLevel={activity.priceLevel}
+                isRecommended={activity.isRecommended}
+              />
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              to="/atrakcje/warszawa"
+              className="inline-flex items-center justify-center rounded-full border border-border bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
+            >
+              Zobacz wszystkie atrakcje
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* Section 2: Discover by City */}
       {(() => {
         const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
         if (visibleCities.length <= 1) return null;
@@ -98,7 +136,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
         );
       })()}
 
-      {/* Section 2: Top Rated */}
+      {/* Section 3: Top Rated */}
       {FEATURES.TOP_RATED_SECTION && topRated.length > 0 && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="⭐" title="Najlepiej oceniane" subtitle="Sprawdzone przez rodziców" />
@@ -128,7 +166,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
         </section>
       )}
 
-      {/* Section 3: Category tiles */}
+      {/* Section 4: Category tiles */}
       <section className="container py-6 md:py-8 border-b border-border/30">
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 md:gap-4">
@@ -157,45 +195,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
         </div>
       </section>
 
-      {/* Section 3.5: Featured places */}
-      {featuredActivities.length > 0 && (
-        <section className="container py-6 md:py-8 border-b border-border/30">
-          <SectionHeader emoji="🏆" title="Polecane miejsca" subtitle="Najlepiej oceniane atrakcje przez rodziców" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredActivities.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                id={activity.id}
-                title={activity.title}
-                location={activity.location}
-                rating={activity.rating}
-                reviewCount={activity.reviewCount}
-                ageRange={activity.ageRange}
-                matchPercentage={activity.matchPercentage}
-                imageUrl={activity.imageUrl}
-                tags={activity.tags}
-                type={activity.type}
-                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
-                eventDate={activity.eventDate}
-                slug={activity.slug}
-                amenities={activity.amenities}
-                priceLevel={activity.priceLevel}
-                isRecommended={activity.isRecommended}
-              />
-            ))}
-          </div>
-          <div className="mt-6 text-center">
-            <Link
-              to="/atrakcje/warszawa"
-              className="inline-flex items-center justify-center rounded-full border border-border bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
-            >
-              Zobacz wszystkie atrakcje
-            </Link>
-          </div>
-        </section>
-      )}
-
-      {/* Section 4: Blog */}
+      {/* Section 5: Blog */}
       {FEATURES.BLOG && blogPosts.length > 0 && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
