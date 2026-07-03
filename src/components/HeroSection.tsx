@@ -17,12 +17,12 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
     <section className="md:container md:px-4 md:pt-4">
       <div
-        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh]"
+        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh] min-h-[280px]"
         style={{
-          // Cap mobile hero height using REAL measured header + bottom nav heights
-          // (set by Header.tsx and BottomNav.tsx as CSS vars) plus a 16px buffer.
+          // Cap mobile hero height so activity cards peek above the fold.
+          // Uses 60svh instead of 100svh to leave room for HomeSearch + featured cards.
           maxHeight:
-            'calc(100svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px)',
+            'calc(60svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px)',
         }}
       >
         {/* Background image */}
