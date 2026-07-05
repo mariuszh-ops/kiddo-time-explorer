@@ -12,7 +12,7 @@ import { env } from "@/config/env";
 
 const Header = () => {
   const location = useLocation();
-  const { isLoggedIn, login, isDemoMode, toggleDemoMode } = useAuth();
+  const { isLoggedIn, signInWithGoogle, isDemoMode, toggleDemoMode } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -69,9 +69,8 @@ const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const handleAuthAction = () => {
-    // Simulate successful login for design purposes
-    login();
+  const handleAuthAction = async () => {
+    await signInWithGoogle();
     setIsAuthModalOpen(false);
   };
 
