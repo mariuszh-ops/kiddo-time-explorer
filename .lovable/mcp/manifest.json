@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "familyfun-mcp",
+      "version": "0.1.0",
+      "title": "FamilyFun MCP"
+    },
+    "tools": [
+      {
+        "name": "search_activities",
+        "title": "Search FamilyFun activities",
+        "description": "Search family activities from the FamilyFun catalog (5 Polish cities). Filter by city, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Free-text query matched against title, location, tags, description."
+            },
+            "city": {
+              "type": "string",
+              "enum": [
+                "warszawa",
+                "krakow",
+                "wroclaw",
+                "poznan",
+                "gdansk"
+              ],
+              "description": "City slug filter."
+            },
+            "indoor": {
+              "type": "boolean",
+              "description": "If true, only indoor. If false, only outdoor."
+            },
+            "tag": {
+              "type": "string",
+              "description": "Tag/category filter (case-insensitive contains)."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max results, default 10."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_activity",
+        "title": "Get FamilyFun activity details",
+        "description": "Fetch full details for one FamilyFun activity by its slug (e.g. 'warszawa-zoo-warszawskie').",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "slug": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Activity slug, e.g. 'warszawa-zoo-warszawskie'."
+            }
+          },
+          "required": [
+            "slug"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_cities",
+        "title": "List FamilyFun cities",
+        "description": "List Polish cities covered by FamilyFun with activity counts.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
