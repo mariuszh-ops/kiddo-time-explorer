@@ -81,7 +81,7 @@ const ActivityCard = ({
   google_review_count,
   priority = false,
 }: ActivityCardProps) => {
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
   
   const [imgSrc, setImgSrc] = useState(imageUrl);
@@ -123,8 +123,8 @@ const ActivityCard = ({
     }
   };
 
-  const handleAuthAction = () => {
-    login();
+  const handleAuthAction = async () => {
+    await signInWithGoogle();
     setIsAuthModalOpen(false);
   };
 
