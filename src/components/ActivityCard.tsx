@@ -192,8 +192,8 @@ const ActivityCard = ({
 
           {/* Content */}
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              {google_rating != null && google_review_count != null ? (
+            {google_rating != null && google_review_count != null && (
+              <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
                     <Star className="w-4 h-4 fill-primary text-primary" />
@@ -203,15 +203,8 @@ const ActivityCard = ({
                     · {formatReviewBucket(google_review_count)}
                   </span>
                 </div>
-              ) : (
-                <div className="flex items-center gap-1 bg-muted/60 px-2 py-1 rounded-lg">
-                  <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground font-medium">
-                    Bez ocen Google
-                  </span>
-                </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <h3 className="font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-primary transition-colors">
               {title}
