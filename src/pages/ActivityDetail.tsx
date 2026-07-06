@@ -717,13 +717,15 @@ const ActivityDetail = () => {
           
           <div className="space-y-4">
             {/* Opening hours */}
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
-                <OpeningHoursDisplay hours={details.openingHours} />
+            {activity.openingHours && (
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
+                  <OpeningHoursDisplay hours={details.openingHours} />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Address */}
             <div className="flex items-start gap-3">
