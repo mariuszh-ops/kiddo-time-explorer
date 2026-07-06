@@ -748,11 +748,11 @@ const ActivityDetail = () => {
             )}
 
             {/* Ticket / Website sources */}
-            <div className="flex items-start gap-3">
-              <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
-                {details.website ? (
+            {details.website && (
+              <div className="flex items-start gap-3">
+                <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
                   <div className="flex flex-wrap gap-2">
                     <a
                       href={details.website}
@@ -764,14 +764,9 @@ const ActivityDetail = () => {
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
-                ) : (
-                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Info className="w-4 h-4" />
-                    Informacje o biletach wkrótce
-                  </p>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Price details */}
             {activity.priceNote && (
