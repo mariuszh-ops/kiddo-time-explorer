@@ -159,7 +159,7 @@ const MobileFilterSheet = ({
         <SheetHeader className="flex-shrink-0 px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between">
             <SheetTitle className="text-lg font-semibold">Filtry</SheetTitle>
-            <SheetClose className="rounded-full p-2 hover:bg-muted transition-colors">
+            <SheetClose aria-label="Zamknij filtry" className="rounded-full p-2 hover:bg-muted transition-colors">
               <X className="w-5 h-5" />
             </SheetClose>
           </div>
