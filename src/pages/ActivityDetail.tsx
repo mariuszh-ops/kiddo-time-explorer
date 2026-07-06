@@ -235,8 +235,8 @@ const ActivityDetail = () => {
     priceRange: activity.priceRange || "$",
     activityTypes: activity.tags.length > 0 ? activity.tags : ["Rodzinne"],
     experiencePoints: activity.experiencePoints || defaultExperiencePoints,
-    openingHours: activity.openingHours || "Sprawdź godziny na stronie organizatora",
-    address: activity.address || "Sprawdź dokładny adres na stronie organizatora",
+    openingHours: activity.openingHours,
+    address: activity.address,
     website: activity.website,
     reviews: activity.reviews || [],
   };
