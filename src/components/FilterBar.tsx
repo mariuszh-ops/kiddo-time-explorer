@@ -111,6 +111,16 @@ const FilterBar = ({
       <>
         <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
           <div className="container py-3">
+            {/* Mobile: always-visible search field (above Filters button) */}
+            {FEATURES.SEARCH_AUTOCOMPLETE && (
+              <div className="mb-3 [&_>*]:w-full">
+                <SearchAutocomplete
+                  activities={getActivities()}
+                  searchQuery={searchQuery}
+                  onSearchChange={onSearchChange}
+                />
+              </div>
+            )}
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
