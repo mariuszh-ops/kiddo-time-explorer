@@ -1,7 +1,7 @@
 import { trackEvent } from "@/lib/analytics";
 import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Star, Calendar, MapPinned, Navigation, Heart, Camera, Sparkles } from "lucide-react";
+import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
