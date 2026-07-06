@@ -728,12 +728,12 @@ const ActivityDetail = () => {
             )}
 
             {/* Address */}
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
-                <p className="text-sm text-foreground">{details.address}</p>
-                {details.address !== "Sprawdź dokładny adres na stronie organizatora" && (
+            {activity.address && (
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
+                  <p className="text-sm text-foreground">{details.address}</p>
                   <a 
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.address)}`}
                     target="_blank"
@@ -743,9 +743,9 @@ const ActivityDetail = () => {
                     Otwórz w Mapach
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Ticket / Website sources */}
             <div className="flex items-start gap-3">
