@@ -235,8 +235,8 @@ const ActivityDetail = () => {
     priceRange: activity.priceRange || "$",
     activityTypes: activity.tags.length > 0 ? activity.tags : ["Rodzinne"],
     experiencePoints: activity.experiencePoints || defaultExperiencePoints,
-    openingHours: activity.openingHours || "Sprawdź godziny na stronie organizatora",
-    address: activity.address || "Sprawdź dokładny adres na stronie organizatora",
+    openingHours: activity.openingHours,
+    address: activity.address,
     website: activity.website,
     reviews: activity.reviews || [],
   };
@@ -717,21 +717,23 @@ const ActivityDetail = () => {
           
           <div className="space-y-4">
             {/* Opening hours */}
-            <div className="flex items-start gap-3">
-              <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
-                <OpeningHoursDisplay hours={details.openingHours} />
+            {activity.openingHours && (
+              <div className="flex items-start gap-3">
+                <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
+                  <OpeningHoursDisplay hours={details.openingHours} />
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Address */}
-            <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
-                <p className="text-sm text-foreground">{details.address}</p>
-                {details.address !== "Sprawdź dokładny adres na stronie organizatora" && (
+            {activity.address && (
+              <div className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
+                  <p className="text-sm text-foreground">{details.address}</p>
                   <a 
                     href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.address)}`}
                     target="_blank"
@@ -741,16 +743,16 @@ const ActivityDetail = () => {
                     Otwórz w Mapach
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Ticket / Website sources */}
-            <div className="flex items-start gap-3">
-              <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
-              <div className="min-w-0 flex-1">
-                <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
-                {details.website ? (
+            {details.website && (
+              <div className="flex items-start gap-3">
+                <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
                   <div className="flex flex-wrap gap-2">
                     <a
                       href={details.website}
@@ -762,14 +764,9 @@ const ActivityDetail = () => {
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
-                ) : (
-                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Info className="w-4 h-4" />
-                    Informacje o biletach wkrótce
-                  </p>
-                )}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Price details */}
             {activity.priceNote && (
