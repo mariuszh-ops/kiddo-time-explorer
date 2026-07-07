@@ -48,10 +48,31 @@ export const PRICE_LEVELS = {
 
 // --- Async data loading ---
 
-import { fallbackActivities } from "./fallbackActivities";
+export type DataStatus = "loading" | "success" | "error";
 
-let _activities: Activity[] = fallbackActivities;
+let _activities: Activity[] = [];
 let _loaded = false;
+let _status: DataStatus = "loading";
+const _statusListeners = new Set<() => void>();
+
+function _setStatus(status: DataStatus) {
+  if (_status === status) return;
+  _status = status;
+  _statusListeners.forEach((listener) => listener());
+}
+
+/** Current load status of the activity catalog. */
+export function getDataStatus(): DataStatus {
+  return _status;
+}
+
+/** Subscribe to status changes (useSyncExternalStore-compatible). Returns unsubscribe. */
+export function subscribeDataStatus(listener: () => void): () => void {
+  _statusListeners.add(listener);
+  return () => {
+    _statusListeners.delete(listener);
+  };
+}
 
 export async function loadActivities(): Promise<Activity[]> {
   if (_loaded) return _activities;
@@ -62,14 +83,22 @@ export async function loadActivities(): Promise<Activity[]> {
     _activities = data.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
     _loaded = true;
     _invalidateLookups();
+    _setStatus("success");
     return _activities;
   } catch (err) {
     console.error("[ActivitiesLoader] Failed to load /data/activities.json:", err);
+    // Awaryjny statyczny snapshot — ładowany dynamicznie, żeby nie obciążał main chunku.
+    try {
+      const { fallbackActivities } = await import("./fallbackActivities");
+      _activities = fallbackActivities;
+      _invalidateLookups();
+    } catch { /* brak fallbacku — zostają puste dane */ }
+    _setStatus("error");
     throw err instanceof Error ? err : new Error(String(err));
   }
 }
 
-/** Synchronous getter — returns loaded activities (fallback if not yet loaded) */
+/** Synchronous getter — returns loaded activities (empty array before load) */
 export function getActivities(): Activity[] {
   return _activities;
 }
@@ -79,6 +108,7 @@ export function setActivities(data: Activity[]) {
   _activities = data;
   _loaded = true;
   _invalidateLookups();
+  _setStatus("success");
 }
 
 // Backward compatibility — same reference as getActivities()

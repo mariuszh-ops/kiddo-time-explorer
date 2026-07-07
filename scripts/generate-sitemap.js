@@ -6,9 +6,9 @@
  * Uses dynamic import + tsx to load TypeScript source files.
  */
 
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 // Note: env shim is handled in src/config/env.ts itself
 
@@ -25,16 +25,18 @@ async function main() {
   let activities, categoryConfigs, FEATURES, blogPosts;
 
   try {
-    const actMod = await import(resolve(ROOT, 'src/data/activities.ts'));
-    activities = actMod.getActivities ? actMod.getActivities() : (actMod.mockActivities || []);
+    // Pełny katalog wprost z JSON — getActivities() w Node zwracał tylko fallback,
+    // przez co sitemap pomijał podstrony atrakcji.
+    activities = JSON.parse(readFileSync(resolve(ROOT, 'public/data/activities.json'), 'utf-8'));
 
-    const catMod = await import(resolve(ROOT, 'src/data/categoryPages.ts'));
+    // pathToFileURL — ESM loader wymaga URL-i file:// (bez tego pada na Windows)
+    const catMod = await import(pathToFileURL(resolve(ROOT, 'src/data/categoryPages.ts')).href);
     categoryConfigs = catMod.categoryConfigs;
 
-    const flagMod = await import(resolve(ROOT, 'src/lib/featureFlags.ts'));
+    const flagMod = await import(pathToFileURL(resolve(ROOT, 'src/lib/featureFlags.ts')).href);
     FEATURES = flagMod.FEATURES;
 
-    const blogMod = await import(resolve(ROOT, 'src/data/blogPosts.ts'));
+    const blogMod = await import(pathToFileURL(resolve(ROOT, 'src/data/blogPosts.ts')).href);
     blogPosts = blogMod.blogPosts;
   } catch (e) {
     console.error('Failed to import source files. Make sure tsx is available:', e.message);

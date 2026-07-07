@@ -9,10 +9,14 @@ import { Badge } from "@/components/ui/badge";
 import { blogPosts } from "@/data/blogPosts";
 import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = blogPosts.find((p) => p.slug === slug);
+  // Strona renderuje się bez czekania na katalog; hook dosyła re-render,
+  // gdy dane się załadują (sekcja powiązanych atrakcji).
+  useDataStatus();
 
   if (!post) {
     return (

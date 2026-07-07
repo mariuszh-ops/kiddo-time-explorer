@@ -1,10 +1,9 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Suspense, lazy, useEffect, useState } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { trackPageView } from "@/lib/analytics";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -14,9 +13,9 @@ import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
+import DataGate from "@/components/DataGate";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
-import DataLoadError from "@/components/DataLoadError";
 import Index from "./pages/Index";
 const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect"));
 const MyPlaces = lazy(() => import("./pages/MyPlaces"));
@@ -36,8 +35,6 @@ import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LayoutDiagnostics from "./components/LayoutDiagnostics";
 
-const queryClient = new QueryClient();
-
 // SPA pageview tracking
 const AnalyticsTracker = () => {
   const location = useLocation();
@@ -56,11 +53,12 @@ const AnimatedRoutes = () => {
       <Suspense fallback={<HomeSkeleton />}>
         <AnimatePresence mode="popLayout" initial={false}>
           <Routes location={location} key={location.pathname}>
-            <Route path="/" element={<Index />} />
-            <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
-            <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
-            <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
-            <Route path="/my-places" element={<MyPlaces />} />
+            {/* Widoki wymagające katalogu atrakcji — bramkowane per-widok (DataGate) */}
+            <Route path="/" element={<DataGate><Index /></DataGate>} />
+            <Route path="/atrakcje/:citySlug/:categorySlug" element={<DataGate><CategoryPage /></DataGate>} />
+            <Route path="/atrakcje/:slug" element={<DataGate><ActivityOrCategoryResolver /></DataGate>} />
+            <Route path="/activity/:id" element={<DataGate><ActivityDetailRedirect /></DataGate>} />
+            <Route path="/my-places" element={<DataGate><MyPlaces /></DataGate>} />
             <Route path="/profile" element={<Profile />} />
             {import.meta.env.DEV && <Route path="/admin" element={<Admin />} />}
             <Route path="/regulamin" element={<Regulamin />} />
@@ -83,26 +81,17 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => {
-  const [dataStatus, setDataStatus] = useState<"loading" | "success" | "error">("loading");
-
+  // Ładowanie katalogu startuje raz, ale nie blokuje renderu — status
+  // trzymany w module danych, widoki bramkuje per-route DataGate.
   useEffect(() => {
-    loadActivities()
-      .then(() => setDataStatus("success"))
-      .catch(() => setDataStatus("error"));
+    loadActivities().catch(() => {
+      // Błąd obsługują widoki przez DataGate (status "error").
+    });
   }, []);
-
-  if (dataStatus === "loading") {
-    return <HomeSkeleton />;
-  }
-
-  if (dataStatus === "error") {
-    return <DataLoadError />;
-  }
 
   return (
     <ErrorBoundary fallbackLevel="page">
       <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
           <AuthProvider>
             <SavedActivitiesProvider>
               <UserRatingsProvider>
@@ -124,7 +113,6 @@ const App = () => {
               </UserRatingsProvider>
             </SavedActivitiesProvider>
           </AuthProvider>
-        </QueryClientProvider>
       </HelmetProvider>
     </ErrorBoundary>
   );

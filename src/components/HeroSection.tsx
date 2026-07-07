@@ -28,7 +28,11 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         {/* Background image */}
         <div className="absolute inset-0 bg-[#8B7355]">
           <img
-            src="/images/hero-parent-child.jpg"
+            src="/images/hero-parent-child-1280.webp"
+            srcSet="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
+            sizes="100vw"
+            width={1280}
+            height={853}
             alt="Rodzic z dzieckiem odkrywają świat razem"
             decoding="async"
             fetchPriority="high"

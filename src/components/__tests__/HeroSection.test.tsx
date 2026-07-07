@@ -25,7 +25,8 @@ describe("HeroSection — CTA visibility on short screens (600–720px)", () => 
     const mh = heroBox.style.maxHeight;
     expect(mh).toContain("var(--header-h");
     expect(mh).toContain("var(--bottom-nav-h");
-    expect(mh).toContain("100svh");
+    // Hero celowo używa 60svh (miejsce na HomeSearch + karty nad foldem)
+    expect(mh).toContain("60svh");
   });
 
   // Layout invariant: header (72px mobile) + hero (≤ vh - 140) + bottom nav (64px)

@@ -1,8 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
-@import 'leaflet/dist/leaflet.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.css';
-@import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-
+/* Fonty ładowane przez <link> w index.html (preconnect + stylesheet).
+   CSS Leafleta/markerclustera importują komponenty mapy (lazy chunk). */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { X, MapPin } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
 import { getActivities } from "@/data/activities";
+import { useDataStatus } from "@/hooks/useDataStatus";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FEATURES } from "@/lib/featureFlags";
@@ -127,7 +128,10 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
-  const activities = useMemo(() => getActivities(), []);
+  // Reaguje na załadowanie katalogu — memo z pustą tablicą zamrażałoby dane.
+  const dataStatus = useDataStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const activities = useMemo(() => getActivities(), [dataStatus]);
   const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 

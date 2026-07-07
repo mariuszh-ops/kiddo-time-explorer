@@ -3,6 +3,7 @@ import { Activity, getActivities, slugFromId, idFromSlug } from "@/data/activiti
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
@@ -41,6 +42,9 @@ const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefi
 
 export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const { user, isLoggedIn } = useAuth();
+  // Mapowanie id↔slug wymaga załadowanego katalogu; hook wymusza też
+  // re-render (favorites/wantToVisit liczone z getActivities()).
+  const dataStatus = useDataStatus();
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
   );
@@ -71,6 +75,9 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Czekamy na katalog (slugFromId/idFromSlug) — efekt ponowi się po zmianie dataStatus.
+      if (dataStatus === "loading") return;
+
       // Merge guest cache → Supabase.
       const localFav = getItem<number[]>(STORAGE_KEYS.FAVORITES, []);
       const localWtv = getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, []);
@@ -87,6 +94,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         await supabase
           .from("saved_activities")
           .upsert(toInsert, { onConflict: "user_id,activity_slug,kind", ignoreDuplicates: true });
+        if (cancelled) return;
       }
 
       const { data, error } = await supabase
@@ -111,7 +119,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [user, dataStatus]);
 
   const favorites = getActivities().filter(a => favoriteIds.has(a.id));
   const wantToVisit = getActivities().filter(a => wantToVisitIds.has(a.id));

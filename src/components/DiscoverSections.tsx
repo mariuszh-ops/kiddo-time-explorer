@@ -55,6 +55,18 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
     return counts;
   }, [activities]);
 
+  // Liczniki kategorii — jeden przebieg zamiast filter() w każdej iteracji pętli kafelków
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const a of getActivities()) {
+      if (!FEATURES.ENABLED_CITIES.includes(a.city)) continue;
+      if (a.isEvent && !FEATURES.EVENTS) continue;
+      counts[a.type] = (counts[a.type] || 0) + 1;
+    }
+    return counts;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activities]);
+
   return (
     <div className="bg-background">
       {/* Section 1: Featured places — raised above city tiles so real cards appear first */}
@@ -171,8 +183,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 md:gap-4">
           {filterOptions.type.map((opt) => {
-            const allEnabled = getActivities().filter(a => FEATURES.ENABLED_CITIES.includes(a.city) && (!a.isEvent || FEATURES.EVENTS));
-            const count = allEnabled.filter(a => a.type === opt.value).length;
+            const count = categoryCounts[opt.value] || 0;
             return (
               <button
                 key={opt.value}

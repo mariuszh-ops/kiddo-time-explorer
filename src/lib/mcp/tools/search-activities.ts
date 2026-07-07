@@ -6,13 +6,15 @@ export default defineTool({
   name: "search_activities",
   title: "Search FamilyFun activities",
   description:
-    "Search family activities from the FamilyFun catalog (5 Polish cities). Filter by city, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
+    "Search family activities from the FamilyFun catalog (Poland — mainly the Warsaw and Silesia regions). Filter by city/region, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
   inputSchema: {
     query: z.string().trim().optional().describe("Free-text query matched against title, location, tags, description."),
     city: z
-      .enum(["warszawa", "krakow", "wroclaw", "poznan", "gdansk"])
+      .enum(["warszawa", "slask"])
       .optional()
-      .describe("City slug filter."),
+      .describe(
+        "Region slug filter: 'warszawa' (Warsaw area) or 'slask' (Silesian agglomeration). Smaller towns appear under their own city values — use `list_cities` for full coverage and the free-text query to match them."
+      ),
     indoor: z.boolean().optional().describe("If true, only indoor. If false, only outdoor."),
     tag: z.string().trim().optional().describe("Tag/category filter (case-insensitive contains)."),
     limit: z.number().int().min(1).max(50).optional().describe("Max results, default 10."),

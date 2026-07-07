@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, X } from "lucide-react";
-import { Activity, getActivities, filterOptions } from "@/data/activities";
+import { MapPin, Search, X } from "lucide-react";
+import { getActivities, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 function normalize(text: string): string {
   return text
@@ -62,7 +63,10 @@ const HomeSearch = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = "home-search-listbox";
 
-  const activities = useMemo(() => getActivities(), []);
+  // Reaguje na załadowanie katalogu — bez tego memo zamrażałoby puste dane.
+  const dataStatus = useDataStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const activities = useMemo(() => getActivities(), [dataStatus]);
 
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), 150);
@@ -233,15 +237,12 @@ const HomeSearch = () => {
                           backgroundColor: selectedIndex === i ? "hsl(var(--accent))" : "transparent",
                         }}
                       >
-                        <img
-                          src={a.imageUrl}
-                          alt=""
-                          loading="lazy"
-                          className="w-10 h-10 rounded-lg object-cover shrink-0 bg-muted"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
+                        <span
+                          aria-hidden="true"
+                          className="w-10 h-10 rounded-lg shrink-0 bg-muted flex items-center justify-center"
+                        >
+                          <MapPin className="w-4 h-4 text-muted-foreground" />
+                        </span>
                         <div className="min-w-0 flex-1">
                           <span className="text-sm font-medium text-foreground truncate block">
                             {a.title}

@@ -3,6 +3,8 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster";
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Link } from "react-router-dom";
 import { Star, LocateFixed, LayoutGrid, MapPin, Heart } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -100,7 +102,7 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
 const createPopupContent = (activity: Activity) => {
   return `
     <a href="/atrakcje/${activity.slug}" style="text-decoration:none;color:inherit;display:block;width:220px;">
-      <img src="${activity.imageUrl}" alt="${activity.title}" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
+      <img src="${activity.imageUrl}" alt="${activity.title}" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
       <div style="padding:8px 10px;">
         <div style="font-weight:600;font-size:14px;margin-bottom:4px;color:#1a1a1a;">${activity.title}</div>
         <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#666;">

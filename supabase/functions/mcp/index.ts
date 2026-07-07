@@ -26,10 +26,12 @@ async function fetchActivities() {
 var search_activities_default = defineTool({
   name: "search_activities",
   title: "Search FamilyFun activities",
-  description: "Search family activities from the FamilyFun catalog (5 Polish cities). Filter by city, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
+  description: "Search family activities from the FamilyFun catalog (Poland \u2014 mainly the Warsaw and Silesia regions). Filter by city/region, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
   inputSchema: {
     query: z.string().trim().optional().describe("Free-text query matched against title, location, tags, description."),
-    city: z.enum(["warszawa", "krakow", "wroclaw", "poznan", "gdansk"]).optional().describe("City slug filter."),
+    city: z.enum(["warszawa", "slask"]).optional().describe(
+      "Region slug filter: 'warszawa' (Warsaw area) or 'slask' (Silesian agglomeration). Smaller towns appear under their own city values \u2014 use `list_cities` for full coverage and the free-text query to match them."
+    ),
     indoor: z.boolean().optional().describe("If true, only indoor. If false, only outdoor."),
     tag: z.string().trim().optional().describe("Tag/category filter (case-insensitive contains)."),
     limit: z.number().int().min(1).max(50).optional().describe("Max results, default 10.")
@@ -142,7 +144,7 @@ var mcp_default = defineMcp({
   name: "familyfun-mcp",
   title: "FamilyFun MCP",
   version: "0.1.0",
-  instructions: "Tools for FamilyFun (familyfun.pl), a catalog of family-friendly activities in 5 Polish cities (Warszawa, Krak\xF3w, Wroc\u0142aw, Pozna\u0144, Gda\u0144sk). Use `list_cities` to see coverage, `search_activities` to find places by city/tag/query, and `get_activity` to fetch details for a specific slug.",
+  instructions: "Tools for FamilyFun (familyfun.pl), a catalog of ~460 family-friendly activities in Poland \u2014 mainly the Warsaw area (city slug `warszawa`) and the Silesian agglomeration (`slask`), plus smaller nearby towns. Use `list_cities` to see coverage, `search_activities` to find places by city/tag/query, and `get_activity` to fetch details for a specific slug.",
   tools: [search_activities_default, get_activity_default, list_cities_default]
 });
 

@@ -5,35 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <!--
-      Baseline security hardening (client-side only).
-
-      Uwaga: HSTS, X-Frame-Options i Permissions-Policy MUSZĄ być nagłówkami HTTP
-      i nie da się ich ustawić z poziomu <meta>. Lovable serwuje stronę po HTTPS
-      z HSTS na poziomie platformy. `frame-ancestors` w meta jest ignorowane przez
-      przeglądarki (spec) — jeśli kiedyś dojdzie własny serwer/CDN, ten sam
-      whitelist należy przepisać na nagłówek `Content-Security-Policy` razem z
-      `X-Frame-Options: DENY`.
-
-      Poniżej Report-Only — niczego NIE blokuje, tylko loguje naruszenia w
-      konsoli przeglądarki, żeby spokojnie zebrać whitelistę przed wymuszeniem.
+      Uwaga bezpieczeństwo: HSTS, X-Frame-Options, Permissions-Policy i CSP z
+      `frame-ancestors` MUSZĄ być nagłówkami HTTP — meta CSP-Report-Only jest
+      ignorowane przez przeglądarki (generowało tylko błędy w konsoli).
+      Lovable serwuje stronę po HTTPS z HSTS na poziomie platformy; przy
+      własnym serwerze/CDN dodać nagłówek `Content-Security-Policy`.
     -->
-    <meta
-      http-equiv="Content-Security-Policy-Report-Only"
-      content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' https://plausible.io https://*.googletagmanager.com https://maps.googleapis.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.googleapis.com;
-        font-src 'self' data: https://fonts.gstatic.com;
-        img-src 'self' data: blob: https: ;
-        connect-src 'self' https://plausible.io https://*.google-analytics.com https://*.googleapis.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com;
-        frame-src 'self' https://www.google.com https://*.google.com;
-        frame-ancestors 'none';
-        base-uri 'self';
-        form-action 'self';
-        object-src 'none';
-        upgrade-insecure-requests
-      "
-    />
     <title>FamilyFun – Sprawdzone atrakcje dla rodzin z dziećmi</title>
     <meta name="description" content="Odkryj sprawdzone miejsca i atrakcje dla dzieci. Opinie rodziców, które pomogą Ci zaplanować wspólny czas z dzieckiem." />
     <meta name="author" content="FamilyFun" />
@@ -45,6 +22,23 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="/og-image.png" />
+
+    <!-- Fonts: preconnect + stylesheet w <head> zamiast @import w CSS (szybszy FCP) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap"
+    />
+
+    <!-- Preload hero (LCP na stronie głównej) -->
+    <link
+      rel="preload"
+      as="image"
+      imagesrcset="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#497a5c" />

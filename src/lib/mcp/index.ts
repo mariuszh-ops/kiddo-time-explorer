@@ -8,6 +8,6 @@ export default defineMcp({
   title: "FamilyFun MCP",
   version: "0.1.0",
   instructions:
-    "Tools for FamilyFun (familyfun.pl), a catalog of family-friendly activities in 5 Polish cities (Warszawa, Kraków, Wrocław, Poznań, Gdańsk). Use `list_cities` to see coverage, `search_activities` to find places by city/tag/query, and `get_activity` to fetch details for a specific slug.",
+    "Tools for FamilyFun (familyfun.pl), a catalog of ~460 family-friendly activities in Poland — mainly the Warsaw area (city slug `warszawa`) and the Silesian agglomeration (`slask`), plus smaller nearby towns. Use `list_cities` to see coverage, `search_activities` to find places by city/tag/query, and `get_activity` to fetch details for a specific slug.",
   tools: [searchActivities, getActivity, listCities],
 });

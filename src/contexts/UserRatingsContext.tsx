@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities } from "@/data/activities";
 import { getRawItem, setRawItem } from "@/lib/storage";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 const STORAGE_KEY = "familyfun_user_ratings";
 
@@ -52,6 +53,8 @@ const UserRatingsContext = createContext<UserRatingsContextType | undefined>(und
 
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
+  // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
+  useDataStatus();
 
   useEffect(() => {
     saveRatings(ratings);

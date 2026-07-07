@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
 interface NearbyActivity {
   id: number;
@@ -20,18 +21,20 @@ interface NearbyMiniMapProps {
   nearbyActivities: NearbyActivity[];
 }
 
+// Markery są klikalne (popup) — przezroczysty wrapper powiększa cel dotyku
+// do ≥28×28 px (WCAG target-size), kropka zostaje wizualnie mała.
 const currentPinIcon = L.divIcon({
   className: "",
-  html: `<div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
-  iconSize: [14, 14],
-  iconAnchor: [7, 7],
+  html: `<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div></div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
 });
 
 const nearbyPinIcon = L.divIcon({
   className: "",
-  html: `<div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div>`,
-  iconSize: [10, 10],
-  iconAnchor: [5, 5],
+  html: `<div style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;"><div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div></div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
 });
 
 function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
@@ -90,10 +93,12 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
 }
 
 const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps) => {
+  // Hooki przed wczesnym returnem (rules-of-hooks)
+  const mapRef = useRef<L.Map | null>(null);
+
   if (nearbyActivities.length === 0) return null;
 
   const center: [number, number] = [currentActivity.latitude, currentActivity.longitude];
-  const mapRef = useRef<L.Map | null>(null);
 
   return (
     <div className="mt-4 h-[200px] md:h-[250px] rounded-xl overflow-hidden shadow-sm relative">

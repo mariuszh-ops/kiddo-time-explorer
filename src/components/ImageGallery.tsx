@@ -177,18 +177,22 @@ const CarouselGallery = ({
             <ChevronRight className="w-5 h-5 text-foreground" />
           </button>
 
-          {/* Mobile dots */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 md:hidden">
+          {/* Mobile dots — cel dotyku 24×44 px (WCAG target-size), kropka to wewnętrzny span */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex items-center md:hidden">
             {images.map((_, index) => (
               <button
                 key={index}
                 onClick={(e) => { e.stopPropagation(); scrollTo(index); }}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-all",
-                  selectedIndex === index ? "bg-background w-4" : "bg-background/50"
-                )}
+                className="w-6 h-11 flex items-center justify-center"
                 aria-label={`Przejdź do zdjęcia ${index + 1}`}
-              />
+              >
+                <span
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all",
+                    selectedIndex === index ? "bg-background w-4" : "bg-background/50"
+                  )}
+                />
+              </button>
             ))}
           </div>
 

@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState, useEffect, useRef } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
-import familyFunLogo from "@/assets/familyfun-logo.png";
+import familyFunLogo from "@/assets/familyfun-logo.webp";
 import { env } from "@/config/env";
 
 
@@ -80,9 +80,12 @@ const Header = () => {
         <div className="container flex items-center justify-between h-[72px] md:h-[88px]">
           {/* Logo */}
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px] -ml-2 md:-ml-3">
-            <img 
-              src={familyFunLogo} 
-              alt="FamilyFun" 
+            <img
+              src={familyFunLogo}
+              alt="FamilyFun"
+              width={379}
+              height={260}
+              fetchPriority="high"
               className="h-[96px] md:h-[130px] w-auto object-contain"
             />
           </Link>

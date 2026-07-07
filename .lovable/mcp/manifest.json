@@ -15,7 +15,7 @@
       {
         "name": "search_activities",
         "title": "Search FamilyFun activities",
-        "description": "Search family activities from the FamilyFun catalog (5 Polish cities). Filter by city, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
+        "description": "Search family activities from the FamilyFun catalog (Poland — mainly the Warsaw and Silesia regions). Filter by city/region, category/tag, indoor/outdoor, or a free-text query matched against title, location, tags and description.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -32,12 +32,9 @@
               "type": "string",
               "enum": [
                 "warszawa",
-                "krakow",
-                "wroclaw",
-                "poznan",
-                "gdansk"
+                "slask"
               ],
-              "description": "City slug filter."
+              "description": "Region slug filter: 'warszawa' (Warsaw area) or 'slask' (Silesian agglomeration). Smaller towns appear under their own city values — use `list_cities` for full coverage and the free-text query to match them."
             },
             "indoor": {
               "type": "boolean",
