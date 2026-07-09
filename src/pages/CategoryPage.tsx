@@ -9,13 +9,13 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
-import { LEGACY_CITY_TO_REGION } from "@/data/regions";
+import { LEGACY_CITY_TO_REGION, REGION_BY_SLUG, REGION_SLUGS } from "@/data/regions";
 import {
   getCategoryConfig,
   resolveCityText,
   cityLabels,
 } from "@/data/categoryPages";
-import { useActivities } from "@/hooks/useActivities";
+import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
 import CategoryFilterBar, { type SortOption } from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
@@ -43,17 +43,27 @@ const pluralizeActivities = (n: number): string => {
 
 const CategoryPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
-  const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string }>();
-  // Support both /atrakcje/:citySlug/:categorySlug and /atrakcje/:slug (where slug is a city)
-  const citySlug = params.citySlug || params.slug;
+  const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string; regionSlug?: string }>();
+  // Obsługiwane ścieżki:
+  //   /atrakcje/:citySlug/:categorySlug
+  //   /atrakcje/:slug (gdzie slug = miasto/województwo)
+  //   /:regionSlug (krótki URL województwa)
+  //   /:regionSlug/:categorySlug
+  //   /kategoria/:categorySlug (kategoria we wszystkich województwach)
+  const citySlug = params.regionSlug || params.citySlug || params.slug;
   const categorySlug = params.categorySlug;
 
   // Stary slug miasta → nowe województwo. Zachowujemy kategorię.
   if (citySlug && LEGACY_CITY_TO_REGION[citySlug]) {
     const target = categorySlug
-      ? `/atrakcje/${LEGACY_CITY_TO_REGION[citySlug]}/${categorySlug}`
-      : `/atrakcje/${LEGACY_CITY_TO_REGION[citySlug]}`;
+      ? `/${LEGACY_CITY_TO_REGION[citySlug]}/${categorySlug}`
+      : `/${LEGACY_CITY_TO_REGION[citySlug]}`;
     return <Navigate to={target} replace />;
+  }
+
+  // Kiedy trafiliśmy tu z /{region} lub /{region}/{type} — waliduj slug.
+  if (params.regionSlug && !REGION_SLUGS.includes(params.regionSlug)) {
+    return <Navigate to="/404" replace />;
   }
 
   const config = getCategoryConfig(categorySlug);
@@ -77,7 +87,10 @@ const CategoryPage = () => {
     total,
     loading,
     error,
-  } = useActivities({
+    hasMore,
+    loadingMore,
+    loadMore,
+  } = useActivitiesInfinite({
     region: citySlug,
     type: effectiveType,
     amenities: urlAmenities,
@@ -126,9 +139,12 @@ const CategoryPage = () => {
     filterFn: () => false,
   };
 
+  // Fallback etykieta: dla znanego regionu użyj label/locative z REGIONS,
+  // dla trybu „tylko kategoria" (brak citySlug) — „w Polsce".
+  const region = citySlug ? REGION_BY_SLUG[citySlug] : undefined;
   const effectiveCityLabel = cityLabel ?? {
-    nominative: citySlug || "To miasto",
-    locative: citySlug || "tym mieście",
+    nominative: region?.label ?? (citySlug ?? "Polska"),
+    locative: region?.locative ?? (citySlug ? citySlug : "Polsce"),
   };
 
   const isEmpty = !loading && activities.length === 0;
@@ -138,9 +154,9 @@ const CategoryPage = () => {
   const resolvedH1 = resolveCityText(effectiveConfig.h1, citySlug || "");
   const resolvedBodyDescription = resolveCityText(effectiveConfig.description, citySlug || "");
 
-  const path = categorySlug
-    ? `/atrakcje/${citySlug}/${categorySlug}`
-    : `/atrakcje/${citySlug}`;
+  const path = citySlug
+    ? (categorySlug ? `/${citySlug}/${categorySlug}` : `/${citySlug}`)
+    : `/kategoria/${categorySlug}`;
 
   // JSON-LD: ItemList + BreadcrumbList
   const itemListJsonLd = {
@@ -326,6 +342,20 @@ const CategoryPage = () => {
                 </>
               )}
             </>
+          )}
+
+          {/* Pokaż więcej (serwerowa paginacja co 24) */}
+          {!isEmpty && !error && hasMore && (
+            <div className="mt-8 flex justify-center">
+              <Button
+                onClick={loadMore}
+                disabled={loadingMore}
+                variant="outline"
+                size="lg"
+              >
+                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${total - activities.length})`}
+              </Button>
+            </div>
           )}
         </div>
       </main>
