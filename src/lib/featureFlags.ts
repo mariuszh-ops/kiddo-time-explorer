@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { REGION_SLUGS } from "@/data/regions";
 
 export const FEATURES = {
   MAP_VIEW: true,            // Widok mapy z pinami — wyłączony w MVP
@@ -10,7 +11,7 @@ export const FEATURES = {
   BLOG: true,                 // Sekcja Blog/Inspiracje — aktywna
   UGC_PHOTOS: false,          // Zdjęcia rodziców na stronie atrakcji — ukryte w MVP
   SEARCH_AUTOCOMPLETE: true,  // Dropdown z podpowiedziami w wyszukiwarce — aktywny
-  ENABLED_CITIES: ["warszawa", "krakow", "wroclaw", "trojmiasto", "poznan", "slask", "lodz"] as string[],  // Miasta widoczne w UI. Dodawaj kolejne: ["warszawa", "krakow", ...]
+  ENABLED_CITIES: REGION_SLUGS as string[],  // Slugi 16 województw. Źródło: src/data/regions.ts
   SOCIAL_LINKS: false,        // Linki do social media w stopce — wyłączone w MVP
   COOKIE_CONSENT: false,      // Baner cookies — wyłączony, bo Plausible nie używa cookies. Włączyć gdy dołożymy GA4 / Meta Pixel.
   ONBOARDING: env.enableOnboarding,    // Welcome screen dla nowych użytkowników — kontrolowane przez VITE_ENABLE_ONBOARDING
