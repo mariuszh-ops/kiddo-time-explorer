@@ -35,6 +35,8 @@ export interface CatalogRow {
   image_url: string | null;
   good_for_children: boolean | null;
   published: boolean | null;
+  uncertain?: boolean | null;
+  confidence?: "niska" | "srednia" | "wysoka" | null;
 }
 
 import type { Activity } from "@/data/activities";
@@ -79,6 +81,8 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     google_rating: rating,
     google_review_count: reviewCount,
     coordinates: row.lat != null && row.lng != null ? { lat: row.lat, lng: row.lng } : undefined,
+    uncertain: row.uncertain ?? false,
+    confidence: row.confidence ?? null,
   };
 }
 
