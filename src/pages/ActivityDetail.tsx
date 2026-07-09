@@ -383,10 +383,10 @@ const ActivityDetail = () => {
               <p className="text-sm font-medium text-foreground truncate max-w-[40ch]">
                 {activity.title}
               </p>
-              {activity.google_rating && (
+              {displayRating != null && (
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                  <span className="text-xs text-muted-foreground">{activity.google_rating.toFixed(1)}</span>
+                  <span className="text-xs text-muted-foreground">{displayRating.toFixed(1)}</span>
                 </div>
               )}
             </div>
@@ -473,21 +473,15 @@ const ActivityDetail = () => {
               <h1 className="text-xl md:text-3xl font-serif text-foreground leading-tight">
                 {activity.title}
               </h1>
-              {activity.google_rating && (
+              {displayRating != null && (
                 <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
                   <div className="flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-primary text-primary" />
-                    <span className="text-sm sm:text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                    <span className="text-sm sm:text-lg font-bold text-foreground">{displayRating.toFixed(1)}</span>
                   </div>
                   <span className="text-xs sm:text-sm text-muted-foreground sm:text-foreground">
                     ·{" "}
-                    {(() => {
-                      const c = activity.google_review_count || 0;
-                      if (c < 50) return "do 50 ocen";
-                      if (c < 100) return "50+ ocen";
-                      if (c < 1000) return "100+ ocen";
-                      return "1000+ ocen";
-                    })()}
+                    {displayReviewCount != null ? formatReviewCount(displayReviewCount) : "brak opinii"}
                   </span>
                   <span className="text-xs text-muted-foreground">· Google</span>
                 </div>
