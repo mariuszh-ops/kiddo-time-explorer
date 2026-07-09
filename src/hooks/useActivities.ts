@@ -10,6 +10,8 @@ export interface UseActivitiesFilters {
   sort?: "rating" | "reviews" | "name";
   page?: number;
   pageSize?: number;
+  /** Gdy false, wyklucz atrakcje klasyfikowane automatycznie (uncertain=true). Domyślnie true. */
+  includeUncertain?: boolean;
 }
 
 export interface UseActivitiesResult {
@@ -25,7 +27,7 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, amenities, minRating, sort = "rating", page = 0, pageSize = 500 } = filters;
+  const { region, type, amenities, minRating, sort = "rating", page = 0, pageSize = 500, includeUncertain = true } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
@@ -47,6 +49,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         if (type) q = q.eq("type", type);
         if (amenities && amenities.length > 0) q = q.contains("amenities", amenities);
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
+        if (!includeUncertain) q = q.eq("uncertain", false);
         if (sort === "name") {
           q = q.order("name", { ascending: true });
         } else if (sort === "reviews") {
@@ -70,7 +73,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
     })();
 
     return () => { cancelled = true; };
-  }, [region, type, amenitiesKey, minRating, sort, page, pageSize]);
+  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain]);
 
   return { data, total, loading, error };
 }
