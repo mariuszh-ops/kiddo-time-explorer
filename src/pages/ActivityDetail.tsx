@@ -501,6 +501,11 @@ const ActivityDetail = () => {
               <span className="line-clamp-1">{activity.location}</span>
             </p>
 
+            {/* Description (fallback z typu + miasta gdy null) */}
+            <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-3">
+              {activityDescription}
+            </p>
+
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
