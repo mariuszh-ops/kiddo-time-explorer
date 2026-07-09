@@ -142,7 +142,7 @@ const ActivityCard = ({
           <div
             className={cn(
               "relative aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-muted",
-              uncertain && "ring-1 ring-dashed ring-muted-foreground/40 outline-dashed outline-1 outline-muted-foreground/30 outline-offset-[-1px]",
+              uncertain && "outline-dashed outline-1 outline-muted-foreground/40 outline-offset-[-1px]",
             )}
           >
             {imgError ? (
