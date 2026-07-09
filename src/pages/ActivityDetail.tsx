@@ -816,7 +816,7 @@ const ActivityDetail = () => {
               <div className="flex items-start gap-3">
                 <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Strona organizatora</p>
                   <div className="flex flex-wrap gap-2">
                     <a
                       href={details.website}
@@ -824,10 +824,26 @@ const ActivityDetail = () => {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
                     >
-                      Strona organizatora
+                      Otwórz stronę
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Phone */}
+            {activity.phone && (
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Telefon</p>
+                  <a
+                    href={`tel:${activity.phone.replace(/\s+/g, "")}`}
+                    className="text-sm text-primary active:opacity-70"
+                  >
+                    {activity.phone}
+                  </a>
                 </div>
               </div>
             )}
