@@ -22,6 +22,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Admin = lazy(() => import("./pages/Admin"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
+const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Regulamin = lazy(() => import("./pages/Regulamin"));
 const PolitykaPrywatnosci = lazy(() => import("./pages/PolitykaPrywatnosci"));
@@ -58,6 +59,7 @@ const AnimatedRoutes = () => {
             <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
             <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
             <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
+            <Route path="/kategoria/:categorySlug" element={<CategoryPage />} />
             <Route path="/my-places" element={<MyPlaces />} />
             <Route path="/profile" element={<Profile />} />
             {import.meta.env.DEV && <Route path="/admin" element={<Admin />} />}
@@ -71,6 +73,9 @@ const AnimatedRoutes = () => {
                 <Route path="/inspiracje/:slug" element={<BlogPostPage />} />
               </>
             )}
+            {/* Krótkie URL-e województw: /{region} i /{region}/{type} */}
+            <Route path="/:regionSlug" element={<RegionRouteResolver />} />
+            <Route path="/:regionSlug/:categorySlug" element={<RegionRouteResolver />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
