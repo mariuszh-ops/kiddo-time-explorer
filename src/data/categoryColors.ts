@@ -9,6 +9,7 @@ export const CATEGORY_COLORS: Record<string, string> = {
   "inne":          "#607D8B",
 };
 
+CATEGORY_COLORS["centra-rozrywki"] = "#3F51B5";
 export function getCategoryColor(type: string): string {
   return CATEGORY_COLORS[type] || "#757575";
 }

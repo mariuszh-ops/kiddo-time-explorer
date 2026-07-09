@@ -23,6 +23,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
   "sala-zabaw": "🎠",
   "plac-zabaw": "🛝",
   "park-rozrywki": "🎢",
+  "centra-rozrywki": "🎮",
   "muzeum-teatr": "🎭",
   "sport": "⚽",
   "zoo": "🦁",
