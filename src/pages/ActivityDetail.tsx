@@ -29,6 +29,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getActivities, PRICE_LEVELS } from "@/data/activities";
+import type { Activity } from "@/data/activities";
+import { fetchActivityBySlug } from "@/hooks/useActivities";
 import SimilarAttractions from "@/components/SimilarAttractions";
 import CommunityNotice from "@/components/CommunityNotice";
 import { getAmenityById } from "@/data/amenities";
@@ -102,9 +104,37 @@ const ActivityDetail = () => {
   
   const { share } = useShare();
 
-  const allActivities = getActivities();
-  const activitiesLoaded = allActivities.length > 0;
-  const activity = allActivities.find((a) => a.slug === slug) || allActivities.find((a) => a.id === Number(slug));
+  // Pobieramy pojedynczy rekord po slug bezpośrednio z Supabase — bez lookupu
+  // w globalnej liście. Lista może być pusta na pierwszym wejściu.
+  const [activity, setActivity] = useState<Activity | null>(null);
+  const [detailStatus, setDetailStatus] = useState<"loading" | "success" | "not-found" | "error">("loading");
+
+  useEffect(() => {
+    if (!slug) { setDetailStatus("not-found"); return; }
+    let cancelled = false;
+    setDetailStatus("loading");
+    setActivity(null);
+    (async () => {
+      // Najpierw sprawdź cache in-memory, żeby uniknąć zbędnego round-tripu
+      const cached = getActivities().find((a) => a.slug === slug);
+      if (cached) {
+        if (!cancelled) { setActivity(cached); setDetailStatus("success"); }
+        return;
+      }
+      try {
+        const row = await fetchActivityBySlug(slug);
+        if (cancelled) return;
+        if (!row) { setDetailStatus("not-found"); return; }
+        setActivity(row);
+        setDetailStatus("success");
+      } catch (e) {
+        if (!cancelled) setDetailStatus("error");
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [slug]);
+
+  const activitiesLoaded = detailStatus !== "loading";
   const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
