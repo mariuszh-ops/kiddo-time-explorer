@@ -507,6 +507,18 @@ const ActivityDetail = () => {
               {activityDescription}
             </p>
 
+            {activity.uncertain && (
+              <div
+                role="note"
+                className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2 mb-3"
+              >
+                <Info className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                <span>
+                  Ta atrakcja została zaklasyfikowana automatycznie — daj znać, jeśli coś się nie zgadza.
+                </span>
+              </div>
+            )}
+
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
