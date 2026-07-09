@@ -77,16 +77,32 @@ export function subscribeDataStatus(listener: () => void): () => void {
 export async function loadActivities(): Promise<Activity[]> {
   if (_loaded) return _activities;
   try {
-    const response = await fetch('/data/activities.json');
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const data: Activity[] = await response.json();
-    _activities = data.map(a => ({ ...a, google_rating: a.rating, google_review_count: a.reviewCount, reviewCount: a.reviews?.length || 0 }));
+    // Katalog atrakcji leży w OSOBNYM (zewnętrznym) projekcie Supabase.
+    // Czytamy anonimowo z tabeli `public_activities` (RLS: anon SELECT).
+    const { catalogClient, mapCatalogRow, type CatalogRow } =
+      await import("@/lib/catalogClient");
+    const PAGE = 1000;
+    const all: CatalogRow[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const { data, error } = await catalogClient
+        .from("public_activities")
+        .select("*")
+        .eq("published", true)
+        .order("rating", { ascending: false })
+        .order("reviews_count", { ascending: false })
+        .range(from, from + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      all.push(...(data as CatalogRow[]));
+      if (data.length < PAGE) break;
+    }
+    _activities = all.map((row, i) => mapCatalogRow(row, i));
     _loaded = true;
     _invalidateLookups();
     _setStatus("success");
     return _activities;
   } catch (err) {
-    console.error("[ActivitiesLoader] Failed to load /data/activities.json:", err);
+    console.error("[ActivitiesLoader] Failed to load catalog from Supabase:", err);
     // Awaryjny statyczny snapshot — ładowany dynamicznie, żeby nie obciążał main chunku.
     try {
       const { fallbackActivities } = await import("./fallbackActivities");
