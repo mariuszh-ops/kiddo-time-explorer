@@ -7,6 +7,7 @@ import HorizontalCarousel from "@/components/HorizontalCarousel";
 import { Activity, getActivities, filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
+import { REGIONS } from "@/data/regions";
 
 interface DiscoverSectionsProps {
   activities: Activity[];
@@ -14,15 +15,14 @@ interface DiscoverSectionsProps {
   onSelectCategory?: (type: string) => void;
 }
 
-const cityMeta: { value: string; label: string; bg: string; emoji: string }[] = [
-  { value: "warszawa", label: "Warszawa i okolice", bg: "#E8F0E4", emoji: "🧜‍♀️" },
-  { value: "slask", label: "Aglomeracja Śląska", bg: "#E8F0E4", emoji: "⛏️" },
-  { value: "krakow", label: "Kraków i okolice", bg: "#DFF0EC", emoji: "🐉" },
-  { value: "wroclaw", label: "Wrocław i okolice", bg: "#E4EEF5", emoji: "🤴" },
-  { value: "trojmiasto", label: "Trójmiasto", bg: "#F2EBDD", emoji: "⚓" },
-  { value: "poznan", label: "Poznań i okolice", bg: "#E6EDDF", emoji: "🐐" },
-  { value: "lodz", label: "Łódź i okolice", bg: "#DFF0EC", emoji: "🎬" },
-];
+// Kafelki 16 województw — źródło: src/data/regions.ts
+const cityMeta = REGIONS.map((r) => ({
+  value: r.slug,
+  label: r.label,
+  subtitle: r.subtitle,
+  bg: r.bg,
+  emoji: r.emoji,
+}));
 
 const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle: string }) => (
   <div className="mb-5">
@@ -98,7 +98,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
           </div>
           <div className="mt-6 text-center">
             <Link
-              to="/atrakcje/warszawa"
+              to={`/atrakcje/${REGIONS[0].slug}`}
               className="inline-flex items-center justify-center rounded-full border border-border bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
             >
               Zobacz wszystkie atrakcje
@@ -109,12 +109,12 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
 
       {/* Section 2: Discover by City */}
       {(() => {
-        const visibleCities = cityMeta.filter(c => ["warszawa", "krakow", "wroclaw", "slask", "poznan"].includes(c.value) && FEATURES.ENABLED_CITIES.includes(c.value));
+        const visibleCities = cityMeta.filter(c => FEATURES.ENABLED_CITIES.includes(c.value));
         if (visibleCities.length <= 1) return null;
         return (
           <section className="container py-6 md:py-8 border-b border-border/30">
-            <SectionHeader emoji="🗺️" title="Odkrywaj po miastach" subtitle="Znajdź atrakcje blisko Ciebie" />
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+            <SectionHeader emoji="🗺️" title="Odkrywaj po województwach" subtitle="Znajdź atrakcje blisko Ciebie" />
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3">
               {visibleCities.map((city) => {
                 const count = cityCounts[city.value] || 0;
                 const isEmpty = count === 0;
@@ -126,7 +126,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
                   >
                     <span className="text-3xl mb-2 block opacity-60">{city.emoji}</span>
                     <h3 className="font-semibold text-gray-800">{city.label}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">Wkrótce</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{city.subtitle} — wkrótce</p>
                   </div>
                 ) : (
                   <button
@@ -138,7 +138,7 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-gray-800">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
+                      {city.subtitle} · {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
                     </p>
                   </button>
                 );

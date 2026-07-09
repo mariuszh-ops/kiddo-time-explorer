@@ -1,17 +1,16 @@
 import { useState, useEffect } from "react";
+import { REGIONS } from "@/data/regions";
 
-// Map coordinates to cities in the app
-const CITY_COORDINATES: { city: string; lat: number; lon: number; radius: number }[] = [
-  { city: "warszawa", lat: 52.2297, lon: 21.0122, radius: 50 },
-  { city: "krakow", lat: 50.0647, lon: 19.9450, radius: 40 },
-  { city: "wroclaw", lat: 51.1079, lon: 17.0385, radius: 40 },
-  { city: "trojmiasto", lat: 54.3720, lon: 18.6382, radius: 40 },
-  { city: "poznan", lat: 52.4064, lon: 16.9252, radius: 40 },
-  { city: "slask", lat: 50.2649, lon: 19.0238, radius: 40 },
-  { city: "lodz", lat: 51.7592, lon: 19.4560, radius: 40 },
-];
+// Nearest-region lookup (bez limitu promienia — zawsze wybieramy najbliższe
+// województwo). Współrzędne = stolice województw z src/data/regions.ts.
+const CITY_COORDINATES = REGIONS.map((r) => ({
+  city: r.slug,
+  lat: r.center.lat,
+  lon: r.center.lng,
+  radius: 120,
+}));
 
-const DEFAULT_CITY = "warszawa";
+const DEFAULT_CITY = "mazowieckie";
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371; // Earth's radius in km

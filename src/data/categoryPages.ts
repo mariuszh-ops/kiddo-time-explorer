@@ -1,14 +1,13 @@
 import { Activity } from "@/data/activities";
+import { REGIONS } from "@/data/regions";
 
-export const cityLabels: Record<string, { nominative: string; locative: string }> = {
-  warszawa: { nominative: "Warszawa i okolice", locative: "Warszawie i okolicach" },
-  krakow: { nominative: "Kraków i okolice", locative: "Krakowie i okolicach" },
-  wroclaw: { nominative: "Wrocław i okolice", locative: "Wrocławiu i okolicach" },
-  trojmiasto: { nominative: "Trójmiasto", locative: "Trójmieście" },
-  poznan: { nominative: "Poznań i okolice", locative: "Poznaniu i okolicach" },
-  slask: { nominative: "Aglomeracja Śląska", locative: "Aglomeracji Śląskiej" },
-  lodz: { nominative: "Łódź i okolice", locative: "Łodzi i okolicach" },
-};
+// Generowane z src/data/regions.ts — nominatyw = etykieta województwa,
+// locative = odmiana miejscownikowa używana w SEO/H1 ("w Mazowieckiem").
+export const cityLabels: Record<string, { nominative: string; locative: string }> =
+  REGIONS.reduce(
+    (acc, r) => ({ ...acc, [r.slug]: { nominative: r.label, locative: r.locative } }),
+    {} as Record<string, { nominative: string; locative: string }>,
+  );
 
 export interface CategoryConfig {
   slug: string;

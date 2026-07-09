@@ -1,4 +1,5 @@
 // Activity data module — loads from /data/activities.json with fallback
+import { REGIONS } from "@/data/regions";
 
 export interface Activity {
   id: number;
@@ -198,15 +199,8 @@ export function idFromSlug(slug: string): number | undefined {
 
 // Filter options with counts
 export const filterOptions = {
-  city: [
-    { value: "warszawa", label: "Warszawa i okolice" },
-    { value: "krakow", label: "Kraków i okolice" },
-    { value: "wroclaw", label: "Wrocław i okolice" },
-    { value: "trojmiasto", label: "Trójmiasto" },
-    { value: "poznan", label: "Poznań i okolice" },
-    { value: "slask", label: "Aglomeracja Śląska" },
-    { value: "lodz", label: "Łódź i okolice" },
-  ],
+  // Slugi 16 województw z src/data/regions.ts
+  city: REGIONS.map((r) => ({ value: r.slug, label: r.label })),
   age: [
     { value: "0-2", label: "0–2 lata", min: 0, max: 2 },
     { value: "3-5", label: "3–5 lat", min: 3, max: 5 },
@@ -243,13 +237,9 @@ export const filterOptions = {
   ],
 };
 
-// City center coordinates for distance calculations
-export const cityCenters: Record<string, { lat: number; lng: number }> = {
-  warszawa: { lat: 52.2297, lng: 21.0122 },
-  krakow: { lat: 50.0647, lng: 19.9450 },
-  wroclaw: { lat: 51.1079, lng: 17.0385 },
-  trojmiasto: { lat: 54.3720, lng: 18.6382 },
-  poznan: { lat: 52.4064, lng: 16.9252 },
-  slask: { lat: 50.2649, lng: 19.0238 },
-  lodz: { lat: 51.7592, lng: 19.4560 },
-};
+// Współrzędne stolic województw — używane w filtrze dystansu i sortowaniu.
+export const cityCenters: Record<string, { lat: number; lng: number }> =
+  REGIONS.reduce(
+    (acc, r) => ({ ...acc, [r.slug]: r.center }),
+    {} as Record<string, { lat: number; lng: number }>,
+  );

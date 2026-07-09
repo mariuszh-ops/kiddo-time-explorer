@@ -35,18 +35,11 @@ interface FilterBarProps {
   onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
-// Helper to get city name in genitive case (Polish grammar)
+// Dopełniacz (od czego?) — używany w podpisach typu "…od centrum {region}".
+// Źródło: src/data/regions.ts.
+import { REGION_BY_SLUG } from "@/data/regions";
 const getCityNameGenitive = (cityValue: string): string => {
-  const cityNames: Record<string, string> = {
-    warszawa: "Warszawy",
-    krakow: "Krakowa",
-    wroclaw: "Wrocławia",
-    trojmiasto: "Trójmiasta",
-    poznan: "Poznania",
-    slask: "Śląska",
-    lodz: "Łodzi",
-  };
-  return cityNames[cityValue] || cityValue;
+  return REGION_BY_SLUG[cityValue]?.genitive ?? cityValue;
 };
 
 const FilterBar = ({

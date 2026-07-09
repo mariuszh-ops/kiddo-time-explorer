@@ -52,8 +52,9 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     id: hashStringToInt(row.slug || row.place_id || String(index)),
     slug: row.slug,
     title: row.name,
+    // location = miejscowość (miasto), city = slug województwa (nasz "region").
     location: row.city ?? row.region ?? "",
-    city: row.city ?? row.region ?? "",
+    city: row.region ?? row.city ?? "",
     rating,
     reviewCount,
     ageRange: "",

@@ -9,6 +9,7 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { getActivities, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { LEGACY_CITY_TO_REGION } from "@/data/regions";
 import {
   getCategoryConfig,
   getCategoryActivities,
@@ -34,6 +35,14 @@ const CategoryPage = () => {
   // Support both /atrakcje/:citySlug/:categorySlug and /atrakcje/:slug (where slug is a city)
   const citySlug = params.citySlug || params.slug;
   const categorySlug = params.categorySlug;
+
+  // Stary slug miasta → nowe województwo. Zachowujemy kategorię.
+  if (citySlug && LEGACY_CITY_TO_REGION[citySlug]) {
+    const target = categorySlug
+      ? `/atrakcje/${LEGACY_CITY_TO_REGION[citySlug]}/${categorySlug}`
+      : `/atrakcje/${LEGACY_CITY_TO_REGION[citySlug]}`;
+    return <Navigate to={target} replace />;
+  }
 
   // Validate that citySlug is an enabled city — if not, this isn't a category page
   const isValidCity = citySlug ? FEATURES.ENABLED_CITIES.includes(citySlug) : false;

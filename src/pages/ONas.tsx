@@ -10,7 +10,7 @@ const ONas = () => {
     <PageTransition>
       <SEOHead
         title="O nas"
-        description="FamilyFun to portal stworzony przez rodziców dla rodziców. Pomagamy znaleźć najlepsze atrakcje dla dzieci w 7 regionach Polski."
+        description="FamilyFun to portal stworzony przez rodziców dla rodziców. Pomagamy znaleźć najlepsze atrakcje dla dzieci w 16 województwach Polski."
         path="/o-nas"
       />
       <div className="min-h-screen bg-background">
@@ -37,7 +37,7 @@ const ONas = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-3">Co znajdziesz na FamilyFun</h2>
             <ul className="list-disc pl-6 text-muted-foreground leading-relaxed mb-4 space-y-1">
-              <li>Ponad 2500 sprawdzonych atrakcji w Warszawie, Krakowie, Wrocławiu, Trójmieście, Poznaniu, Łodzi i na Śląsku</li>
+              <li>Ponad 2500 sprawdzonych atrakcji w 16 województwach Polski</li>
               <li>Filtry dopasowane do potrzeb rodzin: wiek dzieci, indoor/outdoor, typ atrakcji</li>
               <li>Oceny od Google i prawdziwe opinie rodziców</li>
               <li>Mapę z atrakcjami w okolicy</li>

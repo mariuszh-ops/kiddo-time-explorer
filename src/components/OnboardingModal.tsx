@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Compass, X, MapPin, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
+import { REGIONS } from "@/data/regions";
 import { cn } from "@/lib/utils";
 import { setRawItem, STORAGE_KEYS } from "@/lib/storage";
 
@@ -10,15 +11,12 @@ interface OnboardingModalProps {
   onComplete: (selectedCity?: string) => void;
 }
 
-const allCities = [
-  { value: "warszawa", label: "Warszawa i okolice", emoji: "📍" },
-  { value: "krakow", label: "Kraków i okolice", emoji: "📍" },
-  { value: "wroclaw", label: "Wrocław i okolice", emoji: "📍" },
-  { value: "trojmiasto", label: "Trójmiasto", emoji: "📍" },
-  { value: "poznan", label: "Poznań i okolice", emoji: "📍" },
-  { value: "slask", label: "Aglomeracja Śląska", emoji: "📍" },
-  { value: "lodz", label: "Łódź i okolice", emoji: "📍" },
-];
+// 16 województw — źródło: src/data/regions.ts
+const allCities = REGIONS.map((r) => ({
+  value: r.slug,
+  label: `${r.label} — ${r.subtitle}`,
+  emoji: "📍",
+}));
 
 const OnboardingModal = ({ onComplete }: OnboardingModalProps) => {
   const enabledCities = FEATURES.ENABLED_CITIES;
@@ -70,11 +68,11 @@ const OnboardingModal = ({ onComplete }: OnboardingModalProps) => {
 
         {/* City label */}
         <p className="text-sm font-medium text-foreground mb-3 text-left">
-          Wybierz swoje miasto:
+          Wybierz swoje województwo:
         </p>
 
         {/* City tiles */}
-        <div className="space-y-2 mb-8">
+        <div className="space-y-2 mb-8 max-h-[50vh] overflow-y-auto pr-1">
           {allCities.map((city) => {
             const isEnabled = enabledCities.includes(city.value);
             const isSelected = selectedCity === city.value;
