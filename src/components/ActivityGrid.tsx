@@ -248,6 +248,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
                   google_rating={activity.google_rating}
                   google_review_count={activity.google_review_count}
                   priority={index < 3}
+                  uncertain={activity.uncertain}
                 />
               </div>
             ))}
