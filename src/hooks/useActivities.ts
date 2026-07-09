@@ -5,6 +5,9 @@ import type { Activity } from "@/data/activities";
 export interface UseActivitiesFilters {
   region?: string;
   type?: string;
+  amenities?: string[];
+  minRating?: number;
+  sort?: "rating" | "reviews" | "name";
   page?: number;
   pageSize?: number;
 }
@@ -22,7 +25,8 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, page = 0, pageSize = 24 } = filters;
+  const { region, type, amenities, minRating, sort = "rating", page = 0, pageSize = 500 } = filters;
+  const amenitiesKey = amenities?.join(",") ?? "";
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -38,12 +42,21 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         let q = catalogClient
           .from("public_activities")
           .select("*", { count: "exact" })
-          .eq("published", true)
-          .order("rating", { ascending: false })
-          .order("reviews_count", { ascending: false })
-          .range(page * pageSize, page * pageSize + pageSize - 1);
+          .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
+        if (amenities && amenities.length > 0) q = q.contains("amenities", amenities);
+        if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
+        if (sort === "name") {
+          q = q.order("name", { ascending: true });
+        } else if (sort === "reviews") {
+          q = q.order("reviews_count", { ascending: false, nullsFirst: false })
+               .order("rating", { ascending: false, nullsFirst: false });
+        } else {
+          q = q.order("rating", { ascending: false, nullsFirst: false })
+               .order("reviews_count", { ascending: false, nullsFirst: false });
+        }
+        q = q.range(page * pageSize, page * pageSize + pageSize - 1);
         const { data: rows, count, error: err } = await q;
         if (err) throw err;
         if (cancelled) return;
@@ -57,7 +70,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
     })();
 
     return () => { cancelled = true; };
-  }, [region, type, page, pageSize]);
+  }, [region, type, amenitiesKey, minRating, sort, page, pageSize]);
 
   return { data, total, loading, error };
 }
