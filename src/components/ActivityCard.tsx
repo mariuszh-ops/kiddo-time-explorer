@@ -27,6 +27,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const HIDDEN_TAGS = new Set(["W pomieszczeniu", "Na zewnątrz"]);
 
+const formatReviewCount = (count: number): string => {
+  const formatted = new Intl.NumberFormat("pl-PL").format(count);
+  const suffix = count === 1 ? "opinia" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20) ? "opinie" : "opinii";
+  return `${formatted} ${suffix}`;
+};
+
 interface ActivityCardProps {
   id: number;
   title: string;
@@ -50,13 +56,6 @@ interface ActivityCardProps {
   google_review_count?: number;
   priority?: boolean;
 }
-
-const formatReviewBucket = (count: number): string => {
-  if (count < 50) return "do 50 ocen";
-  if (count < 100) return "50+ ocen";
-  if (count < 1000) return "100+ ocen";
-  return "1000+ ocen";
-};
 
 const ActivityCard = ({
   id,
@@ -87,6 +86,10 @@ const ActivityCard = ({
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
   const fallbackImage = getPlaceholderImage(type, id);
+  // Unified rating source: prefer explicit google_* (spójne z detalem),
+  // z fallbackiem na rating/reviewCount z katalogu.
+  const displayRating = google_rating ?? (rating > 0 ? rating : null);
+  const displayReviewCount = google_review_count ?? (reviewCount > 0 ? reviewCount : null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [justToggled, setJustToggled] = useState(false);
 
@@ -192,15 +195,15 @@ const ActivityCard = ({
 
           {/* Content */}
           <div className="space-y-2">
-            {google_rating != null && google_review_count != null && (
+            {displayRating != null && displayReviewCount != null && (
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
                     <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{google_rating.toFixed(1)}</span>
+                    <span className="font-bold text-foreground">{displayRating.toFixed(1)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    · {formatReviewBucket(google_review_count)}
+                    · {formatReviewCount(displayReviewCount)}
                   </span>
                 </div>
               </div>

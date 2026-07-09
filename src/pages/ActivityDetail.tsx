@@ -24,7 +24,8 @@ import {
   MapPinned,
   Info,
   Share2,
-  Wallet
+  Wallet,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,26 @@ const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
   return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  "sala-zabaw": "Sala zabaw",
+  "plac-zabaw": "Plac zabaw",
+  "park-rozrywki": "Park rozrywki",
+  "muzeum-teatr": "Muzeum / teatr",
+  "sport": "Sport",
+  "zoo": "Zoo",
+  "inne": "Atrakcja",
+};
+
+const formatReviewCount = (count: number): string => {
+  const formatted = new Intl.NumberFormat("pl-PL").format(count);
+  const suffix = count === 1
+    ? "opinia"
+    : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
+      ? "opinie"
+      : "opinii";
+  return `${formatted} ${suffix}`;
 };
 
 const getActivityTypeIcon = (type: string) => {
@@ -274,6 +295,20 @@ const ActivityDetail = () => {
   const averageRating = details.reviews.length > 0 
     ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
     : 0;
+
+  // Ujednolicony format oceny — spójny z ActivityCard.
+  const displayRating = activity.google_rating ?? (activity.rating > 0 ? activity.rating : null);
+  const displayReviewCount = activity.google_review_count ?? (activity.reviewCount > 0 ? activity.reviewCount : null);
+
+  const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
+  const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
+  const cityLocative = cityLabels[activity.city]?.locative || `w ${cityLabel}`;
+  const seoTitle = `${activity.title} — ${typeLabel} ${cityLocative}`;
+  const fallbackDescription = `${typeLabel} ${cityLocative} — sprawdź godziny otwarcia i opinie rodziców.`;
+  const activityDescription = activity.description?.trim() || fallbackDescription;
+  const seoDescription = displayRating != null && displayReviewCount != null
+    ? `${typeLabel} ${cityLocative}. Ocena ${displayRating.toFixed(1)}/5 (${formatReviewCount(displayReviewCount)}).`
+    : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
   
   // Number of reviews to show initially (1-2 on mobile)
   const initialReviewCount = isMobile ? 2 : 3;
@@ -281,9 +316,9 @@ const ActivityDetail = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={`${activity.title} — atrakcja dla dzieci`}
-        description={`${activity.title} w ${activity.location}. Ocena ${activity.rating}/5 na podstawie ${activity.reviewCount} opinii rodziców. Wiek: ${activity.ageRange}.`}
-        path={`/atrakcje/${activity.slug}`}
+        title={seoTitle}
+        description={seoDescription}
+        path={`/atrakcje/${activity.city}/${activity.slug}`}
         image={activity.imageUrl}
         type="article"
         jsonLd={[
@@ -348,10 +383,10 @@ const ActivityDetail = () => {
               <p className="text-sm font-medium text-foreground truncate max-w-[40ch]">
                 {activity.title}
               </p>
-              {activity.google_rating && (
+              {displayRating != null && (
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                  <span className="text-xs text-muted-foreground">{activity.google_rating.toFixed(1)}</span>
+                  <span className="text-xs text-muted-foreground">{displayRating.toFixed(1)}</span>
                 </div>
               )}
             </div>
@@ -438,21 +473,15 @@ const ActivityDetail = () => {
               <h1 className="text-xl md:text-3xl font-serif text-foreground leading-tight">
                 {activity.title}
               </h1>
-              {activity.google_rating && (
+              {displayRating != null && (
                 <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
                   <div className="flex items-center gap-1">
                     <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-primary text-primary" />
-                    <span className="text-sm sm:text-lg font-bold text-foreground">{activity.google_rating.toFixed(1)}</span>
+                    <span className="text-sm sm:text-lg font-bold text-foreground">{displayRating.toFixed(1)}</span>
                   </div>
                   <span className="text-xs sm:text-sm text-muted-foreground sm:text-foreground">
                     ·{" "}
-                    {(() => {
-                      const c = activity.google_review_count || 0;
-                      if (c < 50) return "do 50 ocen";
-                      if (c < 100) return "50+ ocen";
-                      if (c < 1000) return "100+ ocen";
-                      return "1000+ ocen";
-                    })()}
+                    {displayReviewCount != null ? formatReviewCount(displayReviewCount) : "brak opinii"}
                   </span>
                   <span className="text-xs text-muted-foreground">· Google</span>
                 </div>
@@ -470,6 +499,11 @@ const ActivityDetail = () => {
             <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
               <MapPin className="w-4 h-4 shrink-0" />
               <span className="line-clamp-1">{activity.location}</span>
+            </p>
+
+            {/* Description (fallback z typu + miasta gdy null) */}
+            <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-3">
+              {activityDescription}
             </p>
 
             {/* Rating action — directly under address */}
@@ -782,7 +816,7 @@ const ActivityDetail = () => {
               <div className="flex items-start gap-3">
                 <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Kup bilety</p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Strona organizatora</p>
                   <div className="flex flex-wrap gap-2">
                     <a
                       href={details.website}
@@ -790,10 +824,26 @@ const ActivityDetail = () => {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
                     >
-                      Strona organizatora
+                      Otwórz stronę
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Phone */}
+            {activity.phone && (
+              <div className="flex items-start gap-3">
+                <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Telefon</p>
+                  <a
+                    href={`tel:${activity.phone.replace(/\s+/g, "")}`}
+                    className="text-sm text-primary active:opacity-70"
+                  >
+                    {activity.phone}
+                  </a>
                 </div>
               </div>
             )}

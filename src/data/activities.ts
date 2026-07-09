@@ -38,6 +38,7 @@ export interface Activity {
   google_review_count?: number;
   coordinates?: { lat: number; lng: number };
   description?: string;
+  phone?: string;
 }
 
 export const PRICE_LEVELS = {

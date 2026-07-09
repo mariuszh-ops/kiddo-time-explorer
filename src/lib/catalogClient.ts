@@ -74,6 +74,8 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     longitude: row.lng ?? 0,
     amenities: row.amenities ?? [],
     description: row.description ?? undefined,
+    phone: row.phone ?? undefined,
+    priceNote: row.price_note ?? undefined,
     google_rating: rating,
     google_review_count: reviewCount,
     coordinates: row.lat != null && row.lng != null ? { lat: row.lat, lng: row.lng } : undefined,
