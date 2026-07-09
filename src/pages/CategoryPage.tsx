@@ -16,10 +16,7 @@ import {
   cityLabels,
 } from "@/data/categoryPages";
 import { useActivities } from "@/hooks/useActivities";
-import CategoryFilterBar, {
-  CATEGORY_TYPES,
-  type SortOption,
-} from "@/components/CategoryFilterBar";
+import CategoryFilterBar, { type SortOption } from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
   BreadcrumbList,
