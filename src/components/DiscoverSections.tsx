@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
@@ -8,10 +7,12 @@ import { Activity, getActivities, filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 import { REGIONS } from "@/data/regions";
+import { useRegionCounts } from "@/hooks/useRegionCounts";
+import { useTypeCounts } from "@/hooks/useTypeCounts";
 
 interface DiscoverSectionsProps {
   activities: Activity[];
-  onSelectCity: (city: string) => void;
+  onSelectCity?: (city: string) => void;
   onSelectCategory?: (type: string) => void;
 }
 
@@ -33,7 +34,12 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
   </div>
 );
 
-const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: DiscoverSectionsProps) => {
+const pluralize = (n: number) => (n === 1 ? "atrakcja" : n < 5 && n > 0 ? "atrakcje" : "atrakcji");
+
+const DiscoverSections = ({ activities }: DiscoverSectionsProps) => {
+  const { counts: regionCounts } = useRegionCounts();
+  const { counts: typeCounts } = useTypeCounts();
+
   const topRated = useMemo(() => {
     return activities
       .filter((a) => a.rating >= 4.7 && a.reviewCount >= 100)
@@ -45,26 +51,6 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
     return [...activities]
       .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
       .slice(0, 10);
-  }, [activities]);
-
-  const cityCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const a of activities) {
-      counts[a.city] = (counts[a.city] || 0) + 1;
-    }
-    return counts;
-  }, [activities]);
-
-  // Liczniki kategorii — jeden przebieg zamiast filter() w każdej iteracji pętli kafelków
-  const categoryCounts = useMemo(() => {
-    const counts: Record<string, number> = {};
-    for (const a of getActivities()) {
-      if (!FEATURES.ENABLED_CITIES.includes(a.city)) continue;
-      if (a.isEvent && !FEATURES.EVENTS) continue;
-      counts[a.type] = (counts[a.type] || 0) + 1;
-    }
-    return counts;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activities]);
 
   return (
@@ -116,31 +102,22 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
             <SectionHeader emoji="🗺️" title="Odkrywaj po województwach" subtitle="Znajdź atrakcje blisko Ciebie" />
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-3">
               {visibleCities.map((city) => {
-                const count = cityCounts[city.value] || 0;
-                const isEmpty = count === 0;
-                return isEmpty ? (
-                  <div
+                const count = regionCounts[city.value] ?? 0;
+                const dim = count === 0;
+                return (
+                  <Link
                     key={city.value}
-                    className="relative overflow-hidden rounded-xl border border-border/70 p-5 text-left cursor-default"
-                    style={{ backgroundColor: city.bg }}
-                  >
-                    <span className="text-3xl mb-2 block opacity-60">{city.emoji}</span>
-                    <h3 className="font-semibold text-gray-800">{city.label}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{city.subtitle} — wkrótce</p>
-                  </div>
-                ) : (
-                  <button
-                    key={city.value}
-                    onClick={() => onSelectCity(city.value)}
-                    className="group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                    to={`/${city.value}`}
+                    aria-label={`${city.label} — ${count} ${pluralize(count)}`}
+                    className={`group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
                     style={{ backgroundColor: city.bg }}
                   >
                     <span className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-gray-800">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {city.subtitle} · {count} {count === 1 ? "atrakcja" : count < 5 ? "atrakcje" : "atrakcji"}
+                      {city.subtitle} · {count} {pluralize(count)}
                     </p>
-                  </button>
+                  </Link>
                 );
               })}
             </div>
@@ -183,24 +160,20 @@ const DiscoverSections = ({ activities, onSelectCity, onSelectCategory }: Discov
         <SectionHeader emoji="🔍" title="Szukasz czegoś konkretnego?" subtitle="Przeglądaj atrakcje według kategorii" />
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-7 gap-3 md:gap-4">
           {filterOptions.type.map((opt) => {
-            const count = categoryCounts[opt.value] || 0;
+            const count = typeCounts[opt.value] ?? 0;
+            const dim = count === 0;
             return (
-              <button
+              <Link
                 key={opt.value}
-                onClick={count > 0 ? () => onSelectCategory?.(opt.value) : undefined}
-                disabled={count === 0}
-                  className={cn(
-                   "group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all",
-                  count > 0
-                    ? "hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
-                     : "cursor-default"
-                )}
+                to={`/kategoria/${opt.value}`}
+                aria-label={`${opt.label} — ${count} ${pluralize(count)}`}
+                className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
               >
                 <h3 className="font-semibold text-gray-800 text-sm">{opt.label}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {count > 0 ? `${count} atrakcji` : "Wkrótce"}
+                  {count} {pluralize(count)}
                 </p>
-              </button>
+              </Link>
             );
           })}
         </div>
