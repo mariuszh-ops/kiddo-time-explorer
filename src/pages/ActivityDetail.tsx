@@ -24,7 +24,8 @@ import {
   MapPinned,
   Info,
   Share2,
-  Wallet
+  Wallet,
+  Phone
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -69,6 +70,26 @@ const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
   return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
+};
+
+const TYPE_LABELS: Record<string, string> = {
+  "sala-zabaw": "Sala zabaw",
+  "plac-zabaw": "Plac zabaw",
+  "park-rozrywki": "Park rozrywki",
+  "muzeum-teatr": "Muzeum / teatr",
+  "sport": "Sport",
+  "zoo": "Zoo",
+  "inne": "Atrakcja",
+};
+
+const formatReviewCount = (count: number): string => {
+  const formatted = new Intl.NumberFormat("pl-PL").format(count);
+  const suffix = count === 1
+    ? "opinia"
+    : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
+      ? "opinie"
+      : "opinii";
+  return `${formatted} ${suffix}`;
 };
 
 const getActivityTypeIcon = (type: string) => {
