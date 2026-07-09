@@ -1,4 +1,6 @@
-// Activity data module — loads from /data/activities.json with fallback
+// Activity data module — reads the catalog directly from the external Supabase
+// project (public_activities). Statyczny snapshot public/data/activities.json
+// został usunięty; w razie awarii sieci używamy `fallbackActivities.ts`.
 import { REGIONS } from "@/data/regions";
 
 export interface Activity {

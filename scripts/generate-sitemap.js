@@ -6,7 +6,7 @@
  * Uses dynamic import + tsx to load TypeScript source files.
  */
 
-import { writeFileSync, mkdirSync, existsSync, readFileSync } from 'fs';
+import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath, pathToFileURL } from 'url';
 
@@ -15,6 +15,33 @@ import { fileURLToPath, pathToFileURL } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const BASE_URL = 'https://familyfun.pl';
+
+// Zewnętrzny (tylko-do-odczytu) projekt Supabase z katalogiem atrakcji.
+// Ten sam anon key co w src/lib/catalogClient.ts.
+const CATALOG_URL = 'https://zpqpgatnnbojgiejmtpt.supabase.co';
+const CATALOG_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcXBnYXRubmJvamdpZWptdHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY2OTIsImV4cCI6MjA5MzE5MjY5Mn0.nHm-KdlT1r2VlXQRfXqRDCCisU4KEf9yPI96kIpx4tc';
+
+async function fetchAllActivities() {
+  const PAGE = 1000;
+  const all = [];
+  for (let from = 0; ; from += PAGE) {
+    const url = `${CATALOG_URL}/rest/v1/public_activities?select=slug&published=eq.true&order=slug.asc&limit=${PAGE}&offset=${from}`;
+    const res = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        apikey: CATALOG_ANON_KEY,
+        authorization: `Bearer ${CATALOG_ANON_KEY}`,
+      },
+    });
+    if (!res.ok) throw new Error(`Supabase ${res.status}: ${await res.text()}`);
+    const chunk = await res.json();
+    if (!chunk.length) break;
+    all.push(...chunk);
+    if (chunk.length < PAGE) break;
+  }
+  return all;
+}
 
 // We'll read the TS files via a simple approach: use the compiled dist or
 // parse them directly. Since this runs post-build, we import from src using tsx.
@@ -25,9 +52,9 @@ async function main() {
   let activities, categoryConfigs, FEATURES, blogPosts;
 
   try {
-    // Pełny katalog wprost z JSON — getActivities() w Node zwracał tylko fallback,
-    // przez co sitemap pomijał podstrony atrakcji.
-    activities = JSON.parse(readFileSync(resolve(ROOT, 'public/data/activities.json'), 'utf-8'));
+    // Pełny katalog czytamy wprost z Supabase (public_activities, anon SELECT).
+    // Wcześniej ładowany z public/data/activities.json — plik został usunięty.
+    activities = await fetchAllActivities();
 
     // pathToFileURL — ESM loader wymaga URL-i file:// (bez tego pada na Windows)
     const catMod = await import(pathToFileURL(resolve(ROOT, 'src/data/categoryPages.ts')).href);
@@ -39,7 +66,7 @@ async function main() {
     const blogMod = await import(pathToFileURL(resolve(ROOT, 'src/data/blogPosts.ts')).href);
     blogPosts = blogMod.blogPosts;
   } catch (e) {
-    console.error('Failed to import source files. Make sure tsx is available:', e.message);
+    console.error('Failed to build sitemap:', e.message);
     process.exit(1);
   }
 
@@ -58,9 +85,9 @@ async function main() {
     }
   }
 
-  // 3. Activity detail pages
-  const filteredActivities = (FEATURES.EVENTS ? activities : activities.filter(a => !a.isEvent)) || [];
-  for (const a of filteredActivities) {
+  // 3. Activity detail pages — jeden wpis na atrakcję z katalogu
+  for (const a of activities) {
+    if (!a.slug) continue;
     urls.push({ loc: `/atrakcje/${a.slug}`, changefreq: 'monthly', priority: '0.7' });
   }
 
