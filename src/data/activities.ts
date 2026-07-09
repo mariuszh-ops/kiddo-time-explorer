@@ -79,8 +79,8 @@ export async function loadActivities(): Promise<Activity[]> {
   try {
     // Katalog atrakcji leży w OSOBNYM (zewnętrznym) projekcie Supabase.
     // Czytamy anonimowo z tabeli `public_activities` (RLS: anon SELECT).
-    const { catalogClient, mapCatalogRow, type CatalogRow } =
-      await import("@/lib/catalogClient");
+    const { catalogClient, mapCatalogRow } = await import("@/lib/catalogClient");
+    type CatalogRow = import("@/lib/catalogClient").CatalogRow;
     const PAGE = 1000;
     const all: CatalogRow[] = [];
     for (let from = 0; ; from += PAGE) {
