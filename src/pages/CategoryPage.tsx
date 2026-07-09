@@ -219,7 +219,7 @@ const CategoryPage = () => {
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
-              {categorySlug ? (
+              {categorySlug && citySlug ? (
                 <>
                   <BreadcrumbItem>
                     <BreadcrumbCityDropdown currentCitySlug={citySlug!} />
@@ -236,7 +236,9 @@ const CategoryPage = () => {
               ) : (
                 <BreadcrumbItem>
                   <BreadcrumbPage className="text-muted-foreground font-medium">
-                    {effectiveCityLabel.nominative}
+                    {categorySlug
+                      ? (filterOptions.type.find(t => t.value === categorySlug)?.label ?? effectiveConfig.label)
+                      : effectiveCityLabel.nominative}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               )}
