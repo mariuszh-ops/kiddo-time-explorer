@@ -2,20 +2,17 @@
 // Used by sort options like "Najbliżej centrum" without needing user geolocation.
 
 import type { Activity } from "@/data/activities";
+import { REGIONS } from "@/data/regions";
 
 /**
  * Coordinates of city/region centers, keyed by the same `city` value used
  * across the app (see filterOptions.city in src/data/activities.ts).
  */
-export const REGION_CENTERS: Record<string, { lat: number; lng: number }> = {
-  warszawa: { lat: 52.2297, lng: 21.0122 },
-  slask: { lat: 50.2649, lng: 19.0238 },     // Katowice — Rynek
-  krakow: { lat: 50.0614, lng: 19.9366 },    // Rynek Główny
-  wroclaw: { lat: 51.1101, lng: 17.0326 },   // Rynek
-  trojmiasto: { lat: 54.3520, lng: 18.6466 },// Gdańsk Główny
-  poznan: { lat: 52.4069, lng: 16.9299 },    // Stary Rynek
-  lodz: { lat: 51.7592, lng: 19.4560 },      // Piotrkowska
-};
+export const REGION_CENTERS: Record<string, { lat: number; lng: number }> =
+  REGIONS.reduce(
+    (acc, r) => ({ ...acc, [r.slug]: r.center }),
+    {} as Record<string, { lat: number; lng: number }>,
+  );
 
 /**
  * Haversine great-circle distance between two coordinates in kilometers.
