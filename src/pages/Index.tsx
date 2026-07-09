@@ -176,14 +176,14 @@ const Index = () => {
     <PageTransition>
       <SEOHead
         title="Atrakcje dla dzieci — sprawdzone przez rodziców"
-        description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w Warszawie, Krakowie, Wrocławiu, Trójmieście, Poznaniu, Łodzi i na Śląsku. Opinie i oceny od rodziców."
+        description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "FamilyFun",
           "url": "https://familyfun.pl",
-          "description": "Sprawdzone atrakcje dla rodzin z dziećmi w Warszawie",
+          "description": "Sprawdzone atrakcje dla rodzin z dziećmi w 16 województwach Polski",
           "potentialAction": {
             "@type": "SearchAction",
             "target": "https://familyfun.pl/?search={search_term_string}",
