@@ -63,6 +63,16 @@ export const categoryConfigs: CategoryConfig[] = [
     filterFn: (a, citySlug) => a.city === citySlug && a.type === "park-rozrywki",
   },
   {
+    slug: "centra-rozrywki",
+    emoji: "🎮",
+    label: "Centra rozrywki",
+    seoTitle: "Centra rozrywki dla dzieci {city} — escape roomy, VR, laser tag | FamilyFun",
+    seoDescription: "Najlepsze kryte centra rozrywki {city}: escape roomy, pokoje zagadek, VR, laser tag i salony gier. Opinie rodziców, ceny, godziny otwarcia.",
+    h1: "Centra rozrywki {city}",
+    description: "Kryte centra rozrywki ocenione przez rodziców: escape roomy, pokoje zagadek, VR, laser tag, salony gier. Idealne na deszczowy dzień.",
+    filterFn: (a, citySlug) => a.city === citySlug && a.type === "centra-rozrywki",
+  },
+  {
     slug: "muzeum-teatr",
     emoji: "🎭",
     label: "Muzea i teatry",

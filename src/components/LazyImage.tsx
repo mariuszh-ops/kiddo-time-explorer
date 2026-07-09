@@ -10,6 +10,7 @@ const CATEGORY_PLACEHOLDER_COLORS: Record<string, string> = {
   warsztaty: "#EC4899",
   park: "#14B8A6",
   "park-rozrywki": "#F44336",
+  "centra-rozrywki": "#3F51B5",
   inne: "#6B7280",
 };
 

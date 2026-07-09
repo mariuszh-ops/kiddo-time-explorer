@@ -19,6 +19,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
   "plac-zabaw": "Plac zabaw",
   "park-rozrywki": "Park rozrywki",
+  "centra-rozrywki": "Centrum rozrywki",
   "muzeum-teatr": "Muzeum / teatr",
   "sport": "Sport",
   "zoo": "Zoo",
