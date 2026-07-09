@@ -15,14 +15,17 @@ const DAY_ABBREV: Record<string, string> = {
 const DAY_ORDER = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
 
 const OpeningHoursDisplay = ({ hours }: OpeningHoursDisplayProps) => {
-  if (!hours.includes("|")) {
-    return <p className="text-sm text-foreground">{hours}</p>;
+  // Akceptujemy zarówno "poniedziałek: 9-17|wtorek: ..." jak i format
+  // wielolinijkowy (nowe linie z Supabase / Google Places).
+  const normalized = hours.replace(/\r\n|\r|\n/g, "|");
+  if (!normalized.includes("|")) {
+    return <p className="text-sm text-foreground whitespace-pre-line">{hours}</p>;
   }
 
   const todayIndex = new Date().getDay(); // 0=Sun
   const todayKey = DAY_ORDER[todayIndex];
 
-  const entries = hours.split("|").map((entry) => {
+  const entries = normalized.split("|").map((e) => e.trim()).filter(Boolean).map((entry) => {
     const colonIdx = entry.indexOf(":");
     if (colonIdx === -1) return { day: entry.trim(), time: "" };
     const day = entry.slice(0, colonIdx).trim().toLowerCase();
