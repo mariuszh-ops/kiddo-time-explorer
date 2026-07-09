@@ -13,6 +13,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AMENITIES } from "@/data/amenities";
@@ -43,6 +45,8 @@ export interface CategoryFilterBarProps {
   onSortChange: (value: SortOption) => void;
   onClearAll?: () => void;
   hasActiveFilters?: boolean;
+  includeUncertain: boolean;
+  onIncludeUncertainChange: (value: boolean) => void;
 }
 
 const RATING_OPTIONS = [
@@ -71,6 +75,8 @@ const CategoryFilterBar = ({
   onSortChange,
   onClearAll,
   hasActiveFilters,
+  includeUncertain,
+  onIncludeUncertainChange,
 }: CategoryFilterBarProps) => {
   const amenitiesLabel = useMemo(() => {
     if (amenities.length === 0) return "Udogodnienia";
@@ -203,6 +209,21 @@ const CategoryFilterBar = ({
 
       {/* Sort */}
       <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2 pr-2 border-r border-border/60 mr-1">
+          <Switch
+            id="toggle-auto-classified"
+            checked={includeUncertain}
+            onCheckedChange={onIncludeUncertainChange}
+            aria-label="Pokaż atrakcje klasyfikowane automatycznie"
+          />
+          <Label
+            htmlFor="toggle-auto-classified"
+            className="text-xs font-medium text-muted-foreground cursor-pointer whitespace-nowrap"
+            title="Wyłącz, aby ukryć atrakcje, których typ ustalił model AI."
+          >
+            Pokaż klasyfikowane automatycznie
+          </Label>
+        </div>
         {hasActiveFilters && onClearAll && (
           <Button variant="ghost" size="sm" onClick={onClearAll} className="h-9 rounded-full">
             Wyczyść filtry

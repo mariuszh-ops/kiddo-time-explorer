@@ -78,6 +78,8 @@ const CategoryPage = () => {
   }, [searchParams]);
   const urlMinRating = Number(searchParams.get("min") ?? "0") || 0;
   const urlSort = (searchParams.get("sort") as SortOption) || "rating";
+  // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
+  const includeUncertain = searchParams.get("auto") !== "0";
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -96,6 +98,7 @@ const CategoryPage = () => {
     amenities: urlAmenities,
     minRating: urlMinRating,
     sort: urlSort,
+    includeUncertain,
   });
 
   const updateParams = useCallback(
@@ -123,7 +126,8 @@ const CategoryPage = () => {
     (urlType && !categorySlug ? true : false) ||
     urlAmenities.length > 0 ||
     urlMinRating > 0 ||
-    urlSort !== "rating";
+    urlSort !== "rating" ||
+    !includeUncertain;
 
   // Fallback config / cityLabel so we never render a completely blank page
   const effectiveConfig = config ?? {
@@ -270,6 +274,8 @@ const CategoryPage = () => {
             onSortChange={(v) => updateParams({ sort: v === "rating" ? undefined : v })}
             hasActiveFilters={hasActiveFilters}
             onClearAll={clearAll}
+            includeUncertain={includeUncertain}
+            onIncludeUncertainChange={(v) => updateParams({ auto: v ? undefined : "0" })}
           />
 
           {/* Count */}

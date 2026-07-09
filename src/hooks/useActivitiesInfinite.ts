@@ -22,9 +22,9 @@ export function useActivitiesInfinite(
   filters: Omit<UseActivitiesFilters, "page" | "pageSize"> = {},
   pageSize = 24,
 ): UseActivitiesInfiniteResult {
-  const { region, type, amenities, minRating, sort = "rating" } = filters;
+  const { region, type, amenities, minRating, sort = "rating", includeUncertain = true } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
-  const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort });
+  const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort, includeUncertain });
 
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
@@ -58,6 +58,7 @@ export function useActivitiesInfinite(
         if (type) q = q.eq("type", type);
         if (amenities && amenities.length > 0) q = q.contains("amenities", amenities);
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
+        if (!includeUncertain) q = q.eq("uncertain", false);
         if (sort === "name") q = q.order("name", { ascending: true });
         else if (sort === "reviews")
           q = q.order("reviews_count", { ascending: false, nullsFirst: false })
@@ -83,7 +84,7 @@ export function useActivitiesInfinite(
       }
     })();
     return () => { cancelled = true; };
-  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort]);
+  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain]);
 
   const hasMore = data.length < total;
   const loadMore = () => {

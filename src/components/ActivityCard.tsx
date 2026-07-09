@@ -1,7 +1,7 @@
 import { trackEvent } from "@/lib/analytics";
 import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { Star, Calendar, MapPinned, Navigation, Heart, Camera } from "lucide-react";
+import { Star, Calendar, MapPinned, Navigation, Heart, Camera, HelpCircle } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
@@ -56,6 +56,7 @@ interface ActivityCardProps {
   google_rating?: number;
   google_review_count?: number;
   priority?: boolean;
+  uncertain?: boolean;
 }
 
 const ActivityCard = ({
@@ -80,6 +81,7 @@ const ActivityCard = ({
   google_rating,
   google_review_count,
   priority = false,
+  uncertain = false,
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
@@ -137,7 +139,12 @@ const ActivityCard = ({
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
         <article className="group cursor-pointer rounded-xl transition-all duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] active:opacity-90 active:duration-150">
           {/* Image */}
-          <div className="relative aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-muted">
+          <div
+            className={cn(
+              "relative aspect-[16/10] rounded-xl overflow-hidden mb-3 bg-muted",
+              uncertain && "outline-dashed outline-1 outline-muted-foreground/40 outline-offset-[-1px]",
+            )}
+          >
             {imgError ? (
               <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground">
                 <Camera className="w-8 h-8 mb-1" />
@@ -163,6 +170,18 @@ const ActivityCard = ({
                 >
                   <Calendar className="w-3 h-3 mr-1" />Wydarzenie
                 </Badge>
+              </div>
+            )}
+
+            {/* Uncertain (AI-classified) marker */}
+            {uncertain && (
+              <div
+                className="absolute bottom-2 left-2 z-10 w-7 h-7 rounded-full bg-background/85 backdrop-blur-sm border border-border/60 flex items-center justify-center shadow-sm"
+                title="Zaklasyfikowana automatycznie — może wymagać weryfikacji"
+                aria-label="Zaklasyfikowana automatycznie — może wymagać weryfikacji"
+                role="img"
+              >
+                <HelpCircle className="w-4 h-4 text-muted-foreground" />
               </div>
             )}
 
@@ -215,7 +234,10 @@ const ActivityCard = ({
             </h3>
 
             {CATEGORY_LABELS[type] && (
-              <p className="text-sm text-muted-foreground">{CATEGORY_LABELS[type]}</p>
+              <p className={cn("text-sm text-muted-foreground", uncertain && "italic opacity-70")}>
+                {CATEGORY_LABELS[type]}
+                {uncertain && <span className="ml-1 text-[11px]">· auto</span>}
+              </p>
             )}
 
             <div className="flex items-center gap-2">
