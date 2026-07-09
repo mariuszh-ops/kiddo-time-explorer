@@ -10,14 +10,43 @@ import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
 import { z } from "npm:zod@^3.23.8";
 
 // src/lib/mcp/data.ts
-var DATA_URL = "https://familyfun.pl/data/activities.json";
+var CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
+var CATALOG_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcXBnYXRubmJvamdpZWptdHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY2OTIsImV4cCI6MjA5MzE5MjY5Mn0.nHm-KdlT1r2VlXQRfXqRDCCisU4KEf9yPI96kIpx4tc";
+var SELECT = "slug,name,type,region,city,address,rating,reviews_count,description,price_note,website,opening_hours,image_url,lat,lng";
 var cache = null;
 var TTL_MS = 5 * 60 * 1e3;
 async function fetchActivities() {
   if (cache && Date.now() - cache.at < TTL_MS) return cache.data;
-  const res = await fetch(DATA_URL, { headers: { accept: "application/json" } });
+  const url = `${CATALOG_URL}/rest/v1/public_activities?select=${encodeURIComponent(SELECT)}&published=eq.true&order=rating.desc.nullslast&limit=2000`;
+  const res = await fetch(url, {
+    headers: {
+      accept: "application/json",
+      apikey: CATALOG_ANON_KEY,
+      authorization: `Bearer ${CATALOG_ANON_KEY}`
+    }
+  });
   if (!res.ok) throw new Error(`Failed to load activities: ${res.status}`);
-  const data = await res.json();
+  const rows = await res.json();
+  const data = rows.map((r, i) => ({
+    id: i + 1,
+    slug: String(r.slug ?? ""),
+    title: String(r.name ?? ""),
+    location: String(r.city ?? r.region ?? ""),
+    city: String(r.region ?? r.city ?? ""),
+    rating: Number(r.rating ?? 0),
+    reviewCount: Number(r.reviews_count ?? 0),
+    ageRange: "",
+    isIndoor: false,
+    tags: [String(r.type ?? "")].filter(Boolean),
+    description: r.description ?? void 0,
+    address: r.address ?? void 0,
+    website: r.website ?? void 0,
+    latitude: Number(r.lat ?? 0),
+    longitude: Number(r.lng ?? 0),
+    openingHours: r.opening_hours ?? void 0,
+    priceRange: r.price_note ?? void 0,
+    imageUrl: r.image_url ?? void 0
+  }));
   cache = { at: Date.now(), data };
   return data;
 }
