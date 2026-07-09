@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
-import { Activity, getActivities, filterOptions } from "@/data/activities";
+import { Activity, filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 import { REGIONS } from "@/data/regions";
