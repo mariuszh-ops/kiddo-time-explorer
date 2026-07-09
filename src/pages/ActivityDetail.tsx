@@ -295,6 +295,20 @@ const ActivityDetail = () => {
   const averageRating = details.reviews.length > 0 
     ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
     : 0;
+
+  // Ujednolicony format oceny — spójny z ActivityCard.
+  const displayRating = activity.google_rating ?? (activity.rating > 0 ? activity.rating : null);
+  const displayReviewCount = activity.google_review_count ?? (activity.reviewCount > 0 ? activity.reviewCount : null);
+
+  const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
+  const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
+  const cityLocative = cityLabels[activity.city]?.locative || `w ${cityLabel}`;
+  const seoTitle = `${activity.title} — ${typeLabel} ${cityLocative}`;
+  const fallbackDescription = `${typeLabel} ${cityLocative} — sprawdź godziny otwarcia i opinie rodziców.`;
+  const activityDescription = activity.description?.trim() || fallbackDescription;
+  const seoDescription = displayRating != null && displayReviewCount != null
+    ? `${typeLabel} ${cityLocative}. Ocena ${displayRating.toFixed(1)}/5 (${formatReviewCount(displayReviewCount)}).`
+    : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
   
   // Number of reviews to show initially (1-2 on mobile)
   const initialReviewCount = isMobile ? 2 : 3;
@@ -302,9 +316,9 @@ const ActivityDetail = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={`${activity.title} — atrakcja dla dzieci`}
-        description={`${activity.title} w ${activity.location}. Ocena ${activity.rating}/5 na podstawie ${activity.reviewCount} opinii rodziców. Wiek: ${activity.ageRange}.`}
-        path={`/atrakcje/${activity.slug}`}
+        title={seoTitle}
+        description={seoDescription}
+        path={`/atrakcje/${activity.city}/${activity.slug}`}
         image={activity.imageUrl}
         type="article"
         jsonLd={[
