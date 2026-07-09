@@ -41,6 +41,10 @@ export interface Activity {
   coordinates?: { lat: number; lng: number };
   description?: string;
   phone?: string;
+  /** Automatyczna klasyfikacja AI (true) vs. reguły (false/undefined). */
+  uncertain?: boolean;
+  /** Poziom pewności AI: 'niska' | 'srednia' | 'wysoka' — tylko gdy uncertain=true. */
+  confidence?: "niska" | "srednia" | "wysoka" | null;
 }
 
 export const PRICE_LEVELS = {
