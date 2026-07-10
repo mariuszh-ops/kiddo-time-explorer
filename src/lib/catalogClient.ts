@@ -1,8 +1,9 @@
-// Dedykowany, tylko-do-odczytu klient Supabase dla ZEWNĘTRZNEGO projektu z
-// katalogiem atrakcji (public_activities, RLS: anonimowy SELECT).
-// Osobny od `@/integrations/supabase/client`, który obsługuje Lovable Cloud
-// (m.in. tabelę saved_activities). Klucz anon jest publiczny — może żyć w
-// kodzie frontu.
+// JEDYNY klient Supabase w aplikacji — projekt katalogowy
+// (public_activities, user_reviews, issue_reports, saved_activities, admins,
+// rpc('is_admin'), rpc('admin_stats')). Autoryzacja i wszystkie zapytania
+// przechodzą przez ten sam klient, dzięki czemu nagłówek Authorization: Bearer
+// niesie token zalogowanego użytkownika (role:"authenticated").
+// Klucz anon jest publiczny — może żyć w kodzie frontu.
 import { createClient } from "@supabase/supabase-js";
 
 const CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
@@ -10,8 +11,16 @@ const CATALOG_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcXBnYXRubmJvamdpZWptdHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY2OTIsImV4cCI6MjA5MzE5MjY5Mn0.nHm-KdlT1r2VlXQRfXqRDCCisU4KEf9yPI96kIpx4tc";
 
 export const catalogClient = createClient(CATALOG_URL, CATALOG_ANON_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false },
+  auth: {
+    storage: typeof window !== "undefined" ? window.localStorage : undefined,
+    persistSession: true,
+    autoRefreshToken: true,
+    storageKey: "sb-catalog-auth",
+  },
 });
+
+// Alias — zachęcamy do używania nazwy `supabase` w nowym kodzie.
+export const supabase = catalogClient;
 
 // Wiersz z tabeli public_activities (patrz PROMPT).
 export interface CatalogRow {
