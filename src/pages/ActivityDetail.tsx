@@ -60,13 +60,6 @@ import { useShare } from "@/hooks/useShare";
 import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Default fallback values for activities without specific data
-const defaultExperiencePoints = [
-  "Aktywność dostosowana do różnych grup wiekowych",
-  "Bezpieczna przestrzeń dla dzieci pod okiem rodziców",
-  "Możliwość wspólnej zabawy całą rodziną",
-];
-
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
   if (parts.length === 1) return parts[0];
@@ -287,7 +280,7 @@ const ActivityDetail = () => {
     estimatedTime: activity.estimatedTime || "1–2 godziny",
     priceRange: activity.priceRange || "$",
     activityTypes: activity.tags.length > 0 ? activity.tags : ["Rodzinne"],
-    experiencePoints: activity.experiencePoints || defaultExperiencePoints,
+    experiencePoints: activity.experiencePoints ?? [],
     openingHours: activity.openingHours,
     address: activity.address,
     website: activity.website,
@@ -328,7 +321,9 @@ const ActivityDetail = () => {
             "@context": "https://schema.org",
             "@type": "TouristAttraction",
             "name": activity.title,
-            "description": activity.experiencePoints?.join(". ") || activity.title,
+            "description": (activity.experiencePoints && activity.experiencePoints.length > 0
+              ? activity.experiencePoints.join(". ")
+              : activity.description?.trim()) || activity.title,
             "address": {
               "@type": "PostalAddress",
               "streetAddress": activity.address || "",
@@ -777,22 +772,24 @@ const ActivityDetail = () => {
         </section>
       )}
 
-      {/* 3. Experience overview - scannable list */}
-      <section className="container mt-5 md:mt-6">
-        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
-          <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
-            Co Was czeka
-          </h2>
-          <ul className="space-y-2.5 md:space-y-3">
-            {details.experiencePoints.map((point, index) => (
-              <li key={index} className="flex items-start gap-2.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
-                <p className="text-foreground text-sm leading-relaxed">{point}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      {/* 3. Experience overview — render only when the catalog provides points. */}
+      {details.experiencePoints.length > 0 && (
+        <section className="container mt-5 md:mt-6">
+          <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+            <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+              Co Was czeka
+            </h2>
+            <ul className="space-y-2.5 md:space-y-3">
+              {details.experiencePoints.map((point, index) => (
+                <li key={index} className="flex items-start gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                  <p className="text-foreground text-sm leading-relaxed">{point}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
 
       {/* 4. Practical information */}
       <section className="container mt-5 md:mt-6">
