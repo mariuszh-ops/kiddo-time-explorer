@@ -30,15 +30,9 @@ const ActivityDetailSkeleton = () => {
           <Block className="h-4 w-24" />
         </div>
 
-        {/* "Co Was czeka" */}
-        <section className="space-y-3">
-          <Block className="h-5 w-40" />
-          <Block className="h-4 w-full" />
-          <Block className="h-4 w-5/6" />
-          <Block className="h-4 w-3/4" />
-        </section>
-
-        {/* "Informacje praktyczne" — 2 grids of 2 cols */}
+        {/* "Informacje praktyczne" — 2 grids of 2 cols.
+            "Co Was czeka" skeleton removed: catalog has no experience_points,
+            so the section usually doesn't render. */}
         <section className="space-y-4">
           <Block className="h-5 w-48" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
