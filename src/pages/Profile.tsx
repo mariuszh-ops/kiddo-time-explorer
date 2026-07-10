@@ -20,11 +20,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
-import { lovable } from "@/integrations/lovable/index";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout, isLoggedIn, login, user } = useAuth();
+  const { logout, isLoggedIn, login, user, signInWithGoogle } = useAuth();
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -36,14 +35,10 @@ const Profile = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.href,
-    });
-    if (result.error) {
-      console.error("Google sign-in error:", result.error);
-    }
-    if (result.redirected) {
-      return;
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Google sign-in error:", error);
     }
   };
 
