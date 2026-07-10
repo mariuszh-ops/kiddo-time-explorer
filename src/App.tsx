@@ -20,11 +20,11 @@ const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect
 const MyPlaces = lazy(() => import("./pages/MyPlaces"));
 const Profile = lazy(() => import("./pages/Profile"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
-const AdminStub = lazy(() => import("./pages/admin/AdminStub"));
 const AdminKatalog = lazy(() => import("./pages/admin/AdminKatalog"));
 const AdminDoPrzejrzenia = lazy(() => import("./pages/admin/AdminDoPrzejrzenia"));
 const AdminOpinie = lazy(() => import("./pages/admin/AdminOpinie"));
 const AdminZgloszenia = lazy(() => import("./pages/admin/AdminZgloszenia"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
 const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
@@ -73,7 +73,7 @@ const AnimatedRoutes = () => {
               <Route path="do-przejrzenia" element={<AdminDoPrzejrzenia />} />
               <Route path="opinie" element={<AdminOpinie />} />
               <Route path="zgloszenia" element={<AdminZgloszenia />} />
-              <Route path="dashboard" element={<AdminStub title="Dashboard" />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
             </Route>
             <Route path="/regulamin" element={<Regulamin />} />
             <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
