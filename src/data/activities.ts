@@ -27,7 +27,9 @@ export interface Activity {
   priceRange?: string;
   experiencePoints?: string[];
   website?: string;
-  reviews?: { author: string; rating: number; text: string; date: string }[];
+  reviews?: { author: string; rating: number; text: string; date?: string; source?: "google" }[];
+  /** Zewnętrzny identyfikator atrakcji (klucz z public_activities.place_id). */
+  place_id?: string;
   latitude: number;
   longitude: number;
   slug: string;
