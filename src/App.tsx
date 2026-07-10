@@ -21,6 +21,7 @@ const MyPlaces = lazy(() => import("./pages/MyPlaces"));
 const Profile = lazy(() => import("./pages/Profile"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminStub = lazy(() => import("./pages/admin/AdminStub"));
+const AdminKatalog = lazy(() => import("./pages/admin/AdminKatalog"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
 const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
@@ -64,8 +65,8 @@ const AnimatedRoutes = () => {
             <Route path="/my-places" element={<MyPlaces />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminStub title="Katalog" />} />
-              <Route path="katalog" element={<AdminStub title="Katalog" />} />
+              <Route index element={<AdminKatalog />} />
+              <Route path="katalog" element={<AdminKatalog />} />
               <Route path="do-przejrzenia" element={<AdminStub title="Do przejrzenia" />} />
               <Route path="opinie" element={<AdminStub title="Opinie" />} />
               <Route path="zgloszenia" element={<AdminStub title="Zgłoszenia" />} />
