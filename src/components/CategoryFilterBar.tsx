@@ -59,6 +59,9 @@ export interface CategoryFilterBarProps {
   /** Wybrany przedział wieku (value z AGE_RANGES) lub undefined. */
   age?: string;
   onAgeChange: (value: string | undefined) => void;
+  /** Filtr „Tylko darmowe" (is_free=true). */
+  onlyFree: boolean;
+  onOnlyFreeChange: (value: boolean) => void;
 }
 
 const RATING_OPTIONS = [
@@ -91,6 +94,8 @@ const CategoryFilterBar = ({
   onIncludeUncertainChange,
   age,
   onAgeChange,
+  onlyFree,
+  onOnlyFreeChange,
 }: CategoryFilterBarProps) => {
   const amenitiesLabel = useMemo(() => {
     if (amenities.length === 0) return "Udogodnienia";
@@ -248,6 +253,22 @@ const CategoryFilterBar = ({
           </div>
         </SelectContent>
       </Select>
+
+      {/* Tylko darmowe */}
+      <button
+        type="button"
+        onClick={() => onOnlyFreeChange(!onlyFree)}
+        aria-pressed={onlyFree}
+        className={cn(
+          "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+          onlyFree
+            ? "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800"
+            : "bg-background text-foreground border-border hover:bg-accent",
+        )}
+        title="Pokaż tylko atrakcje bez biletu"
+      >
+        Tylko darmowe
+      </button>
 
       {/* Sort */}
       <div className="ml-auto flex items-center gap-2">
