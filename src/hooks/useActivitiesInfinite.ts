@@ -22,7 +22,7 @@ export function useActivitiesInfinite(
   filters: Omit<UseActivitiesFilters, "page" | "pageSize"> = {},
   pageSize = 24,
 ): UseActivitiesInfiniteResult {
-  const { region, type, amenities, minRating, sort = "rating", includeUncertain = true } = filters;
+  const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
   const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort, includeUncertain });
 

@@ -58,8 +58,8 @@ const RATING_OPTIONS = [
 ];
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: "reviews", label: "Najpopularniejsze" },
   { value: "rating", label: "Najlepiej oceniane" },
-  { value: "reviews", label: "Najwięcej opinii" },
   { value: "name", label: "Alfabetycznie" },
 ];
 

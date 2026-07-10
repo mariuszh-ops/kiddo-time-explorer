@@ -77,7 +77,9 @@ const CategoryPage = () => {
     return raw ? raw.split(",").filter(Boolean) : [];
   }, [searchParams]);
   const urlMinRating = Number(searchParams.get("min") ?? "0") || 0;
-  const urlSort = (searchParams.get("sort") as SortOption) || "rating";
+  // Domyślnie "reviews" (najpopularniejsze): rating desc wypychał na górę
+  // obiekty 5.0★ z kilkudziesięcioma opiniami ponad znane kotwice (zoo/aquaparki).
+  const urlSort = (searchParams.get("sort") as SortOption) || "reviews";
   // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
   const includeUncertain = searchParams.get("auto") !== "0";
 
@@ -271,7 +273,7 @@ const CategoryPage = () => {
             minRating={urlMinRating}
             onMinRatingChange={(v) => updateParams({ min: v > 0 ? String(v) : undefined })}
             sort={urlSort}
-            onSortChange={(v) => updateParams({ sort: v === "rating" ? undefined : v })}
+            onSortChange={(v) => updateParams({ sort: v === "reviews" ? undefined : v })}
             hasActiveFilters={hasActiveFilters}
             onClearAll={clearAll}
             includeUncertain={includeUncertain}
