@@ -33,6 +33,15 @@ export const CATEGORY_TYPES: { value: string; label: string }[] = [
 
 export type SortOption = "rating" | "reviews" | "name";
 
+/** Predefiniowane przedziały wieku dziecka. */
+export const AGE_RANGES: { value: string; label: string; min: number; max: number }[] = [
+  { value: "0-2", label: "0–2 lata", min: 0, max: 2 },
+  { value: "3-5", label: "3–5 lat", min: 3, max: 5 },
+  { value: "6-9", label: "6–9 lat", min: 6, max: 9 },
+  { value: "10-13", label: "10–13 lat", min: 10, max: 13 },
+  { value: "14-16", label: "14+", min: 14, max: 16 },
+];
+
 export interface CategoryFilterBarProps {
   type?: string;
   onTypeChange: (value: string | undefined) => void;
@@ -47,6 +56,9 @@ export interface CategoryFilterBarProps {
   hasActiveFilters?: boolean;
   includeUncertain: boolean;
   onIncludeUncertainChange: (value: boolean) => void;
+  /** Wybrany przedział wieku (value z AGE_RANGES) lub undefined. */
+  age?: string;
+  onAgeChange: (value: string | undefined) => void;
 }
 
 const RATING_OPTIONS = [
@@ -77,6 +89,8 @@ const CategoryFilterBar = ({
   hasActiveFilters,
   includeUncertain,
   onIncludeUncertainChange,
+  age,
+  onAgeChange,
 }: CategoryFilterBarProps) => {
   const amenitiesLabel = useMemo(() => {
     if (amenities.length === 0) return "Udogodnienia";
@@ -204,6 +218,34 @@ const CategoryFilterBar = ({
               {r.label}
             </SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+
+      {/* Wiek dziecka */}
+      <Select
+        value={age ?? "all"}
+        onValueChange={(v) => onAgeChange(v === "all" ? undefined : v)}
+      >
+        <SelectTrigger
+          className={cn(
+            "h-9 w-auto min-w-[150px] rounded-full px-3 text-sm font-medium",
+            age ? "bg-primary/10 text-primary border-primary" : "",
+          )}
+          aria-label="Wiek dziecka"
+          title="Pokazujemy tylko atrakcje z potwierdzonym wiekiem."
+        >
+          <SelectValue placeholder="Wiek dziecka" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Każdy wiek</SelectItem>
+          {AGE_RANGES.map((a) => (
+            <SelectItem key={a.value} value={a.value}>
+              {a.label}
+            </SelectItem>
+          ))}
+          <div className="px-2 py-1.5 text-[11px] leading-snug text-muted-foreground border-t mt-1">
+            Pokazujemy tylko atrakcje z potwierdzonym wiekiem.
+          </div>
         </SelectContent>
       </Select>
 

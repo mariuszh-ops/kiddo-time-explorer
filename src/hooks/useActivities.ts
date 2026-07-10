@@ -12,6 +12,10 @@ export interface UseActivitiesFilters {
   pageSize?: number;
   /** Gdy false, wyklucz atrakcje klasyfikowane automatycznie (uncertain=true). Domyślnie true. */
   includeUncertain?: boolean;
+  /** Dolna granica wieku dziecka (włącznie). Rekordy z age_min/age_max=null są ukrywane. */
+  ageMin?: number;
+  /** Górna granica wieku dziecka (włącznie). */
+  ageMax?: number;
 }
 
 export interface UseActivitiesResult {
@@ -27,7 +31,7 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 500, includeUncertain = true } = filters;
+  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 500, includeUncertain = true, ageMin, ageMax } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
@@ -50,6 +54,11 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         if (amenities && amenities.length > 0) q = q.contains("amenities", amenities);
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
         if (!includeUncertain) q = q.eq("uncertain", false);
+        // Zakres wieku [ageMin, ageMax] — przepuszczamy, gdy przedziały się przecinają.
+        // Rekordy z age_min/age_max=null są ukrywane, bo nulle nie spełnią .lte/.gte.
+        if (typeof ageMin === "number" && typeof ageMax === "number") {
+          q = q.lte("age_min", ageMax).gte("age_max", ageMin);
+        }
         if (sort === "name") {
           q = q.order("name", { ascending: true });
         } else if (sort === "reviews") {
@@ -73,7 +82,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
     })();
 
     return () => { cancelled = true; };
-  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain]);
+  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain, ageMin, ageMax]);
 
   return { data, total, loading, error };
 }

@@ -670,7 +670,8 @@ const ActivityDetail = () => {
             Podstawowe informacje
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-            {/* Age range */}
+            {/* Age range — pokazujemy tylko gdy wiek jest potwierdzony w danych */}
+            {activity.ageRange && (
             <div className="flex items-center gap-2.5">
               <div className="p-2 bg-accent rounded-lg shrink-0">
                 <Users className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
@@ -680,6 +681,7 @@ const ActivityDetail = () => {
                 <p className="text-xs md:text-sm font-medium text-foreground truncate">{activity.ageRange}</p>
               </div>
             </div>
+            )}
 
             {/* Indoor/Outdoor */}
             <div className="flex items-center gap-2.5">
