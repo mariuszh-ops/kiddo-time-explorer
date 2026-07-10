@@ -57,6 +57,7 @@ interface ActivityCardProps {
   google_review_count?: number;
   priority?: boolean;
   uncertain?: boolean;
+  isFree?: boolean;
 }
 
 const ActivityCard = ({
@@ -82,6 +83,7 @@ const ActivityCard = ({
   google_review_count,
   priority = false,
   uncertain = false,
+  isFree = false,
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
@@ -260,6 +262,15 @@ const ActivityCard = ({
             )}
 
             <div className="flex items-center gap-1.5 flex-wrap">
+              {isFree && (
+                <Badge
+                  variant="outline"
+                  className="text-xs font-medium border-emerald-300 text-emerald-800 bg-emerald-50 dark:border-emerald-800 dark:text-emerald-200 dark:bg-emerald-950/40"
+                  aria-label="Wstęp wolny"
+                >
+                  Wstęp wolny
+                </Badge>
+              )}
               {ageRange && (
                 <Badge
                   variant="outline"

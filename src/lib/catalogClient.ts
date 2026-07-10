@@ -40,6 +40,7 @@ export interface CatalogRow {
   reviews?: Array<{ author: string; rating: number; text: string; source?: "google" }> | null;
   age_min?: number | null;
   age_max?: number | null;
+  is_free?: boolean | null;
 }
 
 import type { Activity } from "@/data/activities";
@@ -103,6 +104,7 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     uncertain: row.uncertain ?? false,
     confidence: row.confidence ?? null,
     place_id: row.place_id,
+    isFree: row.is_free === true,
     reviews: Array.isArray(row.reviews)
       ? row.reviews.map((r) => ({
           author: r.author,

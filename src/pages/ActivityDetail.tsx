@@ -496,6 +496,12 @@ const ActivityDetail = () => {
                 <span className="text-xs font-medium text-primary">Polecane przez FamilyFun</span>
               </div>
             )}
+
+            {activity.isFree && (
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 mb-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-200">
+                <span className="text-xs font-medium">Wstęp wolny</span>
+              </div>
+            )}
             
             {/* Location */}
             <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
