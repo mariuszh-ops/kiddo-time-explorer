@@ -18,7 +18,6 @@ import { FEATURES } from "@/lib/featureFlags";
 import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
-import { lovable } from "@/integrations/lovable/index";
 
 
 const CollectionsView = () => {
