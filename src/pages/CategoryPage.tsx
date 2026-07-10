@@ -16,7 +16,7 @@ import {
   cityLabels,
 } from "@/data/categoryPages";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
-import CategoryFilterBar, { type SortOption } from "@/components/CategoryFilterBar";
+import CategoryFilterBar, { type SortOption, AGE_RANGES } from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -82,6 +82,9 @@ const CategoryPage = () => {
   const urlSort = (searchParams.get("sort") as SortOption) || "reviews";
   // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
   const includeUncertain = searchParams.get("auto") !== "0";
+  // ?age=0-2 | 3-5 | 6-9 | 10-13 | 14-16
+  const urlAge = searchParams.get("age") ?? undefined;
+  const ageOption = urlAge ? AGE_RANGES.find((a) => a.value === urlAge) : undefined;
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -101,6 +104,8 @@ const CategoryPage = () => {
     minRating: urlMinRating,
     sort: urlSort,
     includeUncertain,
+    ageMin: ageOption?.min,
+    ageMax: ageOption?.max,
   });
 
   const updateParams = useCallback(
@@ -129,7 +134,8 @@ const CategoryPage = () => {
     urlAmenities.length > 0 ||
     urlMinRating > 0 ||
     urlSort !== "rating" ||
-    !includeUncertain;
+    !includeUncertain ||
+    Boolean(urlAge);
 
   // Fallback config / cityLabel so we never render a completely blank page
   const effectiveConfig = config ?? {
@@ -278,6 +284,8 @@ const CategoryPage = () => {
             onClearAll={clearAll}
             includeUncertain={includeUncertain}
             onIncludeUncertainChange={(v) => updateParams({ auto: v ? undefined : "0" })}
+            age={urlAge}
+            onAgeChange={(v) => updateParams({ age: v ?? undefined })}
           />
 
           {/* Count */}
