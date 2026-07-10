@@ -3916,6 +3916,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://familyfun.pl/atrakcje/centrum-sportowe-wesolandia-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://familyfun.pl/atrakcje/centrum-sportowo-edukacyjne-im-kazimierza-deyny-starogard-gdanski</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -7021,6 +7026,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://familyfun.pl/atrakcje/gorka-szczesliwicka-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://familyfun.pl/atrakcje/gorki-szymona-piaseczno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -7547,6 +7557,11 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/hulajka-wroclaw</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/hulakula-rozrywkowe-centrum-miasta-warszawa</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -17672,6 +17687,16 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/pge-giganty-mocy-belchatow</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/pge-narodowy-warszawa</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://familyfun.pl/atrakcje/piaseczynsko-grojecka-kolej-waskotorowa-piaseczno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
