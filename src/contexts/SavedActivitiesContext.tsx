@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities, slugFromId, idFromSlug } from "@/data/activities";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
-import { supabase } from "@/integrations/supabase/client";
+import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDataStatus } from "@/hooks/useDataStatus";
 
