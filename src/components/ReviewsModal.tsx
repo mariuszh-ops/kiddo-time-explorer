@@ -17,7 +17,8 @@ interface Review {
   author: string;
   rating: number;
   text: string;
-  date: string;
+  date?: string;
+  source?: "google";
 }
 
 interface ReviewsModalProps {
