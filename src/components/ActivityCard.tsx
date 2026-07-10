@@ -260,12 +260,15 @@ const ActivityCard = ({
             )}
 
             <div className="flex items-center gap-1.5 flex-wrap">
-              <Badge
-                variant="outline"
-                className="text-xs font-medium border-primary/30 text-primary"
-              >
-                {ageRange}
-              </Badge>
+              {ageRange && (
+                <Badge
+                  variant="outline"
+                  className="text-xs font-medium border-primary/30 text-primary"
+                  aria-label={`Rekomendowany wiek: ${ageRange}`}
+                >
+                  {ageRange}
+                </Badge>
+              )}
               {tags.filter((tag) => !HIDDEN_TAGS.has(tag)).slice(0, 2).map((tag) => (
                 <Badge
                   key={tag}
