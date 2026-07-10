@@ -37,6 +37,7 @@ export interface CatalogRow {
   published: boolean | null;
   uncertain?: boolean | null;
   confidence?: "niska" | "srednia" | "wysoka" | null;
+  reviews?: Array<{ author: string; rating: number; text: string; source?: "google" }> | null;
 }
 
 import type { Activity } from "@/data/activities";
@@ -83,6 +84,15 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     coordinates: row.lat != null && row.lng != null ? { lat: row.lat, lng: row.lng } : undefined,
     uncertain: row.uncertain ?? false,
     confidence: row.confidence ?? null,
+    place_id: row.place_id,
+    reviews: Array.isArray(row.reviews)
+      ? row.reviews.map((r) => ({
+          author: r.author,
+          rating: r.rating,
+          text: r.text,
+          source: (r.source ?? "google") as "google",
+        }))
+      : undefined,
   };
 }
 
