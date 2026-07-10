@@ -47,6 +47,8 @@ export interface Activity {
   uncertain?: boolean;
   /** Poziom pewności AI: 'niska' | 'srednia' | 'wysoka' — tylko gdy uncertain=true. */
   confidence?: "niska" | "srednia" | "wysoka" | null;
+  /** Czy wiek został potwierdzony w danych (age_min i age_max nie są nullem). */
+  hasAgeInfo?: boolean;
 }
 
 export const PRICE_LEVELS = {
