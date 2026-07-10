@@ -1,7 +1,19 @@
-import { useMemo, lazy, Suspense } from "react";
-import { Activity, getActivities } from "@/data/activities";
+import { useEffect, useMemo, useState, lazy, Suspense } from "react";
+import { Activity } from "@/data/activities";
+import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
 import ActivityCard from "@/components/ActivityCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
+
+const TYPE_LABELS_GENITIVE: Record<string, string> = {
+  "sala-zabaw": "sal zabaw",
+  "plac-zabaw": "placów zabaw",
+  "park-rozrywki": "parków rozrywki",
+  "centra-rozrywki": "centrów rozrywki",
+  "muzeum-teatr": "muzeów i teatrów",
+  "sport": "obiektów sportowych",
+  "zoo": "ogrodów zoologicznych",
+  "inne": "atrakcji",
+};
 
 const NearbyMiniMap = lazy(() => import("@/components/NearbyMiniMap"));
 
@@ -21,40 +33,78 @@ interface SimilarAttractionsProps {
   activity: Activity;
 }
 
+type Mode = "radius" | "region";
+type Enriched = Activity & { distanceKm: number };
+
 const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
-  const { items, radiusKm } = useMemo(() => {
-    const all = getActivities()
-      .filter((a) => a.id !== activity.id && !a.isEvent && a.city === activity.city)
-      .map((a) => ({
-        ...a,
-        distanceKm: haversineKm(activity.latitude, activity.longitude, a.latitude, a.longitude),
-      }))
-      .sort((a, b) => {
-        const sameA = a.type === activity.type ? 0 : 1;
-        const sameB = b.type === activity.type ? 0 : 1;
-        if (sameA !== sameB) return sameA - sameB;
-        return a.distanceKm - b.distanceKm;
+  const [candidates, setCandidates] = useState<Enriched[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setCandidates(null);
+    (async () => {
+      // TWARDY warunek: ten sam type + to samo województwo (region).
+      // Wykluczamy bieżącą atrakcję po place_id.
+      let query = catalogClient
+        .from("public_activities")
+        .select("*")
+        .eq("published", true)
+        .eq("type", activity.type);
+      if (activity.city) query = query.eq("region", activity.city);
+      if (activity.place_id) query = query.neq("place_id", activity.place_id);
+      const { data, error } = await query.limit(300);
+      if (cancelled) return;
+      if (error || !data) {
+        setCandidates([]);
+        return;
+      }
+      const mapped: Enriched[] = (data as CatalogRow[]).map((row, i) => {
+        const a = mapCatalogRow(row, i);
+        return {
+          ...a,
+          distanceKm: haversineKm(activity.latitude, activity.longitude, a.latitude, a.longitude),
+        };
       });
+      setCandidates(mapped);
+    })();
+    return () => { cancelled = true; };
+  }, [activity.type, activity.city, activity.place_id, activity.latitude, activity.longitude]);
 
-    const within5 = all.filter((a) => a.distanceKm <= 5);
-    if (within5.length >= 3) return { items: within5.slice(0, 12), radiusKm: 5 };
+  const result = useMemo<{ items: Enriched[]; mode: Mode; radiusKm: number } | null>(() => {
+    if (!candidates) return null;
+    // Region ma <2 pozycji tego typu → ukrywamy sekcję.
+    if (candidates.length < 2) return { items: [], mode: "region", radiusKm: 0 };
 
-    const within10 = all.filter((a) => a.distanceKm <= 10);
-    if (within10.length >= 1) return { items: within10.slice(0, 12), radiusKm: 10 };
+    const byDist = [...candidates].sort((a, b) => {
+      if (a.distanceKm !== b.distanceKm) return a.distanceKm - b.distanceKm;
+      return (b.rating || 0) - (a.rating || 0);
+    });
 
-    const fallbackItems = all.slice(0, 12);
-    const maxDist = fallbackItems.length > 0
-      ? Math.ceil(fallbackItems[fallbackItems.length - 1].distanceKm)
-      : 10;
-    return { items: fallbackItems, radiusKm: maxDist };
-  }, [activity]);
+    const within5 = byDist.filter((a) => a.distanceKm <= 5);
+    if (within5.length >= 3) return { items: within5.slice(0, 12), mode: "radius", radiusKm: 5 };
 
-  if (items.length === 0) return null;
+    const within10 = byDist.filter((a) => a.distanceKm <= 10);
+    if (within10.length >= 3) return { items: within10.slice(0, 12), mode: "radius", radiusKm: 10 };
+
+    // Fallback wojewódzki: rating desc, reviews_count desc.
+    const byRating = [...candidates].sort((a, b) => {
+      if ((b.rating || 0) !== (a.rating || 0)) return (b.rating || 0) - (a.rating || 0);
+      return (b.reviewCount || 0) - (a.reviewCount || 0);
+    });
+    return { items: byRating.slice(0, 12), mode: "region", radiusKm: 0 };
+  }, [candidates]);
+
+  if (!result || result.items.length === 0) return null;
+  const { items, mode, radiusKm } = result;
+  const typeLabel = TYPE_LABELS_GENITIVE[activity.type] || "atrakcji";
+  const heading = mode === "radius"
+    ? `Podobne atrakcje w pobliżu (${radiusKm} km)`
+    : `Inne ${typeLabel} w województwie`;
 
   return (
     <section className="container mt-8 md:mt-10 mb-2">
       <h2 className="text-lg md:text-xl font-serif font-semibold text-foreground mb-4">
-        Podobne atrakcje w promieniu {radiusKm} km
+        {heading}
       </h2>
       <HorizontalCarousel visibleCards={[1.5, 2.5, 4]}>
         {items.map((a) => (
@@ -65,9 +115,11 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
               slug={a.slug}
               amenities={a.amenities}
             />
-            <p className="mt-1 text-xs text-muted-foreground">
-              {a.distanceKm.toFixed(1)} km od tej atrakcji
-            </p>
+            {mode === "radius" && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                {a.distanceKm.toFixed(1)} km od tej atrakcji
+              </p>
+            )}
           </div>
         ))}
       </HorizontalCarousel>
