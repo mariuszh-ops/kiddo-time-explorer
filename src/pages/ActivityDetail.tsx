@@ -43,6 +43,7 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import Footer from "@/components/Footer";
 import ReviewsModal from "@/components/ReviewsModal";
+import ReviewsSection from "@/components/ReviewsSection";
 import ActivityCard from "@/components/ActivityCard";
 import RatingHistogram from "@/components/RatingHistogram";
 import ImageGallery from "@/components/ImageGallery";
