@@ -39,19 +39,15 @@ const AdminLayout = () => {
     if (!isLoggedIn) return;
     let cancelled = false;
     setStatus("checking");
-    catalogClient
-      .rpc("is_admin")
-      .then(({ data, error }) => {
+    (async () => {
+      try {
+        const { data, error } = await catalogClient.rpc("is_admin");
         if (cancelled) return;
-        if (error || data !== true) {
-          setStatus("denied");
-        } else {
-          setStatus("allowed");
-        }
-      })
-      .catch(() => {
+        setStatus(!error && data === true ? "allowed" : "denied");
+      } catch {
         if (!cancelled) setStatus("denied");
-      });
+      }
+    })();
     return () => {
       cancelled = true;
     };
