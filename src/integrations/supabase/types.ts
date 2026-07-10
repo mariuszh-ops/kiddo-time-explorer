@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      issue_reports: {
+        Row: {
+          category: string
+          contact_email: string | null
+          created_at: string
+          id: string
+          message: string
+          place_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          message: string
+          place_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          message?: string
+          place_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       saved_activities: {
         Row: {
           activity_slug: string
