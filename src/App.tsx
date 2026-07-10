@@ -19,7 +19,8 @@ import Index from "./pages/Index";
 const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect"));
 const MyPlaces = lazy(() => import("./pages/MyPlaces"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Admin = lazy(() => import("./pages/Admin"));
+const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
+const AdminStub = lazy(() => import("./pages/admin/AdminStub"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
 const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
@@ -62,7 +63,14 @@ const AnimatedRoutes = () => {
             <Route path="/kategoria/:categorySlug" element={<CategoryPage />} />
             <Route path="/my-places" element={<MyPlaces />} />
             <Route path="/profile" element={<Profile />} />
-            {import.meta.env.DEV && <Route path="/admin" element={<Admin />} />}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminStub title="Katalog" />} />
+              <Route path="katalog" element={<AdminStub title="Katalog" />} />
+              <Route path="do-przejrzenia" element={<AdminStub title="Do przejrzenia" />} />
+              <Route path="opinie" element={<AdminStub title="Opinie" />} />
+              <Route path="zgloszenia" element={<AdminStub title="Zgłoszenia" />} />
+              <Route path="dashboard" element={<AdminStub title="Dashboard" />} />
+            </Route>
             <Route path="/regulamin" element={<Regulamin />} />
             <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
             <Route path="/kontakt" element={<Kontakt />} />
