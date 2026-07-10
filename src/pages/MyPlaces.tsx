@@ -96,7 +96,7 @@ const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const defaultTab = tabParam === "wantToVisit" ? "wantToVisit" : tabParam === "visited" ? "visited" : "favorites";
-  const { isLoggedIn, login } = useAuth();
+  const { isLoggedIn, login, signInWithGoogle } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   useEffect(() => {
@@ -109,14 +109,10 @@ const MyPlaces = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.href,
-    });
-    if (result.error) {
-      console.error("Google sign-in error:", result.error);
-    }
-    if (result.redirected) {
-      return;
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error("Google sign-in error:", error);
     }
   };
 
