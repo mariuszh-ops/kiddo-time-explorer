@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { Check, ChevronLeft, ChevronRight, ExternalLink, RotateCcw, Star, Trash2, X } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { catalogClient as supabase } from "@/lib/catalogClient";
 import { catalogClient } from "@/lib/catalogClient";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";

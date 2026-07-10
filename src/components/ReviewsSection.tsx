@@ -3,7 +3,7 @@ import { Star, MessageSquarePlus, Edit2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 

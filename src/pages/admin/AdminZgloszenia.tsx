@@ -12,7 +12,7 @@ import {
   X,
   Loader2,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { catalogClient as supabase } from "@/lib/catalogClient";
 import { catalogClient, type CatalogRow } from "@/lib/catalogClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

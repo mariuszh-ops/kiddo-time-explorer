@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { catalogClient as supabase } from "@/lib/catalogClient";
 import { env } from "@/config/env";
 
 /**
@@ -78,15 +77,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signInWithGoogleImpl = async (): Promise<void> => {
-    const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.href,
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.href },
     });
-    if (result.error) {
-      console.error("Google sign-in error:", result.error);
-      throw result.error instanceof Error ? result.error : new Error(String(result.error));
+    if (error) {
+      console.error("Google sign-in error:", error);
+      throw error;
     }
-    // On redirect flow the browser navigates away; on popup flow the session
-    // is set and onAuthStateChange updates state.
   };
 
   const signInWithGoogle = useCallback(signInWithGoogleImpl, []);
