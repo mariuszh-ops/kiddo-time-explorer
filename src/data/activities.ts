@@ -49,6 +49,8 @@ export interface Activity {
   confidence?: "niska" | "srednia" | "wysoka" | null;
   /** Czy wiek został potwierdzony w danych (age_min i age_max nie są nullem). */
   hasAgeInfo?: boolean;
+  /** Atrakcja bez biletu (fontanny, parki, place zabaw, punkty widokowe, starówki). */
+  isFree?: boolean;
 }
 
 export const PRICE_LEVELS = {
