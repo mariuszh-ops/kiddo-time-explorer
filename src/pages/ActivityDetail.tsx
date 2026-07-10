@@ -34,6 +34,7 @@ import type { Activity } from "@/data/activities";
 import { fetchActivityBySlug } from "@/hooks/useActivities";
 import SimilarAttractions from "@/components/SimilarAttractions";
 import CommunityNotice from "@/components/CommunityNotice";
+import ReportIssueButton from "@/components/ReportIssueButton";
 import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { useState, useEffect, useRef } from "react";
@@ -920,6 +921,11 @@ const ActivityDetail = () => {
       {/* 7.5 Community notice */}
       <section className="container mt-5 md:mt-6">
         <CommunityNotice activityTitle={activity.title} />
+        {activity.place_id && (
+          <div className="mt-3 flex justify-center">
+            <ReportIssueButton placeId={activity.place_id} />
+          </div>
+        )}
       </section>
 
       {/* 8. Similar activities */}
