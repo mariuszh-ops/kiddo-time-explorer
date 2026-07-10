@@ -877,85 +877,14 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 6. Reviews section */}
-      <section className="container mt-5 md:mt-6">
-        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
-          <div className="flex items-center justify-between mb-3 md:mb-4">
-            <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-              Opinie rodziców
-            </h2>
-          </div>
-
-          {hasReviews ? (
-            <>
-              {FEATURES.RATING_HISTOGRAM && details.reviews.length >= 5 && (
-                <RatingHistogram reviews={details.reviews} />
-              )}
-              {/* Review cards - limited on mobile */}
-              <div className="space-y-3 md:space-y-4 mb-4">
-                {details.reviews.slice(0, initialReviewCount).map((review, index) => (
-                  <div key={index} className="pb-3 md:pb-4 border-b border-border last:border-0 last:pb-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-accent flex items-center justify-center">
-                          <span className="text-xs md:text-sm font-medium text-accent-foreground">
-                            {review.author.charAt(0)}
-                          </span>
-                        </div>
-                        <span className="text-sm font-medium text-foreground">{anonymizeAuthor(review.author)}</span>
-                      </div>
-                      <div className="flex items-center gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3 h-3 ${
-                              i < review.rating
-                                ? "fill-primary text-primary"
-                                : "text-muted-foreground/30"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-sm text-foreground leading-relaxed line-clamp-3">{review.text}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <p className="text-xs text-muted-foreground">{review.date}</p>
-                      <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded">Google</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {details.reviews.length > initialReviewCount && (
-                <Button 
-                  variant="outline" 
-                  size={isMobile ? "lg" : "default"}
-                  className="w-full"
-                  onClick={() => setIsReviewsModalOpen(true)}
-                >
-                  Zobacz wszystkie opinie ({details.reviews.length})
-                </Button>
-              )}
-            </>
-          ) : (
-            /* Empty state for no reviews */
-            <div className="text-center py-6 md:py-8">
-              <div className="w-12 h-12 mx-auto mb-3 bg-accent rounded-full flex items-center justify-center">
-                <MessageSquarePlus className="w-6 h-6 text-accent-foreground" />
-              </div>
-              <p className="text-foreground font-medium mb-1">
-                Brak opinii
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {isLoggedIn 
-                  ? "Bądź pierwszy, który oceni tę atrakcję — użyj formularza powyżej"
-                  : "Bądź pierwszy, który oceni tę atrakcję"
-                }
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
+      {/* 6. Reviews section — FamilyFun user reviews + Google */}
+      <ReviewsSection
+        placeId={activity.place_id}
+        googleReviews={details.reviews}
+        averageRating={displayRating}
+        totalReviewCount={displayReviewCount}
+        onAuthRequired={() => setIsAuthModalOpen(true)}
+      />
 
       {/* 7. User photos section — only when feature enabled */}
       {FEATURES.UGC_PHOTOS && (
