@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from "react";
 import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -39,6 +40,9 @@ export function useActivityFilters() {
   // Initialize from persisted state
   const [filters, setFilters] = useState<Filters>(persistedFilters);
   const [searchQuery, setSearchQuery] = useState(persistedSearchQuery);
+  // Katalog ładuje się asynchronicznie — bez tej zależności memo policzyłoby
+  // się raz na pustej tablicy i utknęło do pierwszej interakcji z filtrem.
+  const dataStatus = useDataStatus();
 
   // Sync to persisted state whenever filters change
   useEffect(() => {
@@ -223,7 +227,7 @@ export function useActivityFilters() {
     }
 
     return result;
-  }, [filters, searchQuery]);
+  }, [filters, searchQuery, dataStatus]);
 
   // Calculate counts for each filter option
   // Contextual: shows how many results will remain if you select this option
@@ -354,7 +358,7 @@ export function useActivityFilters() {
       filtered: filteredActivities.length,
       hasAnyFilter,
     };
-  }, [filters, filteredActivities.length, searchQuery]);
+  }, [filters, filteredActivities.length, searchQuery, dataStatus]);
 
   return {
     filters,
