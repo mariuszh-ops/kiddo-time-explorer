@@ -6,13 +6,14 @@ import { useAuth } from "@/contexts/AuthContext";
 import { catalogClient } from "@/lib/catalogClient";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { Loader2 } from "lucide-react";
+import type { AdminStats } from "./AdminDashboard";
 
 const TABS = [
-  { to: "/admin/katalog", label: "Katalog" },
-  { to: "/admin/do-przejrzenia", label: "Do przejrzenia" },
-  { to: "/admin/opinie", label: "Opinie" },
-  { to: "/admin/zgloszenia", label: "Zgłoszenia" },
-  { to: "/admin/dashboard", label: "Dashboard" },
+  { to: "/admin/katalog", label: "Katalog", badge: null },
+  { to: "/admin/do-przejrzenia", label: "Do przejrzenia", badge: null },
+  { to: "/admin/opinie", label: "Opinie", badge: "opinie_pending" as const },
+  { to: "/admin/zgloszenia", label: "Zgłoszenia", badge: "zgloszenia_nowe" as const },
+  { to: "/admin/dashboard", label: "Dashboard", badge: null },
 ];
 
 type AdminStatus = "checking" | "allowed" | "denied";
@@ -23,6 +24,7 @@ const AdminLayout = () => {
   const location = useLocation();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [status, setStatus] = useState<AdminStatus>("checking");
+  const [stats, setStats] = useState<AdminStats | null>(null);
 
   // Auth gate — open existing sign-in flow if not logged in.
   useEffect(() => {
@@ -52,6 +54,21 @@ const AdminLayout = () => {
       cancelled = true;
     };
   }, [isLoggedIn, user?.id]);
+
+  // Jedno wywołanie admin_stats na wejściu do panelu — używamy do badge'y
+  // przy zakładkach ORAZ przekazujemy dalej do AdminDashboard przez outlet context.
+  useEffect(() => {
+    if (status !== "allowed") return;
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await catalogClient.rpc("admin_stats");
+      if (cancelled || error || !data) return;
+      setStats(data as AdminStats);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [status]);
 
   // Redirect bare /admin to /admin/katalog
   if (isLoggedIn && status === "allowed" && location.pathname === "/admin") {
@@ -111,26 +128,34 @@ const AdminLayout = () => {
               </div>
             </div>
             <nav className="max-w-7xl mx-auto px-6 flex gap-1 overflow-x-auto">
-              {TABS.map((t) => (
-                <NavLink
-                  key={t.to}
-                  to={t.to}
-                  className={({ isActive }) =>
-                    `px-4 py-2.5 text-sm border-b-2 whitespace-nowrap transition-colors ${
-                      isActive
-                        ? "border-primary text-primary font-medium"
-                        : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`
-                  }
-                >
-                  {t.label}
-                </NavLink>
-              ))}
+              {TABS.map((t) => {
+                const badgeVal = t.badge ? stats?.[t.badge] ?? 0 : 0;
+                return (
+                  <NavLink
+                    key={t.to}
+                    to={t.to}
+                    className={({ isActive }) =>
+                      `px-4 py-2.5 text-sm border-b-2 whitespace-nowrap transition-colors inline-flex items-center gap-1.5 ${
+                        isActive
+                          ? "border-primary text-primary font-medium"
+                          : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`
+                    }
+                  >
+                    {t.label}
+                    {t.badge && badgeVal > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium tabular-nums">
+                        {badgeVal}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
             </nav>
           </header>
 
           <main className="max-w-7xl mx-auto px-6 py-6">
-            <Outlet />
+            <Outlet context={{ stats }} />
           </main>
         </div>
       )}
