@@ -85,6 +85,8 @@ const CategoryPage = () => {
   // ?age=0-2 | 3-5 | 6-9 | 10-13 | 14-16
   const urlAge = searchParams.get("age") ?? undefined;
   const ageOption = urlAge ? AGE_RANGES.find((a) => a.value === urlAge) : undefined;
+  // ?free=1 → zawężaj do atrakcji bez biletu.
+  const onlyFree = searchParams.get("free") === "1";
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -106,6 +108,7 @@ const CategoryPage = () => {
     includeUncertain,
     ageMin: ageOption?.min,
     ageMax: ageOption?.max,
+    onlyFree,
   });
 
   const updateParams = useCallback(
@@ -135,7 +138,8 @@ const CategoryPage = () => {
     urlMinRating > 0 ||
     urlSort !== "rating" ||
     !includeUncertain ||
-    Boolean(urlAge);
+    Boolean(urlAge) ||
+    onlyFree;
 
   // Fallback config / cityLabel so we never render a completely blank page
   const effectiveConfig = config ?? {
@@ -286,6 +290,8 @@ const CategoryPage = () => {
             onIncludeUncertainChange={(v) => updateParams({ auto: v ? undefined : "0" })}
             age={urlAge}
             onAgeChange={(v) => updateParams({ age: v ?? undefined })}
+            onlyFree={onlyFree}
+            onOnlyFreeChange={(v) => updateParams({ free: v ? "1" : undefined })}
           />
 
           {/* Count */}
