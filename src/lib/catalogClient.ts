@@ -41,6 +41,10 @@ export interface CatalogRow {
   age_min?: number | null;
   age_max?: number | null;
   is_free?: boolean | null;
+  admin_hidden?: boolean | null;
+  featured?: boolean | null;
+  locked_fields?: string[] | null;
+  updated_at?: string | null;
 }
 
 import type { Activity } from "@/data/activities";
