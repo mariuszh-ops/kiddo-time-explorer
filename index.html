@@ -31,14 +31,8 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap"
     />
 
-    <!-- Preload hero (LCP na stronie głównej) -->
-    <link
-      rel="preload"
-      as="image"
-      imagesrcset="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
-      imagesizes="100vw"
-      fetchpriority="high"
-    />
+    <!-- Preload hero jest wstrzykiwany dynamicznie tylko na stronie głównej (src/pages/Index.tsx),
+         żeby uniknąć warninga "preloaded but not used" na podstronach. -->
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#497a5c" />

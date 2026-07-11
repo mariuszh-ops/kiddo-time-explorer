@@ -214,11 +214,20 @@ const CategoryPage = () => {
 
   const countLabel = `${total} ${pluralizeActivities(total)} w ${capitalize(effectiveCityLabel.locative)}`;
 
+  // Meta description: liczba atrakcji + krótki opis kategorii (docięty do ~160 znaków).
+  const dynamicMetaDescription = (() => {
+    const base = `${countLabel}. ${resolvedDescription}`.trim();
+    if (base.length <= 160) return base;
+    const cut = base.slice(0, 160);
+    const lastSpace = cut.lastIndexOf(" ");
+    return `${(lastSpace > 60 ? cut.slice(0, lastSpace) : cut).replace(/[\s,.;:—-]+$/, "")}…`;
+  })();
+
   return (
     <PageTransition>
       <SEOHead
         title={resolvedTitle.replace(" | FamilyFun", "")}
-        description={resolvedDescription}
+        description={dynamicMetaDescription}
         path={path}
         image={activities[0]?.imageUrl}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}

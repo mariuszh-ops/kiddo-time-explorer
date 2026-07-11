@@ -304,9 +304,19 @@ const ActivityDetail = () => {
   const seoTitle = `${activity.title} — ${typeLabel} ${cityLocative}`;
   const fallbackDescription = `${typeLabel} ${cityLocative} — sprawdź godziny otwarcia i opinie rodziców.`;
   const activityDescription = activity.description?.trim() || fallbackDescription;
-  const seoDescription = displayRating != null && displayReviewCount != null
-    ? `${typeLabel} ${cityLocative}. Ocena ${displayRating.toFixed(1)}/5 (${formatReviewCount(displayReviewCount)}).`
-    : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
+  // Meta description: pierwsze ~155 znaków opisu atrakcji (z odcięciem na granicy słowa).
+  // Fallback: krótkie zdanie z typem/miejscem + ocena, jeśli brak opisu.
+  const truncateAtWord = (text: string, max: number): string => {
+    if (text.length <= max) return text;
+    const cut = text.slice(0, max);
+    const lastSpace = cut.lastIndexOf(" ");
+    return `${(lastSpace > 40 ? cut.slice(0, lastSpace) : cut).replace(/[\s,.;:—-]+$/, "")}…`;
+  };
+  const seoDescription = activity.description?.trim()
+    ? truncateAtWord(activity.description.trim(), 155)
+    : displayRating != null && displayReviewCount != null
+      ? `${typeLabel} ${cityLocative}. Ocena ${displayRating.toFixed(1)}/5 (${formatReviewCount(displayReviewCount)}).`
+      : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
   
   // Number of reviews to show initially (1-2 on mobile)
   const initialReviewCount = isMobile ? 2 : 3;
