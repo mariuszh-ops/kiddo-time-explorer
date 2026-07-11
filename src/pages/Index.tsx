@@ -179,9 +179,9 @@ const Index = () => {
         <link
           rel="preload"
           as="image"
-          imagesrcset="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
-          imagesizes="100vw"
-          fetchpriority="high"
+          imageSrcSet="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
+          imageSizes="100vw"
+          fetchPriority="high"
         />
       </Helmet>
       <SEOHead
