@@ -33,18 +33,19 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
     setLightboxOpen(true);
   };
 
-  // Single image
-  if (images.length === 1) {
+  // 0 or 1 image — no counter, no arrows
+  if (images.length <= 1) {
+    const singleSrc = images.length === 1 ? getImageSrc(images[0], 0) : fallbackImage;
     return (
       <>
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden bg-muted">
             <div
               className="aspect-[16/9] max-h-[400px] w-full overflow-hidden cursor-pointer"
-              onClick={() => openLightbox(0)}
+              onClick={() => images.length === 1 && openLightbox(0)}
             >
               <img
-                src={getImageSrc(images[0], 0)}
+                src={singleSrc}
                 alt={activityTitle}
                 decoding="async"
                 fetchPriority="high"
@@ -55,7 +56,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
           </div>
         </div>
         <ImageLightbox
-          images={images}
+          images={images.length === 1 ? images : []}
           initialIndex={0}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
