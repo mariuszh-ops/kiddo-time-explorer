@@ -856,11 +856,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/ackim-umcs-chatka-zaka-lublin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/active-fun-bawilandia-i-szkola-tanca-dabrowa-gornicza</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1636,11 +1631,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/apollo-walbrzych</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/apteka-pod-orlem-krakow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1977,11 +1967,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/artatak-neonowa-arena-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/artkino-krosno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2506,11 +2491,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/batyskaf-nautilus-gdynia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/baw-sie-dobrze-bawialnia-i-kawiarnia-gdansk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -2902,11 +2882,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/biala-fabryka-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/bialostocki-osrodek-kultury-bialystok</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3441,11 +3416,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/centrum-aktywnosci-spolecznej-kolejarz-nowe-skalmierzyce</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/centrum-ciechanowa-rynek-plac-jana-pawla-ii</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -3601,17 +3571,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/centrum-kulturalno-edukacyjne-w-czerwionce-leszczynach-czerwionka-leszczyny</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/centrum-kulturowo-archeologiczne-w-nowej-slupi-nowa-slupia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/centrum-kultury-filmowej-kino-zorza-chelm</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3637,11 +3597,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/centrum-kultury-w-lublinie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/centrum-kultury-w-swieciu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3906,11 +3861,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/centrum-sztuki-moscice-tarnow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/centrum-sztuki-wro-wroclaw</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -4026,11 +3976,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/charlie-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/chata-kawuloka-wojtosze</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -4106,11 +4051,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/chorzowskie-centrum-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/chubi-boom-wroclaw</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -4141,147 +4081,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-arkadia-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-bemowo-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-bialoleka-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-bonarka-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-bydgoszcz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-elblag</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-felicity-lublin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-imax-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-imax-poznan-plaza</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-imax-sadyba-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-imax-wroclavia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-imax-zakopianka-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-janki-raszyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-kazimierz-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-kinepolis-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-korona-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-lublin-plaza</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-mokotow-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-promenada-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-ruda-slaska</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-rybnik</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-silesia-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-sosnowiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-torun-czerwona-droga</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-torun-plaza</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-city-zielona-gora</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/cinema-escape-pszczyna</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema-lumiere-szczytno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/cinema1-gdansk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4576,11 +4376,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/dcf-kino-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/deepspot-najglebszy-basen-nurkowy-w-europie-mszczonow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -4782,16 +4577,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/dom-krasnali-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/dom-kultury-chemik-kedzierzyn-kozle</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/dom-kultury-w-wolbromiu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -6146,11 +5931,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/franciszkanski-osrodek-kultury-lezajsk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/freak-park-bedzin</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -6162,11 +5942,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/freestyle-park-park-trampolin-i-sportow-freestyle-chorzow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/fregata-leborskie-centrum-kultury</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -6696,11 +6471,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/go-kino-olawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/goair-powietrzne-miasto-krakow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -7171,11 +6941,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/helios-szczecin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/herpetarium-plock</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -7492,11 +7257,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/isabell-pracownia-piernikowa-swieradow-zdroj</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/iskra-kino-augustow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -8341,11 +8101,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/kika-kinokawiarnia-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/kinder-klub-ostrow-wielkopolski</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8357,981 +8112,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kinderland-stargard</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-3d-przedwiosnie-kok-krotoszyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-60-krzesel-w-miejskim-osrodku-sztuki-gorzow-wielkopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-7d-vr-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-8d-wladyslawowo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-agrafka-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-apollo-dzialdowo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-atlantic-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-aurum-zlotoryja</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-bajka-darlowo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-bajka-kluczbork</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-bajka-lublin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-baltyk-rypinski-dom-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-basn-kino-miejskiego-osrodka-kultury-w-piastowie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-baszta-sroda-wielkopolska</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-bulgarska-19-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-centrum-bialogard</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-centrum-mck-skarzysko-skarzysko-kamienna</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-centrum-przemysl</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-centrum-torun</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-cinema-n-3d-nysa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-cisy-naleczow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-diana-prudnik</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-echo-im-piotra-lazarkiewicza-jarocin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-elektronik-mckm-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-eva-miedzyzdroje</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-fenix-lowicz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-fenomen-kielce</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-forum-bialystok</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-fregata-lebork</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-galaktyka-mielec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-grazyna-strzelin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-grodzisk-mazowiecki</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-gryf-gryfino</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-gwiazda-ketrzyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-halszka-szamotuly</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-hel-cafe-pleszew</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-belchatow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-bialystok</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-bialystok-2</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-bialystok-3</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-bielany-wroclawskie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-bydgoszcz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-gdansk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-gdansk-2</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-gorzow-wielkopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-grudziadz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-imax-gdynia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-kalisz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-kedzierzyn-kozle</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-kielce</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-koszalin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-krosno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-lomza</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-lubin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-nowy-sacz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-olsztyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-opole</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-opole-2</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-ostrow-wielkopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-pabianice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-przemysl</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-radom</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-rzeszow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-siedlce</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-sosnowiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-stalowa-wola</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-starachowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-szczecin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-tczew</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-wolomin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-helios-zory</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-ignacy-lidzbark-warminski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-ikar-jaroslaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-iluzjon-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-janosik-zywiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kalejdoskop-mck-plonsk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-karolinka-w-miejskim-domu-kultury-w-lublincu-lubliniec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kijow-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kinematograf-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kinogram-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-klaps-limanowa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-konkret-cafe-konsekwencje-zatwarnica</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kosmos-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kosmos-swiebodzin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-krapkowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kryterium-koszalin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kultura-belchatow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kultura-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-lot-jelenia-gora</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-lot-swidnik</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-lukow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-lydynia-ciechanow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-malta-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-marzenie-tarnow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-meduza-opole</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-metalowiec-krasnik</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-mewa-zlocieniec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-miejsce-zakopane</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-miejski-dom-kultury-w-lubaczowie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-miejskiego-domu-kultury-wagrowiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-millennium-tarnow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-mokis-3d-bielawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-morskie-oko-krasnystaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-moskwa-w-kielcach</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-muranow-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-muza-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-muza-wloszczowa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-na-biegunach-jaroslaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-na-boku-kino-na-bialolece-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-na-bursztynowym-szlaku-pruszcz-gdanski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-na-starowce-zory</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-narie-morag</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-nowa-fala-gizycko</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-nowe-horyzonty-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-odeon-sochaczew</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-odra-olawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-okf-iluzja-czestochowa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-opolanka-opole-lubelskie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-orzel-miejskie-centrum-kultury-bydgoszcz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-ostrovia-ostrow-mazowiecka</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-palacowe-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-paradox-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-parczew</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-patria-ruda-slaska</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pegaz-w-polancu-polaniec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-perla-lublin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-piast-legnica</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-piast-ostrzeszow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pionier-zary</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pod-baranami-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pod-filarami-slawno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pod-kopula-gostyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-pokoj-lubawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-praha-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-promien-w-rawiczu</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-przystan-pszczew</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-radosc-debica</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-ratusz-zdunska-wola</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-remus-koscierzyna</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-rialto-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-sfinks-osrodek-kultury-norwida-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-sniezka-rabka-zdroj</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-sokol-brzozowski-dom-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-sokol-sokolka</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-sokol-w-nowym-saczu-nowy-sacz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-spektrum-gdansk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-spojnia-aleksandrow-lodzki</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-studenckie-niebieski-kocyk-torun</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-studyjne-ada-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-studyjne-awangarda-2-olsztyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-studyjne-gdynia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-studyjne-swiatowid-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-stylowy-zamosc</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-swiatowid-w-elblagu</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-swit-w-czechowicach-dziedzicach-czechowice-dziedzice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-szkoly-filmowej-w-lodzi</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-tatry-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-teatr-apollo-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-teatr-forum-boleslawiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-teatr-kurtyna-sulejowek-milosna</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-teatr-syrena-wielun</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-teatr-tomi-pabianice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-ton-bialystok</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-trojka-wrzesnia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-w-pomiechowku-pomiechowek</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wawel-luban</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wawrzyn-mogilenskiego-domu-kultury-mogilno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wazka-niepolomice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wdk-wlodawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wielicka-mediateka-wieliczka</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wielkopolanin-buk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wilga-garwolin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wisla-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wolnosc-szczecinek</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wrzos-swiecie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-wrzos-w-stalowej-woli-stalowa-wola</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-zamek-szczecin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-zdroj-ciechocinek</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-zeglarz-w-jastarni</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-zodiak-mragowo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-zorza-rzeszow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinokawiarnia-stacja-falenica-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinomax-inowroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoport-gcsw-strajku-dokerow-5-gdanskie-centrum-sztuki-wspolczesnej</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-kwidzyn-kwidzynskie-centrum-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-pasja-ilawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-polonez-skierniewice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-rialto-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-rondo-chelmno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteatr-slonko-srem</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -9537,11 +8317,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/klub-kulinarny-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/klub-kultury-filmowej-kino-newa-zielona-gora</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -9792,11 +8567,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kopalnia-guido-zabrze</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kopalnia-kultury-im-henryka-kuzniaka-czeladz</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -10367,11 +9137,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kurza-gora-kurzetnik</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kutnowski-dom-kultury</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11121,11 +9886,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/luna-kino-studyjne-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/lunapark-sowinski-wladyslawowo</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -11516,11 +10276,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/maxkino-swiebodzin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/maxymek-myslowice</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -11631,11 +10386,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/miedzyrzecki-osrodek-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/miedzyrzecki-rejon-umocniony-mru-petla-boryszynska</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -11676,11 +10426,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/miejski-dom-kultury-w-kole-kino-nad-warta-kolo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/miejski-ogrod-zoologiczny-im-antoniny-i-jana-zabinskich-w-warszawie</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -11697,11 +10442,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/miejski-osrodek-kultury-i-sztuki-w-pyskowicach</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/miejski-osrodek-kultury-w-nowej-rudzie-nowa-ruda</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -11771,17 +10511,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/miejsko-gminny-osrodek-kultury-sedziszow-malopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/mieszko-czerwona-wyciag-krzeselkowy-duszniki-zdroj</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/mikro-kino-fundacji-rozwoju-kina-krakow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -12327,146 +11057,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/mucholapka-ludwikowice-klodzkie</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-bydgoszcz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-elblag</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-g-city-reduta-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-g-city-targowek-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-gdansk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-glogow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-gorzow-gorzow-wielkopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-kalisz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-katowice</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-kielce</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-koszalin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-leszno</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-lublin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-mielec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-mlociny-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-olsztyn</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-pasaz-grunwaldzki-wroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-pruszkow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-rumia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-rzeszow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-stary-browar-poznan</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-szczecin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-wloclawek</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-wola-park-warszawa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-zgorzelec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/multikino-zlote-tarasy-warszawa</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -15001,11 +13591,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/narodowe-centrum-kultury-filmowej-lodz</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/narodowe-muzeum-morskie-w-gdansku</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -15196,11 +13781,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/novekino-sybilla-pulawy</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/nowa-plaza-zek-radymno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -15212,11 +13792,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/nowohuckie-centrum-kultury-krakow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/nowosolski-dom-kultury-nowa-sol</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -17801,11 +16376,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/pionier-szczecin</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/piracki-park-rozrywki-w-koscianie</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -18332,11 +16902,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/plama-gak-gdansk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/planet-cinema-elk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -19041,11 +17606,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/powisle-kino-teatr-sztum</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/pozarnicze-centrum-historyczno-edukacyjne-ziemi-lodzkiej-w-wolborzu</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -19317,11 +17877,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/punkt-widokowy-u-pana-tadeusza-smolniki</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/purpur-twoj-ocean-zmyslow-kino-dla-doroslych-lodz</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -19716,11 +18271,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/regionalne-centrum-kultury-fabryka-emocji-pila</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/regionalne-centrum-naukowo-technologiczne-podzamcze</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -20067,11 +18617,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/rydultowska-fikolkownia-rafa</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/rydultowskie-centrum-kultury-feniks</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -21226,11 +19771,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/sandomierskie-centrum-kultury-kino-starowka</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/saneczkowa-gora-karpacz</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -21407,11 +19947,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/sciezka-przyrodniczo-lesna-rdziostow-chelmiec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/sck-park-tradycji-siemianowice-slaskie</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -22041,17 +20576,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/sok-kuznica-kino-cyfrowe-suchedniow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/sokoliki-park-sanok</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/sokolowski-osrodek-kultury-kino-sokol-sokolow-podlaski</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -22501,11 +21026,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/stargardzkie-centrum-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/stargardzkie-centrum-nauki-filary</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -22532,11 +21052,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/stary-mlyn-w-turtulu-malesowizna</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/stary-mlyn-zgierz</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -23471,11 +21986,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/teatr-elektryczny-skoczow</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/teatr-figur-krakow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -23782,11 +22292,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/teatr-miejski-inowroclaw</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/teatr-miejski-leszno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -24836,11 +23341,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/vredutainment-opole-zoo</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/vrepublic-krakow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -25441,11 +23941,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/wlodawski-dom-kultury</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/wmb-bowling-leszno</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -25657,11 +24152,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/wodospady-mosorne-parking-dolny-zawoja</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/wojewodzki-dom-kultury-im-jozefa-pilsudskiego-w-kielcach</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -25972,11 +24462,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/wystrzeleni-paintball-i-quady-scinawka-srednia</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/wytwornia-kino-3d-lodz</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
