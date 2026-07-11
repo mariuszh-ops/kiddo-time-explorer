@@ -23,6 +23,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   "muzeum-teatr": "Muzeum / teatr",
   "sport": "Sport",
   "zoo": "Zoo",
+  "park": "Park i natura",
   "inne": "Inne",
 };
 

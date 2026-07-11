@@ -2316,11 +2316,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/basen-aquapark-energylandia-zator</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/basen-aquarius-lesko</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -6406,11 +6401,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/galeria-morena-centrum-handlowe-gdansk</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/galeria-motoryzacji-ogrodzieniec</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -8771,22 +8761,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/kino-jednosc-sedziszow-malopolski</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/kino-kalejdoskop-mck-plonsk</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kino-karolinka-w-miejskim-domu-kultury-w-lublincu-lubliniec</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kino-kawiarnia-goleniow</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -9352,11 +9332,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/kinoteatr-slonko-srem</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/kinoteka-w-pkin-warszawa</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>

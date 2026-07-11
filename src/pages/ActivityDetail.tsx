@@ -75,6 +75,7 @@ const TYPE_LABELS: Record<string, string> = {
   "muzeum-teatr": "Muzeum / teatr",
   "sport": "Sport",
   "zoo": "Zoo",
+  "park": "Park i natura",
   "inne": "Atrakcja",
 };
 
@@ -298,7 +299,8 @@ const ActivityDetail = () => {
 
   const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
   const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
-  const cityLocative = cityLabels[activity.city]?.locative || `w ${cityLabel}`;
+  const cityLocativeRaw = cityLabels[activity.city]?.locative || cityLabel;
+  const cityLocative = `w ${cityLocativeRaw}`;
   const seoTitle = `${activity.title} — ${typeLabel} ${cityLocative}`;
   const fallbackDescription = `${typeLabel} ${cityLocative} — sprawdź godziny otwarcia i opinie rodziców.`;
   const activityDescription = activity.description?.trim() || fallbackDescription;
