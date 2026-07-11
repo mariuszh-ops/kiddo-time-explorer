@@ -14,6 +14,7 @@ import ActivityCard from "@/components/ActivityCard";
 import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
+import { Helmet } from "react-helmet-async";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
@@ -174,6 +175,15 @@ const Index = () => {
 
   return (
     <PageTransition>
+      <Helmet>
+        <link
+          rel="preload"
+          as="image"
+          imagesrcset="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
+          imagesizes="100vw"
+          fetchpriority="high"
+        />
+      </Helmet>
       <SEOHead
         title="Atrakcje dla dzieci — sprawdzone przez rodziców"
         description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
