@@ -4,15 +4,16 @@ import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClie
 import ActivityCard from "@/components/ActivityCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
 
-const TYPE_LABELS_GENITIVE: Record<string, string> = {
-  "sala-zabaw": "sal zabaw",
-  "plac-zabaw": "placów zabaw",
-  "park-rozrywki": "parków rozrywki",
-  "centra-rozrywki": "centrów rozrywki",
-  "muzeum-teatr": "muzeów i teatrów",
-  "sport": "obiektów sportowych",
-  "zoo": "ogrodów zoologicznych",
-  "inne": "atrakcji",
+const TYPE_LABELS_PLURAL: Record<string, string> = {
+  "sala-zabaw": "sale zabaw",
+  "plac-zabaw": "place zabaw",
+  "park-rozrywki": "parki rozrywki",
+  "centra-rozrywki": "centra rozrywki",
+  "muzeum-teatr": "muzea i teatry",
+  "sport": "obiekty sportowe",
+  "zoo": "ogrody zoologiczne",
+  "park": "parki i tereny zielone",
+  "inne": "atrakcje",
 };
 
 const NearbyMiniMap = lazy(() => import("@/components/NearbyMiniMap"));
@@ -96,7 +97,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
 
   if (!result || result.items.length === 0) return null;
   const { items, mode, radiusKm } = result;
-  const typeLabel = TYPE_LABELS_GENITIVE[activity.type] || "atrakcji";
+  const typeLabel = TYPE_LABELS_PLURAL[activity.type] || "atrakcje";
   const heading = mode === "radius"
     ? `Podobne atrakcje w pobliżu (${radiusKm} km)`
     : `Inne ${typeLabel} w województwie`;
