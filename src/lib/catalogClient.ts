@@ -119,6 +119,9 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     confidence: row.confidence ?? null,
     place_id: row.place_id,
     isFree: row.is_free === true,
+    experiencePoints: Array.isArray(row.experience_points)
+      ? row.experience_points.map((p) => (typeof p === "string" ? p.trim() : "")).filter((p) => p.length > 0)
+      : undefined,
     reviews: Array.isArray(row.reviews)
       ? row.reviews.map((r) => ({
           author: r.author,
