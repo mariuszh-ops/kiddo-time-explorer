@@ -77,9 +77,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signInWithGoogleImpl = async (): Promise<void> => {
+    try {
+      const returnTo = window.location.pathname + window.location.search;
+      window.localStorage.setItem("auth_return_to", returnTo);
+    } catch {
+      // storage unavailable — ignore
+    }
+    const returnTo =
+      (typeof window !== "undefined" &&
+        (window.localStorage.getItem("auth_return_to") ||
+          window.location.pathname + window.location.search)) ||
+      "/";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: window.location.origin + returnTo },
     });
     if (error) {
       console.error("Google sign-in error:", error);
