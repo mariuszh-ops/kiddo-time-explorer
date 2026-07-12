@@ -54,6 +54,7 @@ export interface CatalogRow {
   featured?: boolean | null;
   locked_fields?: string[] | null;
   updated_at?: string | null;
+  experience_points?: string[] | null;
 }
 
 import type { Activity } from "@/data/activities";
