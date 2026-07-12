@@ -39,6 +39,7 @@ import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LayoutDiagnostics from "./components/LayoutDiagnostics";
+import AuthReturnHandler from "./components/AuthReturnHandler";
 
 // SPA pageview tracking
 const AnalyticsTracker = () => {
@@ -119,6 +120,7 @@ const App = () => {
                     <OfflineIndicator />
                     <BrowserRouter>
                       <AnalyticsTracker />
+                      <AuthReturnHandler />
                       <AnimatedRoutes />
                       <BottomNav />
                       <SubmitActivityFAB />
