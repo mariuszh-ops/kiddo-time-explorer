@@ -23,7 +23,6 @@ import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
-import DecisionChips from "@/components/DecisionChips";
 import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 import HomeSearch from "@/components/HomeSearch";
 
