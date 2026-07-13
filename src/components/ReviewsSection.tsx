@@ -249,15 +249,17 @@ const ReviewsSection = ({
                   </span>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsEditing(true)}
-                className="h-auto py-1 px-2 text-xs"
-              >
-                <Edit2 className="w-3.5 h-3.5 mr-1" />
-                Edytuj
-              </Button>
+              {myReview.status === "pending" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsEditing(true)}
+                  className="h-auto py-1 px-2 text-xs"
+                >
+                  <Edit2 className="w-3.5 h-3.5 mr-1" />
+                  Edytuj
+                </Button>
+              )}
             </div>
             <StarRow rating={myReview.rating} size="md" />
             {myReview.text && (
