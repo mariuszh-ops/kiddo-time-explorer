@@ -386,7 +386,9 @@ const ReviewsSection = ({
                 {r.text && <ExpandableText text={r.text} />}
               </li>
             ))}
-            {googleReviews.map((r, idx) => (
+            {[...googleReviews]
+              .sort((a, b) => b.rating - a.rating)
+              .map((r, idx) => (
               <li key={`g-${idx}`} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
