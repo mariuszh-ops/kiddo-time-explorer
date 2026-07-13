@@ -2,19 +2,14 @@ import { trackEvent } from "@/lib/analytics";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { cityLabels } from "@/data/categoryPages";
-import { 
-  Heart, 
-  Star, 
-  Clock, 
-  MapPin, 
-  Users, 
+import {
+  Heart,
+  Star,
+  Clock,
+  MapPin,
+  Users,
   Ticket,
   ExternalLink,
-  
-  
-  
-  
-  
   ArrowLeft,
   ChevronRight,
   Check,
