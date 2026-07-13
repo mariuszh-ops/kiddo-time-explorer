@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 
 const anonymizeAuthor = (name: string): string => {
@@ -43,6 +44,9 @@ const ReviewsModal = ({
           <DialogTitle className="text-xl font-serif pr-8">
             Opinie o {activityName}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Wszystkie opinie o tej atrakcji.
+          </DialogDescription>
           <div className="flex items-center gap-2 mt-2">
             <div className="flex items-center gap-1">
               <Star className="w-5 h-5 fill-primary text-primary" />
