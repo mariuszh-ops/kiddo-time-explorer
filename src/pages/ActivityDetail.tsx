@@ -326,7 +326,7 @@ const ActivityDetail = () => {
       <SEOHead
         title={seoTitle}
         description={seoDescription}
-        path={`/atrakcje/${activity.city}/${activity.slug}`}
+        path={`/atrakcje/${activity.slug}`}
         image={activity.imageUrl}
         type="article"
         jsonLd={[
