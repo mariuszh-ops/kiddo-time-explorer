@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -187,6 +188,9 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                 <MapPin className="w-5 h-5 text-primary" />
                 Zgłoś atrakcję
               </DialogTitle>
+              <DialogDescription className="sr-only">
+                Formularz zgłaszania nowej atrakcji.
+              </DialogDescription>
               <p className="text-sm text-muted-foreground mt-1">
                 Podziel się miejscem, które warto odwiedzić z dziećmi. Wszystkie zgłoszenia są weryfikowane.
               </p>

@@ -16,6 +16,8 @@ interface AuthRequiredModalProps {
   onGoogleClick?: () => Promise<void> | void;
   onEmailClick?: () => Promise<void> | void;
   onLoginClick?: () => Promise<void> | void;
+  title?: string;
+  description?: string;
 }
 
 const AuthRequiredModal = ({
@@ -24,6 +26,8 @@ const AuthRequiredModal = ({
   onGoogleClick,
   onEmailClick,
   onLoginClick,
+  title = "Zapisz to miejsce na później",
+  description = "Aby zapisywać ulubione atrakcje i planować wizyty, potrzebujesz konta.",
 }: AuthRequiredModalProps) => {
   const [isLoading, setIsLoading] = useState<'google' | 'email' | 'login' | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -69,10 +73,10 @@ const AuthRequiredModal = ({
       <DialogContent className="max-w-sm">
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl font-serif">
-            Zapisz to miejsce na później
+            {title}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground pt-2">
-            Aby zapisywać ulubione atrakcje i planować wizyty, potrzebujesz konta.
+            {description}
           </DialogDescription>
         </DialogHeader>
 

@@ -91,6 +91,8 @@ const AdminLayout = () => {
         onGoogleClick={() => signInWithGoogle()}
         onEmailClick={() => signInWithGoogle()}
         onLoginClick={() => signInWithGoogle()}
+        title="Zaloguj się do panelu"
+        description="Panel FamilyFun jest dostępny tylko dla administratorów. Zaloguj się kontem z uprawnieniami."
       />
 
       {!isLoggedIn ? null : status === "checking" ? (
