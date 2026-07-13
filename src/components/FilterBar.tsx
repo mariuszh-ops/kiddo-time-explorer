@@ -213,6 +213,7 @@ const FilterBar = ({
               />
             </div>
             
+            {/* Filtr „Pod dachem?" ukryty — isIndoor twardo false w danych (0 wyników). Logika w useActivityFilters zostaje.
             <FilterDropdown
               label="Pod dachem?"
               options={filterCounts.indoor}
@@ -220,6 +221,7 @@ const FilterBar = ({
               hasAnyFilter={filterCounts.hasAnyFilter}
               onSelect={(value) => onUpdateFilter("indoor", value)}
             />
+            */}
             
             {/* Price filter - hidden until better data */}
             {/* 

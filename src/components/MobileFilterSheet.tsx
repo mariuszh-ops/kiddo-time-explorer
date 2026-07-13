@@ -238,12 +238,14 @@ const MobileFilterSheet = ({
             onToggle={onToggleTypeFilter}
           />
           
+          {/* Sekcja „Pod dachem / Na zewnątrz" ukryta — isIndoor twardo false (0 wyników). Logika zostaje.
           <FilterSection
             title="Pod dachem / Na zewnątrz"
             options={filterCounts.indoor}
             selectedValue={filters.indoor}
             onSelect={(value) => onUpdateFilter("indoor", value)}
           />
+          */}
           
           {/* Price filter - hidden until better data */}
           {/* 
