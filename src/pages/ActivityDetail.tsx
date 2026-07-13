@@ -10,11 +10,11 @@ import {
   Users, 
   Ticket,
   ExternalLink,
-  Home,
-  Sun,
-  Sparkles,
-  Brain,
-  Zap,
+  
+  
+  
+  
+  
   ArrowLeft,
   ChevronRight,
   Check,
