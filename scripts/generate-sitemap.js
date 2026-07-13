@@ -26,7 +26,7 @@ async function fetchAllActivities() {
   const PAGE = 1000;
   const all = [];
   for (let from = 0; ; from += PAGE) {
-    const url = `${CATALOG_URL}/rest/v1/public_activities?select=slug&published=eq.true&order=slug.asc&limit=${PAGE}&offset=${from}`;
+    const url = `${CATALOG_URL}/rest/v1/public_activities?select=slug,updated_at&published=eq.true&order=slug.asc&limit=${PAGE}&offset=${from}`;
     const res = await fetch(url, {
       headers: {
         accept: 'application/json',
@@ -48,6 +48,8 @@ async function fetchAllActivities() {
 // For simplicity, we duplicate the minimal data extraction logic here.
 
 async function main() {
+  const genDate = new Date().toISOString().slice(0, 10);
+
   // Dynamic imports of TS source files (requires tsx or ts-node)
   let activities, categoryConfigs, FEATURES, blogPosts;
 
@@ -88,7 +90,12 @@ async function main() {
   // 3. Activity detail pages — jeden wpis na atrakcję z katalogu
   for (const a of activities) {
     if (!a.slug) continue;
-    urls.push({ loc: `/atrakcje/${a.slug}`, changefreq: 'monthly', priority: '0.7' });
+    urls.push({
+      loc: `/atrakcje/${a.slug}`,
+      changefreq: 'monthly',
+      priority: '0.7',
+      lastmod: a.updated_at ? a.updated_at.slice(0, 10) : genDate,
+    });
   }
 
   // 4. Blog
@@ -113,6 +120,7 @@ async function main() {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map(u => `  <url>
     <loc>${BASE_URL}${u.loc}</loc>
+    <lastmod>${u.lastmod || genDate}</lastmod>
     <changefreq>${u.changefreq}</changefreq>
     <priority>${u.priority}</priority>
   </url>`).join('\n')}
