@@ -37,6 +37,13 @@ const Index = () => {
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
 
+  // Read ?search= from URL on mount (supports SearchAction JSON-LD target)
+  useEffect(() => {
+    const q = searchParams.get("search");
+    if (q) setSearchQuery(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // View mode: grid or map (sync with URL param from bottom nav)
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "map">(
