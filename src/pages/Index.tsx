@@ -39,6 +39,13 @@ const Index = () => {
 
   // View mode: grid or map (sync with URL param from bottom nav)
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read ?search= from URL on mount (supports SearchAction JSON-LD target)
+  useEffect(() => {
+    const q = searchParams.get("search");
+    if (q) setSearchQuery(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [viewMode, setViewMode] = useState<"grid" | "map">(
     searchParams.get("view") === "map" ? "map" : "grid"
   );
