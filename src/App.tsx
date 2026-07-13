@@ -13,6 +13,7 @@ import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
+import DataGate from "@/components/DataGate";
 import { FEATURES } from "@/lib/featureFlags";
 import { loadActivities } from "@/data/activities";
 import Index from "./pages/Index";
@@ -61,12 +62,12 @@ const AnimatedRoutes = () => {
           <Routes location={location} key={location.pathname}>
             {/* Katalog ładowany asynchronicznie z Supabase; poszczególne widoki
                 obsługują stany loading/empty samodzielnie. */}
-            <Route path="/" element={<Index />} />
-            <Route path="/atrakcje/:citySlug/:categorySlug" element={<CategoryPage />} />
-            <Route path="/atrakcje/:slug" element={<ActivityOrCategoryResolver />} />
-            <Route path="/activity/:id" element={<ActivityDetailRedirect />} />
-            <Route path="/kategoria/:categorySlug" element={<CategoryPage />} />
-            <Route path="/my-places" element={<MyPlaces />} />
+            <Route path="/" element={<DataGate><Index /></DataGate>} />
+            <Route path="/atrakcje/:citySlug/:categorySlug" element={<DataGate><CategoryPage /></DataGate>} />
+            <Route path="/atrakcje/:slug" element={<DataGate><ActivityOrCategoryResolver /></DataGate>} />
+            <Route path="/activity/:id" element={<DataGate><ActivityDetailRedirect /></DataGate>} />
+            <Route path="/kategoria/:categorySlug" element={<DataGate><CategoryPage /></DataGate>} />
+            <Route path="/my-places" element={<DataGate><MyPlaces /></DataGate>} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminKatalog />} />
@@ -87,8 +88,8 @@ const AnimatedRoutes = () => {
               </>
             )}
             {/* Krótkie URL-e województw: /{region} i /{region}/{type} */}
-            <Route path="/:regionSlug" element={<RegionRouteResolver />} />
-            <Route path="/:regionSlug/:categorySlug" element={<RegionRouteResolver />} />
+            <Route path="/:regionSlug" element={<DataGate><RegionRouteResolver /></DataGate>} />
+            <Route path="/:regionSlug/:categorySlug" element={<DataGate><RegionRouteResolver /></DataGate>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

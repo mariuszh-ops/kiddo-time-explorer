@@ -1,6 +1,7 @@
 // Activity data module — reads the catalog directly from the external Supabase
 // project (public_activities). Statyczny snapshot public/data/activities.json
-// został usunięty; w razie awarii sieci używamy `fallbackActivities.ts`.
+// został usunięty. Przy awarii sieci nie używamy żadnego fallbacku —
+// widoki katalogu bramkuje DataGate i pokazuje ekran błędu (DataLoadError).
 import { REGIONS } from "@/data/regions";
 
 export interface Activity {
@@ -117,12 +118,6 @@ export async function loadActivities(): Promise<Activity[]> {
     return _activities;
   } catch (err) {
     console.error("[ActivitiesLoader] Failed to load catalog from Supabase:", err);
-    // Awaryjny statyczny snapshot — ładowany dynamicznie, żeby nie obciążał main chunku.
-    try {
-      const { fallbackActivities } = await import("./fallbackActivities");
-      _activities = fallbackActivities;
-      _invalidateLookups();
-    } catch { /* brak fallbacku — zostają puste dane */ }
     _setStatus("error");
     throw err instanceof Error ? err : new Error(String(err));
   }
