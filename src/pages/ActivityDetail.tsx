@@ -2,19 +2,14 @@ import { trackEvent } from "@/lib/analytics";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { cityLabels } from "@/data/categoryPages";
-import { 
-  Heart, 
-  Star, 
-  Clock, 
-  MapPin, 
-  Users, 
+import {
+  Heart,
+  Star,
+  Clock,
+  MapPin,
+  Users,
   Ticket,
   ExternalLink,
-  Home,
-  Sun,
-  Sparkles,
-  Brain,
-  Zap,
   ArrowLeft,
   ChevronRight,
   Check,
@@ -89,14 +84,6 @@ const formatReviewCount = (count: number): string => {
   return `${formatted} ${suffix}`;
 };
 
-const getActivityTypeIcon = (type: string) => {
-  switch (type.toLowerCase()) {
-    case "edukacyjne": return Brain;
-    case "aktywne": return Zap;
-    case "kreatywne": return Sparkles;
-    default: return Star;
-  }
-};
 
 const ActivityDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -279,9 +266,7 @@ const ActivityDetail = () => {
   }
 
   const details = {
-    estimatedTime: activity.estimatedTime || "1–2 godziny",
     priceRange: activity.priceRange || "$",
-    activityTypes: activity.tags.length > 0 ? activity.tags : ["Rodzinne"],
     experiencePoints: activity.experiencePoints ?? [],
     openingHours: activity.openingHours,
     address: activity.address,
@@ -677,90 +662,49 @@ const ActivityDetail = () => {
         </div>
       </section>
 
-      {/* 2. Key facts section - compact grid on mobile */}
-      <section className="container mt-5 md:mt-6">
-        <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
-          <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
-            Podstawowe informacje
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-            {/* Age range — pokazujemy tylko gdy wiek jest potwierdzony w danych */}
-            {activity.ageRange && (
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-accent rounded-lg shrink-0">
-                <Users className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground">Wiek</p>
-                <p className="text-xs md:text-sm font-medium text-foreground truncate">{activity.ageRange}</p>
-              </div>
-            </div>
-            )}
-
-            {/* Indoor/Outdoor */}
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-accent rounded-lg shrink-0">
-                {activity.isIndoor ? (
-                  <Home className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
-                ) : (
-                  <Sun className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground">Lokalizacja</p>
-                <p className="text-xs md:text-sm font-medium text-foreground truncate">
-                  {activity.isIndoor ? "Wewnątrz" : "Na zewnątrz"}
-                </p>
-              </div>
-            </div>
-
-            {/* Estimated time */}
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-accent rounded-lg shrink-0">
-                <Clock className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground">Czas</p>
-                <p className="text-xs md:text-sm font-medium text-foreground truncate">{details.estimatedTime}</p>
-              </div>
-            </div>
-
-            {/* Activity type */}
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-accent rounded-lg shrink-0">
-                {(() => {
-                  const IconComponent = getActivityTypeIcon(details.activityTypes[0]);
-                  return <IconComponent className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />;
-                })()}
-              </div>
-              <div className="min-w-0">
-                <p className="text-[10px] md:text-xs text-muted-foreground">Typ</p>
-                <p className="text-xs md:text-sm font-medium text-foreground truncate">{details.activityTypes[0]}</p>
-              </div>
-            </div>
-
-
-            {/* Inline amenities for 1-2 items */}
-            {activity.amenities && activity.amenities.length > 0 && activity.amenities.length <= 2 && (
-              activity.amenities.map((amenityId) => {
-                const amenity = getAmenityById(amenityId);
-                if (!amenity) return null;
-                return (
-                  <div key={amenityId} className="flex items-center gap-2.5">
-                    <div className="p-2 bg-accent rounded-lg shrink-0">
-                      <AmenityIcon name={amenity.icon} className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[10px] md:text-xs text-muted-foreground">Udogodnienie</p>
-                      <p className="text-xs md:text-sm font-medium text-foreground truncate">{amenity.label}</p>
-                    </div>
+      {(activity.ageRange || (activity.amenities && activity.amenities.length >= 1 && activity.amenities.length <= 2)) && (
+        <section className="container mt-5 md:mt-6">
+          {/* 2. Key facts section - compact grid on mobile */}
+          <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
+            <h2 className="text-xs md:text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3 md:mb-4">
+              Podstawowe informacje
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+              {/* Age range — pokazujemy tylko gdy wiek jest potwierdzony w danych */}
+              {activity.ageRange && (
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2 bg-accent rounded-lg shrink-0">
+                    <Users className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
                   </div>
-                );
-              })
-            )}
+                  <div className="min-w-0">
+                    <p className="text-[10px] md:text-xs text-muted-foreground">Wiek</p>
+                    <p className="text-xs md:text-sm font-medium text-foreground truncate">{activity.ageRange}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Inline amenities for 1-2 items */}
+              {activity.amenities && activity.amenities.length > 0 && activity.amenities.length <= 2 && (
+                activity.amenities.map((amenityId) => {
+                  const amenity = getAmenityById(amenityId);
+                  if (!amenity) return null;
+                  return (
+                    <div key={amenityId} className="flex items-center gap-2.5">
+                      <div className="p-2 bg-accent rounded-lg shrink-0">
+                        <AmenityIcon name={amenity.icon} className="w-4 h-4 md:w-5 md:h-5 text-accent-foreground" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] md:text-xs text-muted-foreground">Udogodnienie</p>
+                        <p className="text-xs md:text-sm font-medium text-foreground truncate">{amenity.label}</p>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Amenities section — only for 3+ amenities */}
       {activity.amenities && activity.amenities.length >= 3 && (
