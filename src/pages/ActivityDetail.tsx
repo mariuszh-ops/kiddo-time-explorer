@@ -89,14 +89,6 @@ const formatReviewCount = (count: number): string => {
   return `${formatted} ${suffix}`;
 };
 
-const getActivityTypeIcon = (type: string) => {
-  switch (type.toLowerCase()) {
-    case "edukacyjne": return Brain;
-    case "aktywne": return Zap;
-    case "kreatywne": return Sparkles;
-    default: return Star;
-  }
-};
 
 const ActivityDetail = () => {
   const { slug } = useParams<{ slug: string }>();
