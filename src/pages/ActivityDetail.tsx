@@ -321,10 +321,12 @@ const ActivityDetail = () => {
             "description": (activity.experiencePoints && activity.experiencePoints.length > 0
               ? activity.experiencePoints.join(". ")
               : activity.description?.trim()) || activity.title,
+            "image": activity.imageUrl,
+            "url": `https://familyfun.pl/atrakcje/${activity.slug}`,
             "address": {
               "@type": "PostalAddress",
               "streetAddress": activity.address || "",
-              "addressLocality": activity.city,
+              ...(activity.location ? { "addressLocality": activity.location } : {}),
               "addressCountry": "PL",
             },
             ...(activity.reviewCount > 0 ? {
@@ -335,11 +337,13 @@ const ActivityDetail = () => {
                 "bestRating": "5",
               },
             } : {}),
-            "audience": {
-              "@type": "PeopleAudience",
-              "suggestedMinAge": activity.ageMin,
-              "suggestedMaxAge": activity.ageMax,
-            },
+            ...(activity.hasAgeInfo ? {
+              "audience": {
+                "@type": "PeopleAudience",
+                "suggestedMinAge": activity.ageMin,
+                "suggestedMaxAge": activity.ageMax,
+              },
+            } : {}),
             ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
           },
           {
