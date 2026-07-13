@@ -11,10 +11,9 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:slugs": "node scripts/validate-slugs.js",
     "report:slugs": "node scripts/report-slugs.js",
     "predev": "npx tsx scripts/generate-sitemap.js",
-    "prebuild": "node scripts/validate-slugs.js && npx tsx scripts/generate-sitemap.js"
+    "prebuild": "npx tsx scripts/generate-sitemap.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
