@@ -76,6 +76,8 @@ const LazyImage = memo(({
       {/* Actual image */}
       <img
         src={src}
+        srcSet={srcSet}
+        sizes={srcSet ? "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" : undefined}
         alt={alt}
         loading={priority ? "eager" : "lazy"}
         decoding="async"
