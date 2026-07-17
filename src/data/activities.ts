@@ -109,7 +109,7 @@ export async function loadActivities(): Promise<Activity[]> {
         .range(from, from + PAGE - 1);
       if (error) throw error;
       if (!data || data.length === 0) break;
-      all.push(...(data as CatalogRow[]));
+      all.push(...(data as unknown as CatalogRow[]));
       if (data.length < PAGE) break;
     }
     _activities = all.map((row, i) => mapCatalogRow(row, i));
