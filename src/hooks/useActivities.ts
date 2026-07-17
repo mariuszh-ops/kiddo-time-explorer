@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import type { Activity } from "@/data/activities";
 
 export interface UseActivitiesFilters {
@@ -49,7 +49,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
       try {
         let q = catalogClient
           .from("public_activities")
-          .select("*", { count: "exact" })
+          .select(CARD_COLUMNS, { count: "exact" })
           .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
