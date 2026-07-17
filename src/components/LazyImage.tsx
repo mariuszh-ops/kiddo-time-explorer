@@ -23,6 +23,19 @@ export function getCategoryPlaceholderColor(type: string): string {
 // Global cache of loaded image URLs to skip placeholder on remount
 const loadedImages = new Set<string>();
 
+// Warianty istnieją w R2 jako 0-320/0-480/0-640.webp obok 0.webp (oryginał ~1200 px).
+const R2_ORIGINAL_RE = /\/0\.webp$/i;
+function buildSrcSet(src: string): string | undefined {
+  if (!R2_ORIGINAL_RE.test(src)) return undefined;
+  const base = src.replace(R2_ORIGINAL_RE, "/0"); // …/{place_id}/0
+  return [
+    `${base}-320.webp 320w`,
+    `${base}-480.webp 480w`,
+    `${base}-640.webp 640w`,
+    `${src} 1200w`, // oryginał jako największy wariant
+  ].join(", ");
+}
+
 interface LazyImageProps {
   src: string;
   alt: string;
