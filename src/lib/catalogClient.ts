@@ -22,6 +22,14 @@ export const catalogClient = createClient(CATALOG_URL, CATALOG_ANON_KEY, {
 // Alias — zachęcamy do używania nazwy `supabase` w nowym kodzie.
 export const supabase = catalogClient;
 
+// Lekka lista kolumn dla widoków listowych (kafle + filtry + sortowanie +
+// wyszukiwarka + dystans). Świadomie pomija ciężkie pola strony detalu:
+// reviews, experience_points, description, price_note, phone, website,
+// opening_hours, address, confidence, good_for_children.
+export const CARD_COLUMNS =
+  "place_id,slug,name,type,region,city,lat,lng,rating,reviews_count," +
+  "age_min,age_max,is_free,amenities,image_url,uncertain";
+
 // Wiersz z tabeli public_activities (patrz PROMPT).
 export interface CatalogRow {
   place_id: string;
