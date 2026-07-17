@@ -119,20 +119,23 @@ const ActivityDetail = () => {
     setDetailStatus("loading");
     setActivity(null);
     (async () => {
-      // Najpierw sprawdź cache in-memory, żeby uniknąć zbędnego round-tripu
+      // 1) Natychmiastowy paint z cache (lekki rekord — bez reviews/opisu).
       const cached = getActivities().find((a) => a.slug === slug);
-      if (cached) {
-        if (!cancelled) { setActivity(cached); setDetailStatus("success"); }
-        return;
+      if (cached && !cancelled) {
+        setActivity(cached);
+        setDetailStatus("success");
       }
+      // 2) ZAWSZE dociągnij pełny wiersz (reviews, opis, "Co Was czeka",
+      //    telefon/WWW/godziny) — lekka lista tych pól nie zawiera.
       try {
         const row = await fetchActivityBySlug(slug);
         if (cancelled) return;
-        if (!row) { setDetailStatus("not-found"); return; }
+        if (!row) { if (!cached) setDetailStatus("not-found"); return; }
         setActivity(row);
         setDetailStatus("success");
       } catch (e) {
-        if (!cancelled) setDetailStatus("error");
+        if (cancelled) return;
+        if (!cached) setDetailStatus("error");
       }
     })();
     return () => { cancelled = true; };
