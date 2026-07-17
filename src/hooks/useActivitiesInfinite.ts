@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import type { Activity } from "@/data/activities";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
 
@@ -52,7 +52,7 @@ export function useActivitiesInfinite(
         if (page > 0) setLoadingMore(true);
         let q = catalogClient
           .from("public_activities")
-          .select("*", page === 0 ? { count: "exact" } : {})
+          .select(CARD_COLUMNS, page === 0 ? { count: "exact" } : {})
           .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
@@ -76,7 +76,7 @@ export function useActivitiesInfinite(
         const { data: rows, count, error: err } = await q;
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
-        const mapped = (rows as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, page * pageSize + i)) ?? [];
+        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, page * pageSize + i)) ?? [];
         setData((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
         if (page === 0 && typeof count === "number") setTotal(count);
       } catch (e) {
