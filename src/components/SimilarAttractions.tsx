@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, lazy, Suspense } from "react";
 import { Activity } from "@/data/activities";
-import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import ActivityCard from "@/components/ActivityCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
 
@@ -48,18 +48,18 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
       // Wykluczamy bieżącą atrakcję po place_id.
       let query = catalogClient
         .from("public_activities")
-        .select("*")
+        .select(CARD_COLUMNS)
         .eq("published", true)
         .eq("type", activity.type);
       if (activity.city) query = query.eq("region", activity.city);
       if (activity.place_id) query = query.neq("place_id", activity.place_id);
-      const { data, error } = await query.limit(300);
+      const { data, error } = await query.limit(60);
       if (cancelled) return;
       if (error || !data) {
         setCandidates([]);
         return;
       }
-      const mapped: Enriched[] = (data as CatalogRow[]).map((row, i) => {
+      const mapped: Enriched[] = (data as unknown as CatalogRow[]).map((row, i) => {
         const a = mapCatalogRow(row, i);
         return {
           ...a,
