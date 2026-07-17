@@ -431,8 +431,10 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const markersRef = useRef<Record<number, L.Marker>>({});
   const mapInstanceRef = useRef<L.Map | null>(null);
 
-  const cityKey = filters.city || "warszawa";
-  const center = cityCenters[cityKey] || cityCenters.warszawa;
+  // Fallback musi być slugiem województwa (cityCenters ma klucze REGIONS, nie miast).
+  // "warszawa" nie istnieje jako klucz → wcześniej center===undefined → crash na center.lat.
+  const cityKey = filters.city || "mazowieckie";
+  const center = cityCenters[cityKey] || cityCenters.mazowieckie || { lat: 52.2297, lng: 21.0122 };
   const mapCenter: [number, number] = savedMapState ? savedMapState.center : [center.lat, center.lng];
   const initialZoom = savedMapState ? savedMapState.zoom : 11;
 
