@@ -95,20 +95,21 @@ export async function loadActivities(): Promise<Activity[]> {
     // Katalog atrakcji leży w OSOBNYM (zewnętrznym) projekcie Supabase.
     // Czytamy anonimowo z tabeli `public_activities` (RLS: anon SELECT).
     const { catalogClient, mapCatalogRow } = await import("@/lib/catalogClient");
+    const { CARD_COLUMNS } = await import("@/lib/catalogClient");
     type CatalogRow = import("@/lib/catalogClient").CatalogRow;
     const PAGE = 1000;
     const all: CatalogRow[] = [];
     for (let from = 0; ; from += PAGE) {
       const { data, error } = await catalogClient
         .from("public_activities")
-        .select("*")
+        .select(CARD_COLUMNS)
         .eq("published", true)
         .order("rating", { ascending: false })
         .order("reviews_count", { ascending: false })
         .range(from, from + PAGE - 1);
       if (error) throw error;
       if (!data || data.length === 0) break;
-      all.push(...(data as CatalogRow[]));
+      all.push(...(data as unknown as CatalogRow[]));
       if (data.length < PAGE) break;
     }
     _activities = all.map((row, i) => mapCatalogRow(row, i));

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import type { Activity } from "@/data/activities";
 
 export interface UseActivitiesFilters {
@@ -49,7 +49,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
       try {
         let q = catalogClient
           .from("public_activities")
-          .select("*", { count: "exact" })
+          .select(CARD_COLUMNS, { count: "exact" })
           .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
@@ -75,7 +75,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         const { data: rows, count, error: err } = await q;
         if (err) throw err;
         if (cancelled) return;
-        setData((rows as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, i)) ?? []);
+        setData((rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, i)) ?? []);
         setTotal(count ?? 0);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
