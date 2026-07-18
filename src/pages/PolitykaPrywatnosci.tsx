@@ -33,7 +33,8 @@ const PolitykaPrywatnosci = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Administrator danych</h2>
                 <p className="mb-4">
                   Administratorem danych osobowych przetwarzanych w serwisie FamilyFun
-                  (dalej: „Serwis") jest [DO UZUPEŁNIENIA: nazwa podmiotu, adres siedziby, NIP/REGON].
+                  (dalej: „Serwis") jest Softline sp. z o.o., z siedzibą w Bołtucia 2, 05-827 Grodzisk Mazowiecki,
+                  NIP: 5342202117, REGON: 016450950.
                   W sprawach dotyczących ochrony danych osobowych można kontaktować się pod adresem
                   e-mail: <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
                 </p>
