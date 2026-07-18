@@ -281,11 +281,10 @@ const CategoryFilterBar = ({
           />
           <Label
             htmlFor="toggle-auto-classified"
-            className="text-xs font-medium text-muted-foreground cursor-pointer"
+            className="text-xs font-medium text-muted-foreground cursor-pointer whitespace-nowrap"
             title="Wyłącz, aby ukryć atrakcje, których typ ustalił model AI."
           >
-            <span className="inline sm:hidden">Auto</span>
-            <span className="hidden sm:inline whitespace-nowrap">Pokaż klasyfikowane automatycznie</span>
+            Pokaż klasyfikowane automatycznie
           </Label>
         </div>
         {hasActiveFilters && onClearAll && (
