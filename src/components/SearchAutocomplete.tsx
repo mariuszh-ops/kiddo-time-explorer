@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, X, Send } from "lucide-react";
 import { Activity, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
+import { REGION_BY_SLUG } from "@/data/regions";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
