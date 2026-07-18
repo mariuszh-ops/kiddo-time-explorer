@@ -270,8 +270,8 @@ const CategoryFilterBar = ({
         Tylko darmowe
       </button>
 
-      {/* Sort */}
-      <div className="ml-auto flex items-center gap-2">
+      {/* Sort / clear / auto-classified */}
+      <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:ml-auto">
         <div className="flex items-center gap-2 pr-2 border-r border-border/60 mr-1">
           <Switch
             id="toggle-auto-classified"
@@ -294,7 +294,7 @@ const CategoryFilterBar = ({
         )}
         <Select value={sort} onValueChange={(v) => onSortChange(v as SortOption)}>
           <SelectTrigger
-            className="h-9 w-auto min-w-[180px] rounded-full px-3 text-sm font-medium"
+            className="h-9 w-auto min-w-[120px] max-w-[150px] sm:min-w-[180px] sm:max-w-none rounded-full px-3 text-sm font-medium truncate"
             aria-label="Sortowanie"
           >
             <SelectValue />
