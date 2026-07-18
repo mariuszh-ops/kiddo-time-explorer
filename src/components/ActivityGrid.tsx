@@ -20,6 +20,8 @@ export interface ActivityGridProps {
   onRetry?: () => void;
   filters?: Filters;
   mapReturnAction?: () => void;
+  /** When false, render all activities without client-side pagination/infinite scroll. */
+  paginate?: boolean;
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -43,7 +45,7 @@ const useGridCols = () => {
 const roundUp = (n: number, cols: number, max: number) =>
   Math.min(Math.ceil(n / cols) * cols, max);
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFiltersKeepCity, isLoading, hasError, onRetry, filters = {}, mapReturnAction }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFiltersKeepCity, isLoading, hasError, onRetry, filters = {}, mapReturnAction, paginate = true }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
@@ -65,9 +67,9 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
     setRawVisibleCount(ITEMS_PER_PAGE);
   }, [activities]);
 
-  const visibleCount = roundUp(rawVisibleCount, cols, activities.length);
-  const visibleActivities = activities.slice(0, visibleCount);
-  const hasMore = visibleCount < activities.length;
+  const visibleCount = paginate ? roundUp(rawVisibleCount, cols, activities.length) : activities.length;
+  const visibleActivities = paginate ? activities.slice(0, visibleCount) : activities;
+  const hasMore = paginate && visibleCount < activities.length;
 
   const loadMore = useCallback(() => {
     if (!hasMore || isLoadingMore) return;
@@ -82,7 +84,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
   // IntersectionObserver for infinite scroll
   useEffect(() => {
     const sentinel = sentinelRef.current;
-    if (!sentinel) return;
+    if (!sentinel || !paginate) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -95,7 +97,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [loadMore]);
+  }, [loadMore, paginate]);
 
   const activeFilterLabels = useMemo(() => {
     const labels: string[] = [];
@@ -268,7 +270,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
         {hasMore && <div ref={sentinelRef} className="h-1" />}
 
         {/* All loaded message */}
-        {!hasMore && activities.length > ITEMS_PER_PAGE && (
+        {paginate && !hasMore && activities.length > ITEMS_PER_PAGE && (
           <p
             className="text-center text-muted-foreground mt-10 text-sm"
           >

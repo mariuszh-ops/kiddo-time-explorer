@@ -371,6 +371,7 @@ const CategoryPage = () => {
                     hasActiveFilters={hasActiveFilters}
                     onClearFilters={clearAll}
                     isLoading={loading}
+                    paginate={false}
                   />
                 </>
               )}
@@ -389,6 +390,17 @@ const CategoryPage = () => {
                 {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${total - activities.length})`}
               </Button>
             </div>
+          )}
+
+          {/* Koniec listy */}
+          {!isEmpty && !error && !hasMore && !loading && total > 24 && (
+            <p className="text-center text-muted-foreground mt-10 text-sm">
+              {categorySlug && !citySlug
+                ? "To wszystkie atrakcje w tej kategorii"
+                : citySlug && !categorySlug
+                ? "To wszystkie atrakcje w tym województwie"
+                : "To wszystkie atrakcje w tej kategorii"}
+            </p>
           )}
         </div>
       </main>
