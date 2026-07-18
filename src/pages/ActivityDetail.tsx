@@ -780,8 +780,12 @@ const ActivityDetail = () => {
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
                   <p className="text-sm text-foreground">{details.address}</p>
-                  <a 
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(details.address)}`}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                      activity.coordinates
+                        ? `${activity.coordinates.lat},${activity.coordinates.lng}`
+                        : details.address
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1"
