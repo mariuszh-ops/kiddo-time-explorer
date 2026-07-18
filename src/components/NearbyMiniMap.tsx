@@ -50,12 +50,20 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
   const map = useMap();
 
   useEffect(() => {
-    const points: [number, number][] = [
-      [currentActivity.latitude, currentActivity.longitude],
-      ...nearbyActivities.map((a) => [a.latitude, a.longitude] as [number, number]),
-    ];
-    const bounds = L.latLngBounds(points);
-    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 });
+    const currentLatLng: [number, number] = [currentActivity.latitude, currentActivity.longitude];
+    const closeby = nearbyActivities.filter((a) => a.distanceKm <= 25);
+    if (closeby.length > 0) {
+      const points: [number, number][] = [
+        currentLatLng,
+        ...closeby.map((a) => [a.latitude, a.longitude] as [number, number]),
+      ];
+      map.fitBounds(L.latLngBounds(points), { padding: [30, 30], maxZoom: 14 });
+      if (map.getZoom() < 11) {
+        map.setView(currentLatLng, 12);
+      }
+    } else {
+      map.setView(currentLatLng, 12);
+    }
 
     const currentMarker = L.marker(
       [currentActivity.latitude, currentActivity.longitude],
