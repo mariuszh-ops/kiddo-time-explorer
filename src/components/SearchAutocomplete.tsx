@@ -36,6 +36,11 @@ function getCategoryLabel(typeValue: string): string {
   return opt?.label || typeValue;
 }
 
+// Map raw region slug (e.g. "slaskie") to Polish label (e.g. "Śląskie")
+function getRegionLabel(regionSlug: string): string {
+  return REGION_BY_SLUG[regionSlug]?.label || regionSlug;
+}
+
 function matchCategories(query: string) {
   const q = query.toLowerCase();
   const matches: { slug: string; emoji: string; label: string; city: string; cityLabel: string; path: string }[] = [];
