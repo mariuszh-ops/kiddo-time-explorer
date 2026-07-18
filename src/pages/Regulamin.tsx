@@ -34,7 +34,8 @@ const Regulamin = () => {
                 <p className="mb-4">
                   Niniejszy regulamin określa zasady korzystania z serwisu internetowego FamilyFun
                   dostępnego pod adresem familyfun.pl (dalej: „Serwis"). Właścicielem i operatorem
-                  Serwisu jest [DO UZUPEŁNIENIA: nazwa podmiotu, adres siedziby, NIP/REGON]
+                  Serwisu jest Softline sp. z o.o., z siedzibą w Bołtucia 2, 05-827 Grodzisk Mazowiecki,
+                  NIP: 5342202117, REGON: 016450950
                   (dalej: „Operator").
                 </p>
                 <p className="mb-4">
