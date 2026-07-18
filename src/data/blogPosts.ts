@@ -33,7 +33,7 @@ Duża przestrzeń, blisko stawów z kaczkami. Idealny na dłuższe wypady z pikn
 
 ## Podsumowanie
 Warszawa ma wiele świetnych placów zabaw — warto odwiedzić kilka i znaleźć ulubiony.`,
-    imageUrl: "https://images.unsplash.com/photo-1596997000103-e597b3ca50df?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/playground.jpg",
     category: "Top lista",
     city: "warszawa",
     tags: ["Warszawa", "place zabaw", "na zewnątrz"],
@@ -60,7 +60,7 @@ Wyładowanie energii gwarantowane. Większość parków trampolin oferuje strefy
 
 ## Podsumowanie
 Deszcz to nie wymówka — Warszawa ma mnóstwo atrakcji indoor, które ucieszą dzieci w każdym wieku.`,
-    imageUrl: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/rainy-indoor.jpg",
     category: "Przewodnik",
     city: "warszawa",
     tags: ["Warszawa", "indoor", "deszcz", "zima"],
@@ -92,7 +92,7 @@ Najlepiej rano — zwierzęta są bardziej aktywne, a tłumy mniejsze. Unikaj we
 
 ## Podsumowanie
 Z dobrym przygotowaniem wizyta w Zoo będzie wspaniałą przygodą dla całej rodziny.`,
-    imageUrl: "https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/zoo.jpg",
     category: "Porada",
     tags: ["zoo", "poradnik", "przygotowanie"],
     publishedAt: "2026-02-28",
@@ -126,7 +126,7 @@ Najlepszy czas na wyjście z maluchem to poranek — mniej tłumów, dziecko jes
 ## Podsumowanie
 
 Warszawa ma sporo miejsc przyjaznych maluchom — trzeba tylko wiedzieć, gdzie szukać. Filtruj atrakcje w FamilyFun po wieku 0–3 lata i sprawdzaj udogodnienia przed wyjściem.`,
-    imageUrl: "https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/toddler.jpg",
     category: "Poradnik",
     city: "warszawa",
     tags: ["Warszawa", "maluchy", "0-3 lata", "poradnik"],
@@ -161,7 +161,7 @@ Piątkowy wieczór, dzieci pytają "co będziemy robić w weekend?", a Ty nie ma
 ## Wskazówka
 
 Nie planuj więcej niż 2 atrakcje dziennie — z dziećmi dojazdy, przebrania i przekąski zajmują więcej czasu niż myślisz.`,
-    imageUrl: "https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/weekend-warsaw.jpg",
     category: "Inspiracje",
     city: "warszawa",
     tags: ["Warszawa", "weekend", "plan", "pomysły"],
@@ -202,7 +202,7 @@ Nowoczesne biblioteki w Warszawie to nie tylko książki. Kąciki zabaw, czytani
 ## Podsumowanie
 
 Bezpłatnych atrakcji jest dużo więcej niż myślisz. W FamilyFun filtruj po "Bezpłatne" żeby zobaczyć pełną listę.`,
-    imageUrl: "https://images.unsplash.com/photo-1543721546-4d19eb8fbb13?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/free-outdoor.jpg",
     category: "Top lista",
     city: "warszawa",
     tags: ["Warszawa", "za darmo", "bezpłatne", "oszczędności"],
@@ -237,7 +237,7 @@ Najczęstsze narzekania: tłumy w weekendy, brak wentylacji (gorąco!), i krótk
 ## Wskazówka
 
 Idź w tygodniu rano — puste, tańsze, i dziecko ma całą trampolinę dla siebie. Weekendowe popołudnia to tłok i nerwy.`,
-    imageUrl: "https://images.unsplash.com/photo-1551966775-a4ddc8df052b?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/trampolines.jpg",
     category: "Porównanie",
     city: "warszawa",
     tags: ["Warszawa", "parki trampolin", "aktywne", "porównanie"],
@@ -276,7 +276,7 @@ Biblioteka z kącikiem zabaw + kawiarnia z przestrzenią dla dzieci. Spokojne za
 ## Rada na koniec
 
 Nie próbuj wypełnić każdej minuty atrakcjami. Czasem deszczowy dzień w piżamie z bajką i kakao to najlepsza atrakcja.`,
-    imageUrl: "https://images.unsplash.com/photo-1515488764276-beab7607c1e6?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/rainy-week.jpg",
     category: "Poradnik",
     city: "warszawa",
     tags: ["Warszawa", "indoor", "deszcz", "plan"],
@@ -313,7 +313,7 @@ Sprawdzaj opinie przed wyjściem — niektóre place zabaw wyglądają świetnie
 ## Podsumowanie
 
 Najlepszy plac zabaw to ten blisko domu, do którego chodzicie regularnie. Ale na weekendowy wypad — Park Praski to bezkonkurencyjny numer jeden.`,
-    imageUrl: "https://images.unsplash.com/photo-1680458841602-8cdba0901e6a?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/playground-ranking.jpg",
     category: "Ranking",
     city: "warszawa",
     tags: ["Warszawa", "place zabaw", "ranking", "na zewnątrz"],
@@ -354,7 +354,7 @@ Interaktywne nie znaczy "bez nadzoru". Większość miejsc wymaga obecności rod
 ## Podsumowanie
 
 Warszawa ma kilka naprawdę świetnych interaktywnych muzeów. Klucz: rezerwuj bilety wcześniej, celuj w poranki, i nie planuj więcej niż jednego muzeum dziennie.`,
-    imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop",
+    imageUrl: "/blog/museum.jpg",
     category: "Przewodnik",
     city: "warszawa",
     tags: ["Warszawa", "muzea", "interaktywne", "edukacyjne"],

@@ -15,6 +15,16 @@ const BlogCard = ({ post }: BlogCardProps) => {
           <img
             src={post.imageUrl}
             alt={post.title}
+            loading="lazy"
+            width={1200}
+            height={675}
+            onError={(e) => {
+              const img = e.currentTarget;
+              if (!img.dataset.fallback) {
+                img.dataset.fallback = "1";
+                img.src = "/blog/placeholder.jpg";
+              }
+            }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         </div>
