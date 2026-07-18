@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, X, Send } from "lucide-react";
 import { Activity, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
+import { REGION_BY_SLUG } from "@/data/regions";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,11 @@ function matchActivity(activity: Activity, query: string): boolean {
 function getCategoryLabel(typeValue: string): string {
   const opt = filterOptions.type.find((o) => o.value === typeValue);
   return opt?.label || typeValue;
+}
+
+// Map raw region slug (e.g. "slaskie") to Polish label (e.g. "Śląskie")
+function getRegionLabel(regionSlug: string): string {
+  return REGION_BY_SLUG[regionSlug]?.label || regionSlug;
 }
 
 function matchCategories(query: string) {
@@ -265,7 +271,7 @@ const SearchAutocomplete = ({
                           {activity.title}
                         </span>
                         <span className="text-xs text-muted-foreground truncate block">
-                          {activity.city} · {getCategoryLabel(activity.type)}
+                          {getRegionLabel(activity.city)} · {getCategoryLabel(activity.type)}
                         </span>
                       </div>
                     </button>
