@@ -196,7 +196,20 @@ const BlogPostPage = () => {
 
             {/* Hero image */}
             <div className="aspect-[16/9] rounded-xl overflow-hidden mb-6">
-              <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover" />
+              <img
+                src={post.imageUrl}
+                alt={post.title}
+                width={1200}
+                height={675}
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  if (!img.dataset.fallback) {
+                    img.dataset.fallback = "1";
+                    img.src = "/blog/placeholder.jpg";
+                  }
+                }}
+                className="w-full h-full object-cover"
+              />
             </div>
 
             {/* Meta */}
