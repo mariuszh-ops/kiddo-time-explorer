@@ -271,7 +271,7 @@ const SearchAutocomplete = ({
                           {activity.title}
                         </span>
                         <span className="text-xs text-muted-foreground truncate block">
-                          {activity.city} · {getCategoryLabel(activity.type)}
+                          {getRegionLabel(activity.city)} · {getCategoryLabel(activity.type)}
                         </span>
                       </div>
                     </button>
