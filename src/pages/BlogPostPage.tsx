@@ -135,9 +135,9 @@ const BlogPostPage = () => {
       if (trimmed.startsWith("# ")) {
         flushList();
         elements.push(
-          <h1 key={`h1-${key++}`} className="text-xl font-serif font-semibold text-foreground mt-4 mb-3">
+          <h2 key={`h2-${key++}`} className="text-xl font-serif font-semibold text-foreground mt-4 mb-3">
             {trimmed.slice(2)}
-          </h1>
+          </h2>
         );
         continue;
       }
