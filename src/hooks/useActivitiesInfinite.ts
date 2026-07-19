@@ -56,7 +56,7 @@ export function useActivitiesInfinite(
           .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
-        if (amenities && amenities.length > 0) q = q.contains("amenities", amenities);
+        if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
         if (!includeUncertain) q = q.eq("uncertain", false);
         if (onlyFree) q = q.eq("is_free", true);
