@@ -40,12 +40,13 @@ const Index = () => {
   // View mode: grid or map (sync with URL param from bottom nav)
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Read ?search= from URL on mount (supports SearchAction JSON-LD target)
+  // Sync ?search= from URL into filter state (supports SearchAction JSON-LD
+  // target and SPA navigations from HomeSearch Enter).
   useEffect(() => {
-    const q = searchParams.get("search");
-    if (q) setSearchQuery(q);
+    const q = searchParams.get("search") ?? "";
+    if (q !== searchQuery) setSearchQuery(q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [searchParams]);
   const [viewMode, setViewMode] = useState<"grid" | "map">(
     searchParams.get("view") === "map" ? "map" : "grid"
   );
