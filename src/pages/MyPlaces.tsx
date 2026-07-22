@@ -204,7 +204,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                 Twoje zapisane atrakcje w jednym miejscu
               </p>
             </div>
-            <SubmitActivityCTA className="self-start" />
+            {FEATURES.SUBMIT_ACTIVITY && <SubmitActivityCTA className="self-start" />}
           </div>
         </div>
       </div>
