@@ -124,7 +124,7 @@ const App = () => {
                       <AuthReturnHandler />
                       <AnimatedRoutes />
                       <BottomNav />
-                      <SubmitActivityFAB />
+                      {FEATURES.SUBMIT_ACTIVITY && <SubmitActivityFAB />}
                       {FEATURES.COOKIE_CONSENT && <CookieConsent />}
                       <LayoutDiagnostics />
                     </BrowserRouter>

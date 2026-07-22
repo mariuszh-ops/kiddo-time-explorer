@@ -33,7 +33,7 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 500, includeUncertain = true, ageMin, ageMax, onlyFree } = filters;
+  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 24, includeUncertain = true, ageMin, ageMax, onlyFree } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);

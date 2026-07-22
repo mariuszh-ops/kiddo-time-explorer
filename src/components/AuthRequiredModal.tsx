@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Mail, Loader2, X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -105,7 +105,7 @@ const AuthRequiredModal = ({
         </AnimatePresence>
 
         <div className="flex flex-col gap-3 pt-2">
-          {/* Google button */}
+          {/* Google button — jedyna metoda logowania (backend nie obsługuje e-maila). */}
           <Button 
             onClick={() => handleAction(onGoogleClick, 'google')}
             className="w-full"
@@ -141,38 +141,8 @@ const AuthRequiredModal = ({
               </>
             )}
           </Button>
-
-          {/* Email button */}
-          <Button 
-            onClick={() => handleAction(onEmailClick, 'email')}
-            variant="outline"
-            className="w-full"
-            disabled={isLoading !== null}
-          >
-            {isLoading === 'email' ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Logowanie...
-              </>
-            ) : (
-              <>
-                <Mail className="w-4 h-4 mr-2" />
-                Załóż konto przez email
-              </>
-            )}
-          </Button>
         </div>
 
-        {/* Login link */}
-        <div className="pt-4 text-center">
-          <button
-            onClick={() => handleAction(onLoginClick, 'login')}
-            disabled={isLoading !== null}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading === 'login' ? 'Logowanie...' : 'Mam już konto — zaloguj się'}
-          </button>
-        </div>
       </DialogContent>
     </Dialog>
   );
