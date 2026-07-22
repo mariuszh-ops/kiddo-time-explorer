@@ -127,7 +127,7 @@ const MobileFilterSheet = ({
   onClearAll,
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
-  const [localDistance, setLocalDistance] = useState(filters.distance ?? 5);
+  const [localDistance, setLocalDistance] = useState(filters.distance ?? 0);
   // Reaguje na załadowanie katalogu — memo z pustą tablicą zamrażałoby dane.
   const dataStatus = useDataStatus();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,7 +145,8 @@ const MobileFilterSheet = ({
   const handleApply = () => {
     onSearchChange(localSearch);
     if (hasCitySelected) {
-      onUpdateFilter("distance", localDistance);
+      // 0 km means "no distance filter" — show the whole region.
+      onUpdateFilter("distance", localDistance > 0 ? localDistance : undefined);
     }
     onClose();
   };
