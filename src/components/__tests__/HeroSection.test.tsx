@@ -15,7 +15,7 @@ describe("HeroSection — CTA visibility on short screens (600–720px)", () => 
     const { container } = render(<HeroSection onExplore={() => {}} />);
     const btn = container.querySelector("button");
     expect(btn).toBeTruthy();
-    expect(btn?.textContent?.toLowerCase()).toMatch(/sprawdź atrakcje/);
+    expect(btn?.textContent?.toLowerCase()).toMatch(/przeglądaj atrakcje/);
   });
 
   it("caps hero height using measured header + bottom-nav CSS vars", () => {

@@ -31,7 +31,7 @@ const CityFilterDropdown = ({
 }: CityFilterDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
-  const [localDistance, setLocalDistance] = useState(selectedDistance ?? 5);
+  const [localDistance, setLocalDistance] = useState(selectedDistance ?? 0);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -114,7 +114,8 @@ const CityFilterDropdown = ({
   const handleSliderChange = (values: number[]) => {
     const newValue = values[0];
     setLocalDistance(newValue);
-    onDistanceChange(newValue);
+    // 0 km means "no distance filter" — show the whole region.
+    onDistanceChange(newValue > 0 ? newValue : undefined);
   };
 
   const dropdownMenu = isOpen ? (

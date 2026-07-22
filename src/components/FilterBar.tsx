@@ -35,11 +35,11 @@ interface FilterBarProps {
   onViewModeChange?: (mode: "grid" | "map") => void;
 }
 
-// Dopełniacz (od czego?) — używany w podpisach typu "…od centrum {region}".
+// Dopełniacz nazwy stolicy województwa — używany w podpisach typu "…od centrum {miasto}".
 // Źródło: src/data/regions.ts.
 import { REGION_BY_SLUG } from "@/data/regions";
-const getCityNameGenitive = (cityValue: string): string => {
-  return REGION_BY_SLUG[cityValue]?.genitive ?? cityValue;
+const getCapitalCityGenitive = (cityValue: string): string => {
+  return REGION_BY_SLUG[cityValue]?.capitalCityGenitive ?? cityValue;
 };
 
 const FilterBar = ({
@@ -90,10 +90,10 @@ const FilterBar = ({
   // Generate dynamic feedback text
   const getFeedbackText = () => {
     const count = formatCount(filterCounts.filtered);
-    if (filters.distance !== undefined && filters.city) {
-      const cityName = getCityNameGenitive(filters.city);
+    if (filters.distance !== undefined && filters.distance > 0 && filters.city) {
+      const cityName = getCapitalCityGenitive(filters.city);
       const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
-      return `${count} w promieniu ${filters.distance} km od ${cityName}${suffix}`;
+      return `${count} w promieniu ${filters.distance} km od centrum ${cityName}${suffix}`;
     }
     return `${count} spełnia wybrane filtry`;
   };

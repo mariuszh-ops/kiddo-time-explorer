@@ -66,10 +66,9 @@ export function useActivityFilters() {
       if (key === "city" && value === undefined) {
         delete newFilters.distance;
       }
-      // Set default distance when city is first selected
-      if (key === "city" && value !== undefined && prev.distance === undefined) {
-        newFilters.distance = 25; // Default 25 km — captures adjacent towns and suburbs
-      }
+      // Distance is intentionally left undefined when a city is selected,
+      // so the user sees every attraction in the region and must consciously
+      // narrow the radius with the slider.
       return newFilters;
     });
   }, []);
