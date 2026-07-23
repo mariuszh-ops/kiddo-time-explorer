@@ -13,6 +13,40 @@
     -->
     <title>FamilyFun – Sprawdzone atrakcje dla rodzin z dziećmi</title>
     <meta name="author" content="FamilyFun" />
+    <meta
+      name="description"
+      content="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
+    />
+
+    <!--
+      Domyślne (site-level) tagi Open Graph / Twitter w STATYCZNYM <head>.
+      SEOHead (react-helmet-async) nadpisuje je per-strona dla botów renderujących
+      JS (Googlebot). Scrapery social bez JS (Facebook, LinkedIn, Slack, Discord, X)
+      widzą tylko to poniżej — dlatego musi tu być sensowna karta serwisu.
+      Per-strona OG dla wszystkich detali = osobny krok (Cloudflare Worker).
+    -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="FamilyFun" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:url" content="https://familyfun.pl/" />
+    <meta property="og:title" content="FamilyFun – Sprawdzone atrakcje dla rodzin z dziećmi" />
+    <meta
+      property="og:description"
+      content="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
+    />
+    <meta property="og:image" content="https://familyfun.pl/og-image.png" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1024" />
+    <meta property="og:image:height" content="1024" />
+    <meta property="og:image:alt" content="FamilyFun – atrakcje dla rodzin z dziećmi" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FamilyFun – Sprawdzone atrakcje dla rodzin z dziećmi" />
+    <meta
+      name="twitter:description"
+      content="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
+    />
+    <meta name="twitter:image" content="https://familyfun.pl/og-image.png" />
 
     <!-- Fonts: preconnect + stylesheet w <head> zamiast @import w CSS (szybszy FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
