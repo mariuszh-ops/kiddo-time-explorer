@@ -9,7 +9,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
-import { SubmissionsProvider } from "@/contexts/SubmissionsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
@@ -114,8 +113,7 @@ const App = () => {
           <AuthProvider>
             <SavedActivitiesProvider>
               <UserRatingsProvider>
-                <SubmissionsProvider>
-                  <TooltipProvider>
+                <TooltipProvider>
                     <Toaster />
                     <Sonner />
                     <OfflineIndicator />
@@ -128,8 +126,7 @@ const App = () => {
                       {FEATURES.COOKIE_CONSENT && <CookieConsent />}
                       <LayoutDiagnostics />
                     </BrowserRouter>
-                  </TooltipProvider>
-                </SubmissionsProvider>
+                </TooltipProvider>
               </UserRatingsProvider>
             </SavedActivitiesProvider>
           </AuthProvider>
