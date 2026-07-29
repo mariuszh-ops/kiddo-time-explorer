@@ -3,6 +3,8 @@ import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { MapPin, Send, CheckCircle2, Calendar } from "lucide-react";
+import { toast } from "sonner";
+import { catalogClient } from "@/lib/catalogClient";
 import {
   Dialog,
   DialogContent,
@@ -33,7 +35,6 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { FEATURES } from "@/lib/featureFlags";
-import { useSubmissions } from "@/contexts/SubmissionsContext";
 import { filterOptions } from "@/data/activities";
 
 const ageGroups = [
@@ -103,6 +104,7 @@ const SectionHeader = ({ title }: { title: string }) => (
 
 const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -130,9 +132,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const isEvent = selectedType === "event";
   const descriptionLength = form.watch("description")?.length || 0;
 
-  const { addSubmission } = useSubmissions();
-
-  const handleSubmit = (data: FormData) => {
+  const handleSubmit = async (data: FormData) => {
     const ageRanges = data.ageGroups.map((g) => {
       const parts = g.split("-").map(Number);
       return { min: parts[0] || 0, max: parts[1] || 16 };
@@ -140,22 +140,44 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     const ageMin = Math.min(...ageRanges.map((r) => r.min));
     const ageMax = Math.max(...ageRanges.map((r) => r.max));
 
-    addSubmission({
-      title: data.name,
-      city: data.city === "inne" ? (data.customCity || "inne") : data.city,
-      address: data.address || "",
+    const cityValue = data.city === "inne" ? (data.customCity || "inne") : data.city;
+    const payload = {
+      name: data.name,
+      region: null as string | null,
+      city: cityValue,
+      address: data.address || null,
       type: data.activityType,
-      isEvent: data.type === "event",
-      eventDate: data.eventDate,
-      ageMin,
-      ageMax,
-      isIndoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
-      priceLevel: data.priceLevel,
-      priceNote: data.priceNote,
-      description: data.description || "",
-      website: data.link || "",
+      age_min: ageMin,
+      age_max: ageMax,
+      is_indoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
+      price_level: data.priceLevel ?? null,
+      description: data.description || null,
+      website: data.link || null,
       amenities: data.amenities || [],
-    });
+      contact_email: null,
+      status: "nowe",
+    };
+
+    setIsSubmitting(true);
+    const { error } = await catalogClient
+      .from("activity_submissions")
+      .insert(payload);
+    setIsSubmitting(false);
+
+    if (error) {
+      const msg = (error.message || "").toLowerCase();
+      const isRateLimit =
+        error.code === "P0001" ||
+        msg.includes("rate") ||
+        msg.includes("too many") ||
+        msg.includes("zbyt wiele");
+      if (isRateLimit) {
+        toast.error("Wysłano zbyt wiele zgłoszeń — spróbuj ponownie później");
+      } else {
+        toast.error("Nie udało się wysłać zgłoszenia", { description: error.message });
+      }
+      return;
+    }
 
     setIsSubmitted(true);
   };
@@ -584,9 +606,9 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                     <Button type="button" variant="outline" onClick={handleClose} className="flex-1">
                       Anuluj
                     </Button>
-                    <Button type="submit" className="flex-1 gap-2">
+                    <Button type="submit" className="flex-1 gap-2" disabled={isSubmitting}>
                       <Send className="w-4 h-4" />
-                      Wyślij zgłoszenie
+                      {isSubmitting ? "Wysyłam…" : "Wyślij zgłoszenie"}
                     </Button>
                   </div>
                   <p className="text-xs text-center text-muted-foreground mt-2">
