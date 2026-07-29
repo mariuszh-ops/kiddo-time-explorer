@@ -16,7 +16,7 @@ const Footer = () => {
             <p className="text-sm text-muted-foreground">
               © 2026 FamilyFun. Wszystkie prawa zastrzeżone.
             </p>
-            <nav aria-label="Stopka" className="flex gap-6 text-sm text-muted-foreground">
+            <nav aria-label="Stopka" className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
               <Link to="/o-nas" className="hover:text-foreground transition-colors">
                 O nas
               </Link>
