@@ -317,7 +317,6 @@ const Index = () => {
             </section>
           )}
           <DiscoverSections 
-            activities={filteredActivities}
             onSelectCity={(city) => {
               trackEvent("filter_city", { city, source: "discover" });
               updateFilter("city", city);
