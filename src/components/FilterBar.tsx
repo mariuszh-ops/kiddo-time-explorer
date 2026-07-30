@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import FilterDropdown from "@/components/FilterDropdown";
 import MultiFilterDropdown from "@/components/MultiFilterDropdown";
@@ -10,7 +11,7 @@ import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 
 interface FilterBarProps {
   filters: Filters;
@@ -56,7 +57,9 @@ const FilterBar = ({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
-  
+  // Re-render po leniwym dociągnięciu katalogu (podpowiedzi wyszukiwarki).
+  useDataStatus();
+
   // Sort is not counted as an active filter
   const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
@@ -102,7 +105,7 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border" onPointerDownCapture={() => ensureActivitiesLoaded()} onFocusCapture={() => ensureActivitiesLoaded()}>
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && (
@@ -175,7 +178,7 @@ const FilterBar = ({
   // Desktop layout (unchanged)
   return (
     <>
-      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border">
+      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border" onPointerDownCapture={() => ensureActivitiesLoaded()} onFocusCapture={() => ensureActivitiesLoaded()}>
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">

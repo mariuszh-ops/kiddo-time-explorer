@@ -3,15 +3,15 @@ import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
-import { Activity, filterOptions } from "@/data/activities";
+import { filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 import { REGIONS } from "@/data/regions";
 import { useRegionCounts } from "@/hooks/useRegionCounts";
 import { useTypeCounts } from "@/hooks/useTypeCounts";
+import { useTopActivities } from "@/hooks/useTopActivities";
 
 interface DiscoverSectionsProps {
-  activities: Activity[];
   onSelectCity?: (city: string) => void;
   onSelectCategory?: (type: string) => void;
 }
@@ -36,9 +36,11 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
 
 const pluralize = (n: number) => (n === 1 ? "atrakcja" : n < 5 && n > 0 ? "atrakcje" : "atrakcji");
 
-const DiscoverSections = ({ activities }: DiscoverSectionsProps) => {
+const DiscoverSections = (_props: DiscoverSectionsProps) => {
   const { counts: regionCounts } = useRegionCounts();
   const { counts: typeCounts } = useTypeCounts();
+  // Jedno zapytanie z limitem zamiast filtrowania całego katalogu w pamięci.
+  const { activities } = useTopActivities(12);
 
   const topRated = useMemo(() => {
     return activities

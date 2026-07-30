@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 
@@ -21,6 +21,11 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Liczniki w rozwijanym menu wymagają pełnego zbioru — dociągamy po otwarciu.
+  useEffect(() => {
+    if (open) ensureActivitiesLoaded();
+  }, [open]);
+
   const cityCounts = useMemo(() => {
     const all = getActivities().filter(a => FEATURES.EVENTS || !a.isEvent);
     const counts: Record<string, number> = {};
@@ -28,7 +33,7 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
       counts[slug] = all.filter(a => a.city === slug).length;
     }
     return counts;
-  }, []);
+  }, [open]);
 
   const currentLabel = cityLabels[currentCitySlug]?.nominative ?? currentCitySlug;
 

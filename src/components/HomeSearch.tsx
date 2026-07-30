@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Search, X } from "lucide-react";
-import { getActivities, filterOptions } from "@/data/activities";
+import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -65,6 +65,10 @@ const HomeSearch = () => {
 
   // Reaguje na załadowanie katalogu — bez tego memo zamrażałoby puste dane.
   const dataStatus = useDataStatus();
+  // Katalog dociągamy dopiero przy pierwszym wpisanym znaku.
+  useEffect(() => {
+    if (value.trim().length > 0) ensureActivitiesLoaded();
+  }, [value]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activities = useMemo(() => getActivities(), [dataStatus]);
 

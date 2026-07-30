@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
-import { getActivities, filterOptions } from "@/data/activities";
+import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 
 interface Props {
@@ -22,11 +22,16 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Liczniki w rozwijanym menu wymagają pełnego zbioru — dociągamy po otwarciu.
+  useEffect(() => {
+    if (open) ensureActivitiesLoaded();
+  }, [open]);
+
   const cityActivities = useMemo(() => {
     return getActivities()
       .filter(a => FEATURES.EVENTS || !a.isEvent)
       .filter(a => a.city === citySlug);
-  }, [citySlug]);
+  }, [citySlug, open]);
 
   const typeOptions = filterOptions.type;
   const allCount = cityActivities.length;

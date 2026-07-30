@@ -63,11 +63,15 @@ export const PRICE_LEVELS = {
 
 // --- Async data loading ---
 
-export type DataStatus = "loading" | "success" | "error";
+// "idle"    — nikt jeszcze nie poprosił o pełny katalog (stan startowy),
+// "loading" — trwa leniwe dociąganie pełnego katalogu (tylko na żądanie),
+// "success" / "error" — wynik tego dociągania.
+export type DataStatus = "idle" | "loading" | "success" | "error";
 
 let _activities: Activity[] = [];
 let _loaded = false;
-let _status: DataStatus = "loading";
+let _status: DataStatus = "idle";
+let _inflight: Promise<Activity[]> | null = null;
 const _statusListeners = new Set<() => void>();
 
 function _setStatus(status: DataStatus) {
@@ -91,6 +95,27 @@ export function subscribeDataStatus(listener: () => void): () => void {
 
 export async function loadActivities(): Promise<Activity[]> {
   if (_loaded) return _activities;
+  if (_inflight) return _inflight;
+  _setStatus("loading");
+  _inflight = _loadActivitiesInner().finally(() => {
+    _inflight = null;
+  });
+  return _inflight;
+}
+
+/**
+ * Leniwe dociągnięcie pełnego katalogu — wołane WYŁĄCZNIE przez widoki,
+ * które faktycznie potrzebują całego zbioru (filtry, mapa, ulubione).
+ * Wejście na home / stronę atrakcji nie uruchamia tego zapytania.
+ */
+export function ensureActivitiesLoaded(): void {
+  if (_loaded || _inflight || _status === "error") return;
+  void loadActivities().catch(() => {
+    /* status "error" obsługują widoki */
+  });
+}
+
+async function _loadActivitiesInner(): Promise<Activity[]> {
   try {
     // Katalog atrakcji leży w OSOBNYM (zewnętrznym) projekcie Supabase.
     // Czytamy anonimowo z tabeli `public_activities` (RLS: anon SELECT).
