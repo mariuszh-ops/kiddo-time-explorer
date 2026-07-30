@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { X, MapPin } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
