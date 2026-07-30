@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
+import { getActivities, filterOptions, Activity, cityCenters, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -52,6 +52,14 @@ export function useActivityFilters() {
   useEffect(() => {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
+
+  // Filtrowanie/wyszukiwanie po stronie klienta wymaga pełnego zbioru —
+  // dociągamy go dopiero, gdy użytkownik faktycznie użyje filtra lub szukajki.
+  useEffect(() => {
+    const hasFilter =
+      Object.keys(filters).length > 0 || searchQuery.trim().length > 0;
+    if (hasFilter) ensureActivitiesLoaded();
+  }, [filters, searchQuery]);
 
   const updateFilter = useCallback((key: keyof Filters, value: string | string[] | number | undefined) => {
     setFilters((prev) => {
