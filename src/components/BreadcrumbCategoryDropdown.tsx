@@ -22,11 +22,16 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Liczniki w rozwijanym menu wymagają pełnego zbioru — dociągamy po otwarciu.
+  useEffect(() => {
+    if (open) ensureActivitiesLoaded();
+  }, [open]);
+
   const cityActivities = useMemo(() => {
     return getActivities()
       .filter(a => FEATURES.EVENTS || !a.isEvent)
       .filter(a => a.city === citySlug);
-  }, [citySlug]);
+  }, [citySlug, open]);
 
   const typeOptions = filterOptions.type;
   const allCount = cityActivities.length;
