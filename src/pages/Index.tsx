@@ -25,6 +25,8 @@ import OnboardingModal from "@/components/OnboardingModal";
 const MapView = lazy(() => import("@/components/MapView"));
 import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 import HomeSearch from "@/components/HomeSearch";
+import { useTopActivities } from "@/hooks/useTopActivities";
+import { ensureActivitiesLoaded } from "@/data/activities";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -113,13 +115,17 @@ const Index = () => {
     }
   }, [filtersKey]);
 
-  // Top rated activities for homepage recommendations (when no filters active)
-  const topRatedActivities = useMemo(() => {
-    if (!FEATURES.TOP_RATED_HOMEPAGE || hasActiveFilters) return [];
-    return [...filteredActivities]
-      .sort((a, b) => b.rating - a.rating || b.reviewCount - a.reviewCount)
-      .slice(0, 8);
-  }, [filteredActivities, hasActiveFilters]);
+  // Polecane na home — jedno zapytanie z limitem (bez pełnego katalogu).
+  const { activities: topActivities } = useTopActivities(8);
+  const topRatedActivities = useMemo(
+    () => (!FEATURES.TOP_RATED_HOMEPAGE || hasActiveFilters ? [] : topActivities),
+    [topActivities, hasActiveFilters],
+  );
+
+  // Widok mapy potrzebuje pełnego zbioru — dociągamy go dopiero tutaj.
+  useEffect(() => {
+    if (viewMode === "map") ensureActivitiesLoaded();
+  }, [viewMode]);
 
   // Onboarding
   const [showOnboarding, setShowOnboarding] = useState(false);
