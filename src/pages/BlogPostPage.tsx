@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import ActivityCard from "@/components/ActivityCard";
 import { Badge } from "@/components/ui/badge";
 import { blogPosts } from "@/data/blogPosts";
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { useDataStatus } from "@/hooks/useDataStatus";
 

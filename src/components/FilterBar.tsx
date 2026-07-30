@@ -10,7 +10,7 @@ import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 
 interface FilterBarProps {
   filters: Filters;

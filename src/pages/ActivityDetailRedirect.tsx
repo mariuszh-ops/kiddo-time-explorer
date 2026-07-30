@@ -1,5 +1,5 @@
 import { Navigate, useParams } from "react-router-dom";
-import { getActivities } from "@/data/activities";
+import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 
 const ActivityDetailRedirect = () => {
   const { id } = useParams<{ id: string }>();
