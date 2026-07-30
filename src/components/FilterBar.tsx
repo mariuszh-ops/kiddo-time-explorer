@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import FilterDropdown from "@/components/FilterDropdown";
 import MultiFilterDropdown from "@/components/MultiFilterDropdown";
@@ -102,7 +103,7 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border" onPointerDownCapture={() => ensureActivitiesLoaded()} onFocusCapture={() => ensureActivitiesLoaded()}>
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && (
@@ -175,7 +176,7 @@ const FilterBar = ({
   // Desktop layout (unchanged)
   return (
     <>
-      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border">
+      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border" onPointerDownCapture={() => ensureActivitiesLoaded()} onFocusCapture={() => ensureActivitiesLoaded()}>
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
