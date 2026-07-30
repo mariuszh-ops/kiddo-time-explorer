@@ -1,16 +1,15 @@
 import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
-import { getActivities } from "@/data/activities";
+import { useCatalogTotal } from "@/hooks/useTopActivities";
 
 interface HeroSectionProps {
   onExplore: () => void;
 }
 
 const HeroSection = ({ onExplore }: HeroSectionProps) => {
-  const totalCount = getActivities().filter(
-    (a) => FEATURES.ENABLED_CITIES.includes(a.city)
-  ).length;
+  // Licznik z jednego zapytania count(head:true) — bez pobierania katalogu.
+  const totalCount = useCatalogTotal();
   const roundedCount = Math.floor(totalCount / 50) * 50;
   const displayCount = roundedCount >= 50 ? `${roundedCount}+` : totalCount;
 
