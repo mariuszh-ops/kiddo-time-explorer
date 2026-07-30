@@ -130,6 +130,10 @@ const MobileFilterSheet = ({
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 0);
   // Reaguje na załadowanie katalogu — memo z pustą tablicą zamrażałoby dane.
   const dataStatus = useDataStatus();
+  // Arkusz filtrów otwiera się na żądanie — tu dopiero potrzebny pełny zbiór.
+  useEffect(() => {
+    if (isOpen) ensureActivitiesLoaded();
+  }, [isOpen]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activities = useMemo(() => getActivities(), [dataStatus]);
   const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
