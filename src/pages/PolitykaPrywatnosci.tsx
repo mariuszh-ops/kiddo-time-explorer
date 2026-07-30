@@ -82,7 +82,9 @@ const PolitykaPrywatnosci = () => {
                 </ul>
                 <p className="mb-4">
                   Część dostawców może przetwarzać dane poza EOG; w takim wypadku administrator zapewnia
-                  odpowiednie zabezpieczenia (standardowe klauzule umowne UE). [DO WERYFIKACJI z listą podprocesorów.]
+                  odpowiednie zabezpieczenia (standardowe klauzule umowne UE). Aktualni podprocesorzy:
+                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2) oraz
+                  Google (logowanie Google OAuth, dane map Google).
                 </p>
               </section>
 
