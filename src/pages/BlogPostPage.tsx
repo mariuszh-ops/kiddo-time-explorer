@@ -33,7 +33,8 @@ const BlogPostPage = () => {
     );
   }
 
-  // Related activities from same city
+  // Powiązane atrakcje — sekcja dodatkowa, korzysta z katalogu tylko
+  // jeśli został już dociągnięty (nie wywołujemy pełnego pobrania na wpisie).
   const relatedActivities = post.city
     ? getActivities()
         .filter((a) => a.city === post.city && (!a.isEvent || FEATURES.EVENTS))
