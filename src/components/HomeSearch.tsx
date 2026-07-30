@@ -65,6 +65,10 @@ const HomeSearch = () => {
 
   // Reaguje na załadowanie katalogu — bez tego memo zamrażałoby puste dane.
   const dataStatus = useDataStatus();
+  // Katalog dociągamy dopiero przy pierwszym wpisanym znaku.
+  useEffect(() => {
+    if (value.trim().length > 0) ensureActivitiesLoaded();
+  }, [value]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const activities = useMemo(() => getActivities(), [dataStatus]);
 
