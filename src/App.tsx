@@ -99,14 +99,10 @@ const AnimatedRoutes = () => {
 };
 
 const App = () => {
-  // Ładowanie katalogu startuje raz, ale nie blokuje renderu — status
-  // trzymany w module danych, widoki bramkuje per-route DataGate.
-  useEffect(() => {
-    loadActivities().catch(() => {
-      // Błąd obsługują widoki przez DataGate (status "error").
-    });
-  }, []);
-
+  // Pełny katalog NIE jest już pobierany na starcie. Widoki korzystają
+  // z zapytań punktowych (count head:true, SELECT z limitem), a pełny zbiór
+  // dociąga się leniwie przez ensureActivitiesLoaded() tylko tam, gdzie
+  // naprawdę jest potrzebny (filtry, mapa, ulubione).
   return (
     <ErrorBoundary fallbackLevel="page">
       <HelmetProvider>
