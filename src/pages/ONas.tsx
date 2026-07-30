@@ -31,7 +31,7 @@ const ONas = () => {
 
             <p className="text-muted-foreground leading-relaxed mb-4">
               FamilyFun to portal stworzony przez rodziców dla rodziców. Naszą misją jest pomóc Wam
-              znaleźć najlepsze atrakcje dla dzieci w 7 największych regionach Polski — bez wertowania
+              znaleźć najlepsze atrakcje dla dzieci w 16 województwach Polski — bez wertowania
               dziesiątek stron, blogów i grup na Facebooku.
             </p>
 
