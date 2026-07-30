@@ -57,7 +57,9 @@ const FilterBar = ({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
-  
+  // Re-render po leniwym dociągnięciu katalogu (podpowiedzi wyszukiwarki).
+  useDataStatus();
+
   // Sort is not counted as an active filter
   const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
