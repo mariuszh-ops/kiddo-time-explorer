@@ -37,7 +37,7 @@ const ONas = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-3">Co znajdziesz na FamilyFun</h2>
             <ul className="list-disc pl-6 text-muted-foreground leading-relaxed mb-4 space-y-1">
-              <li>Ponad 2500 sprawdzonych atrakcji w 16 województwach Polski</li>
+              <li>Ponad 4900 sprawdzonych atrakcji w 16 województwach Polski</li>
               <li>Filtry dopasowane do potrzeb rodzin: wiek dzieci, indoor/outdoor, typ atrakcji</li>
               <li>Oceny od Google i prawdziwe opinie rodziców</li>
               <li>Mapę z atrakcjami w okolicy</li>
