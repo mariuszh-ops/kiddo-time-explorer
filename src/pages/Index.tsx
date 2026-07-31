@@ -88,6 +88,12 @@ const Index = () => {
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
 
+  // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
+  const showAll = searchParams.get("all") === "1";
+  useEffect(() => {
+    if (showAll) ensureActivitiesLoaded();
+  }, [showAll]);
+
   // Scroll listing into view when filters change (not on mount, not on back-navigation)
   const filtersKey = JSON.stringify({ ...filters, search: searchQuery });
   const prevFiltersKey = useRef<string | null>(null);
@@ -272,7 +278,7 @@ const Index = () => {
           filters={filters}
           mapReturnAction={() => handleViewModeChange("map")}
         />
-      ) : hasActiveFilters ? (
+      ) : hasActiveFilters || showAll ? (
         <ActivityGrid 
           activities={filteredActivities} 
           hasActiveFilters={hasActiveFilters}

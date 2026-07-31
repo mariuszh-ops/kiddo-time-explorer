@@ -8,6 +8,8 @@ import { useState, useEffect, useRef } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.webp";
 import { env } from "@/config/env";
+import HeaderSearch from "@/components/HeaderSearch";
+import { REGION_SLUGS } from "@/data/regions";
 
 
 const Header = () => {
@@ -69,6 +71,13 @@ const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Wyszukiwarka w headerze na stronach listingowych (home ma własne, duże pole).
+  const firstSegment = location.pathname.split("/")[1] ?? "";
+  const showSearch =
+    firstSegment === "atrakcje" ||
+    firstSegment === "kategoria" ||
+    (REGION_SLUGS as readonly string[]).includes(firstSegment);
+
   const handleAuthAction = async () => {
     await signInWithGoogle();
     setIsAuthModalOpen(false);
@@ -91,6 +100,7 @@ const Header = () => {
           </Link>
 
           {/* Navigation */}
+          {showSearch && <HeaderSearch />}
           <nav aria-label="Główna nawigacja" className="flex items-center gap-1 md:gap-2">
             {/* Demo Mode Toggle - Development only */}
             {env.isDev && (
