@@ -835,16 +835,29 @@ const ActivityDetail = () => {
             )}
 
             {/* Price details */}
-            {activity.priceNote && (
-              <div className="flex items-start gap-3">
-                <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
-                  <p className="text-sm text-foreground">{activity.priceNote}</p>
-                  <p className="text-xs text-muted-foreground mt-1">Ceny mogą ulec zmianie — sprawdź aktualny cennik na stronie organizatora</p>
-                </div>
+            <div className="flex items-start gap-3">
+              <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
+              <div className="min-w-0">
+                <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
+                {activity.priceNote ? (
+                  <>
+                    <p className="text-sm text-foreground">{activity.priceNote}</p>
+                    <p className="text-xs text-muted-foreground mt-1">Ceny mogą ulec zmianie — sprawdź aktualny cennik na stronie organizatora</p>
+                  </>
+                ) : details.website ? (
+                  <a
+                    href={details.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary underline underline-offset-2 active:opacity-70"
+                  >
+                    Sprawdź aktualny cennik na stronie organizatora
+                  </a>
+                ) : (
+                  <p className="text-sm text-foreground">Sprawdź aktualny cennik na stronie organizatora</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
         </div>
       </section>

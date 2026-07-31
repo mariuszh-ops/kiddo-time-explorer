@@ -86,7 +86,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
           </div>
           <div className="mt-6 text-center">
             <Link
-              to={`/atrakcje/${REGIONS[0].slug}`}
+              to="/?all=1"
               className="inline-flex items-center justify-center rounded-full border border-border bg-secondary px-5 py-2.5 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
             >
               Zobacz wszystkie atrakcje
