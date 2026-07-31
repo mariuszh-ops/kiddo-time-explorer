@@ -26,7 +26,13 @@ async function fetchAllActivities() {
   const PAGE = 1000;
   const all = [];
   for (let from = 0; ; from += PAGE) {
-    const url = `${CATALOG_URL}/rest/v1/public_activities?select=slug,updated_at&published=eq.true&order=slug.asc&limit=${PAGE}&offset=${from}`;
+    // Ten sam warunek publikacji co front (useActivities/useActivitiesInfinite):
+    // published=true oraz karta nieukryta przez admina.
+    const url =
+      `${CATALOG_URL}/rest/v1/public_activities` +
+      `?select=slug,updated_at&published=eq.true` +
+      `&or=(admin_hidden.is.null,admin_hidden.eq.false)` +
+      `&order=slug.asc&limit=${PAGE}&offset=${from}`;
     const res = await fetch(url, {
       headers: {
         accept: 'application/json',
@@ -51,7 +57,7 @@ async function main() {
   const genDate = new Date().toISOString().slice(0, 10);
 
   // Dynamic imports of TS source files (requires tsx or ts-node)
-  let activities, categoryConfigs, FEATURES, blogPosts;
+  let activities, categoryConfigs, FEATURES, blogPosts, REGION_SLUGS;
 
   try {
     // Pełny katalog czytamy wprost z Supabase (public_activities, anon SELECT).
@@ -61,6 +67,9 @@ async function main() {
     // pathToFileURL — ESM loader wymaga URL-i file:// (bez tego pada na Windows)
     const catMod = await import(pathToFileURL(resolve(ROOT, 'src/data/categoryPages.ts')).href);
     categoryConfigs = catMod.categoryConfigs;
+
+    const regionMod = await import(pathToFileURL(resolve(ROOT, 'src/data/regions.ts')).href);
+    REGION_SLUGS = regionMod.REGION_SLUGS;
 
     const flagMod = await import(pathToFileURL(resolve(ROOT, 'src/lib/featureFlags.ts')).href);
     FEATURES = flagMod.FEATURES;
@@ -77,14 +86,21 @@ async function main() {
   // 1. Home
   urls.push({ loc: '/', changefreq: 'daily', priority: '1.0' });
 
-  // 2. Category landing pages (city × category)
-  const enabledCities = FEATURES.ENABLED_CITIES || ['warszawa'];
-  for (const city of enabledCities) {
-    for (const cat of categoryConfigs) {
-      const path = cat.slug ? `/atrakcje/${city}/${cat.slug}` : `/atrakcje/${city}`;
-      const priority = cat.slug ? '0.8' : '0.9';
-      urls.push({ loc: path, changefreq: 'weekly', priority });
+  // 2. Strony regionów i kategorii — URL-e MUSZĄ być identyczne z canonical
+  //    deklarowanym przez CategoryPage.tsx:
+  //      /{region}, /{region}/{kategoria}, /kategoria/{kategoria}
+  const categorySlugs = categoryConfigs.map((c) => c.slug).filter(Boolean);
+
+  for (const region of REGION_SLUGS) {
+    urls.push({ loc: `/${region}`, changefreq: 'weekly', priority: '0.9' });
+    for (const cat of categorySlugs) {
+      urls.push({ loc: `/${region}/${cat}`, changefreq: 'weekly', priority: '0.8' });
     }
+  }
+
+  // Kategorie w skali całej Polski
+  for (const cat of categorySlugs) {
+    urls.push({ loc: `/kategoria/${cat}`, changefreq: 'weekly', priority: '0.8' });
   }
 
   // 3. Activity detail pages — jeden wpis na atrakcję z katalogu
