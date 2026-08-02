@@ -9,6 +9,7 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { activityWord } from "@/lib/plural";
 import { LEGACY_CITY_TO_REGION, REGION_BY_SLUG, REGION_SLUGS } from "@/data/regions";
 import {
   getCategoryConfig,
