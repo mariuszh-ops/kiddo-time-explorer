@@ -182,7 +182,7 @@ const CategoryFilterBar = ({
         </PopoverTrigger>
         <PopoverContent align="start" className="w-72 p-3">
           <div className="max-h-80 overflow-y-auto space-y-1">
-            {AMENITIES.map((a) => {
+            {AMENITIES.filter((a) => !HIDDEN_AMENITY_FILTERS.has(a.id)).map((a) => {
               const checked = amenities.includes(a.id);
               return (
                 <label
