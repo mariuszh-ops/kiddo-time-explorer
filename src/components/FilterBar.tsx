@@ -65,25 +65,10 @@ const FilterBar = ({
   const hasActiveFilters = activeFilterCount > 0;
 
   // Polish grammar for "atrakcja/atrakcje/atrakcji"
-  const formatCount = (n: number): string => {
-    if (n === 0) return "Brak atrakcji";
-    if (n === 1) return "1 atrakcja";
-    const lastTwo = n % 100;
-    const lastOne = n % 10;
-    if (lastTwo >= 12 && lastTwo <= 14) return `${n} atrakcji`;
-    if (lastOne >= 2 && lastOne <= 4) return `${n} atrakcje`;
-    return `${n} atrakcji`;
-  };
+  const formatCount = (n: number): string => (n === 0 ? "Brak atrakcji" : activityCount(n));
 
   // Polish grammar helper — returns just the word, without the number
-  const formatAttractionWord = (n: number): string => {
-    if (n === 1) return "atrakcja";
-    const lastTwo = n % 100;
-    const lastOne = n % 10;
-    if (lastTwo >= 12 && lastTwo <= 14) return "atrakcji";
-    if (lastOne >= 2 && lastOne <= 4) return "atrakcje";
-    return "atrakcji";
-  };
+  const formatAttractionWord = activityWord;
 
   // Check if any non-city/distance/sort filter is active
   const hasExtraFilters = Boolean(
@@ -98,7 +83,7 @@ const FilterBar = ({
       const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
       return `${count} w promieniu ${filters.distance} km od centrum ${cityName}${suffix}`;
     }
-    return `${count} spełnia wybrane filtry`;
+    return `${count} ${verbPl(filterCounts.filtered, "spełnia", "spełniają")} wybrane filtry`;
   };
 
   // Mobile layout
