@@ -34,7 +34,7 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
   </div>
 );
 
-const pluralize = (n: number) => (n === 1 ? "atrakcja" : n < 5 && n > 0 ? "atrakcje" : "atrakcji");
+import { activityWord as pluralize } from "@/lib/plural";
 
 const DiscoverSections = (_props: DiscoverSectionsProps) => {
   const { counts: regionCounts } = useRegionCounts();
