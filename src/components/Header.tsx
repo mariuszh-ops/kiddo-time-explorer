@@ -168,6 +168,8 @@ const Header = () => {
       <AuthRequiredModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        title="Zaloguj się"
+        description="Zaloguj się, aby zapisywać atrakcje, oceniać miejsca i wracać do swoich list."
         onGoogleClick={handleAuthAction}
         onEmailClick={handleAuthAction}
         onLoginClick={handleAuthAction}

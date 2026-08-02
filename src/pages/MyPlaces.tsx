@@ -158,6 +158,8 @@ const MyPlaces = () => {
         <AuthRequiredModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
+          title="Zaloguj się, aby zobaczyć zapisane miejsca"
+          description="Twoje ulubione atrakcje i plany wizyt są dostępne po zalogowaniu."
           onGoogleClick={handleAuthAction}
           onEmailClick={handleAuthAction}
           onLoginClick={handleAuthAction}

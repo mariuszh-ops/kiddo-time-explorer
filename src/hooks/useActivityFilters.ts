@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getActivities, filterOptions, Activity, cityCenters, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
@@ -36,10 +37,33 @@ export interface Filters {
 let persistedFilters: Filters = {};
 let persistedSearchQuery: string = "";
 
+// URL <-> filters mapping. Nazwy parametrów spójne ze stronami /kategoria/* i /atrakcje/*.
+function filtersFromParams(params: URLSearchParams): { filters: Filters; search: string } | null {
+  const region = params.get("region") ?? undefined;
+  const age = params.get("age") ?? undefined;
+  const typeRaw = params.get("type");
+  const sort = params.get("sort") ?? undefined;
+  const distRaw = params.get("dist");
+  const search = params.get("search") ?? "";
+
+  if (!region && !age && !typeRaw && !sort && !distRaw && !search) return null;
+
+  const next: Filters = {};
+  if (region) next.city = region;
+  if (age) next.age = age;
+  if (typeRaw) next.type = typeRaw.split(",").filter(Boolean);
+  if (sort) next.sort = sort;
+  const dist = distRaw ? Number(distRaw) : NaN;
+  if (region && Number.isFinite(dist) && dist > 0) next.distance = dist;
+  return { filters: next, search };
+}
+
 export function useActivityFilters() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialFromUrl = filtersFromParams(new URLSearchParams(window.location.search));
   // Initialize from persisted state
-  const [filters, setFilters] = useState<Filters>(persistedFilters);
-  const [searchQuery, setSearchQuery] = useState(persistedSearchQuery);
+  const [filters, setFilters] = useState<Filters>(initialFromUrl?.filters ?? persistedFilters);
+  const [searchQuery, setSearchQuery] = useState(initialFromUrl?.search ?? persistedSearchQuery);
   // Katalog ładuje się asynchronicznie — bez tej zależności memo policzyłoby
   // się raz na pustej tablicy i utknęło do pierwszej interakcji z filtrem.
   const dataStatus = useDataStatus();
@@ -52,6 +76,25 @@ export function useActivityFilters() {
   useEffect(() => {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
+
+  // Zapis stanu filtrów do URL (bez dokładania wpisów do historii).
+  useEffect(() => {
+    const next = new URLSearchParams(searchParams);
+    const setOrDelete = (key: string, value?: string) => {
+      if (value) next.set(key, value);
+      else next.delete(key);
+    };
+    setOrDelete("region", filters.city);
+    setOrDelete("age", filters.age);
+    setOrDelete("type", filters.type?.length ? filters.type.join(",") : undefined);
+    setOrDelete("sort", filters.sort);
+    setOrDelete("dist", filters.city && filters.distance ? String(filters.distance) : undefined);
+    setOrDelete("search", searchQuery.trim() || undefined);
+    if (next.toString() !== searchParams.toString()) {
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, searchQuery]);
 
   // Filtrowanie/wyszukiwanie po stronie klienta wymaga pełnego zbioru —
   // dociągamy go dopiero, gdy użytkownik faktycznie użyje filtra lub szukajki.

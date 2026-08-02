@@ -68,7 +68,9 @@ export const env = {
 
   // Feature flag overrides — used during testing to enable features per-environment
   // without touching featureFlags.ts
-  enableOnboarding: boolEnv(metaEnv.VITE_ENABLE_ONBOARDING as string, false),
+  // Domyślnie włączone — pokazujemy welcome screen przy pierwszej wizycie.
+  // Ustaw VITE_ENABLE_ONBOARDING=false, aby wyłączyć w danym środowisku.
+  enableOnboarding: boolEnv(metaEnv.VITE_ENABLE_ONBOARDING as string, true),
 } as const;
 
 /**
