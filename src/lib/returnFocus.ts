@@ -4,6 +4,11 @@
  */
 let lastFocusedOutside: HTMLElement | null = null;
 
+const FOCUSABLE = 'button,[role="button"],a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
+
+const isInsideOverlay = (el: HTMLElement) =>
+  Boolean(el.closest('[role="dialog"],[data-radix-popper-content-wrapper]'));
+
 if (typeof document !== "undefined") {
   document.addEventListener(
     "focusin",
@@ -13,8 +18,22 @@ if (typeof document !== "undefined") {
       // Pomijamy body i focus-guardy Radixa — to nie są realne openery.
       if (target === document.body || target === document.documentElement) return;
       if (target.hasAttribute("data-radix-focus-guard")) return;
-      if (target.closest('[role="dialog"],[data-radix-popper-content-wrapper]')) return;
+      if (isInsideOverlay(target)) return;
       lastFocusedOutside = target;
+    },
+    true,
+  );
+
+  // Kliknięcie/tap nie zawsze ustawia focus (Safari), a to zwykle właśnie
+  // klikany przycisk otwiera modal — zapamiętujemy go jako opener.
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target || typeof target.closest !== "function") return;
+      const focusable = target.closest(FOCUSABLE) as HTMLElement | null;
+      if (!focusable || isInsideOverlay(focusable)) return;
+      lastFocusedOutside = focusable;
     },
     true,
   );
