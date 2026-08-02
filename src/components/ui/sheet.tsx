@@ -67,6 +67,7 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
           ref={ref}
           className={cn(sheetVariants({ side }), className)}
           onCloseAutoFocus={(event) => {
+            console.log('[sheet close] opener=', openerRef.current);
             if (restoreFocus(openerRef.current)) event.preventDefault();
             onCloseAutoFocus?.(event);
           }}
