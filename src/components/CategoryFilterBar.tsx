@@ -31,6 +31,17 @@ export const CATEGORY_TYPES: { value: string; label: string }[] = [
   { value: "inne", label: "Inne" },
 ];
 
+/** Udogodnienia rzadkie, których nie pokazujemy jako filtry w UI. */
+const HIDDEN_AMENITY_FILTERS = new Set([
+  "stroller",
+  "wifi",
+  "kids-menu",
+  "fenced",
+  "public-transport",
+  "first-aid",
+]);
+
+
 export type SortOption = "rating" | "reviews" | "name";
 
 /** Predefiniowane przedziały wieku dziecka. */
@@ -171,7 +182,7 @@ const CategoryFilterBar = ({
         </PopoverTrigger>
         <PopoverContent align="start" className="w-72 p-3">
           <div className="max-h-80 overflow-y-auto space-y-1">
-            {AMENITIES.map((a) => {
+            {AMENITIES.filter((a) => !HIDDEN_AMENITY_FILTERS.has(a.id)).map((a) => {
               const checked = amenities.includes(a.id);
               return (
                 <label
