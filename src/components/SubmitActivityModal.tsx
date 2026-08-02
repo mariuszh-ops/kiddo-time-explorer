@@ -339,7 +339,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                           <FormControl>
                             <RadioGroup
                               onValueChange={field.onChange}
-                              value={field.value}
+                              value={field.value ?? ""}
                               className="flex gap-4"
                             >
                               <div className="flex items-center space-x-2">
@@ -440,7 +440,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          value={field.value}
+                          value={field.value ?? ""}
                           className="flex flex-wrap gap-4"
                         >
                           <div className="flex items-center space-x-2">
