@@ -32,14 +32,7 @@ const BASE_URL = "https://familyfun.pl";
 
 const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-const pluralizeActivities = (n: number): string => {
-  const abs = Math.abs(n);
-  const mod10 = abs % 10;
-  const mod100 = abs % 100;
-  if (abs === 1) return "atrakcja";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "atrakcje";
-  return "atrakcji";
-};
+const pluralizeActivities = activityWord;
 
 const CategoryPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
