@@ -89,6 +89,22 @@ const ActivityDetail = () => {
   const navigate = useNavigate();
   const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  // Copy modalu logowania zależne od akcji, która go wywołała.
+  const [authContext, setAuthContext] = useState<"save" | "rate" | "review">("save");
+  const AUTH_COPY = {
+    save: {
+      title: "Zapisz to miejsce na później",
+      description: "Aby zapisywać ulubione atrakcje i planować wizyty, potrzebujesz konta.",
+    },
+    rate: {
+      title: "Zaloguj się, aby ocenić atrakcję",
+      description: "Oceny rodziców pomagają innym wybrać dobre miejsce — potrzebujemy tylko konta.",
+    },
+    review: {
+      title: "Zaloguj się, aby dodać opinię",
+      description: "Opinie dodają zalogowani rodzice — dzięki temu wiemy, że są autentyczne.",
+    },
+  } as const;
   const [isProcessing, setIsProcessing] = useState<'favorite' | 'visit' | null>(null);
   const [saveError, setSaveError] = useState<'favorite' | 'visit' | null>(null);
   const [showStickyHeader, setShowStickyHeader] = useState(false);
@@ -179,6 +195,7 @@ const ActivityDetail = () => {
 
   const handleFavoriteClick = async () => {
     if (!isLoggedIn) {
+      setAuthContext("save");
       setIsAuthModalOpen(true);
       return;
     }
@@ -206,6 +223,7 @@ const ActivityDetail = () => {
 
   const handleWantToVisitClick = async () => {
     if (!isLoggedIn) {
+      setAuthContext("save");
       setIsAuthModalOpen(true);
       return;
     }
@@ -528,7 +546,7 @@ const ActivityDetail = () => {
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
-              onAuthRequired={() => setIsAuthModalOpen(true)}
+              onAuthRequired={() => { setAuthContext("rate"); setIsAuthModalOpen(true); }}
             />
 
             {/* Separator between rating and action buttons */}
@@ -868,7 +886,7 @@ const ActivityDetail = () => {
         googleReviews={details.reviews}
         averageRating={displayRating}
         totalReviewCount={displayReviewCount}
-        onAuthRequired={() => setIsAuthModalOpen(true)}
+        onAuthRequired={() => { setAuthContext("review"); setIsAuthModalOpen(true); }}
       />
 
       {/* 7. User photos section — only when feature enabled */}
@@ -921,6 +939,8 @@ const ActivityDetail = () => {
       <AuthRequiredModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+        title={AUTH_COPY[authContext].title}
+        description={AUTH_COPY[authContext].description}
         onGoogleClick={handleAuthAction}
         onEmailClick={handleAuthAction}
         onLoginClick={handleAuthAction}
