@@ -10,6 +10,9 @@ if (typeof document !== "undefined") {
     (event) => {
       const target = event.target as HTMLElement | null;
       if (!target || typeof target.closest !== "function") return;
+      // Pomijamy body i focus-guardy Radixa — to nie są realne openery.
+      if (target === document.body || target === document.documentElement) return;
+      if (target.hasAttribute("data-radix-focus-guard")) return;
       if (target.closest('[role="dialog"],[data-radix-popper-content-wrapper]')) return;
       lastFocusedOutside = target;
     },
