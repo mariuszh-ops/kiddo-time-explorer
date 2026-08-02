@@ -31,6 +31,17 @@ export const CATEGORY_TYPES: { value: string; label: string }[] = [
   { value: "inne", label: "Inne" },
 ];
 
+/** Udogodnienia rzadkie, których nie pokazujemy jako filtry w UI. */
+const HIDDEN_AMENITY_FILTERS = new Set([
+  "stroller",
+  "wifi",
+  "kids-menu",
+  "fenced",
+  "public-transport",
+  "first-aid",
+]);
+
+
 export type SortOption = "rating" | "reviews" | "name";
 
 /** Predefiniowane przedziały wieku dziecka. */
