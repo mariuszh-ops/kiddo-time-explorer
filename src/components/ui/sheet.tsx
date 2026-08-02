@@ -54,12 +54,6 @@ interface SheetContentProps
 
 const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Content>, SheetContentProps>(
   ({ side = "right", className, children, onCloseAutoFocus, ...props }, ref) => {
-    // Focus wraca na element, który otworzył panel (także po Esc).
-    const openerRef = React.useRef<HTMLElement | null>(null);
-    React.useEffect(() => {
-      openerRef.current = getReturnFocusTarget();
-    }, []);
-
     return (
       <SheetPortal>
         <SheetOverlay />
@@ -67,8 +61,7 @@ const SheetContent = React.forwardRef<React.ElementRef<typeof SheetPrimitive.Con
           ref={ref}
           className={cn(sheetVariants({ side }), className)}
           onCloseAutoFocus={(event) => {
-            console.log('[sheet close] opener=', openerRef.current);
-            if (restoreFocus(openerRef.current)) event.preventDefault();
+                        if (restoreFocus(getReturnFocusTarget())) event.preventDefault();
             onCloseAutoFocus?.(event);
           }}
           {...props}

@@ -32,12 +32,6 @@ const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
 >(({ className, children, onCloseAutoFocus, ...props }, ref) => {
-  // Focus wraca na element, który otworzył modal (także po Esc).
-  const openerRef = React.useRef<HTMLElement | null>(null);
-  React.useEffect(() => {
-    openerRef.current = getReturnFocusTarget();
-  }, []);
-
   return (
     <DialogPortal>
     <DialogOverlay />
@@ -48,7 +42,7 @@ const DialogContent = React.forwardRef<
         className,
       )}
       onCloseAutoFocus={(event) => {
-        if (restoreFocus(openerRef.current)) event.preventDefault();
+        if (restoreFocus(getReturnFocusTarget())) event.preventDefault();
         onCloseAutoFocus?.(event);
       }}
       {...props}

@@ -33,7 +33,6 @@ if (typeof document !== "undefined") {
       if (!target || typeof target.closest !== "function") return;
       const focusable = target.closest(FOCUSABLE) as HTMLElement | null;
       if (!focusable || isInsideOverlay(focusable)) return;
-      console.log('[rf pointerdown]', focusable.tagName, focusable.className.slice(0,30));
       lastFocusedOutside = focusable;
     },
     true,
