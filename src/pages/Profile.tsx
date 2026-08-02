@@ -144,6 +144,8 @@ const Profile = () => {
         <AuthRequiredModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
+          title="Zaloguj się, aby zobaczyć swój profil"
+          description="Profil rodziny i historia wizyt są dostępne po zalogowaniu."
           onGoogleClick={handleAuthAction}
           onEmailClick={handleAuthAction}
           onLoginClick={handleAuthAction}
