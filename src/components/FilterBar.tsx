@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
+import { activityCount, activityWord, verbPl } from "@/lib/plural";
 import FilterDropdown from "@/components/FilterDropdown";
 import MultiFilterDropdown from "@/components/MultiFilterDropdown";
 import CityFilterDropdown from "@/components/CityFilterDropdown";
@@ -65,25 +66,10 @@ const FilterBar = ({
   const hasActiveFilters = activeFilterCount > 0;
 
   // Polish grammar for "atrakcja/atrakcje/atrakcji"
-  const formatCount = (n: number): string => {
-    if (n === 0) return "Brak atrakcji";
-    if (n === 1) return "1 atrakcja";
-    const lastTwo = n % 100;
-    const lastOne = n % 10;
-    if (lastTwo >= 12 && lastTwo <= 14) return `${n} atrakcji`;
-    if (lastOne >= 2 && lastOne <= 4) return `${n} atrakcje`;
-    return `${n} atrakcji`;
-  };
+  const formatCount = (n: number): string => (n === 0 ? "Brak atrakcji" : activityCount(n));
 
   // Polish grammar helper — returns just the word, without the number
-  const formatAttractionWord = (n: number): string => {
-    if (n === 1) return "atrakcja";
-    const lastTwo = n % 100;
-    const lastOne = n % 10;
-    if (lastTwo >= 12 && lastTwo <= 14) return "atrakcji";
-    if (lastOne >= 2 && lastOne <= 4) return "atrakcje";
-    return "atrakcji";
-  };
+  const formatAttractionWord = activityWord;
 
   // Check if any non-city/distance/sort filter is active
   const hasExtraFilters = Boolean(
@@ -98,7 +84,7 @@ const FilterBar = ({
       const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
       return `${count} w promieniu ${filters.distance} km od centrum ${cityName}${suffix}`;
     }
-    return `${count} spełnia wybrane filtry`;
+    return `${count} ${verbPl(filterCounts.filtered, "spełnia", "spełniają")} wybrane filtry`;
   };
 
   // Mobile layout
@@ -122,7 +108,7 @@ const FilterBar = ({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsMobileFilterOpen(true)}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+                  className="inline-flex min-h-11 min-w-11 items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
                 >
                   <SlidersHorizontal className="w-4 h-4" />
                   <span>Filtry</span>
@@ -290,7 +276,7 @@ const FilterBar = ({
                 ) : (
                   <button
                     onClick={() => setIsSearchExpanded(true)}
-                    className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
+                    className="inline-flex items-center justify-center w-11 h-11 rounded-full bg-secondary border border-border hover:bg-muted transition-colors"
                     aria-label="Szukaj"
                   >
                     <Search className="w-4 h-4 text-muted-foreground" />

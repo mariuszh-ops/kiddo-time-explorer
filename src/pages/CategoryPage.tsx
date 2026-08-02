@@ -9,6 +9,7 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { activityWord } from "@/lib/plural";
 import { LEGACY_CITY_TO_REGION, REGION_BY_SLUG, REGION_SLUGS } from "@/data/regions";
 import {
   getCategoryConfig,
@@ -30,16 +31,10 @@ import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 
 const BASE_URL = "https://familyfun.pl";
 
+
 const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
-const pluralizeActivities = (n: number): string => {
-  const abs = Math.abs(n);
-  const mod10 = abs % 10;
-  const mod100 = abs % 100;
-  if (abs === 1) return "atrakcja";
-  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return "atrakcje";
-  return "atrakcji";
-};
+const pluralizeActivities = activityWord;
 
 const CategoryPage = () => {
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid");

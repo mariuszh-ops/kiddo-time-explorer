@@ -247,11 +247,11 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       name="city"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Miasto *</FormLabel>
+                          <FormLabel>Województwo *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Wybierz miasto" />
+                                <SelectValue placeholder="Wybierz województwo" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -339,7 +339,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                           <FormControl>
                             <RadioGroup
                               onValueChange={field.onChange}
-                              value={field.value}
+                              value={field.value ?? ""}
                               className="flex gap-4"
                             >
                               <div className="flex items-center space-x-2">
@@ -440,7 +440,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
-                          value={field.value}
+                          value={field.value ?? ""}
                           className="flex flex-wrap gap-4"
                         >
                           <div className="flex items-center space-x-2">

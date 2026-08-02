@@ -124,7 +124,7 @@ const CategoryFilterBar = ({
         >
           <SelectTrigger
             className={cn(
-              "h-9 w-auto min-w-[160px] rounded-full px-3 text-sm font-medium",
+              "h-11 sm:h-9 w-auto min-w-[160px] rounded-full px-3 text-sm font-medium",
               type ? "bg-primary/10 text-primary border-primary" : "",
             )}
             aria-label="Kategoria atrakcji"
@@ -148,7 +148,7 @@ const CategoryFilterBar = ({
           <button
             type="button"
             className={cn(
-              "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+              "inline-flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
               amenities.length > 0
                 ? "bg-primary/10 text-primary border-primary"
                 : "bg-background text-foreground border-border hover:bg-accent",
@@ -210,7 +210,7 @@ const CategoryFilterBar = ({
       >
         <SelectTrigger
           className={cn(
-            "h-9 w-auto min-w-[140px] rounded-full px-3 text-sm font-medium",
+            "h-11 sm:h-9 w-auto min-w-[140px] rounded-full px-3 text-sm font-medium",
             minRating > 0 ? "bg-primary/10 text-primary border-primary" : "",
           )}
           aria-label="Minimalna ocena"
@@ -233,7 +233,7 @@ const CategoryFilterBar = ({
       >
         <SelectTrigger
           className={cn(
-            "h-9 w-auto min-w-[150px] rounded-full px-3 text-sm font-medium",
+            "h-11 sm:h-9 w-auto min-w-[150px] rounded-full px-3 text-sm font-medium",
             age ? "bg-primary/10 text-primary border-primary" : "",
           )}
           aria-label="Wiek dziecka"
@@ -260,7 +260,7 @@ const CategoryFilterBar = ({
         onClick={() => onOnlyFreeChange(!onlyFree)}
         aria-pressed={onlyFree}
         className={cn(
-          "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+          "inline-flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
           onlyFree
             ? "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800"
             : "bg-background text-foreground border-border hover:bg-accent",
@@ -288,13 +288,13 @@ const CategoryFilterBar = ({
           </Label>
         </div>
         {hasActiveFilters && onClearAll && (
-          <Button variant="ghost" size="sm" onClick={onClearAll} className="h-9 rounded-full">
+          <Button variant="ghost" size="sm" onClick={onClearAll} className="h-11 sm:h-9 rounded-full">
             Wyczyść filtry
           </Button>
         )}
         <Select value={sort} onValueChange={(v) => onSortChange(v as SortOption)}>
           <SelectTrigger
-            className="h-9 w-auto min-w-[120px] max-w-[150px] sm:min-w-[180px] sm:max-w-none rounded-full px-3 text-sm font-medium truncate"
+            className="h-11 sm:h-9 w-auto min-w-[120px] max-w-[150px] sm:min-w-[180px] sm:max-w-none rounded-full px-3 text-sm font-medium truncate"
             aria-label="Sortowanie"
           >
             <SelectValue />

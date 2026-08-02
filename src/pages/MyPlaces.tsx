@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
+import { activityWord } from "@/lib/plural";
 import Footer from "@/components/Footer";
 import SavedActivityCard from "@/components/SavedActivityCard";
 import SavedActivitiesEmptyState from "@/components/SavedActivitiesEmptyState";
@@ -75,7 +76,7 @@ const CollectionsView = () => {
                 <span className="font-medium text-foreground text-sm">{col.name}</span>
               </div>
               <p className="text-xs text-muted-foreground mt-0.5">
-                {col.count} {col.count === 1 ? "atrakcja" : col.count < 5 ? "atrakcje" : "atrakcji"}
+                {col.count} {activityWord(col.count)}
               </p>
             </div>
           </div>

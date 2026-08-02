@@ -46,7 +46,7 @@ const CityFilterDropdown = ({
 
   // Build combined display label
   const getDisplayLabel = () => {
-    if (!selectedCityOption) return "Miasto";
+    if (!selectedCityOption) return "Województwo";
     if (selectedDistance !== undefined && selectedDistance > 0) {
       return `${selectedCityOption.label} +${selectedDistance} km`;
     }
@@ -136,7 +136,7 @@ const CityFilterDropdown = ({
         {/* City section */}
         <div className="py-2">
           <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-            Miasto
+            Województwo
           </div>
           {cityOptions.map((option) => {
             const isEmpty = option.count === 0;
