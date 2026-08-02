@@ -247,11 +247,11 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       name="city"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Miasto *</FormLabel>
+                          <FormLabel>Województwo *</FormLabel>
                           <Select onValueChange={field.onChange} value={field.value}>
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Wybierz miasto" />
+                                <SelectValue placeholder="Wybierz województwo" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>

@@ -189,7 +189,7 @@ const MobileFilterSheet = ({
           {FEATURES.ENABLED_CITIES.length > 1 && (
             <>
               <FilterSection
-                title="Miasto"
+                title="Województwo"
                 options={filterCounts.city}
                 selectedValue={filters.city}
                 onSelect={(value) => onUpdateFilter("city", value)}
