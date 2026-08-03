@@ -300,7 +300,7 @@ const CategoryPage = () => {
 
           {/* Count */}
           <p
-            className="text-sm text-muted-foreground mb-4"
+            className="text-sm text-muted-foreground mb-4 min-h-5"
             aria-live="polite"
             role="status"
           >
