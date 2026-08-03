@@ -96,7 +96,8 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     slug: row.slug,
     title: row.name,
     // location = miejscowość (miasto), city = slug województwa (nasz "region").
-    location: row.city ?? row.region ?? "",
+    // Gdy miasto jest puste, pokazujemy nazwę województwa („woj. podkarpackie”).
+    location: displayLocation(row.city, row.region),
     city: row.region ?? row.city ?? "",
     rating,
     reviewCount,
