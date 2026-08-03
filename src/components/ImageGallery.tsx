@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import ImageLightbox from "./ImageLightbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlaceholderImage } from "@/data/placeholders";
+import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
 
 interface ImageGalleryProps {
   images: string[];
@@ -46,7 +47,10 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
             >
               <img
                 src={singleSrc}
+                srcSet={buildHeroSrcSet(singleSrc)}
+                sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
                 alt={activityTitle}
+                loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 className="w-full h-full object-cover object-center"
@@ -149,6 +153,8 @@ const CarouselGallery = ({
                 >
                   <img
                     src={getImageSrc(image, index)}
+                    srcSet={index === 0 ? buildHeroSrcSet(getImageSrc(image, index)) : undefined}
+                    sizes={index === 0 && buildHeroSrcSet(getImageSrc(image, index)) ? HERO_SIZES : undefined}
                     alt={`${activityTitle} - zdjęcie ${index + 1}`}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
@@ -273,7 +279,10 @@ const GridGallery = ({
             >
               <img
                 src={getImageSrc(images[0], 0)}
+                srcSet={buildHeroSrcSet(getImageSrc(images[0], 0))}
+                sizes={buildHeroSrcSet(getImageSrc(images[0], 0)) ? HERO_SIZES : undefined}
                 alt={activityTitle}
+                loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 className="w-full h-full object-cover object-center"
@@ -297,7 +306,10 @@ const GridGallery = ({
             >
               <img
                 src={getImageSrc(gridImages[0], 0)}
+                srcSet={buildHeroSrcSet(getImageSrc(gridImages[0], 0))}
+                sizes={buildHeroSrcSet(getImageSrc(gridImages[0], 0)) ? HERO_SIZES : undefined}
                 alt={activityTitle}
+                loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
