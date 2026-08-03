@@ -7,8 +7,7 @@ import { filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
 import { FEATURES } from "@/lib/featureFlags";
 import { REGIONS } from "@/data/regions";
-import { useRegionCounts } from "@/hooks/useRegionCounts";
-import { useTypeCounts } from "@/hooks/useTypeCounts";
+import { useHomeCounts } from "@/hooks/useHomeCounts";
 import { useTopActivities } from "@/hooks/useTopActivities";
 
 interface DiscoverSectionsProps {
@@ -37,8 +36,9 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
 import { activityWord as pluralize } from "@/lib/plural";
 
 const DiscoverSections = (_props: DiscoverSectionsProps) => {
-  const { counts: regionCounts } = useRegionCounts();
-  const { counts: typeCounts } = useTypeCounts();
+  const { counts: homeCounts } = useHomeCounts();
+  const regionCounts = homeCounts.regions;
+  const typeCounts = homeCounts.types;
   // Jedno zapytanie z limitem zamiast filtrowania całego katalogu w pamięci.
   const { activities } = useTopActivities(12);
 
