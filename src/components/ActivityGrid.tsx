@@ -136,7 +136,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
       return (
         <section className="bg-background py-6 md:py-10">
           <div className="container">
-            <ActivityGridSkeleton count={12} />
+            <ActivityGridSkeleton count={24} />
           </div>
         </section>
       );
