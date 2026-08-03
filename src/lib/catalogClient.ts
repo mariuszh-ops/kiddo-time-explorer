@@ -5,6 +5,7 @@
 // niesie token zalogowanego użytkownika (role:"authenticated").
 // Klucz anon jest publiczny — może żyć w kodzie frontu.
 import { createClient } from "@supabase/supabase-js";
+import { displayLocation, formatAddress } from "@/lib/address";
 
 const CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
 const CATALOG_ANON_KEY =
