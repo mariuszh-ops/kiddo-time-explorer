@@ -112,7 +112,7 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     tags: [],
     isIndoor: false,
     type: row.type,
-    address: row.address ?? undefined,
+    address: formatAddress(row.address, displayLocation(row.city, row.region)),
     openingHours: row.opening_hours ?? undefined,
     priceRange: row.price_note ?? undefined,
     website: row.website ?? undefined,
