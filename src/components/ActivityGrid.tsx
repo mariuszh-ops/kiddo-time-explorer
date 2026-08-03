@@ -3,7 +3,7 @@ import { SlidersHorizontal, Map } from "lucide-react";
 import ActivityCard from "@/components/ActivityCard";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import SocialProofBanner from "@/components/SocialProofBanner";
-import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
+import ActivityCardSkeleton, { ActivityGridSkeleton } from "@/components/ActivityCardSkeleton";
 import EmptyFilterState from "@/components/EmptyFilterState";
 import { Button } from "@/components/ui/button";
 import { Activity, filterOptions } from "@/data/activities";
@@ -130,6 +130,17 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
   }
 
   if (activities.length === 0) {
+    // Ładowanie: pełna siatka placeholderów o wymiarach prawdziwych kart,
+    // żeby dane po dojściu nie przesuwały layoutu (CLS).
+    if (isLoading) {
+      return (
+        <section className="bg-background py-6 md:py-10">
+          <div className="container">
+            <ActivityGridSkeleton count={12} />
+          </div>
+        </section>
+      );
+    }
     // Active-filters empty state — only when not loading
     if (hasActiveFilters && !isLoading) {
       return (

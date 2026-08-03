@@ -84,6 +84,7 @@ const LazyImage = memo(({
         fetchPriority={priority ? "high" : "auto"}
         width={640}
         height={400}
+        style={{ aspectRatio: "16 / 10" }}
         className={cn(
           "transition-opacity duration-300",
           isLoaded ? "opacity-100" : "opacity-0",
