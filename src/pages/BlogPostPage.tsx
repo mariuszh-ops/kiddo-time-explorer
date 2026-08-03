@@ -100,6 +100,57 @@ const BlogPostPage = () => {
 
   const combinedJsonLd = [articleJsonLd, breadcrumbJsonLd];
 
+  // Formatowanie w linii: **pogrubienie** oraz [etykieta](/atrakcje/slug).
+  // Bez tego treść artykułu pokazywała dosłowne gwiazdki, a linki do kart
+  // atrakcji nie były w ogóle możliwe. Ścieżki wewnętrzne (zaczynające się
+  // od "/") jadą przez <Link>, żeby nie przeładowywać całej aplikacji.
+  const INLINE_PATTERN = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)]+)\)/g;
+
+  const renderInline = (text: string, keyPrefix: string): React.ReactNode[] => {
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+    let n = 0;
+
+    INLINE_PATTERN.lastIndex = 0;
+    while ((match = INLINE_PATTERN.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+      const [, bold, label, href] = match;
+      if (bold) {
+        parts.push(
+          <strong key={`${keyPrefix}-b-${n++}`} className="font-semibold text-foreground">
+            {bold}
+          </strong>
+        );
+      } else if (label && href) {
+        parts.push(
+          href.startsWith("/") ? (
+            <Link key={`${keyPrefix}-l-${n++}`} to={href} className="text-primary hover:underline">
+              {label}
+            </Link>
+          ) : (
+            <a
+              key={`${keyPrefix}-l-${n++}`}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              {label}
+            </a>
+          )
+        );
+      }
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+    return parts.length > 0 ? parts : [text];
+  };
+
   const renderContent = (content: string) => {
     const lines = content.split("\n");
     const elements: React.ReactNode[] = [];
@@ -128,7 +179,7 @@ const BlogPostPage = () => {
         flushList();
         elements.push(
           <h2 key={`h2-${key++}`} className="text-lg font-semibold text-foreground mt-6 mb-2">
-            {trimmed.slice(3)}
+            {renderInline(trimmed.slice(3), `h2-${key}`)}
           </h2>
         );
         continue;
@@ -145,7 +196,7 @@ const BlogPostPage = () => {
       if (trimmed.startsWith("- ")) {
         listItems.push(
           <li key={`li-${key++}`} className="text-foreground/90">
-            {trimmed.slice(2)}
+            {renderInline(trimmed.slice(2), `li-${key}`)}
           </li>
         );
         continue;
@@ -153,7 +204,7 @@ const BlogPostPage = () => {
       flushList();
       elements.push(
         <p key={`p-${key++}`} className="text-foreground/90 leading-relaxed mb-2">
-          {trimmed}
+          {renderInline(trimmed, `p-${key}`)}
         </p>
       );
     }
