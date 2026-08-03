@@ -5,6 +5,7 @@
 // niesie token zalogowanego użytkownika (role:"authenticated").
 // Klucz anon jest publiczny — może żyć w kodzie frontu.
 import { createClient } from "@supabase/supabase-js";
+import { displayLocation, formatAddress } from "@/lib/address";
 
 const CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
 const CATALOG_ANON_KEY =
@@ -96,7 +97,8 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     slug: row.slug,
     title: row.name,
     // location = miejscowość (miasto), city = slug województwa (nasz "region").
-    location: row.city ?? row.region ?? "",
+    // Gdy miasto jest puste, pokazujemy nazwę województwa („woj. podkarpackie”).
+    location: displayLocation(row.city, row.region),
     city: row.region ?? row.city ?? "",
     rating,
     reviewCount,
@@ -110,7 +112,7 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     tags: [],
     isIndoor: false,
     type: row.type,
-    address: row.address ?? undefined,
+    address: formatAddress(row.address, displayLocation(row.city, row.region)),
     openingHours: row.opening_hours ?? undefined,
     priceRange: row.price_note ?? undefined,
     website: row.website ?? undefined,
