@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
 import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
+import NotFound from "@/pages/NotFound";
 
 const BASE_URL = "https://familyfun.pl";
 
