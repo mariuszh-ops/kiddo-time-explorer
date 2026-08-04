@@ -115,7 +115,7 @@ Trzy rzeczy, które warto sprawdzić przed wyjściem, i które przy każdej karc
 Pełną listę placów zabaw z filtrami znajdziesz w kategorii [place zabaw na Mazowszu](/mazowieckie/plac-zabaw).
 
 Dane: katalog FamilyFun, oceny i liczby opinii pochodzą z Google, stan na sierpień 2026.`,
-    imageUrl: "/blog/playground.jpg",
+    imageUrl: "/blog/playground.webp",
     category: "Ranking",
     city: "mazowieckie",
     tags: ["Warszawa", "Mazowieckie", "place zabaw", "na zewnątrz"],
@@ -193,7 +193,7 @@ Sale zabaw w deszczowe weekendy zapełniają się między 11:00 a 15:00. Jeśli 
 Więcej pomysłów pod dachem: [sale zabaw na Mazowszu](/mazowieckie/sala-zabaw) i [centra rozrywki](/mazowieckie/centra-rozrywki).
 
 Dane: katalog FamilyFun, oceny i godziny otwarcia z Google, stan na sierpień 2026. Godziny warto potwierdzić przed wyjściem.`,
-    imageUrl: "/blog/rainy-indoor.jpg",
+    imageUrl: "/blog/rainy-indoor.webp",
     category: "Przewodnik",
     city: "mazowieckie",
     tags: ["Warszawa", "indoor", "deszcz", "sale zabaw"],
@@ -284,7 +284,7 @@ Jeśli macie małe dziecko albo mało czasu, lepiej sprawdzą się mniejsze miej
 Ranking wszystkich największych ogrodów znajdziesz w osobnym zestawieniu: [najlepsze zoo w Polsce](/inspiracje/najlepsze-zoo-w-polsce).
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
-    imageUrl: "/blog/zoo.jpg",
+    imageUrl: "/blog/zoo.webp",
     category: "Poradnik",
     tags: ["zoo", "poradnik", "przygotowanie", "zwierzęta"],
     publishedAt: "2026-08-03",
@@ -363,7 +363,7 @@ W karcie wprost oznaczony jako miejsce dostępne dla wózków, z ławkami i cien
 Filtr wieku znajdziesz na każdej liście atrakcji — na przykład w [salach zabaw na Mazowszu](/mazowieckie/sala-zabaw).
 
 Dane: katalog FamilyFun, oceny z Google, udogodnienia z kart atrakcji, stan na sierpień 2026.`,
-    imageUrl: "/blog/toddler.jpg",
+    imageUrl: "/blog/toddler.webp",
     category: "Poradnik",
     city: "mazowieckie",
     tags: ["Warszawa", "maluchy", "0-3 lata", "wózek", "przewijak"],
@@ -443,7 +443,7 @@ Niedziela: [Pinball Station](/atrakcje/interaktywne-muzeum-flipperow-pinball-sta
 Nie planujcie więcej niż dwóch atrakcji dziennie. Dojazdy, przebieranie, jedzenie i przerwy zajmują więcej czasu, niż się wydaje — a trzeci punkt programu prawie zawsze kończy się awanturą.
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026. Godziny i dostępność biletów potwierdź przed wyjściem.`,
-    imageUrl: "/blog/weekend-warsaw.jpg",
+    imageUrl: "/blog/weekend-warsaw.webp",
     category: "Plan",
     city: "mazowieckie",
     tags: ["Warszawa", "weekend", "plan", "pomysły"],
@@ -549,7 +549,7 @@ Na każdej liście atrakcji jest filtr **Bezpłatne** — pokazuje wyłącznie m
 Uczciwa uwaga: oznaczenie "bezpłatne" w katalogu dotyczy wstępu i nie jest jeszcze ustawione wszędzie tam, gdzie wejście faktycznie nic nie kosztuje. Jeśli szukacie darmowego spaceru, warto zajrzeć również do [Łazienek Królewskich](/atrakcje/lazienki-krolewskie-warszawa) czy [Parku Szczęśliwickiego](/atrakcje/park-szczesliwicki-warszawa).
 
 Dane: katalog FamilyFun, oceny z Google, stan na sierpień 2026.`,
-    imageUrl: "/blog/free-outdoor.jpg",
+    imageUrl: "/blog/free-outdoor.webp",
     category: "Top lista",
     city: "mazowieckie",
     tags: ["Warszawa", "Mazowieckie", "za darmo", "bezpłatne"],
@@ -632,7 +632,7 @@ Poza Warszawą warto znać jeszcze [Hopa Park w Ciechanowie](/atrakcje/hopa-park
 Wszystkie obiekty sportowe i trampoliny: [sport na Mazowszu](/mazowieckie/sport).
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026. Ceny biletów sprawdzaj na stronach obiektów — zmieniają się sezonowo.`,
-    imageUrl: "/blog/trampolines.jpg",
+    imageUrl: "/blog/trampolines.webp",
     category: "Porównanie",
     city: "mazowieckie",
     tags: ["Warszawa", "parki trampolin", "aktywnie", "porównanie"],
@@ -706,7 +706,7 @@ Zostawcie na sobotę i niedzielę coś większego:
 Nie próbujcie wypełnić każdego dnia atrakcją. Jeden dzień w piżamie, z bajką i kakao, też jest częścią planu — a przy pięciu dniach deszczu to często najlepiej zapamiętany dzień tygodnia.
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026. Godziny otwarcia i dni wolne potwierdź przed wyjściem.`,
-    imageUrl: "/blog/rainy-week.jpg",
+    imageUrl: "/blog/rainy-week.webp",
     category: "Plan",
     city: "mazowieckie",
     tags: ["Warszawa", "indoor", "deszcz", "plan"],
@@ -786,7 +786,7 @@ Z opisów tych miejsc powtarzają się trzy rzeczy, na które warto patrzeć w k
 Wszystkie parki w regionie: [parki na Mazowszu](/mazowieckie/park).
 
 Dane: katalog FamilyFun, oceny z Google, udogodnienia z kart atrakcji, stan na sierpień 2026.`,
-    imageUrl: "/blog/playground-ranking.jpg",
+    imageUrl: "/blog/playground-ranking.webp",
     category: "Przewodnik",
     city: "mazowieckie",
     tags: ["Warszawa", "parki", "place zabaw", "na zewnątrz"],
@@ -868,7 +868,7 @@ Wnętrza mieszkań z epoki, sklepowe półki z ówczesnymi towarami i przedmioty
 Więcej: [muzea i teatry na Mazowszu](/mazowieckie/muzeum-teatr) oraz [centra rozrywki](/mazowieckie/centra-rozrywki).
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
-    imageUrl: "/blog/museum.jpg",
+    imageUrl: "/blog/museum.webp",
     category: "Przewodnik",
     city: "mazowieckie",
     tags: ["Warszawa", "muzea", "interaktywne", "edukacyjne"],
