@@ -251,8 +251,11 @@ const BlogPostPage = () => {
               <img
                 src={post.imageUrl}
                 alt={post.title}
-                width={1200}
-                height={675}
+                width={800}
+                height={450}
+                loading="eager"
+                decoding="async"
+                style={{ aspectRatio: "16 / 9" }}
                 onError={(e) => {
                   const img = e.currentTarget;
                   if (!img.dataset.fallback) {
