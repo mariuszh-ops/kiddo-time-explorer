@@ -13,10 +13,11 @@
     -->
     <title>FamilyFun – Sprawdzone atrakcje dla rodzin z dziećmi</title>
     <meta name="author" content="FamilyFun" />
-    <meta
-      name="description"
-      content="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
-    />
+    <!--
+      Brak statycznego <meta name="description"> celowo: każda strona dostarcza
+      DOKŁADNIE JEDEN unikalny opis przez SEOHead (react-helmet-async). Statyczny
+      tag był pierwszy w DOM i crawlery brały właśnie jego, kasując unikalne opisy.
+    -->
 
     <!--
       Domyślne (site-level) tagi Open Graph / Twitter w STATYCZNYM <head>.

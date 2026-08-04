@@ -11,6 +11,7 @@ import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { activityWord } from "@/lib/plural";
 import { LEGACY_CITY_TO_REGION, REGION_BY_SLUG, REGION_SLUGS } from "@/data/regions";
+import { REGION_SEO_DESCRIPTIONS } from "@/data/regionSeo";
 import {
   getCategoryConfig,
   resolveCityText,
@@ -218,7 +219,9 @@ const CategoryPage = () => {
 
   // Meta description: liczba atrakcji + krótki opis kategorii (docięty do ~160 znaków).
   const dynamicMetaDescription = (() => {
-    const base = `${countLabel}. ${resolvedDescription}`.trim();
+    // Strona województwa (bez kategorii) → unikalny opis regionu.
+    const regionCopy = !categorySlug && citySlug ? REGION_SEO_DESCRIPTIONS[citySlug] : undefined;
+    const base = `${countLabel}. ${regionCopy ?? resolvedDescription}`.trim();
     if (base.length <= 160) return base;
     const cut = base.slice(0, 160);
     const lastSpace = cut.lastIndexOf(" ");
