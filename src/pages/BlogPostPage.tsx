@@ -257,7 +257,7 @@ const BlogPostPage = () => {
                   const img = e.currentTarget;
                   if (!img.dataset.fallback) {
                     img.dataset.fallback = "1";
-                    img.src = "/blog/placeholder.jpg";
+                    img.src = "/blog/placeholder.webp";
                   }
                 }}
                 className="w-full h-full object-cover"

@@ -22,7 +22,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
               const img = e.currentTarget;
               if (!img.dataset.fallback) {
                 img.dataset.fallback = "1";
-                img.src = "/blog/placeholder.jpg";
+                img.src = "/blog/placeholder.webp";
               }
             }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
