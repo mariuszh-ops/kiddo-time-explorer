@@ -30,7 +30,8 @@ const SEOHead = ({
   publishedTime,
   modifiedTime,
 }: SEOHeadProps) => {
-  const fullTitle = `${title} | ${SITE_NAME}`;
+  // Nie doklejaj brandu, jeśli tytuł już go zawiera (np. seoTitle z categoryPages).
+  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canonicalUrl = `${BASE_URL}${path}`;
 
   return (
