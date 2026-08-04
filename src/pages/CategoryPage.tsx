@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
 import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
+import NotFound from "@/pages/NotFound";
 
 const BASE_URL = "https://familyfun.pl";
 
@@ -56,12 +57,18 @@ const CategoryPage = () => {
     return <Navigate to={target} replace />;
   }
 
-  // Kiedy trafiliśmy tu z /{region} lub /{region}/{type} — waliduj slug.
-  if (params.regionSlug && !REGION_SLUGS.includes(params.regionSlug)) {
-    return <Navigate to="/404" replace />;
+  // Waliduj slug województwa (16 województw) — nieznany → 404, nie pusty listing.
+  if (citySlug && !REGION_SLUGS.includes(citySlug)) {
+    return <NotFound />;
   }
 
   const config = getCategoryConfig(categorySlug);
+
+  // Waliduj slug kategorii przeciwko znanej liście — nieznany → 404.
+  if (categorySlug && !config) {
+    return <NotFound />;
+  }
+
   const cityLabel = citySlug ? cityLabels[citySlug] : undefined;
 
   // URL-persisted filter state
