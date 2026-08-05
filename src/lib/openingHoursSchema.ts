@@ -42,9 +42,6 @@ export function buildOpeningHoursSpecification(hours?: string | null): OpeningHo
       out.push({ "@type": "OpeningHoursSpecification", dayOfWeek });
       continue;
     }
-    if (/ca[łl]/i.test(time) || /24/.test(time.replace(/[:\s]/g, "")) === false) {
-      // pass through to range parsing below
-    }
     const match = time.match(/(\d{1,2}(?::\d{2})?)\s*[–—-]\s*(\d{1,2}(?::\d{2})?)/);
     if (match) {
       out.push({
