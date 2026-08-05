@@ -293,6 +293,7 @@ const ActivityDetail = () => {
     website: activity.website,
     reviews: activity.reviews || [],
   };
+  const openingHoursSpec = buildOpeningHoursSpecification(activity.openingHours);
   const hasReviews = activity.reviewCount > 0;
   const averageRating = details.reviews.length > 0 
     ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
