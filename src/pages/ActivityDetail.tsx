@@ -45,6 +45,7 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import InlineRatingAction from "@/components/InlineRatingAction";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
+import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
@@ -293,6 +294,7 @@ const ActivityDetail = () => {
     website: activity.website,
     reviews: activity.reviews || [],
   };
+  const openingHoursSpec = buildOpeningHoursSpecification(activity.openingHours);
   const hasReviews = activity.reviewCount > 0;
   const averageRating = details.reviews.length > 0 
     ? details.reviews.reduce((sum, r) => sum + r.rating, 0) / details.reviews.length
@@ -366,6 +368,16 @@ const ActivityDetail = () => {
               },
             } : {}),
             ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
+            ...(openingHoursSpec.length > 0 ? { "openingHoursSpecification": openingHoursSpec } : {}),
+            ...(activity.coordinates
+              ? {
+                  "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": activity.coordinates.lat,
+                    "longitude": activity.coordinates.lng,
+                  },
+                }
+              : {}),
           },
           {
             "@context": "https://schema.org",
@@ -857,7 +869,9 @@ const ActivityDetail = () => {
               <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
-                {activity.priceNote ? (
+                {activity.isFree ? (
+                  <p className="text-sm text-foreground">Wstęp wolny</p>
+                ) : activity.priceNote ? (
                   <>
                     <p className="text-sm text-foreground">{activity.priceNote}</p>
                     <p className="text-xs text-muted-foreground mt-1">Ceny mogą ulec zmianie — sprawdź aktualny cennik na stronie organizatora</p>

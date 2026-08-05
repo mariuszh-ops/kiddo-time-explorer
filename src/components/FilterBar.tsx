@@ -35,6 +35,8 @@ interface FilterBarProps {
   onClearAll: () => void;
   viewMode?: "grid" | "map";
   onViewModeChange?: (mode: "grid" | "map") => void;
+  /** Ukryj pole wyszukiwania w pasku filtrów (np. na home, gdzie szukanie żyje w hero). */
+  hideSearch?: boolean;
 }
 
 // Dopełniacz nazwy stolicy województwa — używany w podpisach typu "…od centrum {miasto}".
@@ -54,6 +56,7 @@ const FilterBar = ({
   onClearAll,
   viewMode,
   onViewModeChange,
+  hideSearch = false,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -94,7 +97,7 @@ const FilterBar = ({
         <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border" onPointerDownCapture={() => ensureActivitiesLoaded()} onFocusCapture={() => ensureActivitiesLoaded()}>
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
-            {FEATURES.SEARCH_AUTOCOMPLETE && (
+            {FEATURES.SEARCH_AUTOCOMPLETE && !hideSearch && (
               <div className="mb-3 [&_>*]:w-full">
                 <SearchAutocomplete
                   activities={getActivities()}
@@ -235,7 +238,7 @@ const FilterBar = ({
             */}
 
             {/* Search input */}
-            {FEATURES.SEARCH_AUTOCOMPLETE ? (
+            {hideSearch ? null : FEATURES.SEARCH_AUTOCOMPLETE ? (
               <SearchAutocomplete
                 activities={getActivities()}
                 searchQuery={searchQuery}

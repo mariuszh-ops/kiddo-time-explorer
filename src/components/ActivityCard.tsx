@@ -239,7 +239,6 @@ const ActivityCard = ({
             {CATEGORY_LABELS[type] && (
               <p className={cn("text-sm text-muted-foreground", uncertain && "italic opacity-70")}>
                 {CATEGORY_LABELS[type]}
-                {uncertain && <span className="ml-1 text-[11px]">· auto</span>}
               </p>
             )}
 
