@@ -45,6 +45,7 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import InlineRatingAction from "@/components/InlineRatingAction";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
+import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
