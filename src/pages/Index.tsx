@@ -267,6 +267,7 @@ const Index = () => {
           onClearAll={clearAllFilters}
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
+          hideSearch={!mapVisibleActivities && !hasActiveFilters && !showAll}
         />
 
       {/* Activity cards grid or curated sections */}
