@@ -969,7 +969,7 @@ Wszystkie atrakcje regionu: [Małopolskie](/malopolskie), a po kategoriach: [muz
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJ9Rk2BW1bFkcRmKV_1sTfuaw/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJ9Rk2BW1bFkcRmKV_1sTfuaw/0.webp",
     category: "Przewodnik",
     city: "malopolskie",
     tags: ["Kraków", "Małopolskie", "przewodnik", "weekend"],
@@ -1070,7 +1070,7 @@ To najlepszy "pierwszy szlak górski" dla małego dziecka, jaki mamy w katalogu 
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJT86vfifoD0cRLbauTNu0ARo/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJT86vfifoD0cRLbauTNu0ARo/0.webp",
     category: "Przewodnik",
     city: "dolnoslaskie",
     tags: ["Wrocław", "Dolnośląskie", "przewodnik", "zoo"],
@@ -1175,7 +1175,7 @@ Niewielki, ale zadbany ośrodek naukowy poświęcony ochronie fok bałtyckich. N
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJZY6HlTin_UYRI-F_iwmj6Lk/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJZY6HlTin_UYRI-F_iwmj6Lk/0.webp",
     category: "Przewodnik",
     city: "pomorskie",
     tags: ["Gdańsk", "Gdynia", "Pomorskie", "nad morzem"],
@@ -1282,7 +1282,7 @@ A jeśli będziecie w Bielsku-Białej, [pomnik Bolka i Lolka](/atrakcje/bolek-i-
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJ3xyiSA_OFkcRydyfaaNEHZo/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJ3xyiSA_OFkcRydyfaaNEHZo/0.webp",
     category: "Przewodnik",
     city: "slaskie",
     tags: ["Śląskie", "Katowice", "kopalnie", "zamki"],
@@ -1391,7 +1391,7 @@ Najlepszy jednodniowy wypad z dzieckiem w regionie: park wodny, dmuchane place z
 
 Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJUbkWetJEBEcRrfyATKdQipQ/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJUbkWetJEBEcRrfyATKdQipQ/0.webp",
     category: "Przewodnik",
     city: "wielkopolskie",
     tags: ["Poznań", "Wielkopolskie", "zoo", "przewodnik"],
@@ -1500,7 +1500,7 @@ Jeśli wybieracie się po raz pierwszy, zajrzyjcie też do naszego [poradnika pr
 
 Dane: katalog FamilyFun, oceny i liczby opinii z Google, stan na sierpień 2026.`,
     imageUrl:
-      "https://pub-72caa1a2c6c54df4961cd54d4d6ccc75.r2.dev/attractions/ChIJYdYyOE81GkcRXjUNTKBuPfE/0.webp",
+      "https://img.familyfun.pl/attractions/ChIJYdYyOE81GkcRXjUNTKBuPfE/0.webp",
     category: "Ranking",
     tags: ["zoo", "ranking", "Polska", "zwierzęta"],
     publishedAt: "2026-08-03",
