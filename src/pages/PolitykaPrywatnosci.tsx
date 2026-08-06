@@ -25,7 +25,7 @@ const PolitykaPrywatnosci = () => {
               Polityka prywatności
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 13 lipca 2026 r.
+              Ostatnia aktualizacja: 3 sierpnia 2026 r.
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -89,6 +89,46 @@ const PolitykaPrywatnosci = () => {
               </section>
 
               <section>
+                <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Zgłaszanie nowych atrakcji</h2>
+                <p className="mb-4">
+                  Każdy — także osoba niezalogowana — może zaproponować dodanie nowej atrakcji do
+                  katalogu („Zgłoś atrakcję"). Formularz zbiera dane dotyczące samego obiektu
+                  (nazwa, adres, miejscowość, region, typ, przedział wieku, opis, strona
+                  internetowa, udogodnienia). Zgłoszenie trafia do weryfikacji i nie jest
+                  publikowane automatycznie.
+                </p>
+                <p className="mb-4">
+                  <strong>Cel:</strong> rozbudowa i aktualizacja katalogu atrakcji.
+                </p>
+                <p className="mb-4">
+                  <strong>Podstawa prawna:</strong> art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes —
+                  rozwój i aktualność katalogu).
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Zabezpieczenie formularzy przed nadużyciami (adres IP)</h2>
+                <p className="mb-4">
+                  Formularze dostępne bez logowania — „Zgłoś atrakcję" oraz „Zgłoś błąd w danych"
+                  — są zabezpieczone przed masowym wysyłaniem zgłoszeń (spamem). W tym celu w
+                  momencie wysłania formularza odczytujemy adres IP, z którego nadeszło
+                  zgłoszenie, i zapisujemy wyłącznie jego <strong>nieodwracalny skrót kryptograficzny
+                  (hash z tajnym kluczem)</strong> — <strong>surowy adres IP nie jest zapisywany w bazie
+                  danych</strong>. Skrót służy jedynie do policzenia, ile zgłoszeń wysłano z tego samego
+                  urządzenia w ciągu ostatniej godziny, i do odrzucenia nadmiarowych. Nie używamy
+                  go do profilowania ani do identyfikacji użytkownika, nie łączymy go z kontem i
+                  nie przekazujemy innym podmiotom.
+                </p>
+                <p className="mb-4">
+                  <strong>Cel:</strong> ochrona Serwisu przed nadużyciami, spamem i przeciążeniem formularzy.
+                </p>
+                <p className="mb-4">
+                  <strong>Podstawa prawna:</strong> art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes —
+                  zapewnienie bezpieczeństwa i prawidłowego działania Serwisu).
+                </p>
+              </section>
+
+              <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Okres przechowywania</h2>
                 <p className="mb-4">
                   Dane konta przechowujemy do momentu jego usunięcia przez użytkownika. Treści publiczne
@@ -96,6 +136,10 @@ const PolitykaPrywatnosci = () => {
                   Logi techniczne przechowywane są przez okres niezbędny dla bezpieczeństwa Serwisu,
                   nie dłużej niż 12 miesięcy.
                 </p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  <li><strong>Zgłoszenia nowych atrakcji</strong> — przez czas niezbędny do weryfikacji zgłoszenia i ewentualnego dodania obiektu do katalogu.</li>
+                  <li><strong>Skrót (hash) adresu IP z formularzy</strong> — przechowywany razem ze zgłoszeniem, do którego się odnosi.</li>
+                </ul>
               </section>
 
               <section>
