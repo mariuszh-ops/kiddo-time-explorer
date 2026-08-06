@@ -33,6 +33,7 @@ const Regulamin = lazy(() => import("./pages/Regulamin"));
 const PolitykaPrywatnosci = lazy(() => import("./pages/PolitykaPrywatnosci"));
 const Kontakt = lazy(() => import("./pages/Kontakt"));
 const ONas = lazy(() => import("./pages/ONas"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const BlogListPage = lazy(() => import("./pages/BlogListPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 import BottomNav from "./components/BottomNav";
@@ -80,6 +81,7 @@ const AnimatedRoutes = () => {
             <Route path="/polityka-prywatnosci" element={<PolitykaPrywatnosci />} />
             <Route path="/kontakt" element={<Kontakt />} />
             <Route path="/o-nas" element={<ONas />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             {FEATURES.BLOG && (
               <>
                 <Route path="/inspiracje" element={<BlogListPage />} />
