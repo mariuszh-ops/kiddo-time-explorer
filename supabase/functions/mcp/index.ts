@@ -3,7 +3,7 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
+import { auth, defineMcp } from "npm:@lovable.dev/mcp-js@0.20.0";
 
 // src/lib/mcp/tools/search-activities.ts
 import { defineTool } from "npm:@lovable.dev/mcp-js@0.20.0";
@@ -169,11 +169,16 @@ var list_cities_default = defineTool3({
 });
 
 // src/lib/mcp/index.ts
+var projectRef = "lcplokzaosphgpwacahe";
 var mcp_default = defineMcp({
   name: "familyfun-mcp",
   title: "FamilyFun MCP",
   version: "0.1.0",
   instructions: "Tools for FamilyFun (familyfun.pl), a catalog of ~460 family-friendly activities in Poland \u2014 mainly the Warsaw area (city slug `warszawa`) and the Silesian agglomeration (`slask`), plus smaller nearby towns. Use `list_cities` to see coverage, `search_activities` to find places by city/tag/query, and `get_activity` to fetch details for a specific slug.",
+  auth: auth.oauth.issuer({
+    issuer: `https://${projectRef}.supabase.co/auth/v1`,
+    acceptedAudiences: "authenticated"
+  }),
   tools: [search_activities_default, get_activity_default, list_cities_default]
 });
 
