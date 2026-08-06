@@ -136,6 +136,10 @@ const PolitykaPrywatnosci = () => {
                   Logi techniczne przechowywane są przez okres niezbędny dla bezpieczeństwa Serwisu,
                   nie dłużej niż 12 miesięcy.
                 </p>
+                <ul className="list-disc pl-6 space-y-2 mb-4">
+                  <li><strong>Zgłoszenia nowych atrakcji</strong> — przez czas niezbędny do weryfikacji zgłoszenia i ewentualnego dodania obiektu do katalogu.</li>
+                  <li><strong>Skrót (hash) adresu IP z formularzy</strong> — przechowywany razem ze zgłoszeniem, do którego się odnosi.</li>
+                </ul>
               </section>
 
               <section>
