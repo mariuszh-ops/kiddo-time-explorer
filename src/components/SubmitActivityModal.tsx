@@ -69,7 +69,7 @@ const amenityOptions = [
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Podaj nazwę miejsca").max(100, "Nazwa jest za długa"),
-  city: z.string().min(1, "Wybierz miasto"),
+  city: z.string().min(1, "Wybierz województwo"),
   customCity: z.string().max(50).optional(),
   address: z.string().max(200).optional(),
   activityType: z.string().min(1, "Wybierz typ aktywności"),
@@ -84,6 +84,13 @@ const formSchema = z.object({
   description: z.string().max(500, "Opis może mieć maksymalnie 500 znaków").optional(),
   link: z.string().url("Podaj prawidłowy adres URL").optional().or(z.literal("")),
   amenities: z.array(z.string()).optional(),
+  contactEmail: z
+    .string()
+    .trim()
+    .email("Podaj prawidłowy adres email")
+    .max(255, "Email jest za długi")
+    .optional()
+    .or(z.literal("")),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -128,6 +135,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       description: "",
       link: "",
       amenities: [],
+      contactEmail: "",
     },
   });
 
@@ -159,7 +167,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       description: data.description || null,
       website: data.link || null,
       amenities: data.amenities || [],
-      contact_email: null,
+      contact_email: data.contactEmail?.trim() || null,
       status: "nowe",
     };
 
