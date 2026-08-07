@@ -2,6 +2,16 @@ import { Helmet } from "react-helmet-async";
 
 const SITE_NAME = "FamilyFun";
 const BASE_URL = "https://familyfun.pl";
+const FALLBACK_IMAGE = `${BASE_URL}/og-image-1200x630.jpg`;
+
+// Open Graph wymaga absolutnych URL-i — relatywne (np. /placeholder.svg) są
+// ignorowane przez parsery social, więc podmieniamy je na baner zastępczy.
+const toAbsoluteImage = (image?: string) => {
+  if (!image) return FALLBACK_IMAGE;
+  if (/^https?:\/\//i.test(image)) return image;
+  if (image.startsWith("/") && !image.endsWith(".svg")) return `${BASE_URL}${image}`;
+  return FALLBACK_IMAGE;
+};
 
 interface SEOHeadProps {
   title: string;
@@ -33,6 +43,8 @@ const SEOHead = ({
   // Nie doklejaj brandu, jeśli tytuł już go zawiera (np. seoTitle z categoryPages).
   const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
   const canonicalUrl = `${BASE_URL}${path}`;
+  const ogImage = toAbsoluteImage(image);
+  const isFallbackImage = ogImage === FALLBACK_IMAGE;
 
   return (
     <Helmet>
@@ -46,20 +58,15 @@ const SEOHead = ({
       <meta property="og:type" content={type} />
       <meta property="og:locale" content="pl_PL" />
       <meta property="og:site_name" content={SITE_NAME} />
-      {image && <meta property="og:image" content={image} />}
+      <meta property="og:image" content={ogImage} />
+      <meta property="og:image:width" content={String(isFallbackImage ? 1200 : imageWidth ?? 1200)} />
+      <meta property="og:image:height" content={String(isFallbackImage ? 630 : imageHeight ?? 630)} />
+      <meta property="og:image:alt" content={title} />
 
-      {image && (
-        <>
-          <meta property="og:image:width" content={String(imageWidth ?? 1200)} />
-          <meta property="og:image:height" content={String(imageHeight ?? 630)} />
-          <meta property="og:image:alt" content={title} />
-        </>
-      )}
-
-      <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      {image && <meta name="twitter:image" content={image} />}
+      <meta name="twitter:image" content={ogImage} />
 
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
