@@ -407,26 +407,28 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       <p className="text-xs text-muted-foreground mb-2">
                         Dla jakich grup wiekowych polecasz to miejsce?
                       </p>
-                      <div className="flex flex-wrap gap-3">
+                      <div className="flex flex-wrap gap-x-3 gap-y-1">
                         {ageGroups.map((age) => (
                           <FormField
                             key={age.id}
                             control={form.control}
                             name="ageGroups"
                             render={({ field }) => (
-                              <FormItem className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(age.id)}
-                                    onCheckedChange={(checked) => {
-                                      const newValue = checked
-                                        ? [...field.value, age.id]
-                                        : field.value.filter((v) => v !== age.id);
-                                      field.onChange(newValue);
-                                    }}
-                                  />
-                                </FormControl>
-                                <Label className="text-sm font-normal cursor-pointer">
+                              <FormItem className="space-y-0">
+                                <Label htmlFor={`age-${age.id}`} className={OPTION_ROW_CLASS}>
+                                  <FormControl>
+                                    <Checkbox
+                                      id={`age-${age.id}`}
+                                      aria-label={age.label}
+                                      checked={field.value?.includes(age.id)}
+                                      onCheckedChange={(checked) => {
+                                        const newValue = checked
+                                          ? [...field.value, age.id]
+                                          : field.value.filter((v) => v !== age.id);
+                                        field.onChange(newValue);
+                                      }}
+                                    />
+                                  </FormControl>
                                   {age.label}
                                 </Label>
                               </FormItem>
@@ -450,20 +452,20 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                         <RadioGroup
                           onValueChange={field.onChange}
                           value={field.value ?? ""}
-                          className="flex flex-wrap gap-4"
+                          className="flex flex-wrap gap-x-3 gap-y-1"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="indoor" id="io-indoor" />
-                            <Label htmlFor="io-indoor" className="cursor-pointer font-normal">W pomieszczeniu</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="outdoor" id="io-outdoor" />
-                            <Label htmlFor="io-outdoor" className="cursor-pointer font-normal">Na zewnątrz</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="both" id="io-both" />
-                            <Label htmlFor="io-both" className="cursor-pointer font-normal">Jedno i drugie</Label>
-                          </div>
+                          <Label htmlFor="io-indoor" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="indoor" id="io-indoor" aria-label="W pomieszczeniu" />
+                            W pomieszczeniu
+                          </Label>
+                          <Label htmlFor="io-outdoor" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="outdoor" id="io-outdoor" aria-label="Na zewnątrz" />
+                            Na zewnątrz
+                          </Label>
+                          <Label htmlFor="io-both" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="both" id="io-both" aria-label="Jedno i drugie" />
+                            Jedno i drugie
+                          </Label>
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
@@ -482,24 +484,24 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                         <RadioGroup
                           onValueChange={(val) => field.onChange(Number(val))}
                           value={field.value !== undefined ? String(field.value) : ""}
-                          className="flex flex-wrap gap-3"
+                          className="flex flex-wrap gap-x-3 gap-y-1"
                         >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="0" id="price-0" />
-                            <Label htmlFor="price-0" className="cursor-pointer font-normal">Bezpłatne</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="1" id="price-1" />
-                            <Label htmlFor="price-1" className="cursor-pointer font-normal">Niedrogie ($)</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="2" id="price-2" />
-                            <Label htmlFor="price-2" className="cursor-pointer font-normal">Umiarkowane ($$)</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="3" id="price-3" />
-                            <Label htmlFor="price-3" className="cursor-pointer font-normal">Drogie ($$$)</Label>
-                          </div>
+                          <Label htmlFor="price-0" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="0" id="price-0" aria-label="Bezpłatne" />
+                            Bezpłatne
+                          </Label>
+                          <Label htmlFor="price-1" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="1" id="price-1" aria-label="Niedrogie" />
+                            Niedrogie ($)
+                          </Label>
+                          <Label htmlFor="price-2" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="2" id="price-2" aria-label="Umiarkowane" />
+                            Umiarkowane ($$)
+                          </Label>
+                          <Label htmlFor="price-3" className={OPTION_ROW_CLASS}>
+                            <RadioGroupItem value="3" id="price-3" aria-label="Drogie" />
+                            Drogie ($$$)
+                          </Label>
                         </RadioGroup>
                       </FormControl>
                       <FormMessage />
@@ -576,27 +578,29 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                       <p className="text-xs text-muted-foreground mb-2">
                         Zaznacz udogodnienia dostępne na miejscu
                       </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1 gap-x-2">
                         {amenityOptions.map((amenity) => (
                           <FormField
                             key={amenity.id}
                             control={form.control}
                             name="amenities"
                             render={({ field }) => (
-                              <FormItem className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <Checkbox
-                                    checked={field.value?.includes(amenity.id)}
-                                    onCheckedChange={(checked) => {
-                                      const current = field.value || [];
-                                      const newValue = checked
-                                        ? [...current, amenity.id]
-                                        : current.filter((v) => v !== amenity.id);
-                                      field.onChange(newValue);
-                                    }}
-                                  />
-                                </FormControl>
-                                <Label className="text-sm font-normal cursor-pointer">
+                              <FormItem className="space-y-0">
+                                <Label htmlFor={`amenity-${amenity.id}`} className={OPTION_ROW_CLASS}>
+                                  <FormControl>
+                                    <Checkbox
+                                      id={`amenity-${amenity.id}`}
+                                      aria-label={amenity.label}
+                                      checked={field.value?.includes(amenity.id)}
+                                      onCheckedChange={(checked) => {
+                                        const current = field.value || [];
+                                        const newValue = checked
+                                          ? [...current, amenity.id]
+                                          : current.filter((v) => v !== amenity.id);
+                                        field.onChange(newValue);
+                                      }}
+                                    />
+                                  </FormControl>
                                   {amenity.label}
                                 </Label>
                               </FormItem>
