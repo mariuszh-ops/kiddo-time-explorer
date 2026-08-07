@@ -355,18 +355,14 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                               value={field.value ?? ""}
                               className="flex gap-4"
                             >
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="place" id="type-place" />
-                                <Label htmlFor="type-place" className="cursor-pointer font-normal">
-                                  Miejsce stałe
-                                </Label>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="event" id="type-event" />
-                                <Label htmlFor="type-event" className="cursor-pointer font-normal">
-                                  Wydarzenie
-                                </Label>
-                              </div>
+                              <Label htmlFor="type-place" className={OPTION_ROW_CLASS}>
+                                <RadioGroupItem value="place" id="type-place" aria-label="Miejsce stałe" />
+                                Miejsce stałe
+                              </Label>
+                              <Label htmlFor="type-event" className={OPTION_ROW_CLASS}>
+                                <RadioGroupItem value="event" id="type-event" aria-label="Wydarzenie" />
+                                Wydarzenie
+                              </Label>
                             </RadioGroup>
                           </FormControl>
                           <FormMessage />
