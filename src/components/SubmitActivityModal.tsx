@@ -614,6 +614,24 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                 />
 
                 {/* Submit - sticky on mobile */}
+                {/* Kontakt (opcjonalnie) */}
+                <FormField
+                  control={form.control}
+                  name="contactEmail"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Twój email (jeśli mamy odpisać)</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="np. jan@example.com" {...field} />
+                      </FormControl>
+                      <FormDescription className="text-xs">
+                        Opcjonalnie — użyjemy go tylko, żeby dopytać o szczegóły zgłoszenia.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
                 <div className="sticky bottom-0 bg-background pt-3 pb-1 border-t border-border/50 -mx-6 px-6 mt-4">
                   <div className="flex gap-3">
                     <Button type="button" variant="outline" onClick={handleClose} className="flex-1">
