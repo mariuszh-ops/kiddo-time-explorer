@@ -11,12 +11,12 @@ znaleźć miejsca dopasowane do wieku dzieci i preferencji rodziny.
 - React 18 + TypeScript
 - Tailwind CSS
 - React Router
-- Dane w plikach JSON (nie w bazie danych)
+- Dane atrakcji w bazie (tabela `public_activities`, tylko odczyt)
 
 ## Kluczowe pliki
 
-- Dane atrakcji: `src/data/activities.json`
-- Typ Activity: `src/data/activities.ts`
+- Klient katalogu (baza): `src/lib/catalogClient.ts`
+- Typ Activity + ładowanie danych: `src/data/activities.ts`
 - Treści redakcyjne (blog, opisy miast): `/content/`
 - Komponenty UI: `src/components/`
 - Strony: `src/pages/`
@@ -31,11 +31,9 @@ znaleźć miejsca dopasowane do wieku dzieci i preferencji rodziny.
 
 ## Jak dodać nową atrakcję
 
-1. Otwórz `src/data/activities.json`
-2. Dodaj nowy obiekt na końcu tablicy
-3. Wymagane pola: `id`, `title`, `city`, `ageRange`, `indoor`, `tags`
-4. Opcjonalne (zalecane): `slug`, `address`, `description`, `amenities`
-5. Zapisz plik — zmiany pojawią się automatycznie
+1. Atrakcje żyją w bazie (`public_activities`) — nie ma plików JSON z danymi
+2. Nowe miejsca dodaje się przez panel `/admin` (zakładka Katalog)
+3. Publikacja: `published = true` oraz `admin_hidden = false`
 
 ## Jak dodać artykuł na blogu
 
