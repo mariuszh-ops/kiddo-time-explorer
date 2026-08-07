@@ -102,6 +102,11 @@ const SectionHeader = ({ title }: { title: string }) => (
   </div>
 );
 
+// Wiersz wyboru = JEDEN obszar dotykowy (min. 44 px) opisany <label htmlFor>,
+// żeby klik w tekst przełączał kontrolkę także na telefonie.
+const OPTION_ROW_CLASS =
+  "flex items-center gap-2.5 min-h-11 px-2.5 -mx-0.5 rounded-md border border-transparent cursor-pointer text-sm font-normal select-none transition-colors hover:bg-accent/60 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1";
+
 const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
