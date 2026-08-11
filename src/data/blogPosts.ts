@@ -558,7 +558,7 @@ Dane: katalog FamilyFun, oceny z Google, stan na sierpień 2026.`,
   },
   {
     id: 7,
-    slug: "parki-trampolin-warszawa-porownianie",
+    slug: "parki-trampolin-warszawa-porownanie",
     title: "Parki trampolin w Warszawie — porównanie 6 największych",
     excerpt:
       "Wszystkie wyglądają podobnie na zdjęciach, ale różnią się wiekiem wejścia, godzinami i tym, co poza trampolinami. Porównanie na danych z katalogu.",
