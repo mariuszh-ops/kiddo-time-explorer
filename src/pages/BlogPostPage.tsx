@@ -6,7 +6,7 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import ActivityCard from "@/components/ActivityCard";
 import { Badge } from "@/components/ui/badge";
-import { blogPosts } from "@/data/blogPosts";
+import { blogPosts, LEGACY_BLOG_SLUGS } from "@/data/blogPosts";
 import NotFound from "@/pages/NotFound";
 import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
