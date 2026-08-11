@@ -1,5 +1,5 @@
-import { useParams, Link, Navigate, useSearchParams } from "react-router-dom";
-import { useMemo, useState, lazy, Suspense, useCallback } from "react";
+import { useParams, Link, Navigate, useSearchParams, useLocation } from "react-router-dom";
+import { useMemo, useState, lazy, Suspense, useCallback, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
@@ -92,6 +92,8 @@ const CategoryPage = () => {
   const onlyFree = searchParams.get("free") === "1";
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
   const urlSearch = searchParams.get("search")?.trim() ?? "";
+  // ?page=2 → liczba doładowanych stron („Pokaż więcej") przywracana po powrocie wstecz.
+  const initialPage = Math.max(0, Number(searchParams.get("page") ?? "0") || 0);
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -104,7 +106,9 @@ const CategoryPage = () => {
     hasMore,
     loadingMore,
     loadMore,
-  } = useActivitiesInfinite({
+    page,
+  } = useActivitiesInfinite(
+    {
     region: citySlug,
     type: effectiveType,
     amenities: urlAmenities,
@@ -115,7 +119,10 @@ const CategoryPage = () => {
     ageMax: ageOption?.max,
     onlyFree,
     search: urlSearch,
-  });
+    },
+    24,
+    initialPage,
+  );
 
   const updateParams = useCallback(
     (patch: Record<string, string | undefined | null>) => {
@@ -137,6 +144,44 @@ const CategoryPage = () => {
   const clearAll = useCallback(() => {
     setSearchParams(new URLSearchParams(), { replace: true });
   }, [setSearchParams]);
+
+  // Trzymaj numer strony w URL, żeby powrót wstecz odtworzył doładowane karty.
+  useEffect(() => {
+    const current = Number(searchParams.get("page") ?? "0") || 0;
+    if (current !== page) {
+      updateParams({ page: page > 0 ? String(page) : undefined });
+    }
+  }, [page, searchParams, updateParams]);
+
+  // Zapamiętaj i przywróć pozycję scrolla dla tego widoku (klucz = ścieżka + filtry).
+  const location = useLocation();
+  const scrollKey = `ff:scroll:${location.pathname}?${new URLSearchParams(
+    Array.from(searchParams.entries()).filter(([k]) => k !== "page"),
+  ).toString()}`;
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    const onScroll = () => {
+      try {
+        sessionStorage.setItem(scrollKey, String(window.scrollY));
+      } catch { /* brak sessionStorage — pomijamy */ }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [scrollKey]);
+
+  useEffect(() => {
+    if (restoredRef.current || loading || activities.length === 0) return;
+    // Czekaj, aż przywrócone strony faktycznie się doładują.
+    if (page > 0 && activities.length <= 24) return;
+    restoredRef.current = true;
+    let saved = 0;
+    try {
+      saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
+    } catch { /* brak sessionStorage */ }
+    if (saved > 0) {
+      requestAnimationFrame(() => window.scrollTo(0, saved));
+    }
+  }, [loading, activities.length, page, scrollKey]);
 
   const hasActiveFilters =
     (urlType && !categorySlug ? true : false) ||
