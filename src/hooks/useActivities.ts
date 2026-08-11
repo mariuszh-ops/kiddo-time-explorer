@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
 
 export interface UseActivitiesFilters {
@@ -18,6 +19,8 @@ export interface UseActivitiesFilters {
   ageMax?: number;
   /** Gdy true, zawężaj do atrakcji z is_free=true. */
   onlyFree?: boolean;
+  /** Fraza wyszukiwania (nazwa lub miasto). */
+  search?: string;
 }
 
 export interface UseActivitiesResult {
@@ -33,8 +36,9 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 24, includeUncertain = true, ageMin, ageMax, onlyFree } = filters;
+  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 24, includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
+  const searchTerm = sanitizeSearchTerm(search ?? "");
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -57,6 +61,9 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
         if (!includeUncertain) q = q.eq("uncertain", false);
         if (onlyFree) q = q.eq("is_free", true);
+        if (searchTerm.length >= 2) {
+          q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
+        }
         // Zakres wieku [ageMin, ageMax] — przepuszczamy, gdy przedziały się przecinają.
         // Rekordy z age_min/age_max=null są ukrywane, bo nulle nie spełnią .lte/.gte.
         if (typeof ageMin === "number" && typeof ageMax === "number") {
@@ -85,7 +92,7 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
     })();
 
     return () => { cancelled = true; };
-  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain, ageMin, ageMax, onlyFree]);
+  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain, ageMin, ageMax, onlyFree, searchTerm]);
 
   return { data, total, loading, error };
 }
