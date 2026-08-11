@@ -4,6 +4,7 @@ import { Search, X, Send } from "lucide-react";
 import { Activity, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { REGION_BY_SLUG } from "@/data/regions";
+import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
@@ -184,7 +185,7 @@ const SearchAutocomplete = ({
           ref={inputRef}
           type="text"
           role="combobox"
-          aria-label="Szukaj atrakcji"
+          aria-label={SEARCH_PLACEHOLDER}
           aria-expanded={showDropdown}
           aria-autocomplete="list"
           aria-controls="search-autocomplete-listbox"
@@ -195,7 +196,7 @@ const SearchAutocomplete = ({
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
-          placeholder="Szukaj atrakcji..."
+          placeholder={SEARCH_PLACEHOLDER}
           className="pl-9 pr-8 py-2 w-48 md:w-56 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
           autoComplete="off"
         />

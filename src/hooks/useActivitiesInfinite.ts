@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
 
@@ -22,9 +23,10 @@ export function useActivitiesInfinite(
   filters: Omit<UseActivitiesFilters, "page" | "pageSize"> = {},
   pageSize = 24,
 ): UseActivitiesInfiniteResult {
-  const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true, ageMin, ageMax, onlyFree } = filters;
+  const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
-  const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree });
+  const searchTerm = sanitizeSearchTerm(search ?? "");
+  const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm });
 
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
@@ -60,6 +62,9 @@ export function useActivitiesInfinite(
         if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
         if (!includeUncertain) q = q.eq("uncertain", false);
         if (onlyFree) q = q.eq("is_free", true);
+        if (searchTerm.length >= 2) {
+          q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
+        }
         // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
         if (typeof ageMin === "number" && typeof ageMax === "number") {
           q = q.lte("age_min", ageMax).gte("age_max", ageMin);
@@ -89,7 +94,7 @@ export function useActivitiesInfinite(
       }
     })();
     return () => { cancelled = true; };
-  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree]);
+  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm]);
 
   const hasMore = data.length < total;
   const loadMore = () => {
