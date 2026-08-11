@@ -162,7 +162,7 @@ const CategoryPage = () => {
   useEffect(() => {
     const onScroll = () => {
       try {
-        sessionStorage.setItem(scrollKey, String(window.scrollY));
+        if (window.scrollY > 0) sessionStorage.setItem(scrollKey, String(window.scrollY));
       } catch { /* brak sessionStorage — pomijamy */ }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -179,7 +179,15 @@ const CategoryPage = () => {
       saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
     } catch { /* brak sessionStorage */ }
     if (saved > 0) {
-      requestAnimationFrame(() => window.scrollTo(0, saved));
+      // Karty dociągają się progresywnie — ponawiaj skok, aż strona urośnie
+      // do zapamiętanej wysokości (maks. ~1,5 s).
+      let tries = 0;
+      const tick = () => {
+        window.scrollTo(0, saved);
+        tries += 1;
+        if (Math.abs(window.scrollY - saved) > 4 && tries < 90) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     }
   }, [loading, activities.length, page, scrollKey]);
 
