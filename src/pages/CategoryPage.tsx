@@ -174,6 +174,7 @@ const CategoryPage = () => {
     // Czekaj, aż przywrócone strony faktycznie się doładują.
     if (page > 0 && activities.length <= 24) return;
     restoredRef.current = true;
+    console.info('[ff] restore attempt', { page, len: activities.length, key: scrollKey });
     let saved = 0;
     try {
       saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
@@ -185,7 +186,7 @@ const CategoryPage = () => {
       const timer = window.setInterval(() => {
         window.scrollTo(0, saved);
         tries += 1;
-        if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) window.clearInterval(timer);
+        if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) { console.info('[ff] restore done', { saved, y: window.scrollY, tries }); window.clearInterval(timer); }
       }, 100);
     }
   }, [loading, activities.length, page, scrollKey]);
