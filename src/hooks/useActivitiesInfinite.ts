@@ -12,6 +12,8 @@ export interface UseActivitiesInfiniteResult {
   hasMore: boolean;
   error: Error | null;
   loadMore: () => void;
+  /** Numer ostatnio doładowanej strony (0 = pierwsza). */
+  page: number;
 }
 
 /**
@@ -22,6 +24,8 @@ export interface UseActivitiesInfiniteResult {
 export function useActivitiesInfinite(
   filters: Omit<UseActivitiesFilters, "page" | "pageSize"> = {},
   pageSize = 24,
+  /** Strona startowa (przywracana z URL po powrocie z karty atrakcji). */
+  initialPage = 0,
 ): UseActivitiesInfiniteResult {
   const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
@@ -30,7 +34,9 @@ export function useActivitiesInfinite(
 
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(0);
+  // Strona startowa czytana raz — późniejsze zmiany URL nie resetują listy.
+  const initialPageRef = useRef(Math.max(0, Math.min(initialPage, 20)));
+  const [page, setPage] = useState(initialPageRef.current);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -39,7 +45,7 @@ export function useActivitiesInfinite(
   // Reset kiedy zmieniają się filtry
   useEffect(() => {
     activeKey.current = filterKey;
-    setPage(0);
+    setPage(initialPageRef.current);
     setData([]);
     setTotal(0);
     setError(null);
@@ -49,12 +55,17 @@ export function useActivitiesInfinite(
   useEffect(() => {
     let cancelled = false;
     const keyAtStart = filterKey;
+    // Pierwszy fetch po zmianie filtrów pobiera wszystkie strony do `page`
+    // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
+    const isInitialFetch = page === initialPageRef.current;
+    const from = isInitialFetch ? 0 : page * pageSize;
+    const to = page * pageSize + pageSize - 1;
     (async () => {
       try {
-        if (page > 0) setLoadingMore(true);
+        if (!isInitialFetch) setLoadingMore(true);
         let q = catalogClient
           .from("public_activities")
-          .select(CARD_COLUMNS, page === 0 ? { count: "exact" } : {})
+          .select(CARD_COLUMNS, isInitialFetch ? { count: "exact" } : {})
           .eq("published", true);
         if (region) q = q.eq("region", region);
         if (type) q = q.eq("type", type);
@@ -76,14 +87,14 @@ export function useActivitiesInfinite(
         else
           q = q.order("rating", { ascending: false, nullsFirst: false })
                .order("reviews_count", { ascending: false, nullsFirst: false });
-        q = q.range(page * pageSize, page * pageSize + pageSize - 1);
+        q = q.range(from, to);
 
         const { data: rows, count, error: err } = await q;
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
-        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, page * pageSize + i)) ?? [];
-        setData((prev) => (page === 0 ? mapped : [...prev, ...mapped]));
-        if (page === 0 && typeof count === "number") setTotal(count);
+        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, from + i)) ?? [];
+        setData((prev) => (isInitialFetch ? mapped : [...prev, ...mapped]));
+        if (isInitialFetch && typeof count === "number") setTotal(count);
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
       } finally {
@@ -101,5 +112,5 @@ export function useActivitiesInfinite(
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
 
-  return { data, total, loading, loadingMore, hasMore, error, loadMore };
+  return { data, total, loading, loadingMore, hasMore, error, loadMore, page };
 }

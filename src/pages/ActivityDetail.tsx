@@ -367,7 +367,6 @@ const ActivityDetail = () => {
                 "suggestedMaxAge": activity.ageMax,
               },
             } : {}),
-            ...(activity.openingHours ? { "openingHours": activity.openingHours } : {}),
             ...(openingHoursSpec.length > 0 ? { "openingHoursSpecification": openingHoursSpec } : {}),
             ...(activity.coordinates
               ? {

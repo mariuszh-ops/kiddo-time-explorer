@@ -1,4 +1,4 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Clock, Tag, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -6,7 +6,8 @@ import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import ActivityCard from "@/components/ActivityCard";
 import { Badge } from "@/components/ui/badge";
-import { blogPosts } from "@/data/blogPosts";
+import { blogPosts, LEGACY_BLOG_SLUGS } from "@/data/blogPosts";
+import NotFound from "@/pages/NotFound";
 import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -18,19 +19,14 @@ const BlogPostPage = () => {
   // gdy dane się załadują (sekcja powiązanych atrakcji).
   useDataStatus();
 
+  // Stare (literówkowe) adresy artykułów → trwałe przekierowanie na nowy slug.
+  if (!post && slug && LEGACY_BLOG_SLUGS[slug]) {
+    return <Navigate to={`/inspiracje/${LEGACY_BLOG_SLUGS[slug]}`} replace />;
+  }
+
+  // Nieznany slug → ten sam komponent 404 co pozostałe trasy (noindex + canonical).
   if (!post) {
-    return (
-      <PageTransition>
-        <div className="min-h-screen bg-background flex items-center justify-center">
-          <div className="text-center">
-            <h1 className="text-2xl font-serif text-foreground mb-4">Nie znaleziono artykułu</h1>
-            <Link to="/inspiracje" className="text-primary hover:underline">
-              Wróć do Inspiracji
-            </Link>
-          </div>
-        </div>
-      </PageTransition>
-    );
+    return <NotFound />;
   }
 
   // Powiązane atrakcje — sekcja dodatkowa, korzysta z katalogu tylko

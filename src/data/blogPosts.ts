@@ -558,7 +558,7 @@ Dane: katalog FamilyFun, oceny z Google, stan na sierpień 2026.`,
   },
   {
     id: 7,
-    slug: "parki-trampolin-warszawa-porownianie",
+    slug: "parki-trampolin-warszawa-porownanie",
     title: "Parki trampolin w Warszawie — porównanie 6 największych",
     excerpt:
       "Wszystkie wyglądają podobnie na zdjęciach, ale różnią się wiekiem wejścia, godzinami i tym, co poza trampolinami. Porównanie na danych z katalogu.",
@@ -1507,3 +1507,8 @@ Dane: katalog FamilyFun, oceny i liczby opinii z Google, stan na sierpień 2026.
     readTimeMinutes: 9,
   },
 ];
+
+/** Stare adresy artykułów (literówki) → aktualny slug. Używane do przekierowań 301. */
+export const LEGACY_BLOG_SLUGS: Record<string, string> = {
+  "parki-trampolin-warszawa-porownianie": "parki-trampolin-warszawa-porownanie",
+};
