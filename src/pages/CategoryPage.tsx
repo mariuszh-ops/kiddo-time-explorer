@@ -161,6 +161,9 @@ const CategoryPage = () => {
   const restoredRef = useRef(false);
   useEffect(() => {
     const onScroll = () => {
+      // Nie nadpisuj zapamiętanej pozycji, dopóki jej nie przywrócimy —
+      // wcześniejsze przewinięcia przeglądarki (clamp na krótkiej liście) zjadały wartość.
+      if (!restoredRef.current) return;
       try {
         if (window.scrollY > 0) sessionStorage.setItem(scrollKey, String(window.scrollY));
       } catch { /* brak sessionStorage — pomijamy */ }
@@ -174,7 +177,6 @@ const CategoryPage = () => {
     // Czekaj, aż przywrócone strony faktycznie się doładują.
     if (page > 0 && activities.length <= 24) return;
     restoredRef.current = true;
-    console.info('[ff] restore attempt', { page, len: activities.length, key: scrollKey });
     let saved = 0;
     try {
       saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
@@ -186,7 +188,7 @@ const CategoryPage = () => {
       const timer = window.setInterval(() => {
         window.scrollTo(0, saved);
         tries += 1;
-        if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) { console.info('[ff] restore done', { saved, y: window.scrollY, tries }); window.clearInterval(timer); }
+        if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) window.clearInterval(timer);
       }, 100);
     }
   }, [loading, activities.length, page, scrollKey]);
