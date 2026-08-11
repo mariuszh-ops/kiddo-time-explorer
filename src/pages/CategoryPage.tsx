@@ -90,6 +90,8 @@ const CategoryPage = () => {
   const ageOption = urlAge ? AGE_RANGES.find((a) => a.value === urlAge) : undefined;
   // ?free=1 → zawężaj do atrakcji bez biletu.
   const onlyFree = searchParams.get("free") === "1";
+  // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
+  const urlSearch = searchParams.get("search")?.trim() ?? "";
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -112,6 +114,7 @@ const CategoryPage = () => {
     ageMin: ageOption?.min,
     ageMax: ageOption?.max,
     onlyFree,
+    search: urlSearch,
   });
 
   const updateParams = useCallback(
@@ -142,7 +145,8 @@ const CategoryPage = () => {
     urlSort !== "rating" ||
     !includeUncertain ||
     Boolean(urlAge) ||
-    onlyFree;
+    onlyFree ||
+    Boolean(urlSearch);
 
   // Fallback config / cityLabel so we never render a completely blank page
   const effectiveConfig = config ?? {
@@ -216,6 +220,15 @@ const CategoryPage = () => {
   const combinedJsonLd = [itemListJsonLd, breadcrumbJsonLd];
 
   const countLabel = `${total} ${pluralizeActivities(total)} w ${capitalize(effectiveCityLabel.locative)}`;
+
+  // Kontekst wyszukiwania: chipy do usunięcia + wyjście na wyniki ogólnopolskie.
+  const searchQS = urlSearch ? `?search=${encodeURIComponent(urlSearch)}` : "";
+  const removeRegionTo = categorySlug
+    ? `/kategoria/${categorySlug}${searchQS}`
+    : `/${searchQS}`;
+  const removeCategoryTo = citySlug ? `/${citySlug}${searchQS}` : `/${searchQS}`;
+  const categoryLabel =
+    filterOptions.type.find((t) => t.value === categorySlug)?.label ?? effectiveConfig.label;
 
   // Meta description: liczba atrakcji + krótki opis kategorii (docięty do ~160 znaków).
   const dynamicMetaDescription = (() => {
@@ -309,6 +322,37 @@ const CategoryPage = () => {
           />
 
           {/* Count */}
+          {urlSearch && (
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              <span className="text-sm text-muted-foreground">
+                Wyniki dla „{urlSearch}” w:
+              </span>
+              {citySlug && (
+                <Link
+                  to={removeRegionTo}
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-primary/10 text-primary text-sm hover:bg-primary/15 transition-colors"
+                  aria-label={`Usuń filtr województwa: ${effectiveCityLabel.nominative}`}
+                >
+                  {effectiveCityLabel.nominative}
+                  <span aria-hidden="true">×</span>
+                </Link>
+              )}
+              {categorySlug && (
+                <Link
+                  to={removeCategoryTo}
+                  className="inline-flex items-center gap-1.5 h-8 px-3 rounded-full border border-border bg-primary/10 text-primary text-sm hover:bg-primary/15 transition-colors"
+                  aria-label={`Usuń filtr kategorii: ${categoryLabel}`}
+                >
+                  {categoryLabel}
+                  <span aria-hidden="true">×</span>
+                </Link>
+              )}
+              <Link to={`/${searchQS}`} className="text-sm text-primary hover:underline">
+                Szukaj w całej Polsce
+              </Link>
+            </div>
+          )}
+
           <p
             className="text-sm text-muted-foreground mb-4 min-h-5"
             aria-live="polite"
