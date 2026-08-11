@@ -160,7 +160,7 @@ const HomeSearch = () => {
     <section className="container py-4 md:py-6">
       <div ref={containerRef} className="relative mx-auto max-w-2xl">
         <label htmlFor="home-search" className="sr-only">
-          Szukaj atrakcji, miasta lub kategorii
+          {SEARCH_PLACEHOLDER}
         </label>
         <div className="relative flex items-center">
           <Search
@@ -179,8 +179,8 @@ const HomeSearch = () => {
             }}
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            placeholder="Szukaj atrakcji, miasta…"
-            aria-label="Szukaj atrakcji, miasta lub kategorii"
+            placeholder={SEARCH_PLACEHOLDER}
+            aria-label={SEARCH_PLACEHOLDER}
             aria-autocomplete="list"
             aria-expanded={showDropdown}
             aria-controls={listboxId}
