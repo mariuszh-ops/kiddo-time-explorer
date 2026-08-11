@@ -182,12 +182,11 @@ const CategoryPage = () => {
       // Karty dociągają się progresywnie — ponawiaj skok, aż strona urośnie
       // do zapamiętanej wysokości (maks. ~1,5 s).
       let tries = 0;
-      const tick = () => {
+      const timer = window.setInterval(() => {
         window.scrollTo(0, saved);
         tries += 1;
-        if (Math.abs(window.scrollY - saved) > 4 && tries < 90) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+        if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) window.clearInterval(timer);
+      }, 100);
     }
   }, [loading, activities.length, page, scrollKey]);
 
