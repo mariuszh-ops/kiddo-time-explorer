@@ -4,6 +4,7 @@ import { MapPin, Search, X } from "lucide-react";
 import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
+import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { useDataStatus } from "@/hooks/useDataStatus";
 
 function normalize(text: string): string {
