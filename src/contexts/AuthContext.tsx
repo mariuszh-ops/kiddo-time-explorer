@@ -24,6 +24,10 @@ interface AuthContextType {
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string) => Promise<void>;
+  resendConfirmation: (email: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 
   // Backward compat aliases for existing consumers (login/logout).
   // New code should prefer signIn/signOut.
@@ -100,6 +104,52 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithGoogle = useCallback(signInWithGoogleImpl, []);
 
+  const rememberReturnTo = () => {
+    try {
+      window.localStorage.setItem(
+        "auth_return_to",
+        window.location.pathname + window.location.search
+      );
+    } catch {
+      // storage unavailable — ignore
+    }
+  };
+
+  const signInWithEmail = useCallback(async (email: string, password: string) => {
+    rememberReturnTo();
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (error) throw error;
+  }, []);
+
+  const signUpWithEmail = useCallback(async (email: string, password: string) => {
+    rememberReturnTo();
+    const { error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) throw error;
+  }, []);
+
+  const resendConfirmation = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email: email.trim(),
+      options: { emailRedirectTo: window.location.origin },
+    });
+    if (error) throw error;
+  }, []);
+
+  const resetPassword = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    if (error) throw error;
+  }, []);
+
   const signOut = useCallback(async (): Promise<void> => {
     await supabase.auth.signOut();
     setIsDemoMode(false);
@@ -142,6 +192,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signIn,
         signOut,
         signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
+        resendConfirmation,
+        resetPassword,
         login,
         logout,
         isDemoMode: env.isDev && isDemoMode,
