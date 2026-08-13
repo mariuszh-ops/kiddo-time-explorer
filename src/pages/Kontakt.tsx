@@ -11,7 +11,7 @@ const Kontakt = () => {
       <SEOHead title="Kontakt" description="Skontaktuj się z zespołem FamilyFun." path="/kontakt" />
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="container py-8 pb-20 sm:pb-8">
+        <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <div className="max-w-2xl mx-auto">
             <Link
               to="/"

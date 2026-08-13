@@ -15,7 +15,7 @@ const BlogListPage = () => {
       />
       <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
-        <main className="container py-8 md:py-12">
+        <main id="main-content" className="container py-8 md:py-12">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
               Inspiracje
