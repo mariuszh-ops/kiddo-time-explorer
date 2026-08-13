@@ -20,6 +20,7 @@ import Index from "./pages/Index";
 const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect"));
 const MyPlaces = lazy(() => import("./pages/MyPlaces"));
 const Profile = lazy(() => import("./pages/Profile"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const AdminLayout = lazy(() => import("./pages/admin/AdminLayout"));
 const AdminKatalog = lazy(() => import("./pages/admin/AdminKatalog"));
 const AdminDoPrzejrzenia = lazy(() => import("./pages/admin/AdminDoPrzejrzenia"));
@@ -70,6 +71,7 @@ const AnimatedRoutes = () => {
             <Route path="/kategoria/:categorySlug" element={<DataGate><CategoryPage /></DataGate>} />
             <Route path="/my-places" element={<DataGate><MyPlaces /></DataGate>} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminKatalog />} />
               <Route path="katalog" element={<AdminKatalog />} />
