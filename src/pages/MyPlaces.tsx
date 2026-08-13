@@ -97,7 +97,7 @@ const MyPlaces = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get("tab");
   const defaultTab = tabParam === "wantToVisit" ? "wantToVisit" : tabParam === "visited" ? "visited" : "favorites";
-  const { isLoggedIn, login, signInWithGoogle } = useAuth();
+  const { isLoggedIn, signInWithGoogle } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = React.useState(false);
 
   useEffect(() => {

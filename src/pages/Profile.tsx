@@ -23,7 +23,7 @@ import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout, isLoggedIn, login, user, signInWithGoogle } = useAuth();
+  const { logout, isLoggedIn, user, signInWithGoogle } = useAuth();
   const { favoritesCount, wantToVisitCount } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
