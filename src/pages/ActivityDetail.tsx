@@ -344,7 +344,13 @@ const ActivityDetail = () => {
             "description": (activity.experiencePoints && activity.experiencePoints.length > 0
               ? activity.experiencePoints.join(". ")
               : activity.description?.trim()) || activity.title,
-            "image": activity.imageUrl,
+            "image": (() => {
+              const img = activity.imageUrl;
+              const FALLBACK = "https://familyfun.pl/og-image-1200x630.jpg";
+              if (!img || img.endsWith(".svg")) return FALLBACK;
+              if (/^https?:\/\//i.test(img)) return img;
+              return img.startsWith("/") ? `https://familyfun.pl${img}` : FALLBACK;
+            })(),
             "url": `https://familyfun.pl/atrakcje/${activity.slug}`,
             "address": {
               "@type": "PostalAddress",
