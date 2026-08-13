@@ -404,7 +404,7 @@ const ActivityDetail = () => {
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={handleBack}
-              className="shrink-0 w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+              className="shrink-0 min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label="Wróć"
             >
               <ArrowLeft className="w-4 h-4 text-foreground" />
