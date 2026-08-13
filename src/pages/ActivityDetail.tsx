@@ -437,7 +437,7 @@ const ActivityDetail = () => {
             </Button>
             <button
               onClick={handleFavoriteClick}
-              className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
+              className="min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
             >
               <Heart className={cn(
