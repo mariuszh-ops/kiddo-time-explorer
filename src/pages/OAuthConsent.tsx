@@ -73,7 +73,7 @@ export default function OAuthConsent() {
   }
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-6 py-12">
+    <main id="main-content" className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-6 py-12">
       {error ? (
         <p className="text-sm text-destructive">Nie udało się obsłużyć tej prośby o dostęp: {error}</p>
       ) : !details ? (

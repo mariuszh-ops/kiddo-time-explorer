@@ -222,7 +222,7 @@ const BlogPostPage = () => {
       />
       <div className="min-h-screen bg-background pb-20 md:pb-0">
         <Header />
-        <main className="container py-6 md:py-10">
+        <main id="main-content" className="container py-6 md:py-10">
           <div className="max-w-2xl mx-auto">
             {/* Breadcrumbs - desktop */}
             <nav className="hidden md:flex items-center gap-1.5 text-sm mb-6" aria-label="breadcrumb">

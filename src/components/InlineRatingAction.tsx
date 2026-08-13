@@ -62,25 +62,25 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
   // Guest state
   if (!isLoggedIn) {
     return (
-      <div className={compact ? "" : "py-3"}>
-        <div className="flex flex-col gap-1.5">
-          {!compact && <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>}
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => onAuthRequired()}
-                className="p-0.5 cursor-pointer"
-                aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
-              >
-                <Star className={`${compact ? "w-5 h-5" : "w-6 h-6 md:w-7 md:h-7"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
-              </button>
-            ))}
-          </div>
-          <p className="text-xs text-muted-foreground">Zaloguj się, aby ocenić</p>
+    <div className={compact ? "" : "py-3"}>
+      <div className="flex flex-col gap-1.5">
+        {!compact && <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>}
+        <div className="flex items-center gap-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onAuthRequired()}
+              className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center cursor-pointer"
+              aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
+            >
+              <Star className={`${compact ? "w-5 h-5" : "w-6 h-6 md:w-7 md:h-7"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
+            </button>
+          ))}
         </div>
+        <p className="text-xs text-muted-foreground">Zaloguj się, aby ocenić</p>
       </div>
+    </div>
     );
   }
 
@@ -103,7 +103,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
                 onClick={() => handleStarClick(starValue)}
                 onMouseEnter={() => setHoveredStar(starValue)}
                 onMouseLeave={() => setHoveredStar(0)}
-                className="p-0.5 transition-transform hover:scale-110 active:scale-95"
+                className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
                 aria-label={`Oceń ${starValue} z 5 gwiazdek`}
               >
                 <AnimatePresence mode="wait">

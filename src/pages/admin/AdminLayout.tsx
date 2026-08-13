@@ -156,7 +156,7 @@ const AdminLayout = () => {
             </nav>
           </header>
 
-          <main className="max-w-7xl mx-auto px-6 py-6">
+          <main id="main-content" className="max-w-7xl mx-auto px-6 py-6">
             <Outlet context={{ stats }} />
           </main>
         </div>

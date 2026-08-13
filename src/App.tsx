@@ -14,6 +14,7 @@ import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
 import DataGate from "@/components/DataGate";
 import { FEATURES } from "@/lib/featureFlags";
+import SkipLink from "./components/SkipLink";
 
 import Index from "./pages/Index";
 const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect"));
@@ -116,6 +117,7 @@ const App = () => {
                     <Sonner />
                     <OfflineIndicator />
                     <BrowserRouter>
+                      <SkipLink />
                       <AnalyticsTracker />
                       <AuthReturnHandler />
                       <AnimatedRoutes />
