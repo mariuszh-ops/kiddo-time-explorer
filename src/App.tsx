@@ -117,6 +117,7 @@ const App = () => {
                     <Sonner />
                     <OfflineIndicator />
                     <BrowserRouter>
+                      <SkipLink />
                       <AnalyticsTracker />
                       <AuthReturnHandler />
                       <AnimatedRoutes />
