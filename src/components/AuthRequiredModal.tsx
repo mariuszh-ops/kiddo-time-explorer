@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import EmailAuthForm from "@/components/EmailAuthForm";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +19,8 @@ interface AuthRequiredModalProps {
   onLoginClick?: () => Promise<void> | void;
   title?: string;
   description?: string;
+  /** Panel admina: tylko logowanie Google. */
+  googleOnly?: boolean;
 }
 
 const AuthRequiredModal = ({
@@ -28,6 +31,7 @@ const AuthRequiredModal = ({
   onLoginClick,
   title = "Zapisz to miejsce na później",
   description = "Aby zapisywać ulubione atrakcje i planować wizyty, potrzebujesz konta.",
+  googleOnly = false,
 }: AuthRequiredModalProps) => {
   const [isLoading, setIsLoading] = useState<'google' | 'email' | 'login' | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -141,6 +145,17 @@ const AuthRequiredModal = ({
               </>
             )}
           </Button>
+
+          {!googleOnly && (
+            <>
+              <div className="flex items-center gap-3 py-1">
+                <span className="h-px flex-1 bg-border" />
+                <span className="text-xs text-muted-foreground">lub e-mailem</span>
+                <span className="h-px flex-1 bg-border" />
+              </div>
+              <EmailAuthForm onSuccess={onClose} />
+            </>
+          )}
         </div>
 
       </DialogContent>
