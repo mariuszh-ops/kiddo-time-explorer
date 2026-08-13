@@ -109,7 +109,7 @@ const Profile = () => {
         <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" noindex />
         <div className="min-h-screen bg-background">
           <Header />
-          <main className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
+          <main id="main-content" className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
             <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
               <User className="w-7 h-7 text-accent-foreground" />
             </div>
@@ -168,7 +168,7 @@ const Profile = () => {
           </div>
         </div>
 
-        <main className="container py-6 md:py-8 pb-20 md:pb-8">
+        <main id="main-content" className="container py-6 md:py-8 pb-20 md:pb-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

@@ -221,6 +221,7 @@ const Index = () => {
         }}
       />
       <main
+        id="main-content"
         className={cn(
           "min-h-screen bg-background pb-20 md:pb-0 transition-opacity duration-150",
           isMobile && viewMode === 'map' && "h-screen overflow-hidden pb-0"

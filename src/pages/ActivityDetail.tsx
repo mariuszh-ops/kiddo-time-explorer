@@ -389,7 +389,7 @@ const ActivityDetail = () => {
           },
         ] as unknown as Record<string, unknown>}
       />
-      <main className="min-h-screen bg-background pb-20 sm:pb-8">
+      <main id="main-content" className="min-h-screen bg-background pb-20 sm:pb-8">
       {/* Global header — same on mobile and desktop */}
       <Header />
 
