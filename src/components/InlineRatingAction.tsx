@@ -103,7 +103,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
                 onClick={() => handleStarClick(starValue)}
                 onMouseEnter={() => setHoveredStar(starValue)}
                 onMouseLeave={() => setHoveredStar(0)}
-                className="p-0.5 transition-transform hover:scale-110 active:scale-95"
+                className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
                 aria-label={`Oceń ${starValue} z 5 gwiazdek`}
               >
                 <AnimatePresence mode="wait">
