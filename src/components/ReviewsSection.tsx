@@ -293,7 +293,7 @@ const ReviewsSection = ({
                     onClick={() => handleStarClick(v)}
                     onMouseEnter={() => setHoveredStar(v)}
                     onMouseLeave={() => setHoveredStar(0)}
-                    className="p-0.5 transition-transform hover:scale-110 active:scale-95"
+                    className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
                     aria-label={`Oceń ${v} z 5`}
                   >
                     <Star
