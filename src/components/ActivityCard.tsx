@@ -191,7 +191,7 @@ const ActivityCard = ({
             {/* Heart button - right side */}
             <button
               onClick={handleHeartClick}
-              className="absolute top-2 right-2 z-10 w-8 h-8 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/50 active:scale-90 opacity-80 group-hover:opacity-100"
+              className="absolute top-2 right-2 z-10 min-h-11 min-w-11 h-11 w-11 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/50 active:scale-90 opacity-80 group-hover:opacity-100"
               aria-label={isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
             >
               <Heart
