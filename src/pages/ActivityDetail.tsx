@@ -447,7 +447,7 @@ const ActivityDetail = () => {
             </button>
             <button
               onClick={handleShare}
-              className="hidden sm:flex w-9 h-9 rounded-full hover:bg-muted items-center justify-center transition-colors"
+              className="hidden sm:flex min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted items-center justify-center transition-colors"
               aria-label="Udostępnij"
             >
               <Share2 className="w-5 h-5 text-foreground" />
