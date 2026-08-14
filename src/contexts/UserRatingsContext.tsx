@@ -2,6 +2,9 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import { Activity, getActivities } from "@/data/activities";
 import { getRawItem, setRawItem, getItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { catalogClient as supabase } from "@/lib/catalogClient";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const STORAGE_KEY = "familyfun_user_ratings";
 
@@ -68,7 +71,7 @@ interface UserRatingsContextType {
   // Update just the review
   updateReview: (activityId: number, review: string) => Promise<void>;
   // Remove a rating entirely
-  removeRating: (activityId: number) => void;
+  removeRating: (activityId: number) => Promise<void>;
   // Get all rated activities with full activity data
   visitedActivities: (Activity & { userRating: UserRating })[];
   // Count of visited/rated activities
@@ -78,13 +81,92 @@ interface UserRatingsContextType {
 const UserRatingsContext = createContext<UserRatingsContextType | undefined>(undefined);
 
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
   // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
   useDataStatus();
 
+  // Gość: localStorage jest źródłem prawdy. Zalogowany: źródłem jest baza,
+  // więc nie nadpisujemy lokalnego cache'u danymi konta.
   useEffect(() => {
-    saveRatings(ratings);
-  }, [ratings]);
+    if (!user) saveRatings(ratings);
+  }, [ratings, user]);
+
+  // Po zalogowaniu: migruj lokalne oceny do bazy (upsert), potem hydratuj z bazy.
+  // Po wylogowaniu: wróć do localStorage.
+  useEffect(() => {
+    let cancelled = false;
+
+    const hydrate = async () => {
+      if (!user) {
+        setRatings(loadRatings());
+        return;
+      }
+
+      const local = loadRatings();
+      if (local.size > 0) {
+        const rows = Array.from(local.values()).map(r => ({
+          user_id: user.id,
+          activity_id: r.activityId,
+          rating: r.rating,
+          review: r.review ?? null,
+        }));
+        const { error } = await supabase
+          .from("user_ratings")
+          .upsert(rows, { onConflict: "user_id,activity_id", ignoreDuplicates: true });
+        if (cancelled) return;
+        if (!error) removeItem(STORAGE_KEY);
+      }
+
+      const { data, error } = await supabase
+        .from("user_ratings")
+        .select("activity_id, rating, review, updated_at, created_at")
+        .eq("user_id", user.id);
+      if (cancelled || error || !data) return;
+
+      const map = new Map<number, UserRating>();
+      for (const row of data as { activity_id: number; rating: number; review: string | null; updated_at: string; created_at: string }[]) {
+        map.set(row.activity_id, {
+          activityId: row.activity_id,
+          rating: row.rating,
+          review: row.review ?? undefined,
+          ratedAt: new Date(row.updated_at ?? row.created_at),
+        });
+      }
+      setRatings(map);
+    };
+
+    hydrate();
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
+
+  // Upsert/delete do bazy. Zwraca false przy błędzie sieciowym → rollback w UI.
+  const syncToServer = useCallback(
+    async (entry: UserRating | null, activityId: number): Promise<boolean> => {
+      if (!user) return true;
+      if (entry) {
+        const { error } = await supabase.from("user_ratings").upsert(
+          {
+            user_id: user.id,
+            activity_id: activityId,
+            rating: entry.rating,
+            review: entry.review ?? null,
+          },
+          { onConflict: "user_id,activity_id" }
+        );
+        return !error;
+      }
+      const { error } = await supabase
+        .from("user_ratings")
+        .delete()
+        .eq("user_id", user.id)
+        .eq("activity_id", activityId);
+      return !error;
+    },
+    [user]
+  );
 
   const getUserRating = useCallback((activityId: number): UserRating | undefined => {
     return ratings.get(activityId);
@@ -95,46 +177,56 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
   }, [ratings]);
 
   const rateActivity = useCallback(async (activityId: number, rating: number, review?: string): Promise<void> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    setRatings(prev => {
-      const newMap = new Map(prev);
-      newMap.set(activityId, {
-        activityId,
-        rating,
-        review: review?.trim() || undefined,
-        ratedAt: new Date(),
+    const previous = ratings.get(activityId);
+    const next: UserRating = {
+      activityId,
+      rating,
+      review: review?.trim() || previous?.review,
+      ratedAt: new Date(),
+    };
+    // Optimistic update.
+    setRatings(prev => new Map(prev).set(activityId, next));
+
+    const ok = await syncToServer(next, activityId);
+    if (!ok) {
+      setRatings(prev => {
+        const newMap = new Map(prev);
+        if (previous) newMap.set(activityId, previous);
+        else newMap.delete(activityId);
+        return newMap;
       });
-      return newMap;
-    });
-  }, []);
+      toast.error("Nie udało się zapisać oceny. Spróbuj ponownie.");
+    }
+  }, [ratings, syncToServer]);
 
   const updateReview = useCallback(async (activityId: number, review: string): Promise<void> => {
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    setRatings(prev => {
-      const existing = prev.get(activityId);
-      if (!existing) return prev;
-      
-      const newMap = new Map(prev);
-      newMap.set(activityId, {
-        ...existing,
-        review: review.trim() || undefined,
-      });
-      return newMap;
-    });
-  }, []);
+    const previous = ratings.get(activityId);
+    if (!previous) return;
+    const next: UserRating = { ...previous, review: review.trim() || undefined };
+    setRatings(prev => new Map(prev).set(activityId, next));
 
-  const removeRating = useCallback((activityId: number) => {
+    const ok = await syncToServer(next, activityId);
+    if (!ok) {
+      setRatings(prev => new Map(prev).set(activityId, previous));
+      toast.error("Nie udało się zapisać opinii. Spróbuj ponownie.");
+    }
+  }, [ratings, syncToServer]);
+
+  const removeRating = useCallback(async (activityId: number) => {
+    const previous = ratings.get(activityId);
+    if (!previous) return;
     setRatings(prev => {
-      if (!prev.has(activityId)) return prev;
       const newMap = new Map(prev);
       newMap.delete(activityId);
       return newMap;
     });
-  }, []);
+
+    const ok = await syncToServer(null, activityId);
+    if (!ok) {
+      setRatings(prev => new Map(prev).set(activityId, previous));
+      toast.error("Nie udało się usunąć oceny. Spróbuj ponownie.");
+    }
+  }, [ratings, syncToServer]);
 
   // Get all visited activities with their ratings
   const visitedActivities = getActivities()

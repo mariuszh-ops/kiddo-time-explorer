@@ -71,6 +71,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_ratings: {
+        Row: {
+          activity_id: number
+          created_at: string
+          id: string
+          rating: number
+          review: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_id: number
+          created_at?: string
+          id?: string
+          rating: number
+          review?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activity_id?: number
+          created_at?: string
+          id?: string
+          rating?: number
+          review?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_reviews: {
         Row: {
           author_name: string
@@ -133,7 +163,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_activity_rating: {
+        Args: { activity_id: number }
+        Returns: {
+          avg_rating: number
+          ratings_count: number
+        }[]
+      }
     }
     Enums: {
       app_role: "admin"
