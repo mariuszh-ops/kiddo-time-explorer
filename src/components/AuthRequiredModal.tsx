@@ -109,7 +109,7 @@ const AuthRequiredModal = ({
         </AnimatePresence>
 
         <div className="flex flex-col gap-3 pt-2">
-          {/* Google button — jedyna metoda logowania (backend nie obsługuje e-maila). */}
+          {/* Google button — obok logowania e-mailem poniżej (poza panelem admina). */}
           <Button 
             onClick={() => handleAction(onGoogleClick, 'google')}
             className="w-full"
