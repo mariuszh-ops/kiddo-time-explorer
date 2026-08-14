@@ -71,7 +71,7 @@ interface UserRatingsContextType {
   // Update just the review
   updateReview: (activityId: number, review: string) => Promise<void>;
   // Remove a rating entirely
-  removeRating: (activityId: number) => void;
+  removeRating: (activityId: number) => Promise<void>;
   // Get all rated activities with full activity data
   visitedActivities: (Activity & { userRating: UserRating })[];
   // Count of visited/rated activities
