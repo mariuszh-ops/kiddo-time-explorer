@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities } from "@/data/activities";
-import { getRawItem, setRawItem } from "@/lib/storage";
+import { getRawItem, setRawItem, getItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { useDataStatus } from "@/hooks/useDataStatus";
 
 const STORAGE_KEY = "familyfun_user_ratings";
@@ -10,12 +10,36 @@ type StoredRating = { activityId: number; rating: number; review?: string; rated
 function loadRatings(): Map<number, UserRating> {
   try {
     const raw = getRawItem(STORAGE_KEY);
-    if (!raw) return new Map();
-    const arr: StoredRating[] = JSON.parse(raw);
-    return new Map(arr.map(r => [r.activityId, { ...r, ratedAt: new Date(r.ratedAt) }]));
+    const map = new Map<number, UserRating>();
+    if (raw) {
+      const arr: StoredRating[] = JSON.parse(raw);
+      for (const r of arr) map.set(r.activityId, { ...r, ratedAt: new Date(r.ratedAt) });
+    }
+    return migrateLegacyRatings(map);
   } catch {
     return new Map();
   }
+}
+
+/**
+ * Migracja starych ocen z klucza "ff_inline_ratings" (InlineRatingAction)
+ * do jednego źródła prawdy. Stary klucz jest usuwany.
+ */
+function migrateLegacyRatings(map: Map<number, UserRating>): Map<number, UserRating> {
+  try {
+    const legacy = getItem<Record<string, number>>(STORAGE_KEYS.INLINE_RATINGS, {});
+    const entries = Object.entries(legacy);
+    if (entries.length === 0) return map;
+    for (const [id, rating] of entries) {
+      const activityId = Number(id);
+      if (!Number.isFinite(activityId) || map.has(activityId)) continue;
+      map.set(activityId, { activityId, rating, ratedAt: new Date() });
+    }
+    removeItem(STORAGE_KEYS.INLINE_RATINGS);
+  } catch {
+    // silent
+  }
+  return map;
 }
 
 function saveRatings(ratings: Map<number, UserRating>) {
@@ -43,6 +67,8 @@ interface UserRatingsContextType {
   rateActivity: (activityId: number, rating: number, review?: string) => Promise<void>;
   // Update just the review
   updateReview: (activityId: number, review: string) => Promise<void>;
+  // Remove a rating entirely
+  removeRating: (activityId: number) => void;
   // Get all rated activities with full activity data
   visitedActivities: (Activity & { userRating: UserRating })[];
   // Count of visited/rated activities
@@ -101,6 +127,15 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const removeRating = useCallback((activityId: number) => {
+    setRatings(prev => {
+      if (!prev.has(activityId)) return prev;
+      const newMap = new Map(prev);
+      newMap.delete(activityId);
+      return newMap;
+    });
+  }, []);
+
   // Get all visited activities with their ratings
   const visitedActivities = getActivities()
     .filter(activity => ratings.has(activity.id))
@@ -117,6 +152,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         hasRated,
         rateActivity,
         updateReview,
+        removeRating,
         visitedActivities,
         visitedCount: ratings.size,
       }}
