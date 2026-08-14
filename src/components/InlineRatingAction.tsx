@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 
 interface InlineRatingActionProps {
   activityId: number;
@@ -10,54 +11,21 @@ interface InlineRatingActionProps {
   compact?: boolean;
 }
 
-function loadRatings(): Record<string, number> {
-  return getItem<Record<string, number>>(STORAGE_KEYS.INLINE_RATINGS, {});
-}
-
-function saveRating(activityId: number, rating: number) {
-  const ratings = loadRatings();
-  ratings[String(activityId)] = rating;
-  setItem(STORAGE_KEYS.INLINE_RATINGS, ratings);
-}
-
-function getSavedRating(activityId: number): number | null {
-  const ratings = loadRatings();
-  return ratings[String(activityId)] ?? null;
-}
-
-function getTotalRatingsCount(): number {
-  return Object.keys(loadRatings()).length;
-}
-
-function getActivityRatingsCount(activityId: number): number {
-  // For now, count how many users rated this activity (localStorage is single-user, so 0 or 1)
-  const saved = getSavedRating(activityId);
-  return saved ? 1 : 0;
-}
-
 const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
-  const [userRating, setUserRating] = useState<number | null>(null);
+  const { getUserRating, rateActivity } = useUserRatings();
   const [hoveredStar, setHoveredStar] = useState(0);
-
-  // Load saved rating on mount
-  useEffect(() => {
-    const saved = getSavedRating(activityId);
-    if (saved) setUserRating(saved);
-  }, [activityId]);
+  const userRating = getUserRating(activityId)?.rating ?? null;
 
   const handleStarClick = (rating: number) => {
     if (!isLoggedIn) {
       onAuthRequired();
       return;
     }
-    setUserRating(rating);
-    saveRating(activityId, rating);
+    void rateActivity(activityId, rating);
   };
 
   const hasRated = userRating !== null;
-  const ratingCount = getActivityRatingsCount(activityId);
-  const minRequired = 5;
 
   // Guest state
   if (!isLoggedIn) {
@@ -126,13 +94,16 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
             );
           })}
         </div>
-        <p className="text-xs text-muted-foreground">
-          {hasRated
-            ? ratingCount >= minRequired
-              ? `Ocena rodziców: ⭐ ${userRating!.toFixed(1)} (${ratingCount} opinii)`
-              : `Twoja ocena: ${userRating}/5. Ocena rodziców pojawi się po zebraniu 5 opinii (${ratingCount}/${minRequired})`
-            : "Kliknij gwiazdkę, aby ocenić"}
-        </p>
+        {hasRated ? (
+          <p className="text-xs text-muted-foreground">
+            Twoja ocena: {userRating}/5 —{" "}
+            <Link to="/my-places?tab=visited" className="text-primary underline underline-offset-2">
+              znajdziesz ją w Moje miejsca → Odwiedzone
+            </Link>
+          </p>
+        ) : (
+          <p className="text-xs text-muted-foreground">Kliknij gwiazdkę, aby ocenić</p>
+        )}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
-import { Star, MapPin, ChevronRight } from "lucide-react";
+import { Star, MapPin, ChevronRight, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Activity } from "@/data/activities";
-import { UserRating } from "@/contexts/UserRatingsContext";
+import { UserRating, useUserRatings } from "@/contexts/UserRatingsContext";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 
@@ -11,6 +11,7 @@ interface VisitedActivityCardProps {
 
 const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
   const { userRating } = activity;
+  const { removeRating } = useUserRatings();
   const formattedDate = format(userRating.ratedAt, "d MMMM yyyy", { locale: pl });
   
   // Truncate review for preview
@@ -78,6 +79,21 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
       
       {/* Review section */}
       <div className="px-3 md:px-4 pb-3 md:pb-4 -mt-1">
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              removeRating(activity.id);
+            }}
+            aria-label="Usuń ocenę"
+            className="min-h-11 min-w-11 -mr-1 flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span>Usuń ocenę</span>
+          </button>
+        </div>
         {userRating.review ? (
           <div className="bg-accent/50 rounded-lg p-3">
             <p className="text-sm text-foreground leading-relaxed line-clamp-2">
