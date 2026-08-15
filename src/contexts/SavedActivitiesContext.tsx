@@ -182,6 +182,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       });
       const res = await syncToServer(activityId, "favorite", willAdd);
       if (!res.ok) {
+        notifySaveError();
         // Rollback.
         setFavoriteIds(prev => {
           const next = new Set(prev);
@@ -207,6 +208,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       });
       const res = await syncToServer(activityId, "want_to_visit", willAdd);
       if (!res.ok) {
+        notifySaveError();
         setWantToVisitIds(prev => {
           const next = new Set(prev);
           if (willAdd) next.delete(activityId);
@@ -231,6 +233,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       if (!had) return;
       const res = await syncToServer(id, "favorite", false);
       if (!res.ok) {
+        notifySaveError();
         setFavoriteIds(prev => {
           const next = new Set(prev);
           next.add(id);
@@ -252,6 +255,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       if (!had) return;
       const res = await syncToServer(id, "want_to_visit", false);
       if (!res.ok) {
+        notifySaveError();
         setWantToVisitIds(prev => {
           const next = new Set(prev);
           next.add(id);
@@ -273,8 +277,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         toggleWantToVisit,
         removeFromFavorites,
         removeFromWantToVisit,
-        favoritesCount: favoriteIds.size,
-        wantToVisitCount: wantToVisitIds.size,
+        favoritesCount: favorites.length,
+        wantToVisitCount: wantToVisit.length,
       }}
     >
       {children}
