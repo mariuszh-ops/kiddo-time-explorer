@@ -1,9 +1,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivities, slugFromId, idFromSlug } from "@/data/activities";
-import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
+import { getItem, setItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { toast } from "sonner";
+
+const SAVE_ERROR = "Nie udało się zapisać. Spróbuj ponownie.";
+const notifySaveError = () => toast.error(SAVE_ERROR);
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
@@ -91,17 +95,28 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         if (slug) toInsert.push({ user_id: user.id, activity_slug: slug, kind: "want_to_visit" });
       }
       if (toInsert.length > 0) {
-        await supabase
+        const { error: mergeError } = await supabase
           .from("saved_activities")
           .upsert(toInsert, { onConflict: "user_id,activity_slug,kind", ignoreDuplicates: true });
         if (cancelled) return;
+        if (mergeError) {
+          notifySaveError();
+        } else {
+          // Czyścimy lokalne klucze DOPIERO po potwierdzonym zapisie.
+          removeItem(STORAGE_KEYS.FAVORITES);
+          removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+        }
       }
 
       const { data, error } = await supabase
         .from("saved_activities")
         .select("activity_slug, kind")
         .eq("user_id", user.id);
-      if (cancelled || error || !data) return;
+      if (cancelled) return;
+      if (error || !data) {
+        if (error) toast.error("Nie udało się wczytać zapisanych atrakcji.");
+        return;
+      }
 
       const fav = new Set<number>();
       const wtv = new Set<number>();
@@ -121,6 +136,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     };
   }, [user, dataStatus]);
 
+  // Jedno źródło prawdy dla list i liczników: zapisane atrakcje odnalezione
+  // w katalogu (licznik = długość listy, więc nigdy nie rozjadą się ze sobą).
   const favorites = getActivities().filter(a => favoriteIds.has(a.id));
   const wantToVisit = getActivities().filter(a => wantToVisitIds.has(a.id));
 
@@ -165,6 +182,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       });
       const res = await syncToServer(activityId, "favorite", willAdd);
       if (!res.ok) {
+        notifySaveError();
         // Rollback.
         setFavoriteIds(prev => {
           const next = new Set(prev);
@@ -190,6 +208,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       });
       const res = await syncToServer(activityId, "want_to_visit", willAdd);
       if (!res.ok) {
+        notifySaveError();
         setWantToVisitIds(prev => {
           const next = new Set(prev);
           if (willAdd) next.delete(activityId);
@@ -214,6 +233,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       if (!had) return;
       const res = await syncToServer(id, "favorite", false);
       if (!res.ok) {
+        notifySaveError();
         setFavoriteIds(prev => {
           const next = new Set(prev);
           next.add(id);
@@ -235,6 +255,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       if (!had) return;
       const res = await syncToServer(id, "want_to_visit", false);
       if (!res.ok) {
+        notifySaveError();
         setWantToVisitIds(prev => {
           const next = new Set(prev);
           next.add(id);
@@ -256,8 +277,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         toggleWantToVisit,
         removeFromFavorites,
         removeFromWantToVisit,
-        favoritesCount: favoriteIds.size,
-        wantToVisitCount: wantToVisitIds.size,
+        favoritesCount: favorites.length,
+        wantToVisitCount: wantToVisit.length,
       }}
     >
       {children}

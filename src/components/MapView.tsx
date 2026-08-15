@@ -100,8 +100,18 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
 };
 
 // Popup content for pin click
-const createPopupContent = (activity: Activity) => {
+const favButtonMarkup = (isFav: boolean) => `
+  <button type="button" data-fav-toggle="1" aria-pressed="${isFav}"
+    aria-label="${isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}"
+    style="position:absolute;top:8px;right:8px;z-index:5;width:36px;height:36px;border:0;border-radius:9999px;
+    background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="${isFav ? "#ef4444" : "none"}" stroke="${isFav ? "#ef4444" : "#ffffff"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+  </button>`;
+
+const createPopupContent = (activity: Activity, isFav: boolean) => {
   return `
+    <div style="position:relative;width:220px;">
+    ${favButtonMarkup(isFav)}
     <a href="/atrakcje/${activity.slug}" style="text-decoration:none;color:inherit;display:block;width:220px;">
       <img src="${activity.imageUrl}" alt="${activity.title}" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
       <div style="padding:8px 10px;">
@@ -113,6 +123,7 @@ const createPopupContent = (activity: Activity) => {
         <div style="font-size:12px;color:#888;margin-top:2px;">${activity.location}</div>
       </div>
     </a>
+    </div>
   `;
 };
 
@@ -143,6 +154,7 @@ function ClusteredMarkers({
   highlightedId,
   onMapClick,
   isFavorite,
+  toggleFavorite,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
@@ -150,6 +162,7 @@ function ClusteredMarkers({
   highlightedId: number | null;
   onMapClick: () => void;
   isFavorite: (id: number) => boolean;
+  toggleFavorite: (id: number) => Promise<boolean>;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -178,13 +191,25 @@ function ClusteredMarkers({
         title: activity.title,
         alt: activity.title,
         keyboard: true,
-      }).bindPopup(createPopupContent(activity), {
+      }).bindPopup(createPopupContent(activity, isFavorite(activity.id)), {
         maxWidth: 240,
         className: "custom-map-popup",
         closeButton: true,
       });
 
       marker.on("click", () => onMarkerClick(activity.id));
+      marker.on("popupopen", (e: L.PopupEvent) => {
+        const el = e.popup.getElement();
+        const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
+        if (!btn) return;
+        btn.onclick = async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const next = await toggleFavorite(activity.id);
+          btn.outerHTML = favButtonMarkup(next);
+          marker.setPopupContent(createPopupContent(activity, next));
+        };
+      });
       markersRef.current[activity.id] = marker;
       activityMapRef.current[activity.id] = activity;
       group.addLayer(marker);
@@ -199,7 +224,7 @@ function ClusteredMarkers({
       }
       markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick, markersRef, isFavorite]);
+  }, [activities, map, onMarkerClick, markersRef, isFavorite, toggleFavorite]);
 
   // Update pin icons when highlightedId or favorites change
   useEffect(() => {
@@ -578,7 +603,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
@@ -683,7 +708,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} />
+          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
