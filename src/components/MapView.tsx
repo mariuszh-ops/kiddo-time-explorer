@@ -154,6 +154,7 @@ function ClusteredMarkers({
   highlightedId,
   onMapClick,
   isFavorite,
+  toggleFavorite,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
@@ -161,6 +162,7 @@ function ClusteredMarkers({
   highlightedId: number | null;
   onMapClick: () => void;
   isFavorite: (id: number) => boolean;
+  toggleFavorite: (id: number) => Promise<boolean>;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -189,13 +191,25 @@ function ClusteredMarkers({
         title: activity.title,
         alt: activity.title,
         keyboard: true,
-      }).bindPopup(createPopupContent(activity), {
+      }).bindPopup(createPopupContent(activity, isFavorite(activity.id)), {
         maxWidth: 240,
         className: "custom-map-popup",
         closeButton: true,
       });
 
       marker.on("click", () => onMarkerClick(activity.id));
+      marker.on("popupopen", (e: L.PopupEvent) => {
+        const el = e.popup.getElement();
+        const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
+        if (!btn) return;
+        btn.onclick = async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          const next = await toggleFavorite(activity.id);
+          btn.outerHTML = favButtonMarkup(next);
+          marker.setPopupContent(createPopupContent(activity, next));
+        };
+      });
       markersRef.current[activity.id] = marker;
       activityMapRef.current[activity.id] = activity;
       group.addLayer(marker);
@@ -210,7 +224,7 @@ function ClusteredMarkers({
       }
       markersRef.current = {};
     };
-  }, [activities, map, onMarkerClick, markersRef, isFavorite]);
+  }, [activities, map, onMarkerClick, markersRef, isFavorite, toggleFavorite]);
 
   // Update pin icons when highlightedId or favorites change
   useEffect(() => {
