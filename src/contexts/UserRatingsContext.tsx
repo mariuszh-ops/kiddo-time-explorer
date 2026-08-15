@@ -142,28 +142,41 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     };
   }, [user]);
 
-  // Upsert/delete do bazy. Zwraca false przy błędzie sieciowym → rollback w UI.
+  // Upsert/delete do bazy. Zwraca false przy JAKIMKOLWIEK niepowodzeniu
+  // (błąd sieci, 404 brakującej tabeli, RLS, brak potwierdzonego wiersza)
+  // → rollback w UI + toast. Nigdy nie zgłasza sukcesu "na słowo".
   const syncToServer = useCallback(
     async (entry: UserRating | null, activityId: number): Promise<boolean> => {
       if (!user) return true;
-      if (entry) {
-        const { error } = await supabase.from("user_ratings").upsert(
-          {
-            user_id: user.id,
-            activity_id: activityId,
-            rating: entry.rating,
-            review: entry.review ?? null,
-          },
-          { onConflict: "user_id,activity_id" }
-        );
-        return !error;
+      try {
+        if (entry) {
+          const { data, error } = await supabase
+            .from("user_ratings")
+            .upsert(
+              {
+                user_id: user.id,
+                activity_id: activityId,
+                rating: entry.rating,
+                review: entry.review ?? null,
+              },
+              { onConflict: "user_id,activity_id" }
+            )
+            .select("activity_id");
+          if (error || !data || data.length === 0) return false;
+          return true;
+        }
+        const { data, error } = await supabase
+          .from("user_ratings")
+          .delete()
+          .eq("user_id", user.id)
+          .eq("activity_id", activityId)
+          .select("activity_id");
+        if (error) return false;
+        // Brak wiersza do usunięcia = nic nie zostało w bazie → traktujemy jako sukces.
+        return Array.isArray(data);
+      } catch {
+        return false;
       }
-      const { error } = await supabase
-        .from("user_ratings")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("activity_id", activityId);
-      return !error;
     },
     [user]
   );
