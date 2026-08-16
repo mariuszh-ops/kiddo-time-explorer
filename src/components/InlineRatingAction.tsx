@@ -3,7 +3,6 @@ import { Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useActivityRating } from "@/hooks/useActivityRating";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface InlineRatingActionProps {
