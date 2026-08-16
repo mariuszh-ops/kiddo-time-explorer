@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { Activity, getActivities } from "@/data/activities";
+import { Activity, getActivityById, n as ensureActivitiesLoaded } from "@/data/activities";
 import { getRawItem, setRawItem, getItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { catalogClient as supabase } from "@/lib/catalogClient";
@@ -85,6 +85,12 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
   // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
   useDataStatus();
+
+  // Lista „Odwiedzone" potrzebuje danych katalogu — dociągnij go leniwie,
+  // gdy użytkownik ma jakiekolwiek oceny (inaczej lista byłaby pusta przy liczniku > 0).
+  useEffect(() => {
+    if (ratings.size > 0) ensureActivitiesLoaded();
+  }, [ratings]);
 
   // Gość: localStorage jest źródłem prawdy. Zalogowany: źródłem jest baza,
   // więc nie nadpisujemy lokalnego cache'u danymi konta.
@@ -241,13 +247,14 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     }
   }, [ratings, syncToServer]);
 
-  // Get all visited activities with their ratings
-  const visitedActivities = getActivities()
-    .filter(activity => ratings.has(activity.id))
-    .map(activity => ({
-      ...activity,
-      userRating: ratings.get(activity.id)!,
-    }))
+  // JEDNO źródło prawdy: mapa ocen. Dane atrakcji dociągamy przez lookup po id;
+  // oceny bez odpowiednika w katalogu nie trafiają ani na listę, ani do licznika.
+  const visitedActivities = Array.from(ratings.values())
+    .map(userRating => {
+      const activity = getActivityById(userRating.activityId);
+      return activity ? { ...activity, userRating } : null;
+    })
+    .filter((entry): entry is Activity & { userRating: UserRating } => entry !== null)
     .sort((a, b) => b.userRating.ratedAt.getTime() - a.userRating.ratedAt.getTime());
 
   return (
@@ -259,7 +266,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         updateReview,
         removeRating,
         visitedActivities,
-        visitedCount: ratings.size,
+        visitedCount: visitedActivities.length,
       }}
     >
       {children}
