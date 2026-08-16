@@ -465,7 +465,11 @@ const CategoryPage = () => {
               {/* Activity Grid or Map */}
               {FEATURES.MAP_VIEW && viewMode === "map" ? (
                 <Suspense fallback={<div className="h-[60vh] bg-muted animate-pulse rounded-lg" />}>
-                  <MapView activities={activities} filters={{ city: citySlug }} />
+                  <MapView
+                    activities={activities}
+                    filters={{ city: citySlug }}
+                    onViewModeChange={(mode) => setViewMode(mode)}
+                  />
                 </Suspense>
               ) : (
                 <>
