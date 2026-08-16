@@ -518,7 +518,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const filteredActivities = useMemo(() => {
     let result = activities;
     if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(a.type));
+      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
@@ -542,7 +542,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const displayedActivities = useMemo(() => {
     let result = visibleActivities;
     if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(a.type));
+      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
