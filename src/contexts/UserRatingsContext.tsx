@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { Activity, getActivityById, n as ensureActivitiesLoaded } from "@/data/activities";
+import { Activity, getActivityById, ensureActivitiesLoaded } from "@/data/activities";
 import { getRawItem, setRawItem, getItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { catalogClient as supabase } from "@/lib/catalogClient";
