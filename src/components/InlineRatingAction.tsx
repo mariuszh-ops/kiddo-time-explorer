@@ -17,7 +17,6 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
   const aggregate = useActivityRating(activityId, userRating);
-  const MIN_REVIEWS = 5;
 
   const handleStarClick = (rating: number) => {
     if (!isLoggedIn) {
