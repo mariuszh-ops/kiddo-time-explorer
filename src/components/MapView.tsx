@@ -19,7 +19,6 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
-</dummy>
   // Nowa taksonomia
   "sala-zabaw": "🎠",
   "plac-zabaw": "🛝",
@@ -33,6 +32,18 @@ const CATEGORY_EMOJI: Record<string, string> = {
   // Compatibility ze starą taksonomią (do czasu migracji danych)
   "warsztaty": "🎨",
   "muzeum": "🎭",
+};
+
+/** Aliasy starej taksonomii → wartości używane na listingu (FILTER_OPTIONS.type). */
+const TYPE_ALIASES: Record<string, string> = {
+  muzeum: "muzeum-teatr",
+  teatr: "muzeum-teatr",
+  warsztaty: "inne",
+};
+
+const canonicalType = (type?: string) => {
+  const t = (type || "inne").trim();
+  return TYPE_ALIASES[t] ?? t;
 };
 
 // Border color based on rating
