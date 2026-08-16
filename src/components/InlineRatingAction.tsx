@@ -3,7 +3,6 @@ import { Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useActivityRating } from "@/hooks/useActivityRating";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface InlineRatingActionProps {
@@ -18,7 +17,6 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
   const aggregate = useActivityRating(activityId, userRating);
-  const MIN_REVIEWS = 5;
 
   const handleStarClick = (rating: number) => {
     if (!isLoggedIn) {
@@ -99,20 +97,22 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
         </div>
         {hasRated ? (
           <div className="text-xs text-muted-foreground space-y-0.5">
-            <p>
-              Twoja ocena: {userRating}/5 —{" "}
-              <Link to="/my-places?tab=visited" className="text-primary underline underline-offset-2">
-                znajdziesz ją w Moje miejsca → Odwiedzone
-              </Link>
-            </p>
-            <p>
-              {aggregate.count >= MIN_REVIEWS && aggregate.avg != null
-                ? `Ocena rodziców: ⭐ ${aggregate.avg.toFixed(1)} (${aggregate.count} opinii)`
-                : `Ocena rodziców pojawi się po zebraniu ${MIN_REVIEWS} opinii (${aggregate.count}/${MIN_REVIEWS})`}
-            </p>
+            <p>Twoja ocena: {userRating}/5</p>
+            {aggregate.count > 0 && aggregate.avg != null && (
+              <p>
+                Ocena rodziców: ⭐ {aggregate.avg.toFixed(1)} ({aggregate.count} opinii)
+              </p>
+            )}
           </div>
         ) : (
-          <p className="text-xs text-muted-foreground">Kliknij gwiazdkę, aby ocenić</p>
+          <div className="text-xs text-muted-foreground space-y-0.5">
+            <p>Kliknij gwiazdkę, aby ocenić</p>
+            {aggregate.count > 0 && aggregate.avg != null && (
+              <p>
+                Ocena rodziców: ⭐ {aggregate.avg.toFixed(1)} ({aggregate.count} opinii)
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>
