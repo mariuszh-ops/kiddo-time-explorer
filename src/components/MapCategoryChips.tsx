@@ -6,11 +6,13 @@ export const FAVORITES_CHIP_KEY = "_favorites";
 
 const CATEGORIES = [
   { key: FAVORITES_CHIP_KEY, label: "Ulubione", emoji: "❤️" },
+  { key: "sala-zabaw", label: "Sale zabaw", emoji: "🎠" },
   { key: "plac-zabaw", label: "Plac zabaw", emoji: "🛝" },
+  { key: "park-rozrywki", label: "Parki rozrywki", emoji: "🎢" },
+  { key: "centra-rozrywki", label: "Centra rozrywki", emoji: "🎮" },
+  { key: "muzeum-teatr", label: "Muzea i teatry", emoji: "🎭" },
   { key: "sport", label: "Sport", emoji: "⚽" },
-  { key: "warsztaty", label: "Warsztaty", emoji: "🎨" },
   { key: "zoo", label: "Zoo", emoji: "🦁" },
-  { key: "muzeum", label: "Muzeum", emoji: "🎭" },
   { key: "park", label: "Park", emoji: "🌳" },
   { key: "inne", label: "Inne", emoji: "📌" },
 ] as const;

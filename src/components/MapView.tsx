@@ -34,6 +34,18 @@ const CATEGORY_EMOJI: Record<string, string> = {
   "muzeum": "🎭",
 };
 
+/** Aliasy starej taksonomii → wartości używane na listingu (FILTER_OPTIONS.type). */
+const TYPE_ALIASES: Record<string, string> = {
+  muzeum: "muzeum-teatr",
+  teatr: "muzeum-teatr",
+  warsztaty: "inne",
+};
+
+const canonicalType = (type?: string) => {
+  const t = (type || "inne").trim();
+  return TYPE_ALIASES[t] ?? t;
+};
+
 // Border color based on rating
 const getRatingBorderColor = (rating: number): string => {
   if (rating >= 4.5) return "#22c55e";
@@ -488,8 +500,11 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // Filter activities by selected categories + favorites + search
   const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
   const categoryFilters = useMemo(() => {
-    const s = new Set(selectedCategories);
-    s.delete(FAVORITES_CHIP_KEY);
+    const s = new Set<string>();
+    selectedCategories.forEach((c) => {
+      if (c === FAVORITES_CHIP_KEY) return;
+      s.add(canonicalType(c));
+    });
     return s;
   }, [selectedCategories]);
 
@@ -503,7 +518,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const filteredActivities = useMemo(() => {
     let result = activities;
     if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(a.type));
+      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
@@ -527,7 +542,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const displayedActivities = useMemo(() => {
     let result = visibleActivities;
     if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(a.type));
+      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
