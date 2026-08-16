@@ -488,8 +488,11 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // Filter activities by selected categories + favorites + search
   const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
   const categoryFilters = useMemo(() => {
-    const s = new Set(selectedCategories);
-    s.delete(FAVORITES_CHIP_KEY);
+    const s = new Set<string>();
+    selectedCategories.forEach((c) => {
+      if (c === FAVORITES_CHIP_KEY) return;
+      s.add(canonicalType(c));
+    });
     return s;
   }, [selectedCategories]);
 
