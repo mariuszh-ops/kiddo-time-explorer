@@ -1,5 +1,5 @@
-import { useParams, Link, Navigate, useSearchParams, useLocation } from "react-router-dom";
-import { useMemo, useState, lazy, Suspense, useCallback, useEffect, useRef } from "react";
+import { useParams, Link, Navigate, useSearchParams, useLocation, useNavigationType } from "react-router-dom";
+import { useMemo, useState, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
@@ -159,6 +159,16 @@ const CategoryPage = () => {
 
   // Zapamiętaj i przywróć pozycję scrolla dla tego widoku (klucz = ścieżka + filtry).
   const location = useLocation();
+  const navigationType = useNavigationType();
+  // Nawigacja „w przód" na listing (PUSH) zawsze startuje od góry strony —
+  // bez tego SPA zachowuje scroll z poprzedniego widoku (np. przewiniętej home).
+  const isBackNavigation = navigationType === "POP";
+  const didResetTopRef = useRef(false);
+  useLayoutEffect(() => {
+    if (didResetTopRef.current || isBackNavigation) return;
+    didResetTopRef.current = true;
+    window.scrollTo(0, 0);
+  }, [isBackNavigation]);
   const scrollKey = `ff:scroll:${location.pathname}?${new URLSearchParams(
     Array.from(searchParams.entries()).filter(([k]) => k !== "page"),
   ).toString()}`;
@@ -181,6 +191,8 @@ const CategoryPage = () => {
     // Czekaj, aż przywrócone strony faktycznie się doładują.
     if (page > 0 && activities.length <= 24) return;
     restoredRef.current = true;
+    // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę listingu.
+    if (!isBackNavigation) return;
     let saved = 0;
     try {
       saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
@@ -195,7 +207,7 @@ const CategoryPage = () => {
         if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) window.clearInterval(timer);
       }, 100);
     }
-  }, [loading, activities.length, page, scrollKey]);
+  }, [loading, activities.length, page, scrollKey, isBackNavigation]);
 
   const hasActiveFilters =
     (urlType && !categorySlug ? true : false) ||
