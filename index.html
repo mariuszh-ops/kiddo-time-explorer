@@ -24,6 +24,18 @@
       DOKŁADNIE JEDEN zestaw przez SEOHead (react-helmet-async). Statyczne tagi
       były pierwsze w DOM i parsery social brały je zamiast unikalnych per-strona.
     -->
+    <!--
+      Wyjątek: og:image / twitter:image są statyczne, bo parsery social nie
+      wykonują JS. To sitewide baner marki (1200x640) — zastępuje automatyczny
+      zrzut ekranu podglądu. Podstrony nadpisują go przez SEOHead (dedupe po
+      property/name).
+    -->
+    <meta property="og:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content="FamilyFun – sprawdzone atrakcje dla rodzin z dziećmi" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
 
     <!-- Fonts: preconnect + stylesheet w <head> zamiast @import w CSS (szybszy FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
