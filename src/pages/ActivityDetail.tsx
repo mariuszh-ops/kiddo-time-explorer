@@ -204,7 +204,7 @@ const ActivityDetail = () => {
     setSaveError(null);
     setIsProcessing('favorite');
     try {
-      const newState = await toggleFavorite(activityId);
+      const newState = await toggleFavorite(activityId, activity?.slug);
       
       trackEvent("favorite_toggle", { activityId, state: newState ? "add" : "remove" });
       
@@ -232,7 +232,7 @@ const ActivityDetail = () => {
     setSaveError(null);
     setIsProcessing('visit');
     try {
-      const newState = await toggleWantToVisit(activityId);
+      const newState = await toggleWantToVisit(activityId, activity?.slug);
       
       // Subtle toast feedback
       if (newState) {

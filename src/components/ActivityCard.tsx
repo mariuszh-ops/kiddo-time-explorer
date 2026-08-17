@@ -124,7 +124,7 @@ const ActivityCard = ({
       return;
     }
 
-    const newState = await toggleFavorite(id);
+    const newState = await toggleFavorite(id, slug);
     trackEvent("favorite_toggle", { activityId: id, state: newState ? "add" : "remove" });
     if (newState) {
       setJustToggled(true);

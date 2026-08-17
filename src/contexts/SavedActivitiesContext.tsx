@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { Activity, getActivities, slugFromId, idFromSlug } from "@/data/activities";
+import {
+  Activity,
+  getActivities,
+  slugFromId,
+  idFromSlug,
+  loadActivities,
+} from "@/data/activities";
 import { getItem, setItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,8 +40,9 @@ interface SavedActivitiesContextType {
   wantToVisit: Activity[];
   isFavorite: (id: number) => boolean;
   isWantToVisit: (id: number) => boolean;
-  toggleFavorite: (activityId: number) => Promise<boolean>;
-  toggleWantToVisit: (activityId: number) => Promise<boolean>;
+  /** `slug` jest opcjonalny — karta/atrakcja zwykle go zna, wtedy nie potrzebujemy mapy id→slug. */
+  toggleFavorite: (activityId: number, slug?: string) => Promise<boolean>;
+  toggleWantToVisit: (activityId: number, slug?: string) => Promise<boolean>;
   removeFromFavorites: (id: number) => Promise<void>;
   removeFromWantToVisit: (id: number) => Promise<void>;
   favoritesCount: number;
@@ -79,8 +86,19 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Czekamy na katalog (slugFromId/idFromSlug) — efekt ponowi się po zmianie dataStatus.
+      // Mapy id↔slug wymagają katalogu. Na wejściu bezpośrednio na kartę atrakcji
+      // katalog nie jest ładowany („idle"), więc dociągamy go tutaj sami —
+      // bez tego hydracja i zapisy cicho przepadały.
       if (dataStatus === "loading") return;
+      if (dataStatus !== "success") {
+        try {
+          await loadActivities();
+        } catch {
+          toast.error("Nie udało się wczytać zapisanych atrakcji.");
+          return;
+        }
+        if (cancelled) return;
+      }
 
       // Merge guest cache → Supabase.
       const localFav = getItem<number[]>(STORAGE_KEYS.FAVORITES, []);
@@ -144,11 +162,30 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const isFavorite = useCallback((id: number) => favoriteIds.has(id), [favoriteIds]);
   const isWantToVisit = useCallback((id: number) => wantToVisitIds.has(id), [wantToVisitIds]);
 
+  // Slug rozwiązujemy z mapy, a gdy katalog nie jest jeszcze wczytany —
+  // dociągamy go i próbujemy ponownie. Brak sluga = błąd, nie sukces.
+  const resolveSlug = useCallback(async (activityId: number, knownSlug?: string) => {
+    if (knownSlug) return knownSlug;
+    const direct = slugFromId(activityId);
+    if (direct) return direct;
+    try {
+      await loadActivities();
+    } catch {
+      return undefined;
+    }
+    return slugFromId(activityId);
+  }, []);
+
   const syncToServer = useCallback(
-    async (activityId: number, kind: "favorite" | "want_to_visit", add: boolean) => {
+    async (
+      activityId: number,
+      kind: "favorite" | "want_to_visit",
+      add: boolean,
+      knownSlug?: string
+    ) => {
       if (!user) return { ok: true as const };
-      const slug = slugFromId(activityId);
-      if (!slug) return { ok: true as const };
+      const slug = await resolveSlug(activityId, knownSlug);
+      if (!slug) return { ok: false as const, error: new Error("missing-slug") };
       if (add) {
         const { error } = await supabase
           .from("saved_activities")
@@ -167,11 +204,11 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         return { ok: !error, error };
       }
     },
-    [user]
+    [user, resolveSlug]
   );
 
   const toggleFavorite = useCallback(
-    async (activityId: number): Promise<boolean> => {
+    async (activityId: number, slug?: string): Promise<boolean> => {
       const willAdd = !favoriteIds.has(activityId);
       // Optimistic update.
       setFavoriteIds(prev => {
@@ -180,7 +217,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         else next.delete(activityId);
         return next;
       });
-      const res = await syncToServer(activityId, "favorite", willAdd);
+      const res = await syncToServer(activityId, "favorite", willAdd, slug);
       if (!res.ok) {
         notifySaveError();
         // Rollback.
@@ -198,7 +235,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   );
 
   const toggleWantToVisit = useCallback(
-    async (activityId: number): Promise<boolean> => {
+    async (activityId: number, slug?: string): Promise<boolean> => {
       const willAdd = !wantToVisitIds.has(activityId);
       setWantToVisitIds(prev => {
         const next = new Set(prev);
@@ -206,7 +243,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         else next.delete(activityId);
         return next;
       });
-      const res = await syncToServer(activityId, "want_to_visit", willAdd);
+      const res = await syncToServer(activityId, "want_to_visit", willAdd, slug);
       if (!res.ok) {
         notifySaveError();
         setWantToVisitIds(prev => {

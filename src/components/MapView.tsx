@@ -174,7 +174,7 @@ function ClusteredMarkers({
   highlightedId: number | null;
   onMapClick: () => void;
   isFavorite: (id: number) => boolean;
-  toggleFavorite: (id: number) => Promise<boolean>;
+  toggleFavorite: (id: number, slug?: string) => Promise<boolean>;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
@@ -217,7 +217,7 @@ function ClusteredMarkers({
         btn.onclick = async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          const next = await toggleFavorite(activity.id);
+          const next = await toggleFavorite(activity.id, activity.slug);
           btn.outerHTML = favButtonMarkup(next);
           marker.setPopupContent(createPopupContent(activity, next));
         };

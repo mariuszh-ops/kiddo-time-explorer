@@ -482,7 +482,7 @@ function SheetActivityCard({
       <button
         onClick={(e) => {
           e.stopPropagation();
-          toggleFavorite(activity.id);
+          toggleFavorite(activity.id, activity.slug);
         }}
         aria-label={fav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
         className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center rounded-full hover:bg-accent transition-colors cursor-pointer"
