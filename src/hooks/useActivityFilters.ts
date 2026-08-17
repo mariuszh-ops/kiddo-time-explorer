@@ -161,7 +161,7 @@ export function useActivityFilters() {
     // Filter to enabled cities only
     result = result.filter(a => FEATURES.ENABLED_CITIES.includes(a.city));
 
-    // When search is active, bypass category and age filters
+    // Fraza i filtry łączą się warunkiem AND.
     const isSearchActive = searchQuery.trim().length > 0;
 
     // Filter by search query
@@ -180,8 +180,8 @@ export function useActivityFilters() {
       result = result.filter((a) => a.city === filters.city);
     }
 
-    // Filter by age range — bypassed when search is active
-    if (!isSearchActive && filters.age) {
+    // Filter by age range
+    if (filters.age) {
       const ageOption = filterOptions.age.find((o) => o.value === filters.age);
       if (ageOption) {
         result = result.filter(
@@ -190,8 +190,8 @@ export function useActivityFilters() {
       }
     }
 
-    // Filter by type (multi-select OR logic) — bypassed when search is active
-    if (!isSearchActive && filters.type && filters.type.length > 0) {
+    // Filter by type (multi-select OR logic)
+    if (filters.type && filters.type.length > 0) {
       result = result.filter((a) => filters.type!.includes(a.type));
     }
 

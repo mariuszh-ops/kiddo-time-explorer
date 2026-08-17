@@ -184,7 +184,7 @@ const FilterBar = ({
               />
             )}
             
-            <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+            <div>
               <FilterDropdown
                 label="Wiek dziecka"
                 options={filterCounts.age}
@@ -194,7 +194,7 @@ const FilterBar = ({
               />
             </div>
             
-            <div className={cn("transition-opacity", searchQuery.trim() && "opacity-50 pointer-events-auto")}>
+            <div>
               <MultiFilterDropdown
                 label="Kategoria"
                 options={filterCounts.type}
