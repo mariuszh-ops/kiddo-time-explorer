@@ -69,6 +69,14 @@ export function useMapUrlState(
   const handleSaveMapState = useCallback(
     (state: SavedMapState) => {
       if (!isStillOnThisRoute()) return;
+      // Nie przywracaj widoku mapy, jeśli adres w przeglądarce już go nie ma
+      // (np. klik logo → "/" bez query, a MapView zapisuje stan w unmouncie).
+      if (
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("view") !== "map"
+      ) {
+        return;
+      }
       setSearchParams(
         (prev) => {
           if (prev.get("view") !== "map") return prev;
