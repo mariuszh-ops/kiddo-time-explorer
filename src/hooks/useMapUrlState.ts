@@ -1,5 +1,6 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import type { SetURLSearchParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import type { SavedMapState } from "@/components/MapView";
 
 /**
@@ -11,6 +12,19 @@ export function useMapUrlState(
   searchParams: URLSearchParams,
   setSearchParams: SetURLSearchParams,
 ) {
+  // setSearchParams (useNavigate) resolves relatywnie do trasy, w której został
+  // wyrenderowany. Gdy MapView zapisuje stan już PO nawigacji (np. klik „Profil"
+  // w headerze → cleanup/live-sync w trakcie unmountu), taki zapis cofa
+  // użytkownika na listing. Dlatego każdy zapis pomijamy, jeśli ścieżka w
+  // przeglądarce nie jest już ścieżką tego widoku.
+  const { pathname } = useLocation();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
+  const isStillOnThisRoute = useCallback(
+    () => typeof window === "undefined" || window.location.pathname === pathnameRef.current,
+    [],
+  );
+
   const viewMode: "grid" | "map" = searchParams.get("view") === "map" ? "map" : "grid";
 
   const rawLat = searchParams.get("lat");
@@ -32,6 +46,7 @@ export function useMapUrlState(
 
   const setViewMode = useCallback(
     (mode: "grid" | "map") => {
+      if (!isStillOnThisRoute()) return;
       setSearchParams(
         (prev) => {
           if (mode === "map") {
@@ -48,11 +63,20 @@ export function useMapUrlState(
         { replace: true },
       );
     },
-    [setSearchParams],
+    [setSearchParams, isStillOnThisRoute],
   );
 
   const handleSaveMapState = useCallback(
     (state: SavedMapState) => {
+      if (!isStillOnThisRoute()) return;
+      // Nie przywracaj widoku mapy, jeśli adres w przeglądarce już go nie ma
+      // (np. klik logo → "/" bez query, a MapView zapisuje stan w unmouncie).
+      if (
+        typeof window !== "undefined" &&
+        new URLSearchParams(window.location.search).get("view") !== "map"
+      ) {
+        return;
+      }
       setSearchParams(
         (prev) => {
           if (prev.get("view") !== "map") return prev;
@@ -67,7 +91,7 @@ export function useMapUrlState(
         { replace: true },
       );
     },
-    [setSearchParams],
+    [setSearchParams, isStillOnThisRoute],
   );
 
   return { viewMode, setViewMode, savedMapState, handleSaveMapState };
