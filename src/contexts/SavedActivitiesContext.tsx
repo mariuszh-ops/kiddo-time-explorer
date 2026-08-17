@@ -1,5 +1,11 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { Activity, getActivities, slugFromId, idFromSlug } from "@/data/activities";
+import {
+  Activity,
+  getActivities,
+  slugFromId,
+  idFromSlug,
+  loadActivities,
+} from "@/data/activities";
 import { getItem, setItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
@@ -34,8 +40,9 @@ interface SavedActivitiesContextType {
   wantToVisit: Activity[];
   isFavorite: (id: number) => boolean;
   isWantToVisit: (id: number) => boolean;
-  toggleFavorite: (activityId: number) => Promise<boolean>;
-  toggleWantToVisit: (activityId: number) => Promise<boolean>;
+  /** `slug` jest opcjonalny — karta/atrakcja zwykle go zna, wtedy nie potrzebujemy mapy id→slug. */
+  toggleFavorite: (activityId: number, slug?: string) => Promise<boolean>;
+  toggleWantToVisit: (activityId: number, slug?: string) => Promise<boolean>;
   removeFromFavorites: (id: number) => Promise<void>;
   removeFromWantToVisit: (id: number) => Promise<void>;
   favoritesCount: number;
