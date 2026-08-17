@@ -30,6 +30,7 @@ import {
 import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
 import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 import NotFound from "@/pages/NotFound";
+import { useMapUrlState } from "@/hooks/useMapUrlState";
 
 const BASE_URL = "https://familyfun.pl";
 
@@ -39,7 +40,6 @@ const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : 
 const pluralizeActivities = activityWord;
 
 const CategoryPage = () => {
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid");
   const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string; regionSlug?: string }>();
   // Obsługiwane ścieżki:
   //   /atrakcje/:citySlug/:categorySlug
@@ -74,6 +74,10 @@ const CategoryPage = () => {
 
   // URL-persisted filter state
   const [searchParams, setSearchParams] = useSearchParams();
+  const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
+    searchParams,
+    setSearchParams,
+  );
   const urlType = searchParams.get("type") ?? undefined;
   const urlAmenities = useMemo(() => {
     const raw = searchParams.get("amenities");
@@ -469,6 +473,8 @@ const CategoryPage = () => {
                     activities={activities}
                     filters={{ city: citySlug }}
                     onViewModeChange={(mode) => setViewMode(mode)}
+                    savedMapState={savedMapState}
+                    onSaveMapState={handleSaveMapState}
                   />
                 </Suspense>
               ) : (
