@@ -86,8 +86,19 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      // Czekamy na katalog (slugFromId/idFromSlug) — efekt ponowi się po zmianie dataStatus.
+      // Mapy id↔slug wymagają katalogu. Na wejściu bezpośrednio na kartę atrakcji
+      // katalog nie jest ładowany („idle"), więc dociągamy go tutaj sami —
+      // bez tego hydracja i zapisy cicho przepadały.
       if (dataStatus === "loading") return;
+      if (dataStatus !== "success") {
+        try {
+          await loadActivities();
+        } catch {
+          toast.error("Nie udało się wczytać zapisanych atrakcji.");
+          return;
+        }
+        if (cancelled) return;
+      }
 
       // Merge guest cache → Supabase.
       const localFav = getItem<number[]>(STORAGE_KEYS.FAVORITES, []);
