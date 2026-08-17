@@ -18,6 +18,7 @@ import { Helmet } from "react-helmet-async";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -49,16 +50,12 @@ const Index = () => {
     if (q !== searchQuery) setSearchQuery(q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
-  const [viewMode, setViewMode] = useState<"grid" | "map">(
-    searchParams.get("view") === "map" ? "map" : "grid"
+  const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
+    searchParams,
+    setSearchParams,
   );
   // Activities from map viewport — used when switching from map to grid
   const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
-  // Persist map state (center, zoom, categories) across view switches
-  const savedMapStateRef = useRef<SavedMapState | null>(null);
-  const handleSaveMapState = useCallback((state: SavedMapState) => {
-    savedMapStateRef.current = state;
-  }, []);
 
   const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
     if (mode === "grid" && visibleActivities) {
@@ -67,21 +64,7 @@ const Index = () => {
       setMapVisibleActivities(null);
     }
     setViewMode(mode);
-    // Sync URL param
-    if (mode === "map") {
-      setSearchParams((prev) => { prev.set("view", "map"); return prev; }, { replace: true });
-    } else {
-      setSearchParams((prev) => { prev.delete("view"); return prev; }, { replace: true });
-    }
-  }, [setSearchParams]);
-
-  // React to ?view=map param changes (e.g. from bottom nav)
-  useEffect(() => {
-    if (searchParams.get("view") === "map") {
-      setViewMode("map");
-      setMapVisibleActivities(null);
-    }
-  }, [searchParams]);
+  }, [setViewMode]);
 
   // No longer reset to grid when city is cleared — map works without city filter
 
@@ -250,7 +233,7 @@ const Index = () => {
             activities={filteredActivities}
             filters={filters}
             onViewModeChange={handleViewModeChange}
-            savedMapState={savedMapStateRef.current}
+            savedMapState={savedMapState}
             onSaveMapState={handleSaveMapState}
           />
         </Suspense>

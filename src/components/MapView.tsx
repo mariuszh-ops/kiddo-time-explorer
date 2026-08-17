@@ -491,6 +491,20 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onSaveMapState, selectedCategories]);
 
+  // Live sync (center/zoom/chipsy) — zapisywane od razu, żeby URL był aktualny
+  // przed nawigacją do karty atrakcji (unmount jest już za późno dla historii).
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || !onSaveMapState) return;
+    const c = map.getCenter();
+    onSaveMapState({
+      center: [c.lat, c.lng],
+      zoom: map.getZoom(),
+      selectedCategories,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [liveMapCenter, selectedCategories, onSaveMapState]);
+
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
     text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""), []);
