@@ -18,6 +18,7 @@ import { Helmet } from "react-helmet-async";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -232,7 +233,7 @@ const Index = () => {
             activities={filteredActivities}
             filters={filters}
             onViewModeChange={handleViewModeChange}
-            savedMapState={savedMapStateRef.current}
+            savedMapState={savedMapState}
             onSaveMapState={handleSaveMapState}
           />
         </Suspense>
