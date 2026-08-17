@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MapPin, Search, X } from "lucide-react";
 import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
@@ -56,7 +56,13 @@ function matchCategories(q: string): CategoryMatch[] {
 
 const HomeSearch = () => {
   const navigate = useNavigate();
-  const [value, setValue] = useState("");
+  // Fraza żyje w ?search= — po powrocie „wstecz" z karty atrakcji pole jest wypełnione.
+  const [searchParams] = useSearchParams();
+  const urlSearch = searchParams.get("search") ?? "";
+  const [value, setValue] = useState(urlSearch);
+  useEffect(() => {
+    setValue(urlSearch);
+  }, [urlSearch]);
   const [debounced, setDebounced] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -195,6 +201,7 @@ const HomeSearch = () => {
               onClick={() => {
                 setValue("");
                 setIsOpen(false);
+                if (urlSearch) navigate("/", { replace: true });
                 inputRef.current?.focus();
               }}
               aria-label="Wyczyść wyszukiwanie"

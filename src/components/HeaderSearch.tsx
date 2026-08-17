@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Search } from "lucide-react";
 import { REGION_SLUGS } from "@/data/regions";
@@ -13,7 +13,12 @@ const HeaderSearch = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const [value, setValue] = useState(searchParams.get("search") ?? "");
+  const urlSearch = searchParams.get("search") ?? "";
+  const [value, setValue] = useState(urlSearch);
+  // Odtwarzaj frazę z URL (m.in. po „wstecz" z karty atrakcji).
+  useEffect(() => {
+    setValue(urlSearch);
+  }, [urlSearch]);
 
   const segments = location.pathname.split("/").filter(Boolean);
   const isRegionPath = segments.length > 0 && (REGION_SLUGS as readonly string[]).includes(segments[0]);

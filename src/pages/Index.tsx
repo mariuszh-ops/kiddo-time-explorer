@@ -50,6 +50,22 @@ const Index = () => {
     if (q !== searchQuery) setSearchQuery(q);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
+
+  // Fraza wpisana w polu (FilterBar/HomeSearch) trafia do ?search=, żeby po
+  // „wstecz" z karty atrakcji wróciła zarówno do pola, jak i do wyników.
+  useEffect(() => {
+    const q = searchQuery.trim();
+    if ((searchParams.get("search") ?? "") === q) return;
+    const t = setTimeout(() => {
+      setSearchParams((prev) => {
+        if (q) prev.set("search", q);
+        else prev.delete("search");
+        return prev;
+      }, { replace: true });
+    }, 300);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
   const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
     searchParams,
     setSearchParams,
