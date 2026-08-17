@@ -217,7 +217,7 @@ function ClusteredMarkers({
         btn.onclick = async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
-          const next = await toggleFavorite(activity.id);
+          const next = await toggleFavorite(activity.id, activity.slug);
           btn.outerHTML = favButtonMarkup(next);
           marker.setPopupContent(createPopupContent(activity, next));
         };
