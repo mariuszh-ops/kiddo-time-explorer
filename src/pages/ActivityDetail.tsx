@@ -232,7 +232,7 @@ const ActivityDetail = () => {
     setSaveError(null);
     setIsProcessing('visit');
     try {
-      const newState = await toggleWantToVisit(activityId);
+      const newState = await toggleWantToVisit(activityId, activity?.slug);
       
       // Subtle toast feedback
       if (newState) {
