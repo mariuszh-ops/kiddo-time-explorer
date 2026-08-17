@@ -1,4 +1,4 @@
-import { useParams, Link, Navigate, useSearchParams, useLocation } from "react-router-dom";
+import { useParams, Link, Navigate, useSearchParams, useLocation, useNavigationType } from "react-router-dom";
 import { useMemo, useState, lazy, Suspense, useCallback, useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
