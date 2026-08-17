@@ -60,7 +60,7 @@ const SEOHead = ({
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:image:width" content={String(isFallbackImage ? 1200 : imageWidth ?? 1200)} />
-      <meta property="og:image:height" content={String(isFallbackImage ? 630 : imageHeight ?? 630)} />
+      <meta property="og:image:height" content={String(isFallbackImage ? 640 : imageHeight ?? 630)} />
       <meta property="og:image:alt" content={title} />
 
       <meta name="twitter:card" content="summary_large_image" />
