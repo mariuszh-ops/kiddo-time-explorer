@@ -174,7 +174,7 @@ function ClusteredMarkers({
   highlightedId: number | null;
   onMapClick: () => void;
   isFavorite: (id: number) => boolean;
-  toggleFavorite: (id: number) => Promise<boolean>;
+  toggleFavorite: (id: number, slug?: string) => Promise<boolean>;
 }) {
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
