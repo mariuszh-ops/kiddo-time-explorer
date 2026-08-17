@@ -255,9 +255,6 @@ const Index = () => {
         />
 
       {/* Activity cards grid or curated sections */}
-      {/* Pole wyszukiwania zawsze widoczne — fraza z ?search= zostaje w polu
-          także przy aktywnych wynikach (np. po „wstecz" z karty atrakcji). */}
-      <HomeSearch />
       {mapVisibleActivities ? (
         <ActivityGrid 
           activities={mapVisibleActivities} 
@@ -276,6 +273,8 @@ const Index = () => {
         />
       ) : (
         <>
+          {/* Prominent search field above city tiles */}
+          <HomeSearch />
           {/* Top rated recommendations when no filters active */}
           {FEATURES.TOP_RATED_HOMEPAGE && topRatedActivities.length > 0 && (
             <section className="bg-background py-6 md:py-10">
