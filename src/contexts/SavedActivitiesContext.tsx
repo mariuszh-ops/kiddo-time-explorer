@@ -6,7 +6,17 @@ import {
   idFromSlug,
   loadActivities,
 } from "@/data/activities";
-import { getItem, setItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
+import {
+  getItem,
+  setItem,
+  removeItem,
+  STORAGE_KEYS,
+  scopedKey,
+  clearForeignScopedKeys,
+  hasFreshGuestData,
+  touchGuestDataMarker,
+} from "@/lib/storage";
+import { requestGuestMigrationConsent } from "@/lib/guestMigration";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -66,15 +76,25 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     () => new Set(getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, []))
   );
 
-  // Persist to localStorage ONLY when the user is a guest. When logged in the
-  // source of truth is Supabase; we avoid overwriting the guest cache with
-  // account data so that logout can fall back to a clean local state.
+  // Lokalne lustro: gość pisze pod „gołym" kluczem, zalogowany pod kluczem
+  // przypisanym do właściciela (`ff_favorites:<user_id>`), żeby dane jednego
+  // konta nigdy nie wyciekły do drugiego na tej samej przeglądarce.
   useEffect(() => {
-    if (!isLoggedIn) setItem(STORAGE_KEYS.FAVORITES, [...favoriteIds]);
-  }, [favoriteIds, isLoggedIn]);
+    if (user) {
+      setItem(scopedKey(STORAGE_KEYS.FAVORITES, user.id), [...favoriteIds]);
+    } else {
+      setItem(STORAGE_KEYS.FAVORITES, [...favoriteIds]);
+      if (favoriteIds.size > 0) touchGuestDataMarker();
+    }
+  }, [favoriteIds, user]);
   useEffect(() => {
-    if (!isLoggedIn) setItem(STORAGE_KEYS.WANT_TO_VISIT, [...wantToVisitIds]);
-  }, [wantToVisitIds, isLoggedIn]);
+    if (user) {
+      setItem(scopedKey(STORAGE_KEYS.WANT_TO_VISIT, user.id), [...wantToVisitIds]);
+    } else {
+      setItem(STORAGE_KEYS.WANT_TO_VISIT, [...wantToVisitIds]);
+      if (wantToVisitIds.size > 0) touchGuestDataMarker();
+    }
+  }, [wantToVisitIds, user]);
 
   // On login: merge local (guest) saved items into Supabase, then hydrate
   // state from Supabase (source of truth). On logout: reset to localStorage.
@@ -89,6 +109,12 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         setIsLoadingSaved(false);
         return;
       }
+
+      // Lustra innych kont są nieaktualne dla tego użytkownika — usuwamy je,
+      // a start bierzemy z lustra przypisanego do zalogowanego konta.
+      clearForeignScopedKeys(user.id);
+      setFavoriteIds(new Set(getItem<number[]>(scopedKey(STORAGE_KEYS.FAVORITES, user.id), [])));
+      setWantToVisitIds(new Set(getItem<number[]>(scopedKey(STORAGE_KEYS.WANT_TO_VISIT, user.id), [])));
 
       // Mapy id↔slug wymagają katalogu. Na wejściu bezpośrednio na kartę atrakcji
       // katalog nie jest ładowany („idle"), więc dociągamy go tutaj sami —
@@ -107,29 +133,46 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
 
       setIsLoadingSaved(true);
 
-      // Merge guest cache → Supabase.
+      // Migracja danych gościa → konto. Tylko gdy powstały PO ostatnim
+      // wylogowaniu (ta sama sesja przeglądarki) i tylko po jawnej zgodzie.
       const localFav = getItem<number[]>(STORAGE_KEYS.FAVORITES, []);
       const localWtv = getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, []);
-      const toInsert: { user_id: string; activity_slug: string; kind: "favorite" | "want_to_visit" }[] = [];
-      for (const id of localFav) {
-        const slug = slugFromId(id);
-        if (slug) toInsert.push({ user_id: user.id, activity_slug: slug, kind: "favorite" });
-      }
-      for (const id of localWtv) {
-        const slug = slugFromId(id);
-        if (slug) toInsert.push({ user_id: user.id, activity_slug: slug, kind: "want_to_visit" });
-      }
-      if (toInsert.length > 0) {
-        const { error: mergeError } = await supabase
-          .from("saved_activities")
-          .upsert(toInsert, { onConflict: "user_id,activity_slug,kind", ignoreDuplicates: true });
-        if (cancelled) return;
-        if (mergeError) {
-          notifySaveError();
-        } else {
-          // Czyścimy lokalne klucze DOPIERO po potwierdzonym zapisie.
+      const guestCount = localFav.length + localWtv.length;
+      if (guestCount > 0) {
+        if (!hasFreshGuestData()) {
+          // Dane z poprzedniej sesji (innego użytkownika) — nie migrujemy.
           removeItem(STORAGE_KEYS.FAVORITES);
           removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+        } else {
+          const accepted = await requestGuestMigrationConsent(guestCount);
+          if (cancelled) return;
+          if (!accepted) {
+            removeItem(STORAGE_KEYS.FAVORITES);
+            removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+          } else {
+            const toInsert: { user_id: string; activity_slug: string; kind: "favorite" | "want_to_visit" }[] = [];
+            for (const id of localFav) {
+              const slug = slugFromId(id);
+              if (slug) toInsert.push({ user_id: user.id, activity_slug: slug, kind: "favorite" });
+            }
+            for (const id of localWtv) {
+              const slug = slugFromId(id);
+              if (slug) toInsert.push({ user_id: user.id, activity_slug: slug, kind: "want_to_visit" });
+            }
+            if (toInsert.length > 0) {
+              const { error: mergeError } = await supabase
+                .from("saved_activities")
+                .upsert(toInsert, { onConflict: "user_id,activity_slug,kind", ignoreDuplicates: true });
+              if (cancelled) return;
+              if (mergeError) {
+                notifySaveError();
+              } else {
+                // Czyścimy lokalne klucze DOPIERO po potwierdzonym zapisie.
+                removeItem(STORAGE_KEYS.FAVORITES);
+                removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+              }
+            }
+          }
         }
       }
 
