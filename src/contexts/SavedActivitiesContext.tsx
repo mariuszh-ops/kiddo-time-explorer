@@ -325,6 +325,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         removeFromWantToVisit,
         favoritesCount: favorites.length,
         wantToVisitCount: wantToVisit.length,
+        isLoading: dataStatus !== "success" || isLoadingSaved,
       }}
     >
       {children}
