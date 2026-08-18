@@ -231,16 +231,16 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
           </>
         ) : (
           <Tabs value={defaultTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full max-w-lg grid-cols-3 mb-6 md:mb-8">
-              <TabsTrigger value="favorites" className="text-sm md:text-base">
+            <TabsList className="grid h-auto w-full max-w-lg grid-cols-3 p-1 mb-6 md:mb-8">
+              <TabsTrigger value="favorites" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Ulubione
                 <span className="ml-1.5 text-xs text-muted-foreground">({favoritesCount})</span>
               </TabsTrigger>
-              <TabsTrigger value="wantToVisit" className="text-sm md:text-base">
+              <TabsTrigger value="wantToVisit" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Chcę odwiedzić
                 <span className="ml-1.5 text-xs text-muted-foreground">({wantToVisitCount})</span>
               </TabsTrigger>
-              <TabsTrigger value="visited" className="text-sm md:text-base">
+              <TabsTrigger value="visited" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Odwiedzone
                 <span className="ml-1.5 text-xs text-muted-foreground">({visitedCount})</span>
               </TabsTrigger>
