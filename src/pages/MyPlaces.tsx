@@ -342,7 +342,20 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             </TabsContent>
 
             <TabsContent value="visited">
-              {visitedActivities.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5" aria-hidden="true">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-card border border-border rounded-xl p-3 md:p-4 flex gap-3">
+                      <Skeleton className="w-20 h-20 md:w-24 md:h-24 rounded-lg shrink-0" />
+                      <div className="flex-1 min-w-0 space-y-2 py-0.5">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : visitedActivities.length === 0 ? (
                 <SavedActivitiesEmptyState type="visited" />
               ) : (
                 <motion.div 
