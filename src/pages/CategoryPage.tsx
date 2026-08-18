@@ -162,16 +162,26 @@ const CategoryPage = () => {
   const navigationType = useNavigationType();
   // Nawigacja „w przód" na listing (PUSH) zawsze startuje od góry strony —
   // bez tego SPA zachowuje scroll z poprzedniego widoku (np. przewiniętej home).
-  const isBackNavigation = navigationType === "POP";
-  const didResetTopRef = useRef(false);
-  useLayoutEffect(() => {
-    if (didResetTopRef.current || isBackNavigation) return;
-    didResetTopRef.current = true;
-    window.scrollTo(0, 0);
-  }, [isBackNavigation]);
   const scrollKey = `ff:scroll:${location.pathname}?${new URLSearchParams(
     Array.from(searchParams.entries()).filter(([k]) => k !== "page"),
   ).toString()}`;
+  // Typ nawigacji zamrażamy na pierwszym renderze — nasze własne
+  // setSearchParams({ replace: true }) zmieniają go na "REPLACE" i zabiłyby
+  // przywracanie pozycji po „wstecz".
+  const entryNavTypeRef = useRef(navigationType);
+  const isBackNavigation = entryNavTypeRef.current === "POP";
+  // Reset do góry przy każdej zmianie trasy/filtrów w przód (PUSH/REPLACE).
+  // Klucz pomija ?page=, żeby doładowanie kolejnych stron nie skakało na górę.
+  const lastResetKeyRef = useRef<string | null>(null);
+  useLayoutEffect(() => {
+    if (lastResetKeyRef.current === scrollKey) return;
+    const isFirst = lastResetKeyRef.current === null;
+    lastResetKeyRef.current = scrollKey;
+    // Wejście „wstecz" na tę trasę → pozycję przywraca efekt niżej.
+    if (isFirst && isBackNavigation) return;
+    if (navigationType === "POP") return;
+    window.scrollTo(0, 0);
+  }, [scrollKey, isBackNavigation, navigationType]);
   const restoredRef = useRef(false);
   useEffect(() => {
     const onScroll = () => {
