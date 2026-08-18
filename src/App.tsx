@@ -43,6 +43,8 @@ import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LayoutDiagnostics from "./components/LayoutDiagnostics";
 import AuthReturnHandler from "./components/AuthReturnHandler";
+import SessionExpiredHandler from "./components/SessionExpiredHandler";
+import GuestDataMigrationDialog from "./components/GuestDataMigrationDialog";
 
 // SPA pageview tracking
 const AnalyticsTracker = () => {
@@ -118,6 +120,8 @@ const App = () => {
                     <Toaster />
                     <Sonner />
                     <OfflineIndicator />
+                    <SessionExpiredHandler />
+                    <GuestDataMigrationDialog />
                     <BrowserRouter>
                       <SkipLink />
                       <AnalyticsTracker />
