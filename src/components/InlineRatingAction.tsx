@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface InlineRatingActionProps {
   activityId: number;
-  onAuthRequired: () => void;
+  /** `rating` to liczba gwiazdek, którą gość kliknął (intencja przed logowaniem). */
+  onAuthRequired: (rating?: number) => void;
   compact?: boolean;
 }
 
@@ -20,7 +21,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
 
   const handleStarClick = (rating: number) => {
     if (!isLoggedIn) {
-      onAuthRequired();
+      onAuthRequired(rating);
       return;
     }
     void rateActivity(activityId, rating);
@@ -39,7 +40,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
             <button
               key={i}
               type="button"
-              onClick={() => onAuthRequired()}
+              onClick={() => onAuthRequired(i + 1)}
               className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center cursor-pointer"
               aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
             >
