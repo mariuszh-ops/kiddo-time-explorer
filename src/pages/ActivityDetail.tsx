@@ -905,6 +905,8 @@ const ActivityDetail = () => {
         googleReviews={details.reviews}
         averageRating={displayRating}
         totalReviewCount={displayReviewCount}
+        latitude={activity.coordinates?.lat ?? activity.latitude ?? null}
+        longitude={activity.coordinates?.lng ?? activity.longitude ?? null}
         onAuthRequired={() => { setAuthContext("review"); setIsAuthModalOpen(true); }}
       />
 
