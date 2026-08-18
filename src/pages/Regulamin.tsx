@@ -49,7 +49,7 @@ const Regulamin = () => {
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Serwis</strong> — strona internetowa FamilyFun wraz z jej funkcjonalnościami.</li>
                   <li><strong>Użytkownik</strong> — osoba korzystająca z Serwisu, zarówno bez logowania, jak i po utworzeniu konta.</li>
-                  <li><strong>Konto</strong> — indywidualny profil Użytkownika, utworzony po zalogowaniu przez zewnętrznego dostawcę (Google).</li>
+                  <li><strong>Konto</strong> — indywidualny profil Użytkownika, utworzony na jeden z dwóch sposobów: (a) przez zalogowanie się zewnętrznym dostawcą (Google) albo (b) przez rejestrację adresem e-mail i hasłem (minimum 6 znaków) z potwierdzeniem adresu e-mail.</li>
                   <li><strong>Treści Użytkownika</strong> — opinie, oceny, zgłoszenia miejsc, zgłoszenia błędów oraz inne materiały przesyłane przez Użytkownika.</li>
                   <li><strong>Katalog</strong> — zbiór informacji o atrakcjach dla rodzin prezentowanych w Serwisie.</li>
                 </ul>
@@ -59,8 +59,8 @@ const Regulamin = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">§3 Zasady korzystania z serwisu</h2>
                 <p className="mb-4">
                   Korzystanie z Serwisu jest bezpłatne. Przeglądanie Katalogu nie wymaga rejestracji.
-                  Funkcje takie jak zapisywanie miejsc, wystawianie opinii oraz zgłaszanie nowych
-                  atrakcji dostępne są po zalogowaniu.
+                  Zgłoszenie nowej atrakcji oraz zgłoszenie błędu w danych są dostępne bez logowania.
+                  Logowania wymagają wyłącznie: zapisywanie miejsc, listy „Chcę odwiedzić", oceny i opinie.
                 </p>
                 <p className="mb-4">
                   Użytkownik zobowiązany jest do korzystania z Serwisu w sposób zgodny z prawem,
@@ -76,8 +76,15 @@ const Regulamin = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">§4 Konto użytkownika</h2>
                 <p className="mb-4">
-                  Konto tworzone jest automatycznie po pierwszym zalogowaniu z użyciem zewnętrznego
-                  dostawcy (Google). Użytkownik może w każdej chwili usunąć konto kontaktując się
+                  Konto można założyć na dwa sposoby: (a) logując się przez Google — konto tworzone jest
+                  automatycznie po pierwszym zalogowaniu, albo (b) rejestrując się adresem e-mail i hasłem
+                  (minimum 6 znaków). W przypadku rejestracji e-mailem na podany adres wysyłamy wiadomość
+                  z linkiem potwierdzającym — konto staje się aktywne po jego kliknięciu. Użytkownik, który
+                  zapomni hasła, może je zmienić korzystając z funkcji resetu hasła („Nie pamiętam hasła"),
+                  która wysyła link do ustawienia nowego hasła.
+                </p>
+                <p className="mb-4">
+                  Użytkownik może w każdej chwili usunąć konto kontaktując się
                   pod adresem <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
                 </p>
                 <p className="mb-4">
