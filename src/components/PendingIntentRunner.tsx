@@ -66,14 +66,6 @@ const PendingIntentRunner = () => {
     clearPendingIntent,
   ]);
 
-  // Wylogowanie unieważnia intencję.
-  useEffect(() => {
-    if (!isLoggedIn && pendingIntent && !runningRef.current) {
-      // Intencja zapamiętana przez gościa musi przetrwać do zalogowania,
-      // więc nic tu nie czyścimy — czyszczeniem zajmuje się modal logowania.
-    }
-  }, [isLoggedIn, pendingIntent]);
-
   return null;
 };
 
