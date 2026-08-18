@@ -18,6 +18,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
 import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 
