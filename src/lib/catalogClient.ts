@@ -47,7 +47,7 @@ const catalogFetch: typeof fetch = async (input, init) => {
   const isPublicCatalog = url.includes("/rest/v1/public_activities");
 
   if (isPublicCatalog) {
-    return fetch(input, { ...init, headers: withAnonAuth(headersOf(input, init)) });
+    return fetch(new Request(input, { ...init, headers: withAnonAuth(headersOf(input, init)) }));
   }
 
   const response = await fetch(input, init);
@@ -66,7 +66,7 @@ const catalogFetch: typeof fetch = async (input, init) => {
   const headers = headersOf(input, init);
   const auth = headers.get("Authorization");
   if (auth && auth !== `Bearer ${CATALOG_ANON_KEY}`) {
-    return fetch(url, { ...init, headers: withAnonAuth(headers) });
+    return fetch(new Request(url, { ...init, headers: withAnonAuth(headers) }));
   }
   return response;
 };
