@@ -43,6 +43,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import ActivityCard from "@/components/ActivityCard";
 import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
+import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import InlineRatingAction from "@/components/InlineRatingAction";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
@@ -114,6 +115,7 @@ const ActivityDetail = () => {
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
+  const { setPendingIntent, clearPendingIntent } = usePendingIntent();
   
   // Use saved activities context
   const { 
@@ -197,6 +199,7 @@ const ActivityDetail = () => {
   const handleFavoriteClick = async () => {
     if (!isLoggedIn) {
       setAuthContext("save");
+      setPendingIntent({ kind: "favorite", activityId, slug: activity?.slug });
       setIsAuthModalOpen(true);
       return;
     }
@@ -225,6 +228,7 @@ const ActivityDetail = () => {
   const handleWantToVisitClick = async () => {
     if (!isLoggedIn) {
       setAuthContext("save");
+      setPendingIntent({ kind: "wantToVisit", activityId, slug: activity?.slug });
       setIsAuthModalOpen(true);
       return;
     }
@@ -563,7 +567,13 @@ const ActivityDetail = () => {
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
-              onAuthRequired={() => { setAuthContext("rate"); setIsAuthModalOpen(true); }}
+              onAuthRequired={(value) => {
+                setAuthContext("rate");
+                if (value) {
+                  setPendingIntent({ kind: "rating", activityId, slug: activity?.slug, value });
+                }
+                setIsAuthModalOpen(true);
+              }}
             />
 
             {/* Separator between rating and action buttons */}
@@ -959,7 +969,10 @@ const ActivityDetail = () => {
 
       <AuthRequiredModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          if (!isLoggedIn) clearPendingIntent();
+        }}
         title={AUTH_COPY[authContext].title}
         description={AUTH_COPY[authContext].description}
         onGoogleClick={handleAuthAction}
