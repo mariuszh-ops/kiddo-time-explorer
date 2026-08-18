@@ -58,6 +58,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   // Mapowanie id↔slug wymaga załadowanego katalogu; hook wymusza też
   // re-render (favorites/wantToVisit liczone z getActivities()).
   const dataStatus = useDataStatus();
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
   );
