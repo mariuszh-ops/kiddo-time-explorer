@@ -35,6 +35,7 @@ const AuthRequiredModal = ({
 }: AuthRequiredModalProps) => {
   const [isLoading, setIsLoading] = useState<'google' | 'email' | 'login' | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [emailMode, setEmailMode] = useState<'signin' | 'signup' | 'reset'>('signin');
 
   // Auto-dismiss error after 5 seconds
   useEffect(() => {
@@ -49,6 +50,7 @@ const AuthRequiredModal = ({
     if (!isOpen) {
       setIsLoading(null);
       setError(null);
+      setEmailMode('signin');
     }
   }, [isOpen]);
 
@@ -72,15 +74,21 @@ const AuthRequiredModal = ({
 
   const dismissError = () => setError(null);
 
+  const isSignup = !googleOnly && emailMode === 'signup';
+  const shownTitle = isSignup ? "Załóż konto" : title;
+  const shownDescription = isSignup
+    ? "Załóż darmowe konto, aby zapisywać ulubione atrakcje, planować wizyty i oceniać miejsca."
+    : description;
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm max-h-[90vh] [@supports(height:100svh)]:max-h-[90svh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl font-serif">
-            {title}
+            {shownTitle}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground pt-2">
-            {description}
+            {shownDescription}
           </DialogDescription>
         </DialogHeader>
 
@@ -153,7 +161,7 @@ const AuthRequiredModal = ({
                 <span className="text-xs text-muted-foreground">lub e-mailem</span>
                 <span className="h-px flex-1 bg-border" />
               </div>
-              <EmailAuthForm onSuccess={onClose} />
+              <EmailAuthForm onSuccess={onClose} onModeChange={setEmailMode} />
             </>
           )}
         </div>

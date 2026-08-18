@@ -78,13 +78,16 @@ const PolitykaPrywatnosci = () => {
                   <li>dostawca hostingu i bazy danych (Supabase / Lovable Cloud);</li>
                   <li>dostawca logowania (Google — w zakresie danych profilu udostępnianych przy logowaniu OAuth);</li>
                   <li>dostawcy narzędzi analitycznych (Plausible, Google Analytics — jeśli włączone);</li>
+                  <li>dostawcy map: OpenStreetMap (dane mapy) oraz CARTO (kafle mapy) — otrzymują adres IP przy pobieraniu kafli;</li>
+                  <li>Google Fonts (dostawca czcionek) — otrzymuje adres IP przy pobieraniu plików czcionek;</li>
                   <li>podmioty świadczące pomoc prawną lub księgową administratora — w zakresie niezbędnym.</li>
                 </ul>
                 <p className="mb-4">
                   Część dostawców może przetwarzać dane poza EOG; w takim wypadku administrator zapewnia
                   odpowiednie zabezpieczenia (standardowe klauzule umowne UE). Aktualni podprocesorzy:
-                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2) oraz
-                  Google (logowanie Google OAuth, dane map Google).
+                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2),
+                  OpenStreetMap i CARTO (dane oraz kafle mapy) oraz Google (logowanie Google OAuth,
+                  Google Fonts).
                 </p>
               </section>
 
@@ -145,10 +148,16 @@ const PolitykaPrywatnosci = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Cookies</h2>
                 <p className="mb-4">
-                  Serwis wykorzystuje pliki cookies niezbędne do jego działania (m.in. utrzymanie sesji
-                  po zalogowaniu). Pliki cookies analityczne i marketingowe uruchamiane są wyłącznie po
-                  wyrażeniu zgody w banerze cookies. Zgodę można w każdej chwili wycofać czyszcząc dane
-                  przeglądarki lub zmieniając ustawienia w banerze.
+                  Serwis wykorzystuje wyłącznie pliki cookies niezbędne do jego działania (m.in. utrzymanie
+                  sesji po zalogowaniu). Nie stosujemy plików cookies marketingowych ani profilujących.
+                </p>
+                <p className="mb-4">
+                  Statystyki odwiedzin zbieramy w narzędziu Plausible Analytics, które nie zapisuje plików
+                  cookies ani żadnych identyfikatorów na urządzeniu użytkownika i nie pozwala na
+                  identyfikację osób. Podstawą przetwarzania jest prawnie uzasadniony interes
+                  administratora (art. 6 ust. 1 lit. f RODO), polegający na analizie ruchu i ulepszaniu
+                  Serwisu. Pliki cookies niezbędne można usunąć czyszcząc dane przeglądarki — może to
+                  jednak spowodować wylogowanie z konta.
                 </p>
               </section>
 

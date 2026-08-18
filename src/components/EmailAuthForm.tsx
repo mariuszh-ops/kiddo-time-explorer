@@ -1,27 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
-import { translateAuthError } from "@/lib/authErrors";
+import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
 
 type Mode = "signin" | "signup" | "reset";
 
 interface EmailAuthFormProps {
   /** Wywoływane po udanym zalogowaniu e-mailem. */
   onSuccess?: () => void;
+  /** Informuje rodzica o zmianie trybu (logowanie / rejestracja / reset). */
+  onModeChange?: (mode: Mode) => void;
+  /** Startowy adres e-mail (np. przy ponawianiu linku potwierdzającego). */
+  initialEmail?: string;
+  /** Startowy tryb formularza. */
+  initialMode?: Mode;
 }
 
-const EmailAuthForm = ({ onSuccess }: EmailAuthFormProps) => {
+const RESEND_COOLDOWN = 30;
+
+const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
   const { signInWithEmail, signUpWithEmail, resendConfirmation, resetPassword } = useAuth();
-  const [mode, setMode] = useState<Mode>("signin");
-  const [email, setEmail] = useState("");
+  const [mode, setModeState] = useState<Mode>(initialMode);
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
+  const [cooldown, setCooldown] = useState(0);
+
+  const setMode = (next: Mode) => {
+    setModeState(next);
+    onModeChange?.(next);
+  };
+
+  useEffect(() => {
+    onModeChange?.(initialMode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +71,7 @@ const EmailAuthForm = ({ onSuccess }: EmailAuthFormProps) => {
       } else if (mode === "signup") {
         await signUpWithEmail(email, password);
         setScreen("confirm");
+        setCooldown(RESEND_COOLDOWN);
       } else {
         await signInWithEmail(email, password);
         onSuccess?.();
@@ -58,14 +84,17 @@ const EmailAuthForm = ({ onSuccess }: EmailAuthFormProps) => {
   };
 
   const resend = async () => {
+    if (busy || cooldown > 0) return;
     setBusy(true);
     setError(null);
     setInfo(null);
     try {
       await resendConfirmation(email);
       setInfo("Wysłaliśmy link ponownie.");
+      setCooldown(RESEND_COOLDOWN);
     } catch (err) {
       setError(translateAuthError(err));
+      if (isEmailRateLimitError(err)) setCooldown(RESEND_COOLDOWN);
     } finally {
       setBusy(false);
     }
@@ -90,8 +119,14 @@ const EmailAuthForm = ({ onSuccess }: EmailAuthFormProps) => {
         {info && <p className="text-sm text-muted-foreground">{info}</p>}
         <div className="flex flex-col gap-2 w-full pt-1">
           {isConfirm && (
-            <Button variant="outline" onClick={resend} disabled={busy} className="w-full">
-              {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : "Wyślij link ponownie"}
+            <Button variant="outline" onClick={resend} disabled={busy || cooldown > 0} className="w-full">
+              {busy ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : cooldown > 0 ? (
+                `Wyślij link ponownie (${cooldown} s)`
+              ) : (
+                "Wyślij link ponownie"
+              )}
             </Button>
           )}
           <Button
@@ -152,6 +187,30 @@ const EmailAuthForm = ({ onSuccess }: EmailAuthFormProps) => {
           "Zaloguj się"
         )}
       </Button>
+
+      {mode === "signup" && (
+        <p className="text-xs text-muted-foreground text-center">
+          Zakładając konto akceptujesz{" "}
+          <a
+            href="/regulamin"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            Regulamin
+          </a>{" "}
+          i{" "}
+          <a
+            href="/polityka-prywatnosci"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline"
+          >
+            Politykę prywatności
+          </a>
+          .
+        </p>
+      )}
 
       <div className="flex items-center justify-between gap-2 text-sm">
         <button

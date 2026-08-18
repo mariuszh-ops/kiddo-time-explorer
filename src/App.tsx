@@ -43,6 +43,7 @@ import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
 import LayoutDiagnostics from "./components/LayoutDiagnostics";
 import AuthReturnHandler from "./components/AuthReturnHandler";
+import AuthLinkErrorHandler from "./components/AuthLinkErrorHandler";
 import SessionExpiredHandler from "./components/SessionExpiredHandler";
 import GuestDataMigrationDialog from "./components/GuestDataMigrationDialog";
 
@@ -121,6 +122,7 @@ const App = () => {
                     <Sonner />
                     <OfflineIndicator />
                     <SessionExpiredHandler />
+                    <AuthLinkErrorHandler />
                     <GuestDataMigrationDialog />
                     <BrowserRouter>
                       <SkipLink />
