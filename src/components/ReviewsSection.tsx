@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Star, MessageSquarePlus, Edit2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,6 +31,8 @@ interface ReviewsSectionProps {
   averageRating: number | null;
   totalReviewCount: number | null;
   onAuthRequired: () => void;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const REVIEW_MAX = 500;
@@ -52,12 +54,40 @@ const anonymizeAuthor = (name: string): string => {
   return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
 };
 
-const ExpandableText = ({ text }: { text: string }) => {
+const isTruncatedAtSource = (text: string): boolean =>
+  /(…|\.\.\.)\s*$/.test(text.trim());
+
+const ExpandableText = ({
+  text,
+  mapsUrl,
+}: {
+  text: string;
+  mapsUrl?: string | null;
+}) => {
   const [expanded, setExpanded] = useState(false);
-  const isLong = text.length > 220;
+  const [isClamped, setIsClamped] = useState(false);
+  const ref = useRef<HTMLParagraphElement>(null);
+  const truncatedAtSource = isTruncatedAtSource(text);
+
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => {
+      setIsClamped(el.scrollHeight - el.clientHeight > 1);
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [text, expanded]);
+
+  const showToggle = !truncatedAtSource && (isClamped || expanded);
+
   return (
     <>
       <p
+        ref={ref}
         className={cn(
           "text-sm text-foreground leading-relaxed whitespace-pre-line",
           !expanded && "line-clamp-4",
@@ -65,14 +95,30 @@ const ExpandableText = ({ text }: { text: string }) => {
       >
         {text}
       </p>
-      {isLong && (
-        <button
-          type="button"
-          onClick={() => setExpanded((v) => !v)}
-          className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2"
-        >
-          {expanded ? "mniej" : "więcej"}
-        </button>
+      {truncatedAtSource ? (
+        <div className="mt-1.5 space-y-0.5">
+          <p className="text-xs text-muted-foreground">Fragment opinii z Google</p>
+          {mapsUrl && (
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-primary hover:underline underline-offset-2"
+            >
+              Zobacz wszystkie opinie w Google Maps
+            </a>
+          )}
+        </div>
+      ) : (
+        showToggle && (
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2"
+          >
+            {expanded ? "mniej" : "więcej"}
+          </button>
+        )
       )}
     </>
   );
@@ -81,7 +127,7 @@ const ExpandableText = ({ text }: { text: string }) => {
 const StarRow = ({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) => {
   const cls = size === "md" ? "w-4 h-4" : "w-3 h-3";
   return (
-    <div className="flex items-center gap-0.5" aria-label={`Ocena ${rating} z 5`}>
+    <div className="flex items-center gap-0.5" aria-label={`Ocena ${rating} na 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -101,8 +147,15 @@ const ReviewsSection = ({
   averageRating,
   totalReviewCount,
   onAuthRequired,
+  latitude,
+  longitude,
 }: ReviewsSectionProps) => {
   const { isLoggedIn, user } = useAuth();
+
+  const mapsUrl =
+    latitude != null && longitude != null
+      ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+      : null;
 
   const [userReviews, setUserReviews] = useState<UserReviewRow[]>([]);
   const [myReview, setMyReview] = useState<UserReviewRow | null>(null);
@@ -385,7 +438,7 @@ const ReviewsSection = ({
                   </div>
                   <StarRow rating={r.rating} />
                 </div>
-                {r.text && <ExpandableText text={r.text} />}
+                {r.text && <ExpandableText text={r.text} mapsUrl={mapsUrl} />}
               </li>
             ))}
             {[...googleReviews]
@@ -408,7 +461,7 @@ const ReviewsSection = ({
                   </div>
                   <StarRow rating={r.rating} />
                 </div>
-                {r.text && <ExpandableText text={r.text} />}
+                {r.text && <ExpandableText text={r.text} mapsUrl={mapsUrl} />}
               </li>
             ))}
           </ul>
