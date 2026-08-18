@@ -300,7 +300,13 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             </TabsContent>
 
             <TabsContent value="wantToVisit">
-              {wantToVisit.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <ActivityCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : wantToVisit.length === 0 ? (
                 <SavedActivitiesEmptyState type="wantToVisit" />
               ) : (
                 <motion.div 
