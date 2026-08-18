@@ -160,6 +160,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
     removeFromWantToVisit,
     favoritesCount,
     wantToVisitCount,
+    isLoading,
   } = useSavedActivities();
 
   const { visitedActivities, visitedCount } = useUserRatings();
