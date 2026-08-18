@@ -115,6 +115,7 @@ const ActivityDetail = () => {
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
+  const { setPendingIntent, clearPendingIntent } = usePendingIntent();
   
   // Use saved activities context
   const { 
