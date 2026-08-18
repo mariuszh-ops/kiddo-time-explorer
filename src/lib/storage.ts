@@ -105,3 +105,79 @@ export const STORAGE_KEYS = {
   INLINE_RATINGS: "ff_inline_ratings",
   ADMIN_EDITS: "ff_admin_edits",
 } as const;
+
+/* ------------------------------------------------------------------ *
+ * Higiena sesji na wspólnym komputerze (S-184)
+ * ------------------------------------------------------------------ */
+
+/** Prefiksy WSZYSTKICH kluczy aplikacji trzymanych w localStorage. */
+const APP_PREFIXES = ["ff_", "familyfun_"] as const;
+
+/** Znacznik ostatniego wylogowania (poza prefiksami aplikacji — nie jest czyszczony). */
+const LAST_LOGOUT_KEY = "auth_last_logout";
+
+/** Znacznik czasu powstania danych gościa (czyszczony razem z danymi). */
+const GUEST_SINCE_KEY = "ff_guest_data_since";
+
+const isAppKey = (key: string) => APP_PREFIXES.some((p) => key.startsWith(p));
+
+/**
+ * Usuń WSZYSTKIE dane aplikacji z localStorage (ff_*, familyfun_*).
+ * Wywoływane przy wylogowaniu i przy wygaśnięciu sesji, żeby kolejny
+ * użytkownik tej przeglądarki nie zobaczył cudzych zapisów.
+ */
+export function clearAllAppStorage(): void {
+  if (!available()) return;
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key && isAppKey(key)) keys.push(key);
+    }
+    keys.forEach((k) => window.localStorage.removeItem(k));
+  } catch {
+    // silent
+  }
+}
+
+/** Zapisz moment wylogowania — dane gościa starsze od niego nie są „z tej sesji". */
+export function markLoggedOutNow(): void {
+  setRawItem(LAST_LOGOUT_KEY, String(Date.now()));
+}
+
+/** Oznacz, że w tej sesji przeglądarki gość zapisał jakiekolwiek dane. */
+export function touchGuestDataMarker(): void {
+  if (getRawItem(GUEST_SINCE_KEY)) return;
+  setRawItem(GUEST_SINCE_KEY, String(Date.now()));
+}
+
+/** Czy dane gościa powstały PO ostatnim wylogowaniu (czyli w tej sesji)? */
+export function hasFreshGuestData(): boolean {
+  const since = Number(getRawItem(GUEST_SINCE_KEY) ?? 0);
+  if (!Number.isFinite(since) || since <= 0) return false;
+  const lastLogout = Number(getRawItem(LAST_LOGOUT_KEY) ?? 0);
+  return since > (Number.isFinite(lastLogout) ? lastLogout : 0);
+}
+
+/** Klucz lokalnego lustra przypisany do właściciela: `ff_favorites:<user_id>`. */
+export function scopedKey(base: string, userId: string): string {
+  return `${base}:${userId}`;
+}
+
+/** Usuń lokalne lustra należące do INNYCH kont (obcy identyfikator w kluczu). */
+export function clearForeignScopedKeys(userId: string): void {
+  if (!available()) return;
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (!key || !isAppKey(key)) continue;
+      const idx = key.lastIndexOf(":");
+      if (idx === -1) continue;
+      if (key.slice(idx + 1) !== userId) keys.push(key);
+    }
+    keys.forEach((k) => window.localStorage.removeItem(k));
+  } catch {
+    // silent
+  }
+}
