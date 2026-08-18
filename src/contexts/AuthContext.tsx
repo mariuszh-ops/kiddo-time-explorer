@@ -1,6 +1,19 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { env } from "@/config/env";
+import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
+import { resetGuestMigrationConsent } from "@/lib/guestMigration";
+
+/**
+ * S-184: wspólny komputer. Po wylogowaniu / wygaśnięciu sesji z localStorage
+ * musi zniknąć KAŻDY klucz aplikacji (ff_*, familyfun_*), żeby kolejna osoba
+ * nie zobaczyła cudzych ulubionych ani ocen.
+ */
+const wipeLocalUserData = () => {
+  clearAllAppStorage();
+  markLoggedOutNow();
+  resetGuestMigrationConsent();
+};
 
 /**
  * User object shape. Compatible with typical auth providers (Supabase, Firebase,
@@ -67,6 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     getSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (_event === "SIGNED_OUT") wipeLocalUserData();
       setUser(mapSupabaseUser(session?.user ?? null));
     });
 
@@ -152,7 +166,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = useCallback(async (): Promise<void> => {
     await supabase.auth.signOut();
+    wipeLocalUserData();
     setIsDemoMode(false);
+    // Przeładowanie widoku dopiero PO wyczyszczeniu danych lokalnych.
+    if (typeof window !== "undefined") window.location.assign("/");
   }, []);
 
   // Backward-compat: void-returning aliases that fire-and-forget the async API.
