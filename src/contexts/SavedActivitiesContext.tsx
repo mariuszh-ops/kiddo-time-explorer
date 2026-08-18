@@ -47,6 +47,8 @@ interface SavedActivitiesContextType {
   removeFromWantToVisit: (id: number) => Promise<void>;
   favoritesCount: number;
   wantToVisitCount: number;
+  /** True dopóki listy zapisanych atrakcji nie są wiarygodne (katalog się ładuje lub trwa pierwszy select). */
+  isLoading: boolean;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
