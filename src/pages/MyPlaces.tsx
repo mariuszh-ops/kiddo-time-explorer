@@ -18,6 +18,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
 import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 
 
@@ -158,6 +160,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
     removeFromWantToVisit,
     favoritesCount,
     wantToVisitCount,
+    isLoading,
   } = useSavedActivities();
 
   const { visitedActivities, visitedCount } = useUserRatings();
@@ -234,20 +237,32 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             <TabsList className="grid h-auto w-full max-w-lg grid-cols-3 p-1 mb-6 md:mb-8">
               <TabsTrigger value="favorites" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Ulubione
-                <span className="ml-1.5 text-xs text-muted-foreground">({favoritesCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${favoritesCount})`}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="wantToVisit" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Chcę odwiedzić
-                <span className="ml-1.5 text-xs text-muted-foreground">({wantToVisitCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${wantToVisitCount})`}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="visited" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Odwiedzone
-                <span className="ml-1.5 text-xs text-muted-foreground">({visitedCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${visitedCount})`}
+                </span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="favorites">
-              {favorites.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <ActivityCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : favorites.length === 0 ? (
                 <SavedActivitiesEmptyState type="favorites" />
               ) : FEATURES.TRIP_PLANNER ? (
                 <TripPlannerFavorites favorites={favorites} onRemove={removeFromFavorites} />
@@ -285,7 +300,13 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             </TabsContent>
 
             <TabsContent value="wantToVisit">
-              {wantToVisit.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <ActivityCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : wantToVisit.length === 0 ? (
                 <SavedActivitiesEmptyState type="wantToVisit" />
               ) : (
                 <motion.div 
@@ -321,7 +342,20 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             </TabsContent>
 
             <TabsContent value="visited">
-              {visitedActivities.length === 0 ? (
+              {isLoading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5" aria-hidden="true">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="bg-card border border-border rounded-xl p-3 md:p-4 flex gap-3">
+                      <Skeleton className="w-20 h-20 md:w-24 md:h-24 rounded-lg shrink-0" />
+                      <div className="flex-1 min-w-0 space-y-2 py-0.5">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                        <Skeleton className="h-3 w-24" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : visitedActivities.length === 0 ? (
                 <SavedActivitiesEmptyState type="visited" />
               ) : (
                 <motion.div 

@@ -47,6 +47,8 @@ interface SavedActivitiesContextType {
   removeFromWantToVisit: (id: number) => Promise<void>;
   favoritesCount: number;
   wantToVisitCount: number;
+  /** True dopóki listy zapisanych atrakcji nie są wiarygodne (katalog się ładuje lub trwa pierwszy select). */
+  isLoading: boolean;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
@@ -56,6 +58,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   // Mapowanie id↔slug wymaga załadowanego katalogu; hook wymusza też
   // re-render (favorites/wantToVisit liczone z getActivities()).
   const dataStatus = useDataStatus();
+  const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
   );
@@ -83,6 +86,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         // Guest — restore from localStorage.
         setFavoriteIds(new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, [])));
         setWantToVisitIds(new Set(getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, [])));
+        setIsLoadingSaved(false);
         return;
       }
 
@@ -95,10 +99,13 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
           await loadActivities();
         } catch {
           toast.error("Nie udało się wczytać zapisanych atrakcji.");
+          setIsLoadingSaved(false);
           return;
         }
         if (cancelled) return;
       }
+
+      setIsLoadingSaved(true);
 
       // Merge guest cache → Supabase.
       const localFav = getItem<number[]>(STORAGE_KEYS.FAVORITES, []);
@@ -133,6 +140,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       if (cancelled) return;
       if (error || !data) {
         if (error) toast.error("Nie udało się wczytać zapisanych atrakcji.");
+        setIsLoadingSaved(false);
         return;
       }
 
@@ -146,6 +154,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       }
       setFavoriteIds(fav);
       setWantToVisitIds(wtv);
+      setIsLoadingSaved(false);
     };
 
     hydrateFromServer();
@@ -316,6 +325,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         removeFromWantToVisit,
         favoritesCount: favorites.length,
         wantToVisitCount: wantToVisit.length,
+        isLoading: dataStatus !== "success" || isLoadingSaved,
       }}
     >
       {children}
