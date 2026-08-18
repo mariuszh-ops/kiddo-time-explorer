@@ -171,21 +171,33 @@ const Profile = () => {
                 <Link to="/my-places?tab=favorites" className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer">
                   <div className="flex items-center justify-center gap-1.5 mb-1">
                     <Heart className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <p className="text-2xl font-bold text-foreground">{favoritesCount}</p>
+                    {isSavedLoading ? (
+                      <Skeleton className="h-7 w-7 rounded-md" />
+                    ) : (
+                      <p className="text-2xl font-bold text-foreground">{favoritesCount}</p>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Ulubione</p>
                 </Link>
                 <Link to="/my-places?tab=wantToVisit" className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer">
                   <div className="flex items-center justify-center gap-1.5 mb-1">
                     <MapPin className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <p className="text-2xl font-bold text-foreground">{wantToVisitCount}</p>
+                    {isSavedLoading ? (
+                      <Skeleton className="h-7 w-7 rounded-md" />
+                    ) : (
+                      <p className="text-2xl font-bold text-foreground">{wantToVisitCount}</p>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Chcę odwiedzić</p>
                 </Link>
                 <Link to="/my-places?tab=visited" className="text-center p-3 bg-accent/50 rounded-lg hover:bg-accent transition-colors group cursor-pointer">
                   <div className="flex items-center justify-center gap-1.5 mb-1">
                     <Star className="w-4 h-4 text-primary opacity-70 group-hover:opacity-100 transition-opacity" />
-                    <p className="text-2xl font-bold text-foreground">{visitedCount}</p>
+                    {isSavedLoading ? (
+                      <Skeleton className="h-7 w-7 rounded-md" />
+                    ) : (
+                      <p className="text-2xl font-bold text-foreground">{visitedCount}</p>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">Odwiedzone</p>
                 </Link>
