@@ -44,6 +44,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import LayoutDiagnostics from "./components/LayoutDiagnostics";
 import AuthReturnHandler from "./components/AuthReturnHandler";
 import AuthLinkErrorHandler from "./components/AuthLinkErrorHandler";
+import { PendingIntentProvider } from "./contexts/PendingIntentContext";
+import PendingIntentRunner from "./components/PendingIntentRunner";
 import SessionExpiredHandler from "./components/SessionExpiredHandler";
 import GuestDataMigrationDialog from "./components/GuestDataMigrationDialog";
 
@@ -115,9 +117,11 @@ const App = () => {
     <ErrorBoundary fallbackLevel="page">
       <HelmetProvider>
           <AuthProvider>
+            <PendingIntentProvider>
             <SavedActivitiesProvider>
               <UserRatingsProvider>
                 <TooltipProvider>
+                    <PendingIntentRunner />
                     <Toaster />
                     <Sonner />
                     <OfflineIndicator />
@@ -137,6 +141,7 @@ const App = () => {
                 </TooltipProvider>
               </UserRatingsProvider>
             </SavedActivitiesProvider>
+            </PendingIntentProvider>
           </AuthProvider>
       </HelmetProvider>
     </ErrorBoundary>
