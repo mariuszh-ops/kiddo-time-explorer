@@ -1,6 +1,17 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import { Activity, getActivityById, ensureActivitiesLoaded } from "@/data/activities";
-import { getRawItem, setRawItem, getItem, removeItem, STORAGE_KEYS } from "@/lib/storage";
+import {
+  getRawItem,
+  setRawItem,
+  getItem,
+  removeItem,
+  STORAGE_KEYS,
+  scopedKey,
+  clearForeignScopedKeys,
+  hasFreshGuestData,
+  touchGuestDataMarker,
+} from "@/lib/storage";
+import { requestGuestMigrationConsent } from "@/lib/guestMigration";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,9 +21,9 @@ const STORAGE_KEY = "familyfun_user_ratings";
 
 type StoredRating = { activityId: number; rating: number; review?: string; ratedAt: string };
 
-function loadRatings(): Map<number, UserRating> {
+function loadRatings(key: string = STORAGE_KEY): Map<number, UserRating> {
   try {
-    const raw = getRawItem(STORAGE_KEY);
+    const raw = getRawItem(key);
     const map = new Map<number, UserRating>();
     if (raw) {
       const arr: StoredRating[] = JSON.parse(raw);
@@ -45,10 +56,10 @@ function migrateLegacyRatings(map: Map<number, UserRating>): Map<number, UserRat
   return map;
 }
 
-function saveRatings(ratings: Map<number, UserRating>) {
+function saveRatings(ratings: Map<number, UserRating>, key: string = STORAGE_KEY) {
   try {
     const arr = Array.from(ratings.values());
-    setRawItem(STORAGE_KEY, JSON.stringify(arr));
+    setRawItem(key, JSON.stringify(arr));
   } catch {
     // localStorage unavailable — silent fail
   }
@@ -92,10 +103,16 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     if (ratings.size > 0) ensureActivitiesLoaded();
   }, [ratings]);
 
-  // Gość: localStorage jest źródłem prawdy. Zalogowany: źródłem jest baza,
-  // więc nie nadpisujemy lokalnego cache'u danymi konta.
+  // Gość: localStorage jest źródłem prawdy pod „gołym" kluczem.
+  // Zalogowany: baza jest źródłem prawdy, a lokalne lustro trzymamy pod
+  // kluczem właściciela (`familyfun_user_ratings:<user_id>`).
   useEffect(() => {
-    if (!user) saveRatings(ratings);
+    if (user) {
+      saveRatings(ratings, scopedKey(STORAGE_KEY, user.id));
+    } else {
+      saveRatings(ratings);
+      if (ratings.size > 0) touchGuestDataMarker();
+    }
   }, [ratings, user]);
 
   // Po zalogowaniu: migruj lokalne oceny do bazy (upsert), potem hydratuj z bazy.
@@ -109,19 +126,35 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Lustra innych kont są nieaktualne — usuwamy je, start z własnego lustra.
+      clearForeignScopedKeys(user.id);
+      setRatings(loadRatings(scopedKey(STORAGE_KEY, user.id)));
+
+      // Oceny gościa NIGDY nie migrują automatycznie: wymagana jest ta sama
+      // sesja przeglądarki (znacznik po ostatnim wylogowaniu) i jawna zgoda.
       const local = loadRatings();
       if (local.size > 0) {
-        const rows = Array.from(local.values()).map(r => ({
-          user_id: user.id,
-          activity_id: r.activityId,
-          rating: r.rating,
-          review: r.review ?? null,
-        }));
-        const { error } = await supabase
-          .from("user_ratings")
-          .upsert(rows, { onConflict: "user_id,activity_id", ignoreDuplicates: true });
-        if (cancelled) return;
-        if (!error) removeItem(STORAGE_KEY);
+        if (!hasFreshGuestData()) {
+          removeItem(STORAGE_KEY);
+        } else {
+          const accepted = await requestGuestMigrationConsent(local.size);
+          if (cancelled) return;
+          if (!accepted) {
+            removeItem(STORAGE_KEY);
+          } else {
+            const rows = Array.from(local.values()).map(r => ({
+              user_id: user.id,
+              activity_id: r.activityId,
+              rating: r.rating,
+              review: r.review ?? null,
+            }));
+            const { error } = await supabase
+              .from("user_ratings")
+              .upsert(rows, { onConflict: "user_id,activity_id", ignoreDuplicates: true });
+            if (cancelled) return;
+            if (!error) removeItem(STORAGE_KEY);
+          }
+        }
       }
 
       const { data, error } = await supabase
