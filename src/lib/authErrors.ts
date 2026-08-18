@@ -1,4 +1,16 @@
 // Tłumaczenie komunikatów błędów autoryzacji na polski.
+
+/** Rozpoznaje HTTP 429 / over_email_send_rate_limit z odpowiedzi Supabase Auth. */
+export const isEmailRateLimitError = (error: unknown): boolean => {
+  const e = error as { code?: string; status?: number; message?: string } | null;
+  const raw = typeof error === "string" ? error : (e?.message ?? "");
+  const msg = raw.toLowerCase();
+  if (e?.code === "over_email_send_rate_limit") return true;
+  if (msg.includes("over_email_send_rate_limit")) return true;
+  if (e?.status === 429 && (msg.includes("email") || msg.includes("rate limit"))) return true;
+  return false;
+};
+
 export const translateAuthError = (error: unknown): string => {
   const raw =
     typeof error === "string"
@@ -6,6 +18,9 @@ export const translateAuthError = (error: unknown): string => {
       : ((error as { message?: string } | null)?.message ?? "");
   const msg = raw.toLowerCase();
 
+  if (isEmailRateLimitError(error)) {
+    return "Wysłaliśmy już wiadomość. Odczekaj chwilę (ok. 30 sekund) i spróbuj ponownie.";
+  }
   if (msg.includes("user already registered") || msg.includes("already been registered")) {
     return "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.";
   }
