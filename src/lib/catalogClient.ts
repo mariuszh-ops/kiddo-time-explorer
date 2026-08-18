@@ -6,17 +6,78 @@
 // Klucz anon jest publiczny — może żyć w kodzie frontu.
 import { createClient } from "@supabase/supabase-js";
 import { displayLocation, formatAddress } from "@/lib/address";
+import { reportInvalidSession } from "@/lib/sessionRecovery";
 
 const CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
 const CATALOG_ANON_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpwcXBnYXRubmJvamdpZWptdHB0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY2OTIsImV4cCI6MjA5MzE5MjY5Mn0.nHm-KdlT1r2VlXQRfXqRDCCisU4KEf9yPI96kIpx4tc";
 
+export const CATALOG_AUTH_STORAGE_KEY = "sb-catalog-auth";
+
+const urlOf = (input: RequestInfo | URL): string => {
+  if (typeof input === "string") return input;
+  if (input instanceof URL) return input.toString();
+  return input.url;
+};
+
+const headersOf = (input: RequestInfo | URL, init?: RequestInit): Headers => {
+  const headers = new Headers(
+    typeof Request !== "undefined" && input instanceof Request ? input.headers : undefined
+  );
+  if (init?.headers) new Headers(init.headers).forEach((v, k) => headers.set(k, v));
+  return headers;
+};
+
+const withAnonAuth = (headers: Headers): Headers => {
+  headers.set("apikey", CATALOG_ANON_KEY);
+  headers.set("Authorization", `Bearer ${CATALOG_ANON_KEY}`);
+  return headers;
+};
+
+/**
+ * Fetch klienta katalogu:
+ * - publiczny katalog (`public_activities`) jedzie ZAWSZE kluczem anon, więc
+ *   nieważny token użytkownika nigdy nie blokuje listingów;
+ * - 401 / PGRST301 na innych zasobach → globalne zgłoszenie martwej sesji
+ *   i ponowna próba jako anonim.
+ */
+const catalogFetch: typeof fetch = async (input, init) => {
+  const url = urlOf(input);
+  const isAuthEndpoint = url.includes("/auth/v1/");
+  const isPublicCatalog = url.includes("/rest/v1/public_activities");
+
+  if (isPublicCatalog) {
+    return fetch(input, { ...init, headers: withAnonAuth(headersOf(input, init)) });
+  }
+
+  const response = await fetch(input, init);
+  if (response.status !== 401 || isAuthEndpoint) return response;
+
+  let code = "";
+  try {
+    code = (await response.clone().json())?.code ?? "";
+  } catch {
+    code = "";
+  }
+  if (code && code !== "PGRST301" && code !== "PGRST303") return response;
+
+  reportInvalidSession();
+
+  const headers = headersOf(input, init);
+  const auth = headers.get("Authorization");
+  if (auth && auth !== `Bearer ${CATALOG_ANON_KEY}`) {
+    return fetch(url, { ...init, headers: withAnonAuth(headers) });
+  }
+  return response;
+};
+
 export const catalogClient = createClient(CATALOG_URL, CATALOG_ANON_KEY, {
+  global: { fetch: catalogFetch },
   auth: {
     storage: typeof window !== "undefined" ? window.localStorage : undefined,
     persistSession: true,
     autoRefreshToken: true,
-    storageKey: "sb-catalog-auth",
+    storageKey: CATALOG_AUTH_STORAGE_KEY,
   },
 });
 
