@@ -237,15 +237,21 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             <TabsList className="grid h-auto w-full max-w-lg grid-cols-3 p-1 mb-6 md:mb-8">
               <TabsTrigger value="favorites" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Ulubione
-                <span className="ml-1.5 text-xs text-muted-foreground">({favoritesCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${favoritesCount})`}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="wantToVisit" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Chcę odwiedzić
-                <span className="ml-1.5 text-xs text-muted-foreground">({wantToVisitCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${wantToVisitCount})`}
+                </span>
               </TabsTrigger>
               <TabsTrigger value="visited" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Odwiedzone
-                <span className="ml-1.5 text-xs text-muted-foreground">({visitedCount})</span>
+                <span className="ml-1.5 text-xs text-muted-foreground">
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${visitedCount})`}
+                </span>
               </TabsTrigger>
             </TabsList>
 
