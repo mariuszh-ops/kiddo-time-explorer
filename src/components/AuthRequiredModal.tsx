@@ -82,7 +82,7 @@ const AuthRequiredModal = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-sm max-h-[90vh] max-h-[90svh] overflow-y-auto">
+      <DialogContent className="max-w-sm max-h-[90vh] [@supports(height:100svh)]:max-h-[90svh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl font-serif">
             {shownTitle}

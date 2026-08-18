@@ -65,7 +65,7 @@ const AuthLinkErrorHandler = () => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-sm max-h-[90vh] max-h-[90svh] overflow-y-auto">
+      <DialogContent className="max-w-sm max-h-[90vh] [@supports(height:100svh)]:max-h-[90svh] overflow-y-auto">
         <DialogHeader className="text-center sm:text-center">
           <DialogTitle className="text-xl font-serif">
             Ten link wygasł lub został już użyty
