@@ -5,6 +5,7 @@ import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/act
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
+import { persistSearchInHistory } from "@/lib/searchHistory";
 import { useDataStatus } from "@/hooks/useDataStatus";
 
 function normalize(text: string): string {
@@ -119,6 +120,8 @@ const HomeSearch = () => {
 
   const handleSelect = useCallback(
     (index: number) => {
+      // Zachowaj frazę w bieżącym wpisie historii — „wstecz" wróci na wyniki.
+      persistSearchInHistory(value);
       if (index < matchingActivities.length) {
         const a = matchingActivities[index];
         navigate(`/atrakcje/${a.slug}`);
@@ -128,7 +131,7 @@ const HomeSearch = () => {
       }
       setIsOpen(false);
     },
-    [matchingActivities, matchingCategories, navigate]
+    [matchingActivities, matchingCategories, navigate, value]
   );
 
   const submitSearch = () => {

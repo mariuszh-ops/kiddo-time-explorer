@@ -5,6 +5,7 @@ import { Activity, filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { REGION_BY_SLUG } from "@/data/regions";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
+import { persistSearchInHistory } from "@/lib/searchHistory";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
@@ -119,6 +120,8 @@ const SearchAutocomplete = ({
 
   const handleSelect = useCallback(
     (index: number) => {
+      // Fraza zostaje w bieżącym wpisie historii → „wstecz" wraca na wyniki.
+      persistSearchInHistory(inputValue);
       if (index < matchingActivities.length) {
         const activity = matchingActivities[index];
         navigate(`/atrakcje/${activity.slug}`);
@@ -132,7 +135,7 @@ const SearchAutocomplete = ({
         }
       }
     },
-    [matchingActivities, matchingCategories, navigate]
+    [matchingActivities, matchingCategories, navigate, inputValue]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
