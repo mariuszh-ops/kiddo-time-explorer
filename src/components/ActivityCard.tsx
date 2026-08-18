@@ -14,6 +14,7 @@ import AmenityIcon from "@/components/AmenityIcon";
 import { PRICE_LEVELS } from "@/data/activities";
 import { cn } from "@/lib/utils";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
+import { usePendingIntent } from "@/contexts/PendingIntentContext";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
@@ -88,6 +89,7 @@ const ActivityCard = ({
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
+  const { setPendingIntent, clearPendingIntent } = usePendingIntent();
   
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
@@ -120,6 +122,8 @@ const ActivityCard = ({
     e.stopPropagation();
 
     if (!isLoggedIn) {
+      // Zapamiętaj intencję gościa — wykonamy ją po zalogowaniu.
+      setPendingIntent({ kind: "favorite", activityId: id, slug });
       setIsAuthModalOpen(true);
       return;
     }
@@ -303,7 +307,11 @@ const ActivityCard = ({
 
       <AuthRequiredModal
         isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
+        onClose={() => {
+          setIsAuthModalOpen(false);
+          // Anulowane logowanie — intencja przepada.
+          if (!isLoggedIn) clearPendingIntent();
+        }}
         onGoogleClick={handleAuthAction}
         onEmailClick={handleAuthAction}
         onLoginClick={handleAuthAction}
