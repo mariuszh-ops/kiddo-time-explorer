@@ -1,3 +1,4 @@
+import { buildSrcSet } from "@/lib/imageSrcSet";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Clock, Tag, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";

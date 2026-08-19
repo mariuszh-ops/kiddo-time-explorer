@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
+import { CAROUSEL_SIZES } from "@/lib/imageSrcSet";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
 import { filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
@@ -81,6 +82,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
+                imageSizes={CAROUSEL_SIZES}
               />
             ))}
           </div>
@@ -151,6 +153,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
+                imageSizes={CAROUSEL_SIZES}
               />
             ))}
           </div>
