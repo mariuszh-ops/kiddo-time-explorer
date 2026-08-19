@@ -74,17 +74,26 @@ const BottomNav = () => {
   // Hide on admin page
   if (location.pathname.startsWith("/admin")) return null;
 
-  // Hide on activity detail pages (path is /atrakcje/:slug where slug is not a city)
-  const atrakcjeMatch = location.pathname.match(/^\/atrakcje\/([^/]+)$/);
-  if (atrakcjeMatch) {
-    const slug = atrakcjeMatch[1];
-    if (!FEATURES.ENABLED_CITIES.includes(slug)) return null;
-  }
-  // Also hide on /atrakcje/:city/:category detail-like paths that are actually activity slugs
-  if (location.pathname.match(/^\/atrakcje\/[^/]+\/[^/]+/)) return null;
-
   const isActive = (path: string) => location.pathname === path;
   const isMapView = location.search.includes("view=map");
+
+  // „Odkrywaj” jest aktywne na wszystkich trasach przeglądania katalogu:
+  // /, /:region, /:region/:kategoria, /atrakcje/:miasto/:kategoria, /kategoria/:slug,
+  // /atrakcje/:slug (karta atrakcji).
+  const NON_CATALOG_PREFIXES = [
+    "/my-places",
+    "/profile",
+    "/inspiracje",
+    "/o-nas",
+    "/kontakt",
+    "/regulamin",
+    "/polityka-prywatnosci",
+    "/reset-password",
+    "/oauth",
+  ];
+  const isCatalogRoute =
+    !isMapView &&
+    !NON_CATALOG_PREFIXES.some((p) => location.pathname.startsWith(p));
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -106,6 +115,7 @@ const BottomNav = () => {
   return (
     <nav
       ref={navRef}
+      aria-label="Nawigacja dolna"
       className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden bg-background shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
       style={{
         height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
@@ -116,7 +126,7 @@ const BottomNav = () => {
         const active = item.isMap
           ? isMapView
           : item.path === "/"
-            ? isActive("/") && !isMapView
+            ? isCatalogRoute
             : isActive(item.path);
         const Icon = item.icon;
 
@@ -132,6 +142,7 @@ const BottomNav = () => {
               onClick={handleDiscoverClick}
               className={itemClasses}
               aria-label={item.label}
+              aria-current={active ? "page" : undefined}
             >
               <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
               <span className="text-[10px] leading-none font-medium">{item.label}</span>
@@ -146,6 +157,7 @@ const BottomNav = () => {
               onClick={handleMapClick}
               className={itemClasses}
               aria-label={item.label}
+              aria-current={active ? "page" : undefined}
             >
               <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
               <span className="text-[10px] leading-none font-medium">{item.label}</span>
@@ -159,6 +171,7 @@ const BottomNav = () => {
             to={item.path}
             className={itemClasses}
             aria-label={item.label}
+            aria-current={active ? "page" : undefined}
           >
             <Icon className="w-[22px] h-[22px]" strokeWidth={active ? 2.2 : 1.5} />
             <span className="text-[10px] leading-none font-medium">{item.label}</span>
