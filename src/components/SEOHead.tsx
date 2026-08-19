@@ -59,8 +59,12 @@ const SEOHead = ({
       <meta property="og:locale" content="pl_PL" />
       <meta property="og:site_name" content={SITE_NAME} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content={String(isFallbackImage ? 1200 : imageWidth ?? 1200)} />
-      <meta property="og:image:height" content={String(isFallbackImage ? 640 : imageHeight ?? 630)} />
+      {/* Wymiary podajemy tylko wtedy, gdy je naprawdę znamy (baner sitewide
+          albo jawnie przekazane) — fałszywe 1200x630 psuło podglądy. */}
+      {isFallbackImage && <meta property="og:image:width" content="1200" />}
+      {isFallbackImage && <meta property="og:image:height" content="640" />}
+      {!isFallbackImage && imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
+      {!isFallbackImage && imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
       <meta property="og:image:alt" content={title} />
 
       <meta name="twitter:card" content="summary_large_image" />

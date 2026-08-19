@@ -55,6 +55,8 @@ interface ActivityCardProps {
   amenities?: string[];
   priceLevel?: 0 | 1 | 2 | 3;
   isRecommended?: boolean;
+  /** Węższe `sizes` dla kafli w karuzeli. */
+  imageSizes?: string;
   google_rating?: number;
   google_review_count?: number;
   priority?: boolean;
@@ -86,6 +88,7 @@ const ActivityCard = ({
   priority = false,
   uncertain = false,
   isFree = false,
+  imageSizes,
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
@@ -161,6 +164,7 @@ const ActivityCard = ({
               <LazyImage
                 src={imgSrc}
                 alt={title}
+                sizes={imageSizes}
                 categoryColor={getCategoryPlaceholderColor(type)}
                 className="w-full h-full object-cover transition-transform duration-200 ease-out [@media(hover:hover)]:group-hover:scale-[1.03]"
                 onError={handleImageError}

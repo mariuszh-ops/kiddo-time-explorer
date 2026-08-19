@@ -1,10 +1,10 @@
-import { useMemo } from "react";
+import { Suspense, lazy, useMemo } from "react";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
-import BlogCard from "@/components/BlogCard";
-import HorizontalCarousel from "@/components/HorizontalCarousel";
+// Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
+const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
 import { filterOptions } from "@/data/activities";
-import { blogPosts } from "@/data/blogPosts";
+const HomeBlogSection = lazy(() => import("@/components/HomeBlogSection"));
 import { FEATURES } from "@/lib/featureFlags";
 import { REGIONS } from "@/data/regions";
 import { useHomeCounts } from "@/hooks/useHomeCounts";
@@ -151,6 +151,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
+                imageSizes={TWO_COL_SIZES}
               />
             ))}
           </div>
@@ -182,14 +183,12 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
       </section>
 
       {/* Section 5: Blog */}
-      {FEATURES.BLOG && blogPosts.length > 0 && (
+      {FEATURES.BLOG && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
-          <HorizontalCarousel visibleCards={[1.5, 2.5, 3]}>
-            {blogPosts.map((post) => (
-              <BlogCard key={post.id} post={post} />
-            ))}
-          </HorizontalCarousel>
+          <Suspense fallback={<div className="h-48 rounded-xl bg-muted animate-pulse" />}>
+            <HomeBlogSection />
+          </Suspense>
         </section>
       )}
     </div>

@@ -2,18 +2,22 @@ import { Link } from "react-router-dom";
 import { Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BlogPost } from "@/data/blogPosts";
+import { buildSrcSet, CAROUSEL_SIZES } from "@/lib/imageSrcSet";
 
 interface BlogCardProps {
   post: BlogPost;
 }
 
 const BlogCard = ({ post }: BlogCardProps) => {
+  const srcSet = buildSrcSet(post.imageUrl);
   return (
     <Link to={`/inspiracje/${post.slug}`} className="group">
       <article className="rounded-xl overflow-hidden border border-border bg-card transition-all hover:shadow-md hover:border-primary/20">
         <div className="aspect-[16/9] overflow-hidden">
           <img
             src={post.imageUrl}
+            srcSet={srcSet}
+            sizes={srcSet ? CAROUSEL_SIZES : undefined}
             alt={post.title}
             loading="lazy"
             decoding="async"
@@ -24,6 +28,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
               const img = e.currentTarget;
               if (!img.dataset.fallback) {
                 img.dataset.fallback = "1";
+                img.removeAttribute("srcset");
                 img.src = "/blog/placeholder.webp";
               }
             }}
