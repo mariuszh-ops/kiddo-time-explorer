@@ -16,8 +16,6 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
     <section className="md:container md:px-4 md:pt-4">
       <div
-        // Cap mobile hero height so activity cards peek above the fold (60svh),
-        // ale na niskich ekranach (landscape) zdejmujemy limity, żeby nie ciąć H1.
         className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh] min-h-[280px] max-h-[calc(60svh-var(--header-h,72px)-var(--bottom-nav-h,64px)-16px)] [@media(max-height:500px)]:!h-auto [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-h-none [@media(max-height:500px)]:!overflow-visible"
       >
         {/* Background image */}
