@@ -41,6 +41,11 @@ const HIDDEN_AMENITY_FILTERS = new Set([
   "first-aid",
 ]);
 
+/** Dozwolone wartości `?amenities=` — dokładnie te, które oferuje popover „Udogodnienia". */
+export const AMENITY_FILTER_VALUES: string[] = AMENITIES.filter(
+  (a) => !HIDDEN_AMENITY_FILTERS.has(a.id),
+).map((a) => a.id);
+
 
 export type SortOption = "rating" | "reviews" | "name";
 
