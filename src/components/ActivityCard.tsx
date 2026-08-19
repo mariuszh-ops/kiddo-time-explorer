@@ -88,6 +88,7 @@ const ActivityCard = ({
   priority = false,
   uncertain = false,
   isFree = false,
+  imageSizes,
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();

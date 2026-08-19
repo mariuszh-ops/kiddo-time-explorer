@@ -246,6 +246,8 @@ const BlogPostPage = () => {
             <div className="aspect-[16/9] rounded-xl overflow-hidden mb-6">
               <img
                 src={post.imageUrl}
+                srcSet={buildSrcSet(post.imageUrl)}
+                sizes="(max-width: 768px) 100vw, 800px"
                 alt={post.title}
                 width={800}
                 height={450}
@@ -256,6 +258,7 @@ const BlogPostPage = () => {
                   const img = e.currentTarget;
                   if (!img.dataset.fallback) {
                     img.dataset.fallback = "1";
+                    img.removeAttribute("srcset");
                     img.src = "/blog/placeholder.webp";
                   }
                 }}
