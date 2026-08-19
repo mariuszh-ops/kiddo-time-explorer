@@ -443,6 +443,7 @@ const ReviewsSection = ({
                   size="sm"
                   onClick={handleSubmit}
                   disabled={submitting || rating < 1}
+                  className="min-h-[40px] md:min-h-0"
                 >
                   {submitting ? (
                     "Wysyłam..."
