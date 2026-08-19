@@ -18,7 +18,7 @@ import {
   cityLabels,
 } from "@/data/categoryPages";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
-import CategoryFilterBar, { type SortOption, AGE_RANGES } from "@/components/CategoryFilterBar";
+import CategoryFilterBar, { type SortOption, AGE_RANGES, CATEGORY_TYPES, AMENITY_FILTER_VALUES } from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -78,20 +78,30 @@ const CategoryPage = () => {
     searchParams,
     setSearchParams,
   );
-  const urlType = searchParams.get("type") ?? undefined;
+  // Walidacja parametrów URL — nieznane wartości odrzucamy po cichu,
+  // żeby nie budować z nich zapytania do backendu.
+  const rawType = searchParams.get("type") ?? undefined;
+  const urlType = rawType && CATEGORY_TYPES.some((t) => t.value === rawType) ? rawType : undefined;
   const urlAmenities = useMemo(() => {
     const raw = searchParams.get("amenities");
-    return raw ? raw.split(",").filter(Boolean) : [];
+    if (!raw) return [];
+    return raw
+      .split(",")
+      .map((v) => v.trim())
+      .filter((v) => AMENITY_FILTER_VALUES.includes(v));
   }, [searchParams]);
   const urlMinRating = Number(searchParams.get("min") ?? "0") || 0;
   // Domyślnie "reviews" (najpopularniejsze): rating desc wypychał na górę
   // obiekty 5.0★ z kilkudziesięcioma opiniami ponad znane kotwice (zoo/aquaparki).
-  const urlSort = (searchParams.get("sort") as SortOption) || "reviews";
+  const rawSort = searchParams.get("sort");
+  const urlSort: SortOption =
+    rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : "reviews";
   // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
   const includeUncertain = searchParams.get("auto") !== "0";
   // ?age=0-2 | 3-5 | 6-9 | 10-13 | 14-16
-  const urlAge = searchParams.get("age") ?? undefined;
-  const ageOption = urlAge ? AGE_RANGES.find((a) => a.value === urlAge) : undefined;
+  const rawAge = searchParams.get("age") ?? undefined;
+  const ageOption = rawAge ? AGE_RANGES.find((a) => a.value === rawAge) : undefined;
+  const urlAge = ageOption?.value;
   // ?free=1 → zawężaj do atrakcji bez biletu.
   const onlyFree = searchParams.get("free") === "1";
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
@@ -111,6 +121,7 @@ const CategoryPage = () => {
     loadingMore,
     loadMore,
     page,
+    refetch,
   } = useActivitiesInfinite(
     {
     region: citySlug,
