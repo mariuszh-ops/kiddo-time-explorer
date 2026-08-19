@@ -2,6 +2,7 @@ import { Star, MapPin, ChevronRight, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Activity } from "@/data/activities";
 import { UserRating, useUserRatings } from "@/contexts/UserRatingsContext";
+import { useMyPendingReviews } from "@/hooks/useMyPendingReviews";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 
@@ -12,6 +13,8 @@ interface VisitedActivityCardProps {
 const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
   const { userRating } = activity;
   const { removeRating } = useUserRatings();
+  const pendingReviews = useMyPendingReviews();
+  const hasPendingReview = !!activity.place_id && pendingReviews.has(activity.place_id);
   const formattedDate = format(userRating.ratedAt, "d MMMM yyyy", { locale: pl });
   
   // Truncate review for preview
@@ -105,7 +108,7 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
           </div>
         ) : (
           <p className="text-xs text-muted-foreground italic">
-            Brak opinii
+            {hasPendingReview ? "Twoja opinia czeka na weryfikację" : "Brak opinii"}
           </p>
         )}
       </div>
