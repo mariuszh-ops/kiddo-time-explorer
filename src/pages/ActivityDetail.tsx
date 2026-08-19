@@ -423,7 +423,7 @@ const ActivityDetail = () => {
 
       {/* Sticky header on scroll past gallery */}
       <div
-        inert={!showStickyHeader ? "" : undefined}
+        {...(!showStickyHeader ? ({ inert: "" } as Record<string, string>) : {})}
         aria-hidden={!showStickyHeader ? true : undefined}
         className={cn(
           "fixed top-[72px] md:top-[88px] left-0 right-0 z-40 bg-background border-b border-border/60 transition-opacity duration-300",
