@@ -262,7 +262,8 @@ const CategoryPage = () => {
     locative: region?.locative ?? (citySlug ? citySlug : "Polsce"),
   };
 
-  const isEmpty = !loading && activities.length === 0;
+  const isError = Boolean(error) && !loading;
+  const isEmpty = !loading && !isError && activities.length === 0;
 
   const resolvedTitle = resolveCityText(effectiveConfig.seoTitle, citySlug || "");
   const resolvedDescription = resolveCityText(effectiveConfig.seoDescription, citySlug || "");
@@ -445,23 +446,34 @@ const CategoryPage = () => {
             </div>
           )}
 
-          <p
-            className="text-sm text-muted-foreground mb-4 min-h-5"
-            aria-live="polite"
-            role="status"
-          >
-            {loading ? "Wczytywanie atrakcji…" : countLabel}
-          </p>
+          {/* Licznik — ukryty przy błędzie, bo „0 atrakcji" byłoby nieprawdą */}
+          {!isError && (
+            <p
+              className="text-sm text-muted-foreground mb-4 min-h-5"
+              aria-live="polite"
+              role="status"
+            >
+              {loading ? "Wczytywanie atrakcji…" : countLabel}
+            </p>
+          )}
 
-          {/* Error */}
-          {error && !loading && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/5 text-destructive px-4 py-3 mb-4 text-sm">
-              Nie udało się pobrać atrakcji. Spróbuj odświeżyć stronę.
+          {/* Stan błędu — wyłącznie ten blok, bez pustego stanu filtrów */}
+          {isError && (
+            <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+              <div aria-live="polite">
+                <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
+                  Nie udało się pobrać atrakcji
+                </h2>
+                <p className="text-muted-foreground mb-6 max-w-md">
+                  Spróbuj odświeżyć stronę za chwilę.
+                </p>
+              </div>
+              <Button onClick={refetch}>Spróbuj ponownie</Button>
             </div>
           )}
 
           {/* Empty state */}
-          {isEmpty ? (
+          {isError ? null : isEmpty ? (
             <div className="flex flex-col items-center justify-center py-20 text-center px-4">
               <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
                 Nic nie pasuje do wybranych filtrów
