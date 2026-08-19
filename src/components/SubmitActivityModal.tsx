@@ -805,7 +805,9 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                         <Input type="email" placeholder="np. jan@example.com" {...field} />
                       </FormControl>
                       <FormDescription className="text-xs">
-                        Opcjonalnie — użyjemy go tylko, żeby dopytać o szczegóły zgłoszenia.
+                        {user?.email
+                          ? "Twój adres z konta — możesz go zmienić"
+                          : "Opcjonalnie — użyjemy go tylko, żeby dopytać o szczegóły zgłoszenia."}
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -832,6 +834,22 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
         )}
       </DialogContent>
     </Dialog>
+
+    <AlertDialog open={confirmClose} onOpenChange={setConfirmClose}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Masz niezapisane zmiany. Zamknąć formularz?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Zachowamy wersję roboczą — wrócisz do niej przy następnym otwarciu formularza.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Wróć do formularza</AlertDialogCancel>
+          <AlertDialogAction onClick={finalizeClose}>Zamknij</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 };
 
