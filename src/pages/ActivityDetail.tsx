@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getActivities, PRICE_LEVELS } from "@/data/activities";
+import { categoryConfigs } from "@/data/categoryPages";
 import type { Activity } from "@/data/activities";
 import { fetchActivityBySlug } from "@/hooks/useActivities";
 import SimilarAttractions from "@/components/SimilarAttractions";
