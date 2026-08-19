@@ -46,6 +46,7 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import InlineRatingAction from "@/components/InlineRatingAction";
+import { useActivityRating } from "@/hooks/useActivityRating";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
