@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import { useFilterListbox } from "@/hooks/useFilterListbox";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,10 +27,13 @@ const MultiFilterDropdown = ({
   onToggle,
   onClear,
 }: MultiFilterDropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const firstSelectedIndex = Math.max(options.findIndex((o) => selectedValues.includes(o.value)), 0);
+  const {
+    listboxId, isOpen, open, close, activeIndex, setActiveIndex,
+    buttonRef, listRef, setOptionRef, handleTriggerKeyDown, handleListKeyDown, triggerAria,
+  } = useFilterListbox(options.length, firstSelectedIndex);
+  const dropdownRef = listRef;
 
   const hasSelection = selectedValues.length > 0;
 
@@ -72,16 +76,22 @@ const MultiFilterDropdown = ({
         buttonRef.current && !buttonRef.current.contains(target) &&
         dropdownRef.current && !dropdownRef.current.contains(target)
       ) {
-        setIsOpen(false);
+        close(false);
       }
     };
     if (isOpen) document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, close]);
 
   const dropdownMenu = isOpen ? (
     <div
       ref={dropdownRef}
+      id={listboxId}
+      role="listbox"
+      aria-label={label}
+      aria-multiselectable
+      tabIndex={-1}
+      onKeyDown={handleListKeyDown}
       className={cn(
         "fixed min-w-[180px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
@@ -94,11 +104,16 @@ const MultiFilterDropdown = ({
       }}
     >
       <div className="py-1 max-h-[300px] overflow-y-auto">
-        {options.map((option) => {
+        {options.map((option, index) => {
           const isSelected = selectedValues.includes(option.value);
           return (
             <button
               key={option.value}
+              ref={setOptionRef(index)}
+              role="option"
+              aria-selected={isSelected}
+              tabIndex={index === activeIndex ? 0 : -1}
+              onFocus={() => setActiveIndex(index)}
               onClick={() => onToggle(option.value)}
               className={cn(
                 "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
@@ -121,7 +136,9 @@ const MultiFilterDropdown = ({
     <>
       <button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => (isOpen ? close(false) : open(firstSelectedIndex))}
+        onKeyDown={handleTriggerKeyDown}
+        {...triggerAria}
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
           "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
@@ -137,7 +154,7 @@ const MultiFilterDropdown = ({
             onClick={(e) => {
               e.stopPropagation();
               onClear();
-              setIsOpen(false);
+              close(false);
             }}
           />
         ) : (

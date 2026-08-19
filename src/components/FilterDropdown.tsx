@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import { useFilterListbox } from "@/hooks/useFilterListbox";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,10 +27,13 @@ const FilterDropdown = ({
   onSelect,
   disabled = false,
 }: FilterDropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const selectedIndex = Math.max(options.findIndex((o) => o.value === selectedValue), 0);
+  const {
+    listboxId, isOpen, open, close, activeIndex, setActiveIndex,
+    buttonRef, listRef, setOptionRef, handleTriggerKeyDown, handleListKeyDown, triggerAria,
+  } = useFilterListbox(options.length, selectedIndex);
+  const dropdownRef = listRef;
 
   const selectedOption = options.find((o) => o.value === selectedValue);
   const displayLabel = selectedOption?.label || label;
@@ -74,7 +78,7 @@ const FilterDropdown = ({
         dropdownRef.current && 
         !dropdownRef.current.contains(target)
       ) {
-        setIsOpen(false);
+        close(false);
       }
     };
 
@@ -82,11 +86,16 @@ const FilterDropdown = ({
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, close]);
 
   const dropdownMenu = isOpen ? (
     <div
       ref={dropdownRef}
+      id={listboxId}
+      role="listbox"
+      aria-label={label}
+      tabIndex={-1}
+      onKeyDown={handleListKeyDown}
       className={cn(
         "fixed min-w-[180px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
@@ -99,12 +108,17 @@ const FilterDropdown = ({
       }}
     >
       <div className="py-1 max-h-[300px] overflow-y-auto">
-        {options.map((option) => (
+        {options.map((option, index) => (
           <button
             key={option.value}
+            ref={setOptionRef(index)}
+            role="option"
+            aria-selected={option.value === selectedValue}
+            tabIndex={index === activeIndex ? 0 : -1}
+            onFocus={() => setActiveIndex(index)}
             onClick={() => {
               onSelect(option.value);
-              setIsOpen(false);
+              close();
             }}
             className={cn(
               "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
@@ -130,8 +144,10 @@ const FilterDropdown = ({
     <>
       <button
         ref={buttonRef}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
+        onClick={() => !disabled && (isOpen ? close(false) : open(selectedIndex))}
+        onKeyDown={handleTriggerKeyDown}
         disabled={disabled}
+        {...triggerAria}
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
           "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
@@ -149,7 +165,7 @@ const FilterDropdown = ({
             onClick={(e) => {
               e.stopPropagation();
               onSelect(undefined);
-              setIsOpen(false);
+              close(false);
             }}
           />
         ) : (
