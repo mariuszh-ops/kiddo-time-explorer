@@ -1,9 +1,10 @@
 import { trackEvent } from "@/lib/analytics";
-import { useState } from "react";
+import { Suspense, lazy, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { FEATURES } from "@/lib/featureFlags";
-import SubmitActivityModal from "./SubmitActivityModal";
+// Ciężki formularz (walidacja, kroki) ładowany dopiero po kliknięciu FAB.
+const SubmitActivityModal = lazy(() => import("./SubmitActivityModal"));
 
 const SubmitActivityFAB = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -34,7 +35,11 @@ const SubmitActivityFAB = () => {
           Dodaj miejsce
         </span>
       </button>
-      <SubmitActivityModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {isModalOpen && (
+        <Suspense fallback={null}>
+          <SubmitActivityModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        </Suspense>
+      )}
     </>
   );
 };
