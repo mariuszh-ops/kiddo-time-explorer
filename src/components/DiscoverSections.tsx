@@ -2,7 +2,8 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 import BlogCard from "@/components/BlogCard";
-import { CAROUSEL_SIZES } from "@/lib/imageSrcSet";
+// Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
+const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
 import HorizontalCarousel from "@/components/HorizontalCarousel";
 import { filterOptions } from "@/data/activities";
 import { blogPosts } from "@/data/blogPosts";
@@ -82,7 +83,6 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
-                imageSizes={CAROUSEL_SIZES}
               />
             ))}
           </div>
@@ -153,7 +153,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
-                imageSizes={CAROUSEL_SIZES}
+                imageSizes={TWO_COL_SIZES}
               />
             ))}
           </div>
