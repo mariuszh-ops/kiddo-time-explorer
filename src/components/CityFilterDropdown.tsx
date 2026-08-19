@@ -155,7 +155,7 @@ const CityFilterDropdown = ({
                 tabIndex={index === activeIndex ? 0 : -1}
                 onFocus={() => setActiveIndex(index)}
                 onClick={isEmpty ? undefined : () => onCitySelect(option.value)}
-                disabled={isEmpty}
+                aria-disabled={isEmpty || undefined}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
                   isEmpty
