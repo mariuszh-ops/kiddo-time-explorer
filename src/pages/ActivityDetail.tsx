@@ -423,8 +423,10 @@ const ActivityDetail = () => {
 
       {/* Sticky header on scroll past gallery */}
       <div
+        inert={!showStickyHeader ? "" : undefined}
+        aria-hidden={!showStickyHeader ? true : undefined}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 bg-background border-b border-border/60 transition-opacity duration-300",
+          "fixed top-[72px] md:top-[88px] left-0 right-0 z-40 bg-background border-b border-border/60 transition-opacity duration-300",
           showStickyHeader ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
       >
@@ -432,6 +434,7 @@ const ActivityDetail = () => {
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={handleBack}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="shrink-0 min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label="Wróć"
             >
@@ -452,6 +455,7 @@ const ActivityDetail = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             <Button
               onClick={handleWantToVisitClick}
+              tabIndex={showStickyHeader ? 0 : -1}
               size="sm"
               variant={wantToVisit ? "default" : "default"}
               className="h-9 px-3 text-xs sm:text-sm"
@@ -465,6 +469,7 @@ const ActivityDetail = () => {
             </Button>
             <button
               onClick={handleFavoriteClick}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
             >
@@ -475,6 +480,7 @@ const ActivityDetail = () => {
             </button>
             <button
               onClick={handleShare}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="hidden sm:flex min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted items-center justify-center transition-colors"
               aria-label="Udostępnij"
             >
@@ -504,6 +510,8 @@ const ActivityDetail = () => {
 
       {/* 1. Header section with gallery */}
       <section ref={galleryRef} className="relative">
+        {/* Sentinel: gdy zniknie z widoku, odsłaniamy pasek szybkich akcji. */}
+        <div ref={heroSentinelRef} aria-hidden="true" className="absolute top-40 left-0 h-1 w-1" />
         {/* Image gallery - swipeable carousel on mobile */}
         <ImageGallery 
           images={activity.imageUrls || [activity.imageUrl]} 
@@ -515,15 +523,33 @@ const ActivityDetail = () => {
         {/* Content overlay */}
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
-            {/* Desktop: Breadcrumbs */}
-            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-4" aria-label="breadcrumb">
-              <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              <Link to={`/atrakcje/${activity.city}`} className="text-muted-foreground hover:text-foreground transition-colors">
-                {cityLabels[activity.city]?.nominative || activity.city}
+            {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
+            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0" aria-label="breadcrumb">
+              <Link to="/" className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Link
+                to={regionHref}
+                title={regionLabel}
+                className="shrink-0 max-w-[10ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {regionLabel}
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-foreground font-medium truncate max-w-[300px]">{activity.title}</span>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Link
+                to={categoryHref}
+                title={typeLabel}
+                className="shrink-0 max-w-[12ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {typeLabel}
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <span
+                aria-current="page"
+                title={activity.title}
+                className="min-w-0 truncate text-foreground font-medium md:max-w-[300px]"
+              >
+                {activity.title}
+              </span>
             </nav>
             
             {/* Activity title + Google rating inline */}
