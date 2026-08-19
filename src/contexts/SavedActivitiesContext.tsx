@@ -14,6 +14,7 @@ import {
   scopedKey,
   clearForeignScopedKeys,
   hasFreshGuestData,
+  touchGuestDataMarker,
   syncGuestDataMarker,
 } from "@/lib/storage";
 import { requestGuestMigrationConsent } from "@/lib/guestMigration";
@@ -280,6 +281,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const toggleFavorite = useCallback(
     async (activityId: number, slug?: string): Promise<boolean> => {
       const willAdd = !favoriteIds.has(activityId);
+      if (!user && willAdd) touchGuestDataMarker();
       // Optimistic update.
       setFavoriteIds(prev => {
         const next = new Set(prev);
@@ -301,12 +303,13 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       }
       return willAdd;
     },
-    [favoriteIds, syncToServer]
+    [favoriteIds, syncToServer, user]
   );
 
   const toggleWantToVisit = useCallback(
     async (activityId: number, slug?: string): Promise<boolean> => {
       const willAdd = !wantToVisitIds.has(activityId);
+      if (!user && willAdd) touchGuestDataMarker();
       setWantToVisitIds(prev => {
         const next = new Set(prev);
         if (willAdd) next.add(activityId);
@@ -326,7 +329,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       }
       return willAdd;
     },
-    [wantToVisitIds, syncToServer]
+    [wantToVisitIds, syncToServer, user]
   );
 
   const removeFromFavorites = useCallback(

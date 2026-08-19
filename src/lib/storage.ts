@@ -158,8 +158,8 @@ export function touchGuestDataMarker(): void {
 }
 
 /**
- * Znacznik istnieje wyłącznie wtedy, gdy gość ma faktycznie niepuste dane,
- * które mogą zostać zaproponowane do migracji.
+ * Usuń znacznik, gdy nie istnieją już żadne dane gościa. Ta funkcja celowo
+ * NIE tworzy znacznika — robią to wyłącznie jawne akcje gościa.
  */
 export function syncGuestDataMarker(): void {
   const guestKeys = [
@@ -178,8 +178,7 @@ export function syncGuestDataMarker(): void {
     }
   });
 
-  if (hasGuestData) touchGuestDataMarker();
-  else removeItem(GUEST_SINCE_KEY);
+  if (!hasGuestData) removeItem(GUEST_SINCE_KEY);
 }
 
 /** Czy dane gościa powstały PO ostatnim wylogowaniu (czyli w tej sesji)? */

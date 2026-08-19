@@ -9,6 +9,7 @@ import {
   scopedKey,
   clearForeignScopedKeys,
   hasFreshGuestData,
+  touchGuestDataMarker,
   syncGuestDataMarker,
 } from "@/lib/storage";
 import { requestGuestMigrationConsent } from "@/lib/guestMigration";
@@ -244,6 +245,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
 
   const rateActivity = useCallback(async (activityId: number, rating: number, review?: string): Promise<void> => {
     const previous = ratings.get(activityId);
+    if (!user) touchGuestDataMarker();
     const next: UserRating = {
       activityId,
       rating,
@@ -263,7 +265,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
       });
       toast.error("Nie udało się zapisać oceny. Spróbuj ponownie.");
     }
-  }, [ratings, syncToServer]);
+  }, [ratings, syncToServer, user]);
 
   const updateReview = useCallback(async (activityId: number, review: string): Promise<void> => {
     const previous = ratings.get(activityId);
