@@ -16,16 +16,12 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
   return (
     <section className="md:container md:px-4 md:pt-4">
       <div
-        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh] min-h-[280px]"
-        style={{
-          // Cap mobile hero height so activity cards peek above the fold.
-          // Uses 60svh instead of 100svh to leave room for HomeSearch + featured cards.
-          maxHeight:
-            'calc(60svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px)',
-        }}
+        // Cap mobile hero height so activity cards peek above the fold (60svh),
+        // ale na niskich ekranach (landscape) zdejmujemy limity, żeby nie ciąć H1.
+        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh] min-h-[280px] max-h-[calc(60svh-var(--header-h,72px)-var(--bottom-nav-h,64px)-16px)] [@media(max-height:500px)]:!h-auto [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-h-none [@media(max-height:500px)]:!overflow-visible"
       >
         {/* Background image */}
-        <div className="absolute inset-0 bg-[#8B7355]">
+        <div className="absolute inset-0 overflow-hidden bg-[#8B7355]">
           <img
             src="/images/hero-parent-child-1280.webp"
             srcSet="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
@@ -47,7 +43,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
         <div className="relative z-10 container px-5 sm:px-6 md:px-8 lg:px-12">
           <div className="max-w-xl md:max-w-[45%] lg:max-w-xl lg:!max-w-[45%]">
             {/* Headline */}
-            <h1 className="font-serif text-[22px] [@media(min-height:700px)]:text-[26px] leading-[1.15] xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl md:leading-tight text-foreground text-balance animate-fade-in">
+            <h1 className="font-serif text-[22px] [@media(min-height:700px)]:text-[26px] leading-[1.15] xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl md:leading-tight [@media(max-height:500px)]:!text-2xl [@media(max-height:500px)]:!leading-tight text-foreground text-balance animate-fade-in">
               {FEATURES.ENABLED_CITIES.length > 1
                 ? "Sprawdzone pomysły na wspólny czas z dzieckiem"
                 : "Sprawdzone pomysły na wspólny czas z dzieckiem w Warszawie"

@@ -417,7 +417,7 @@ const ActivityDetail = () => {
           },
         ] as unknown as Record<string, unknown>}
       />
-      <main id="main-content" className="min-h-screen bg-background pb-20 sm:pb-8">
+      <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
       {/* Global header — same on mobile and desktop */}
       <Header />
 
@@ -632,7 +632,7 @@ const ActivityDetail = () => {
                   onClick={handleFavoriteClick}
                   variant={isFavorite ? "default" : "default"}
                   size={isMobile ? "lg" : "default"}
-                  className={`flex-1 transition-all duration-200 ${isFavorite ? "bg-primary" : ""}`}
+                  className={`flex-1 min-h-[44px] md:min-h-0 transition-all duration-200 ${isFavorite ? "bg-primary" : ""}`}
                   disabled={isProcessing !== null}
                 >
                   <AnimatePresence mode="wait">
@@ -666,7 +666,7 @@ const ActivityDetail = () => {
                   onClick={handleWantToVisitClick}
                   variant={wantToVisit ? "secondary" : "outline"}
                   size={isMobile ? "lg" : "default"}
-                  className="flex-1 transition-all duration-200"
+                  className="flex-1 min-h-[44px] md:min-h-0 transition-all duration-200"
                   disabled={isProcessing !== null}
                 >
                   <AnimatePresence mode="wait">
@@ -704,7 +704,7 @@ const ActivityDetail = () => {
                   onClick={handleShare}
                   variant="outline"
                   size={isMobile ? "lg" : "default"}
-                  className="flex-1"
+                  className="flex-1 min-h-[44px] md:min-h-0"
                 >
                   <Share2 className="w-4 h-4 mr-2" />
                   Udostępnij
@@ -726,7 +726,7 @@ const ActivityDetail = () => {
                     </p>
                     <button
                       onClick={() => setSaveError(null)}
-                      className="text-xs text-destructive/70 hover:text-destructive underline underline-offset-2"
+                      className="inline-flex items-center min-h-[40px] md:min-h-0 text-xs text-destructive/70 hover:text-destructive underline underline-offset-2"
                     >
                       Zamknij
                     </button>
@@ -739,7 +739,7 @@ const ActivityDetail = () => {
                   {isFavorite ? (
                     <Link 
                       to="/my-places?tab=favorites"
-                      className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors"
+                      className="inline-flex items-center gap-1.5 min-h-[40px] md:min-h-0 text-sm text-primary hover:text-primary/80 hover:underline underline-offset-2 transition-colors"
                     >
                       <span>Zobacz moje miejsca</span>
                       <Heart className="w-3.5 h-3.5" />
@@ -878,7 +878,7 @@ const ActivityDetail = () => {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1"
+                    className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1 min-h-[40px] md:min-h-0"
                   >
                     Otwórz w Mapach
                     <ExternalLink className="w-3 h-3" />
@@ -898,7 +898,7 @@ const ActivityDetail = () => {
                       href={details.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-2 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
+                      className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] md:min-h-0 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
                     >
                       Otwórz stronę
                       <ExternalLink className="w-3 h-3" />
@@ -916,7 +916,7 @@ const ActivityDetail = () => {
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Telefon</p>
                   <a
                     href={`tel:${activity.phone.replace(/\s+/g, "")}`}
-                    className="text-sm text-primary active:opacity-70"
+                    className="text-sm text-primary active:opacity-70 inline-flex items-center min-h-[40px] md:min-h-0"
                   >
                     {activity.phone}
                   </a>
@@ -941,7 +941,7 @@ const ActivityDetail = () => {
                     href={details.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary underline underline-offset-2 active:opacity-70"
+                    className="text-sm text-primary underline underline-offset-2 active:opacity-70 inline-flex items-center min-h-[40px] md:min-h-0"
                   >
                     Sprawdź aktualny cennik na stronie organizatora
                   </a>
