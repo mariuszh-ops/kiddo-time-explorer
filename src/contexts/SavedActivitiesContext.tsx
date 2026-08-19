@@ -163,7 +163,6 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
             removeItem(STORAGE_KEYS.FAVORITES);
             removeItem(STORAGE_KEYS.WANT_TO_VISIT);
             syncGuestDataMarker();
-              syncGuestDataMarker();
           } else {
             const toInsert: { user_id: string; activity_slug: string; kind: "favorite" | "want_to_visit" }[] = [];
             for (const id of localFav) {
