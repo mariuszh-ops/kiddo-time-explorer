@@ -318,7 +318,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       is_indoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
       price_level: data.priceLevel ?? null,
       description: data.description || null,
-      website: data.link || null,
+      website: data.link?.trim() ? normalizeUrlInput(data.link) : null,
       amenities: data.amenities || [],
       contact_email: data.contactEmail?.trim() || null,
       status: "nowe",
