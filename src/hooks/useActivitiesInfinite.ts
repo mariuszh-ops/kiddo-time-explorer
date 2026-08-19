@@ -14,6 +14,8 @@ export interface UseActivitiesInfiniteResult {
   loadMore: () => void;
   /** Numer ostatnio doładowanej strony (0 = pierwsza). */
   page: number;
+  /** Ponawia bieżące zapytanie (bez przeładowania strony). */
+  refetch: () => void;
 }
 
 /**
@@ -41,6 +43,7 @@ export function useActivitiesInfinite(
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const activeKey = useRef(filterKey);
+  const [reloadToken, setReloadToken] = useState(0);
 
   // Reset kiedy zmieniają się filtry
   useEffect(() => {
@@ -105,12 +108,17 @@ export function useActivitiesInfinite(
       }
     })();
     return () => { cancelled = true; };
-  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm]);
+  }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
   const hasMore = data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
+  const refetch = () => {
+    setError(null);
+    setLoading(true);
+    setReloadToken((t) => t + 1);
+  };
 
-  return { data, total, loading, loadingMore, hasMore, error, loadMore, page };
+  return { data, total, loading, loadingMore, hasMore, error, loadMore, page, refetch };
 }
