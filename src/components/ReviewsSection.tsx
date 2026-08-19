@@ -2,9 +2,12 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { Star, MessageSquarePlus, Edit2, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
 
 interface GoogleReview {
@@ -27,6 +30,8 @@ interface UserReviewRow {
 
 interface ReviewsSectionProps {
   placeId?: string;
+  /** ID atrakcji — służy do podstawienia oceny wystawionej wyżej na karcie. */
+  activityId?: number;
   googleReviews?: GoogleReview[];
   averageRating: number | null;
   totalReviewCount: number | null;
@@ -127,7 +132,7 @@ const ExpandableText = ({
 const StarRow = ({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) => {
   const cls = size === "md" ? "w-4 h-4" : "w-3 h-3";
   return (
-    <div className="flex items-center gap-0.5" aria-label={`Ocena ${rating} na 5`}>
+    <div className="flex items-center gap-0.5" role="img" aria-label={`Ocena ${rating} na 5`}>
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
@@ -143,6 +148,7 @@ const StarRow = ({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }
 
 const ReviewsSection = ({
   placeId,
+  activityId,
   googleReviews = [],
   averageRating,
   totalReviewCount,
@@ -151,6 +157,11 @@ const ReviewsSection = ({
   longitude,
 }: ReviewsSectionProps) => {
   const { isLoggedIn, user } = useAuth();
+  const { getUserRating } = useUserRatings();
+  const cardRating = activityId != null ? getUserRating(activityId)?.rating ?? 0 : 0;
+
+  /** Podpis autora — NIGDY nie pochodzi z adresu e-mail. */
+  const defaultAuthorName = user?.name?.trim() || "Rodzic";
 
   const mapsUrl =
     latitude != null && longitude != null
@@ -165,6 +176,7 @@ const ReviewsSection = ({
   const [rating, setRating] = useState(0);
   const [hoveredStar, setHoveredStar] = useState(0);
   const [text, setText] = useState("");
+  const [authorName, setAuthorName] = useState(defaultAuthorName);
   const [isEditing, setIsEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -201,8 +213,19 @@ const ReviewsSection = ({
     if (isEditing && myReview) {
       setRating(myReview.rating);
       setText(myReview.text ?? "");
+      setAuthorName(myReview.author_name || defaultAuthorName);
     }
-  }, [isEditing, myReview]);
+  }, [isEditing, myReview, defaultAuthorName]);
+
+  // Podstaw ocenę wystawioną wyżej na karcie jako wartość początkową.
+  useEffect(() => {
+    if (!isEditing && rating === 0 && cardRating > 0) setRating(cardRating);
+  }, [cardRating, isEditing, rating]);
+
+  // Domyślny podpis po zalogowaniu (imię z Google, inaczej „Rodzic").
+  useEffect(() => {
+    setAuthorName((prev) => (prev && prev !== "Rodzic" ? prev : defaultAuthorName));
+  }, [defaultAuthorName]);
 
   const handleStarClick = (value: number) => {
     if (!isLoggedIn) {
@@ -224,12 +247,11 @@ const ReviewsSection = ({
     }
     setSubmitting(true);
     try {
-      const authorName =
-        user.name || (user.email ? user.email.split("@")[0] : "Anonim");
+      const signature = authorName.trim() || defaultAuthorName;
       const payload = {
         place_id: placeId,
         user_id: user.id,
-        author_name: authorName,
+        author_name: signature,
         rating,
         text: text.trim(),
         status: "pending" as const,
@@ -251,7 +273,8 @@ const ReviewsSection = ({
     }
   };
 
-  const hasAnyReview = userReviews.length > 0 || googleReviews.length > 0;
+  const hasAnyReview =
+    userReviews.length > 0 || googleReviews.length > 0 || myReview !== null;
   const showForm = !myReview || isEditing;
 
   return (
@@ -335,6 +358,9 @@ const ReviewsSection = ({
               </p>
             )}
 
+            <p className="text-xs font-medium text-foreground mb-1">
+              Wybierz ocenę (wymagane)
+            </p>
             <div className="flex items-center gap-1 mb-3">
               {Array.from({ length: 5 }).map((_, i) => {
                 const v = i + 1;
@@ -347,7 +373,7 @@ const ReviewsSection = ({
                     onMouseEnter={() => setHoveredStar(v)}
                     onMouseLeave={() => setHoveredStar(0)}
                     className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-                    aria-label={`Oceń ${v} z 5`}
+                    aria-label={`Oceń ${v} z 5 gwiazdek — formularz opinii`}
                   >
                     <Star
                       className={cn(
@@ -363,6 +389,26 @@ const ReviewsSection = ({
               {rating > 0 && (
                 <span className="ml-2 text-sm text-muted-foreground">{rating}/5</span>
               )}
+            </div>
+            {rating < 1 && (
+              <p className="text-xs text-destructive mb-3">
+                Zaznacz ocenę w gwiazdkach, aby opublikować opinię
+              </p>
+            )}
+
+            <div className="mb-3">
+              <Label htmlFor="review-author" className="text-xs font-medium">
+                Jak Cię podpisać?
+              </Label>
+              <Input
+                id="review-author"
+                value={authorName}
+                onChange={(e) => setAuthorName(e.target.value.slice(0, 60))}
+                placeholder="Rodzic"
+                maxLength={60}
+                className="mt-1"
+              />
+              <p className="text-xs text-muted-foreground mt-1">Widoczne publicznie</p>
             </div>
 
             <Textarea
@@ -413,6 +459,11 @@ const ReviewsSection = ({
                 </Button>
               </div>
             </div>
+            {rating < 1 && (
+              <p className="text-xs text-muted-foreground mt-1.5 text-right">
+                Aby opublikować opinię, wybierz najpierw liczbę gwiazdek
+              </p>
+            )}
           </div>
         )}
 
