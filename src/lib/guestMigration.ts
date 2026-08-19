@@ -6,16 +6,22 @@
  * decyzją wszystkie oczekujące pytania (miejsca + oceny).
  */
 
-type Listener = (count: number | null) => void;
+export type GuestMigrationSummary = {
+  savedPlaces: number;
+  ratings: number;
+};
+
+type MigrationKind = keyof GuestMigrationSummary;
+type Listener = (summary: GuestMigrationSummary | null) => void;
 
 let listener: Listener | null = null;
 let waiting: ((v: boolean) => void)[] = [];
-let pendingCount = 0;
+let pending: GuestMigrationSummary = { savedPlaces: 0, ratings: 0 };
 let decision: boolean | null = null;
 
 export function subscribeGuestMigration(l: Listener): () => void {
   listener = l;
-  if (pendingCount > 0) l(pendingCount);
+  if (pending.savedPlaces + pending.ratings > 0) l({ ...pending });
   return () => {
     if (listener === l) listener = null;
   };
@@ -24,27 +30,27 @@ export function subscribeGuestMigration(l: Listener): () => void {
 /** Reset decyzji (np. po wylogowaniu / zmianie konta). */
 export function resetGuestMigrationConsent(): void {
   decision = null;
-  pendingCount = 0;
+  pending = { savedPlaces: 0, ratings: 0 };
   waiting = [];
   listener?.(null);
 }
 
 /** Zapytaj użytkownika o zgodę. Zwraca tę samą decyzję dla wszystkich pytających. */
-export function requestGuestMigrationConsent(count: number): Promise<boolean> {
+export function requestGuestMigrationConsent(kind: MigrationKind, count: number): Promise<boolean> {
   if (decision !== null) return Promise.resolve(decision);
   if (count <= 0) return Promise.resolve(false);
-  pendingCount += count;
+  pending = { ...pending, [kind]: pending[kind] + count };
   const promise = new Promise<boolean>((resolve) => waiting.push(resolve));
-  listener?.(pendingCount);
+  listener?.({ ...pending });
   return promise;
 }
 
 /** Wywoływane przez dialog: „Dodaj" (true) / „Nie, to nie moje" (false). */
 export function resolveGuestMigration(accepted: boolean): void {
   decision = accepted;
-  const pending = waiting;
+  const pendingResolvers = waiting;
   waiting = [];
-  pendingCount = 0;
+  pending = { savedPlaces: 0, ratings: 0 };
   listener?.(null);
-  pending.forEach((resolve) => resolve(accepted));
+  pendingResolvers.forEach((resolve) => resolve(accepted));
 }

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import { Activity, getActivityById, ensureActivitiesLoaded } from "@/data/activities";
 import {
   getRawItem,
@@ -9,7 +9,7 @@ import {
   scopedKey,
   clearForeignScopedKeys,
   hasFreshGuestData,
-  touchGuestDataMarker,
+  syncGuestDataMarker,
 } from "@/lib/storage";
 import { requestGuestMigrationConsent } from "@/lib/guestMigration";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -94,6 +94,7 @@ const UserRatingsContext = createContext<UserRatingsContextType | undefined>(und
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
+  const previousUserIdRef = useRef(user?.id);
   // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
   useDataStatus();
 
@@ -107,11 +108,15 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
   // Zalogowany: baza jest źródłem prawdy, a lokalne lustro trzymamy pod
   // kluczem właściciela (`familyfun_user_ratings:<user_id>`).
   useEffect(() => {
+    if (previousUserIdRef.current && !user) return;
     if (user) {
       saveRatings(ratings, scopedKey(STORAGE_KEY, user.id));
-    } else {
+    } else if (ratings.size > 0) {
       saveRatings(ratings);
-      if (ratings.size > 0) touchGuestDataMarker();
+      syncGuestDataMarker();
+    } else {
+      removeItem(STORAGE_KEY);
+      syncGuestDataMarker();
     }
   }, [ratings, user]);
 
@@ -122,7 +127,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
 
     const hydrate = async () => {
       if (!user) {
-        setRatings(loadRatings());
+        setRatings(previousUserIdRef.current ? new Map() : loadRatings());
         return;
       }
 
@@ -137,7 +142,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         if (!hasFreshGuestData()) {
           removeItem(STORAGE_KEY);
         } else {
-          const accepted = await requestGuestMigrationConsent(local.size);
+          const accepted = await requestGuestMigrationConsent("ratings", local.size);
           if (cancelled) return;
           if (!accepted) {
             removeItem(STORAGE_KEY);
@@ -152,7 +157,10 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
               .from("user_ratings")
               .upsert(rows, { onConflict: "user_id,activity_id", ignoreDuplicates: true });
             if (cancelled) return;
-            if (!error) removeItem(STORAGE_KEY);
+            if (!error) {
+              removeItem(STORAGE_KEY);
+              syncGuestDataMarker();
+            }
           }
         }
       }
@@ -179,6 +187,10 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, [user]);
+
+  useEffect(() => {
+    previousUserIdRef.current = user?.id;
   }, [user]);
 
   // Upsert/delete do bazy. Zwraca false przy JAKIMKOLWIEK niepowodzeniu

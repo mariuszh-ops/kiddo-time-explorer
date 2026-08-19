@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
 import {
   Activity,
   getActivities,
@@ -14,7 +14,7 @@ import {
   scopedKey,
   clearForeignScopedKeys,
   hasFreshGuestData,
-  touchGuestDataMarker,
+  syncGuestDataMarker,
 } from "@/lib/storage";
 import { requestGuestMigrationConsent } from "@/lib/guestMigration";
 import { catalogClient as supabase } from "@/lib/catalogClient";
@@ -75,24 +75,33 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const [wantToVisitIds, setWantToVisitIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, []))
   );
+  const previousUserIdRef = useRef(user?.id);
 
   // Lokalne lustro: gość pisze pod „gołym" kluczem, zalogowany pod kluczem
   // przypisanym do właściciela (`ff_favorites:<user_id>`), żeby dane jednego
   // konta nigdy nie wyciekły do drugiego na tej samej przeglądarce.
   useEffect(() => {
+    if (previousUserIdRef.current && !user) return;
     if (user) {
       setItem(scopedKey(STORAGE_KEYS.FAVORITES, user.id), [...favoriteIds]);
-    } else {
+    } else if (favoriteIds.size > 0) {
       setItem(STORAGE_KEYS.FAVORITES, [...favoriteIds]);
-      if (favoriteIds.size > 0) touchGuestDataMarker();
+      syncGuestDataMarker();
+    } else {
+      removeItem(STORAGE_KEYS.FAVORITES);
+      syncGuestDataMarker();
     }
   }, [favoriteIds, user]);
   useEffect(() => {
+    if (previousUserIdRef.current && !user) return;
     if (user) {
       setItem(scopedKey(STORAGE_KEYS.WANT_TO_VISIT, user.id), [...wantToVisitIds]);
-    } else {
+    } else if (wantToVisitIds.size > 0) {
       setItem(STORAGE_KEYS.WANT_TO_VISIT, [...wantToVisitIds]);
-      if (wantToVisitIds.size > 0) touchGuestDataMarker();
+      syncGuestDataMarker();
+    } else {
+      removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+      syncGuestDataMarker();
     }
   }, [wantToVisitIds, user]);
 
@@ -103,9 +112,11 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
 
     const hydrateFromServer = async () => {
       if (!user) {
-        // Guest — restore from localStorage.
-        setFavoriteIds(new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, [])));
-        setWantToVisitIds(new Set(getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, [])));
+        const justLoggedOut = Boolean(previousUserIdRef.current);
+        // Po wylogowaniu najpierw zerujemy pamięć. Przy zwykłym wejściu gościa
+        // odtwarzamy wyłącznie dane utworzone przez niego w tej przeglądarce.
+        setFavoriteIds(new Set(justLoggedOut ? [] : getItem<number[]>(STORAGE_KEYS.FAVORITES, [])));
+        setWantToVisitIds(new Set(justLoggedOut ? [] : getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, [])));
         setIsLoadingSaved(false);
         return;
       }
@@ -144,11 +155,12 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
           removeItem(STORAGE_KEYS.FAVORITES);
           removeItem(STORAGE_KEYS.WANT_TO_VISIT);
         } else {
-          const accepted = await requestGuestMigrationConsent(guestCount);
+          const accepted = await requestGuestMigrationConsent("savedPlaces", guestCount);
           if (cancelled) return;
           if (!accepted) {
             removeItem(STORAGE_KEYS.FAVORITES);
             removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+              syncGuestDataMarker();
           } else {
             const toInsert: { user_id: string; activity_slug: string; kind: "favorite" | "want_to_visit" }[] = [];
             for (const id of localFav) {
@@ -205,6 +217,10 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, [user, dataStatus]);
+
+  useEffect(() => {
+    previousUserIdRef.current = user?.id;
+  }, [user]);
 
   // Jedno źródło prawdy dla list i liczników: zapisane atrakcje odnalezione
   // w katalogu (licznik = długość listy, więc nigdy nie rozjadą się ze sobą).
