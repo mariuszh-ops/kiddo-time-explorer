@@ -119,7 +119,7 @@ const ExpandableText = ({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2"
+            className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2 inline-flex items-center min-h-[40px] md:min-h-0"
           >
             {expanded ? "mniej" : "więcej"}
           </button>
@@ -415,7 +415,7 @@ const ReviewsSection = ({
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, REVIEW_MAX))}
               placeholder="Co warto wiedzieć innym rodzicom? (opcjonalnie)"
-              className="resize-none min-h-[100px] text-sm"
+              className="resize-none min-h-[100px]"
               maxLength={REVIEW_MAX}
               onFocus={() => {
                 if (!isLoggedIn) onAuthRequired();
