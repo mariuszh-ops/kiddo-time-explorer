@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -36,6 +36,18 @@ import {
 } from "@/components/ui/form";
 import { FEATURES } from "@/lib/featureFlags";
 import { filterOptions } from "@/data/activities";
+import { useAuth } from "@/contexts/AuthContext";
+import { normalizeUrlInput, isHttpUrl } from "@/lib/safeUrl";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ageGroups = [
   { id: "0-3", label: "0–3 lata" },
@@ -82,7 +94,15 @@ const formSchema = z.object({
   priceLevel: z.number().min(0).max(3).optional(),
   priceNote: z.string().max(200).optional(),
   description: z.string().max(500, "Opis może mieć maksymalnie 500 znaków").optional(),
-  link: z.string().url("Podaj prawidłowy adres URL").optional().or(z.literal("")),
+  link: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(""))
+    .refine(
+      (val) => !val || isHttpUrl(normalizeUrlInput(val)),
+      "Podaj poprawny adres zaczynający się od http:// lub https://",
+    ),
   amenities: z.array(z.string()).optional(),
   contactEmail: z
     .string()
@@ -99,6 +119,54 @@ interface SubmitActivityModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+const DRAFT_KEY = "ff:draft:activity-submission";
+const DRAFT_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+type Draft = Partial<FormData> & { savedAt?: number };
+
+const readDraft = (): Draft | null => {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Draft;
+    if (!parsed?.savedAt || Date.now() - parsed.savedAt > DRAFT_MAX_AGE_MS) {
+      sessionStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeDraft = (data: FormData) => {
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ ...data, savedAt: Date.now() }));
+  } catch {
+    /* brak sessionStorage — pomijamy */
+  }
+};
+
+const clearDraft = () => {
+  try {
+    sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    /* ignore */
+  }
+};
+
+const hasAnyContent = (d: Partial<FormData> | null | undefined): boolean => {
+  if (!d) return false;
+  const texts = [d.name, d.customCity, d.address, d.eventDate, d.priceNote, d.description, d.link, d.contactEmail];
+  if (texts.some((t) => typeof t === "string" && t.trim() !== "")) return true;
+  if ((d.ageGroups?.length ?? 0) > 0) return true;
+  if ((d.amenities?.length ?? 0) > 0) return true;
+  if (d.activityType) return true;
+  if (d.indoorOutdoor) return true;
+  if (d.priceLevel !== undefined) return true;
+  return false;
+};
 
 const SectionHeader = ({ title }: { title: string }) => (
   <div className="pt-4 pb-1">
@@ -117,6 +185,11 @@ const OPTION_ROW_CLASS =
 const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const [confirmClose, setConfirmClose] = useState(false);
+  const { user } = useAuth();
+  const pushedHistoryRef = useRef(false);
+  const closingFromPopRef = useRef(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -139,11 +212,91 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     },
   });
 
+  const emptyValues = useRef<FormData | null>(null);
+  if (!emptyValues.current) {
+    emptyValues.current = form.getValues();
+  }
+
   const selectedType = useWatch({ control: form.control, name: "type" });
   const selectedCity = useWatch({ control: form.control, name: "city" });
   const selectedPriceLevel = useWatch({ control: form.control, name: "priceLevel" });
   const isEvent = selectedType === "event";
   const descriptionLength = form.watch("description")?.length || 0;
+
+  // ── Wersja robocza: zapis z debounce 300 ms przy każdej zmianie pola ──
+  useEffect(() => {
+    if (!isOpen || isSubmitted) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const sub = form.watch((values) => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (hasAnyContent(values as FormData)) writeDraft(values as FormData);
+      }, 300);
+    });
+    return () => {
+      if (timer) clearTimeout(timer);
+      sub.unsubscribe();
+    };
+  }, [isOpen, isSubmitted, form]);
+
+  // ── Otwarcie modala: przywrócenie wersji roboczej + wpis w historii ──
+  useEffect(() => {
+    if (!isOpen) return;
+    const draft = readDraft();
+    if (draft && hasAnyContent(draft)) {
+      const { savedAt: _savedAt, ...values } = draft;
+      form.reset({ ...(emptyValues.current as FormData), ...values });
+      setDraftRestored(true);
+    } else if (user?.email) {
+      form.setValue("contactEmail", user.email);
+    }
+
+    if (!pushedHistoryRef.current) {
+      try {
+        window.history.pushState({ ffModal: "zglos-atrakcje" }, "");
+        pushedHistoryRef.current = true;
+      } catch {
+        /* brak History API */
+      }
+    }
+
+    const onPop = () => {
+      pushedHistoryRef.current = false;
+      closingFromPopRef.current = true;
+      setConfirmClose(false);
+      onClose();
+      closingFromPopRef.current = false;
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
+
+  /** Zamyka modal i zdejmuje wpis z historii (jeden wpis na otwarcie). */
+  const finalizeClose = useCallback(() => {
+    setConfirmClose(false);
+    setDraftRestored(false);
+    if (pushedHistoryRef.current && !closingFromPopRef.current) {
+      pushedHistoryRef.current = false;
+      onClose();
+      try {
+        window.history.back();
+      } catch {
+        /* ignore */
+      }
+      return;
+    }
+    onClose();
+  }, [onClose]);
+
+  const startOver = () => {
+    clearDraft();
+    form.reset({
+      ...(emptyValues.current as FormData),
+      contactEmail: user?.email ?? "",
+    });
+    setDraftRestored(false);
+  };
 
   const handleSubmit = async (data: FormData) => {
     const ageRanges = data.ageGroups.map((g) => {
@@ -181,28 +334,46 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       const msg = (error.message || "").toLowerCase();
       const isRateLimit =
         error.code === "P0001" ||
+        error.code === "PT429" ||
+        (error as { status?: number }).status === 429 ||
         msg.includes("rate") ||
         msg.includes("too many") ||
         msg.includes("zbyt wiele");
       if (isRateLimit) {
-        toast.error("Wysłano zbyt wiele zgłoszeń — spróbuj ponownie później");
+        toast.error(
+          error.message?.trim()
+            ? error.message
+            : "Wysłano zbyt wiele zgłoszeń z tego urządzenia — spróbuj ponownie za godzinę",
+        );
       } else {
         toast.error("Nie udało się wysłać zgłoszenia", { description: error.message });
       }
+      // Nieudana wysyłka NIE kasuje wersji roboczej.
       return;
     }
 
+    clearDraft();
+    setDraftRestored(false);
     setIsSubmitted(true);
   };
 
   const handleClose = () => {
-    setIsSubmitted(false);
-    form.reset();
-    onClose();
+    if (isSubmitted) {
+      setIsSubmitted(false);
+      form.reset(emptyValues.current as FormData);
+      finalizeClose();
+      return;
+    }
+    if (hasAnyContent(form.getValues())) {
+      setConfirmClose(true);
+      return;
+    }
+    finalizeClose();
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <>
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) handleClose(); }}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         {isSubmitted ? (
           <div className="py-8 text-center">
@@ -230,6 +401,15 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                 Podziel się miejscem, które warto odwiedzić z dziećmi. Wszystkie zgłoszenia są weryfikowane.
               </p>
             </DialogHeader>
+
+            {draftRestored && (
+              <div className="flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2">
+                <p className="text-sm text-foreground">Przywróciliśmy Twój niedokończony formularz.</p>
+                <Button type="button" variant="ghost" size="sm" onClick={startOver}>
+                  Zacznij od nowa
+                </Button>
+              </div>
+            )}
 
             <Form {...form}>
               <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4 pt-2">
