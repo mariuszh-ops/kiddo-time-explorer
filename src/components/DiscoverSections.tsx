@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import ActivityCard from "@/components/ActivityCard";
 // Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
 const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
-import HorizontalCarousel from "@/components/HorizontalCarousel";
 import { filterOptions } from "@/data/activities";
 const HomeBlogSection = lazy(() => import("@/components/HomeBlogSection"));
 import { FEATURES } from "@/lib/featureFlags";
