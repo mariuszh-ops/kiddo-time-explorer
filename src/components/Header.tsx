@@ -14,7 +14,7 @@ import { REGION_SLUGS } from "@/data/regions";
 
 const Header = () => {
   const location = useLocation();
-  const { isLoggedIn, signInWithGoogle, isDemoMode, toggleDemoMode } = useAuth();
+  const { isLoggedIn, user, signInWithGoogle, isDemoMode, toggleDemoMode } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -71,6 +71,16 @@ const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
+  // Inicjały użytkownika na awatarze w headerze.
+  const initials = (() => {
+    if (!user) return "";
+    const source = user.name?.trim() || user.email || "";
+    if (!source) return "";
+    const parts = source.split(/\s+/).filter(Boolean);
+    if (user.name && parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return source.slice(0, 2).toUpperCase();
+  })();
+
   // Wyszukiwarka w headerze na stronach listingowych (home ma własne, duże pole).
   const firstSegment = location.pathname.split("/")[1] ?? "";
   const showSearch =
@@ -118,7 +128,7 @@ const Header = () => {
 
             {isLoggedIn ? (
               <>
-                {/* My Places link - desktop only (mobile uses bottom nav) */}
+                {/* Moje miejsca — desktop (na mobile jest dolna nawigacja) */}
                 <Link to="/my-places" className="hidden sm:block">
                   <Button
                     variant="ghost"
@@ -133,31 +143,39 @@ const Header = () => {
                   </Button>
                 </Link>
 
-                {/* Profile button - desktop only (mobile uses bottom nav) */}
-                <Link to="/profile" className="hidden sm:block">
+                {/* Awatar/inicjały → /profile. Widoczne również na telefonie. */}
+                <Link to="/profile" aria-label="Twój profil" className="block">
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-hidden="true"
+                    tabIndex={-1}
                     className={cn(
-                      "text-muted-foreground hover:text-foreground",
+                      "min-h-11 min-w-11 text-muted-foreground hover:text-foreground",
                       isActive("/profile") && "text-foreground bg-accent"
                     )}
                   >
-                    <User className="w-5 h-5" />
-                    <span className="sr-only">Profil</span>
+                    {initials ? (
+                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                        {initials}
+                      </span>
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
                   </Button>
                 </Link>
               </>
             ) : (
-              /* Login button - logged out, desktop only (mobile uses bottom nav) */
+              /* Wejście do logowania — widoczne na każdej szerokości (S-115) */
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
-                className="hidden sm:flex gap-2 text-muted-foreground hover:text-foreground"
+                aria-label="Zaloguj się"
+                className="flex min-h-11 gap-2 px-2 text-muted-foreground hover:text-foreground sm:px-3"
               >
                 <LogIn className="w-4 h-4" />
-                <span>Zaloguj się</span>
+                <span className="hidden sm:inline">Zaloguj się</span>
               </Button>
             )}
           </nav>

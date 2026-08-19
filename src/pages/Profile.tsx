@@ -21,6 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -345,6 +346,9 @@ const Profile = () => {
                 </Link>
               ))}
             </section>
+
+            {/* Usunięcie konta (RODO art. 17) — tylko dla zalogowanych */}
+            <DeleteAccountSection />
 
             {/* Logout */}
             <section className="pt-2">
