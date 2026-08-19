@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import { useFilterListbox } from "@/hooks/useFilterListbox";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -29,11 +30,14 @@ const CityFilterDropdown = ({
   onCitySelect,
   onDistanceChange,
 }: CityFilterDropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
   const [localDistance, setLocalDistance] = useState(selectedDistance ?? 0);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const selectedIndex = Math.max(cityOptions.findIndex((o) => o.value === selectedCity), 0);
+  const {
+    listboxId, isOpen, open, close, activeIndex, setActiveIndex,
+    buttonRef, listRef, setOptionRef, handleTriggerKeyDown, handleListKeyDown, triggerAria,
+  } = useFilterListbox(cityOptions.length, selectedIndex);
+  const dropdownRef = listRef;
 
   const selectedCityOption = cityOptions.find((o) => o.value === selectedCity);
   
@@ -94,7 +98,7 @@ const CityFilterDropdown = ({
         dropdownRef.current && 
         !dropdownRef.current.contains(target)
       ) {
-        setIsOpen(false);
+        close(false);
       }
     };
 
@@ -102,13 +106,13 @@ const CityFilterDropdown = ({
       document.addEventListener("mousedown", handleClickOutside);
     }
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+  }, [isOpen, close]);
 
   // Handle clearing both city and distance
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     onCitySelect(undefined);
-    setIsOpen(false);
+    close(false);
   };
 
   const handleSliderChange = (values: number[]) => {
@@ -121,6 +125,8 @@ const CityFilterDropdown = ({
   const dropdownMenu = isOpen ? (
     <div
       ref={dropdownRef}
+      tabIndex={-1}
+      onKeyDown={handleListKeyDown}
       className={cn(
         "fixed min-w-[280px] bg-popover border border-border rounded-xl shadow-xl overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200",
         dropdownPosition.openUpward && "origin-bottom"
@@ -134,17 +140,22 @@ const CityFilterDropdown = ({
     >
       <div className="max-h-[420px] overflow-y-auto">
         {/* City section */}
-        <div className="py-2">
-          <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
+        <div className="py-2" id={listboxId} role="listbox" aria-label="Województwo">
+          <div className="px-4 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide" aria-hidden="true">
             Województwo
           </div>
-          {cityOptions.map((option) => {
+          {cityOptions.map((option, index) => {
             const isEmpty = option.count === 0;
             return (
               <button
                 key={option.value}
+                ref={setOptionRef(index)}
+                role="option"
+                aria-selected={option.value === selectedCity}
+                tabIndex={index === activeIndex ? 0 : -1}
+                onFocus={() => setActiveIndex(index)}
                 onClick={isEmpty ? undefined : () => onCitySelect(option.value)}
-                disabled={isEmpty}
+                aria-disabled={isEmpty || undefined}
                 className={cn(
                   "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
                   isEmpty
@@ -214,7 +225,9 @@ const CityFilterDropdown = ({
     <>
       <button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => (isOpen ? close(false) : open(selectedIndex))}
+        onKeyDown={handleTriggerKeyDown}
+        {...triggerAria}
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap",
           "border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
