@@ -114,7 +114,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
       <button
         type="button"
         onClick={openModal}
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground underline underline-offset-4 decoration-dotted"
+        className="inline-flex items-center gap-1.5 min-h-[40px] md:min-h-0 text-sm text-muted-foreground hover:text-foreground underline underline-offset-4 decoration-dotted"
       >
         <AlertTriangle className="w-3.5 h-3.5" />
         Zgłoś błąd w danych

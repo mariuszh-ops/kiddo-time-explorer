@@ -131,7 +131,7 @@ const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps
           type="button"
           aria-label="Przybliż mapę"
           onClick={() => mapRef.current?.zoomIn()}
-          className="w-8 h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
+          className="w-10 h-10 md:w-8 md:h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
         >
           +
         </button>
@@ -139,7 +139,7 @@ const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps
           type="button"
           aria-label="Oddal mapę"
           onClick={() => mapRef.current?.zoomOut()}
-          className="w-8 h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
+          className="w-10 h-10 md:w-8 md:h-8 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-lg font-semibold leading-none"
         >
           −
         </button>
