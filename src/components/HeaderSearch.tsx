@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { REGION_SLUGS } from "@/data/regions";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 
@@ -27,10 +27,22 @@ const HeaderSearch = () => {
   const isCategoryPath = segments[0] === "kategoria" && Boolean(segments[1]);
   const keepsContext = Boolean(isRegionPath || isAtrakcjeRegionPath || isCategoryPath);
 
+  /** Usuwa wyłącznie parametr `search`, zachowując pozostałe filtry i trasę. */
+  const clearSearchParam = () => {
+    const next = new URLSearchParams(searchParams);
+    next.delete("search");
+    const qs = next.toString();
+    navigate(`${location.pathname}${qs ? `?${qs}` : ""}`, { replace: true });
+  };
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const q = value.trim();
-    if (!q) return;
+    if (!q) {
+      // Enter w pustym polu = usunięcie frazy z URL (filtry zostają).
+      clearSearchParam();
+      return;
+    }
     if (keepsContext) {
       const next = new URLSearchParams(searchParams);
       next.set("search", q);
@@ -38,6 +50,11 @@ const HeaderSearch = () => {
       return;
     }
     navigate(`/?search=${encodeURIComponent(q)}`);
+  };
+
+  const handleClear = () => {
+    setValue("");
+    clearSearchParam();
   };
 
   return (
@@ -57,8 +74,18 @@ const HeaderSearch = () => {
         placeholder={SEARCH_PLACEHOLDER}
         aria-label={SEARCH_PLACEHOLDER}
         autoComplete="off"
-        className="w-full h-10 pl-9 pr-3 rounded-full bg-secondary border border-border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+        className="w-full h-11 md:h-10 pl-9 pr-11 rounded-full bg-secondary border border-border text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
       />
+      {value.length > 0 && (
+        <button
+          type="button"
+          onClick={handleClear}
+          aria-label="Wyczyść wyszukiwanie"
+          className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
     </form>
   );
 };
