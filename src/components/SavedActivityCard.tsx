@@ -119,7 +119,6 @@ const SavedActivityCard = ({
             <Button
               variant="secondary"
               size="icon"
-              // Wizualnie 32×32, ale obszar dotyku rozszerzony do 44×44 (::after).
               className="relative h-8 w-8 bg-background/90 backdrop-blur-sm hover:bg-destructive hover:text-destructive-foreground transition-colors after:absolute after:content-[''] after:-inset-1.5 after:rounded-full"
               onClick={(e) => e.stopPropagation()}
               disabled={isRemoving}
