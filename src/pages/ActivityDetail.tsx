@@ -458,7 +458,7 @@ const ActivityDetail = () => {
               tabIndex={showStickyHeader ? 0 : -1}
               size="sm"
               variant={wantToVisit ? "default" : "default"}
-              className="h-9 px-3 text-xs sm:text-sm"
+              className="h-10 px-3 text-xs sm:text-sm"
               disabled={isProcessing !== null}
             >
               {wantToVisit ? (
@@ -524,7 +524,7 @@ const ActivityDetail = () => {
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
             {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
-            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0" aria-label="breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0 [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="breadcrumb">
               <Link to="/" className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
               <Link

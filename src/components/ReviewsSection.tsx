@@ -108,7 +108,7 @@ const ExpandableText = ({
               href={mapsUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs font-medium text-primary hover:underline underline-offset-2"
+              className="inline-flex items-center min-h-[40px] md:min-h-0 text-xs font-medium text-primary hover:underline underline-offset-2"
             >
               Zobacz wszystkie opinie w Google Maps
             </a>
