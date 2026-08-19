@@ -113,6 +113,7 @@ const ActivityDetail = () => {
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const isMobile = useIsMobile();
   const galleryRef = useRef<HTMLElement>(null);
+  const heroSentinelRef = useRef<HTMLDivElement>(null);
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
@@ -171,21 +172,20 @@ const ActivityDetail = () => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // Sticky header on scroll past gallery
+  // Pasek szybkich akcji pojawia się, gdy sentinel w sekcji hero wyjdzie z
+  // widoku. Efekt musi poczekać na wyrenderowanie karty (wcześniej ref był
+  // pusty, bo komponent zwracał skeleton — pasek nigdy się nie pokazywał).
   useEffect(() => {
-    const el = galleryRef.current;
+    const el = heroSentinelRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowStickyHeader(!entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: '0px 0px 0px 0px' }
+      ([entry]) => setShowStickyHeader(!entry.isIntersecting),
+      { threshold: 0 }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
-  }, [slug]);
+  }, [slug, activity?.id]);
 
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
