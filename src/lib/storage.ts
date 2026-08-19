@@ -113,6 +113,12 @@ export const STORAGE_KEYS = {
 /** Prefiksy WSZYSTKICH kluczy aplikacji trzymanych w localStorage. */
 const APP_PREFIXES = ["ff_", "familyfun_"] as const;
 
+/** Ustawienia urządzenia, które nie zawierają danych konkretnego konta. */
+const LOGOUT_PRESERVED_KEYS = new Set<string>([
+  STORAGE_KEYS.COOKIE_CONSENT,
+  STORAGE_KEYS.ONBOARDING_SEEN,
+]);
+
 /** Znacznik ostatniego wylogowania (poza prefiksami aplikacji — nie jest czyszczony). */
 const LAST_LOGOUT_KEY = "auth_last_logout";
 
@@ -132,7 +138,7 @@ export function clearAllAppStorage(): void {
     const keys: string[] = [];
     for (let i = 0; i < window.localStorage.length; i++) {
       const key = window.localStorage.key(i);
-      if (key && isAppKey(key)) keys.push(key);
+      if (key && isAppKey(key) && !LOGOUT_PRESERVED_KEYS.has(key)) keys.push(key);
     }
     keys.forEach((k) => window.localStorage.removeItem(k));
   } catch {
@@ -149,6 +155,30 @@ export function markLoggedOutNow(): void {
 export function touchGuestDataMarker(): void {
   if (getRawItem(GUEST_SINCE_KEY)) return;
   setRawItem(GUEST_SINCE_KEY, String(Date.now()));
+}
+
+/**
+ * Usuń znacznik, gdy nie istnieją już żadne dane gościa. Ta funkcja celowo
+ * NIE tworzy znacznika — robią to wyłącznie jawne akcje gościa.
+ */
+export function syncGuestDataMarker(): void {
+  const guestKeys = [
+    STORAGE_KEYS.FAVORITES,
+    STORAGE_KEYS.WANT_TO_VISIT,
+    "familyfun_user_ratings",
+  ];
+  const hasGuestData = guestKeys.some((key) => {
+    const raw = getRawItem(key);
+    if (!raw) return false;
+    try {
+      const value: unknown = JSON.parse(raw);
+      return Array.isArray(value) && value.length > 0;
+    } catch {
+      return false;
+    }
+  });
+
+  if (!hasGuestData) removeItem(GUEST_SINCE_KEY);
 }
 
 /** Czy dane gościa powstały PO ostatnim wylogowaniu (czyli w tej sesji)? */
