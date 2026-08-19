@@ -310,6 +310,15 @@ const ActivityDetail = () => {
   const displayReviewCount = activity.google_review_count ?? (activity.reviewCount > 0 ? activity.reviewCount : null);
 
   const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
+  // Okruszek kategorii: krótka, kanoniczna trasa regionu + kategorii, jeśli
+  // kategoria istnieje w konfiguracji; inaczej ogólny listing kategorii.
+  const categoryConfig = categoryConfigs.find((c) => c.slug === activity.type);
+  const regionSlug = activity.city;
+  const regionLabel = cityLabels[activity.city]?.nominative || activity.city;
+  const regionHref = `/${regionSlug}`;
+  const categoryHref = categoryConfig
+    ? `/${regionSlug}/${categoryConfig.slug}`
+    : `/kategoria/${activity.type}`;
   const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
   const cityLocativeRaw = cityLabels[activity.city]?.locative || cityLabel;
   const cityLocative = `w ${cityLocativeRaw}`;
@@ -363,12 +372,16 @@ const ActivityDetail = () => {
               ...(activity.location ? { "addressLocality": activity.location } : {}),
               "addressCountry": "PL",
             },
-            ...(activity.reviewCount > 0 ? {
+            // Agregat WYŁĄCZNIE z ocen naszych użytkowników (RPC get_activity_rating),
+            // nigdy z rating/reviews_count pochodzących z Google. Poniżej 5 ocen
+            // klucza aggregateRating w ogóle nie emitujemy.
+            ...(ownRating.avg != null && ownRating.count >= 5 ? {
               "aggregateRating": {
                 "@type": "AggregateRating",
-                "ratingValue": activity.rating,
-                "reviewCount": activity.reviewCount,
+                "ratingValue": Number(ownRating.avg.toFixed(1)),
+                "ratingCount": ownRating.count,
                 "bestRating": "5",
+                "worstRating": "1",
               },
             } : {}),
             ...(activity.hasAgeInfo ? {
@@ -394,8 +407,9 @@ const ActivityDetail = () => {
             "@type": "BreadcrumbList",
             "itemListElement": [
               { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://familyfun.pl/" },
-              { "@type": "ListItem", "position": 2, "name": cityLabels[activity.city]?.nominative || activity.city, "item": `https://familyfun.pl/atrakcje/${activity.city}` },
-              { "@type": "ListItem", "position": 3, "name": activity.title },
+              { "@type": "ListItem", "position": 2, "name": regionLabel, "item": `https://familyfun.pl${regionHref}` },
+              { "@type": "ListItem", "position": 3, "name": typeLabel, "item": `https://familyfun.pl${categoryHref}` },
+              { "@type": "ListItem", "position": 4, "name": activity.title },
             ],
           },
         ] as unknown as Record<string, unknown>}
