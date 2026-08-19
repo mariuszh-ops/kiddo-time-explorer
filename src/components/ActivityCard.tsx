@@ -213,13 +213,23 @@ const ActivityCard = ({
 
             {/* Match percentage badge - only visible when feature enabled */}
             {FEATURES.MATCH_PERCENTAGE && isLoggedIn && (
-              <div className="absolute top-12 right-2">
-                <Badge
-                  variant="secondary"
-                  className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
+              <div className="absolute top-12 right-2 max-w-[70%] text-right">
+                {hasPreferences ? (
+                  <Badge
+                    variant="secondary"
+                    className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
+                  >
+                    {matchPercentage}% dopasowania
+                  </Badge>
+                ) : (
+                  <Link
+                  to="/profile"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center rounded-full bg-background/90 px-2 py-1 text-xs font-medium text-primary underline backdrop-blur-sm"
                 >
-                  {matchPercentage}% dopasowania
-                </Badge>
+                  Ustaw preferencje, aby zobaczyć dopasowanie
+                </Link>
+                )}
               </div>
             )}
           </div>

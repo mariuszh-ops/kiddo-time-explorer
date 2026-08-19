@@ -4,6 +4,8 @@ import { Star, X, AlertCircle, RefreshCw, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { FEATURES } from "@/lib/featureFlags";
+import { hasFamilyPreferences } from "@/lib/preferences";
 import { motion, AnimatePresence } from "framer-motion";
 import { getPlaceholderImage } from "@/data/placeholders";
 import {
@@ -214,14 +216,24 @@ const SavedActivityCard = ({
           />
           
           {/* Match percentage badge - only visible for logged-in users */}
-          {isLoggedIn && (
-            <div className="absolute top-2 right-2">
-              <Badge 
-                variant="secondary" 
-                className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
-              >
-                {matchPercentage}% dopasowania
-              </Badge>
+          {FEATURES.MATCH_PERCENTAGE && isLoggedIn && (
+            <div className="absolute top-2 right-2 max-w-[75%] text-right">
+              {hasPreferences ? (
+                <Badge
+                  variant="secondary"
+                  className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-medium"
+                >
+                  {matchPercentage}% dopasowania
+                </Badge>
+              ) : (
+                <Link
+                  to="/profile"
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center rounded-full bg-background/90 px-2 py-1 text-xs font-medium text-primary underline backdrop-blur-sm"
+                >
+                  Ustaw preferencje, aby zobaczyć dopasowanie
+                </Link>
+              )}
             </div>
           )}
         </div>
