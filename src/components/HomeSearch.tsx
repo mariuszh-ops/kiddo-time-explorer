@@ -7,6 +7,7 @@ import { FEATURES } from "@/lib/featureFlags";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { matchesSearchQuery } from "@/lib/searchMatch";
 
 function normalize(text: string): string {
   return text
@@ -89,14 +90,8 @@ const HomeSearch = () => {
     if (debounced.trim().length < 2) return [];
     const q = debounced.trim();
     return activities
-      .filter(
-        (a) =>
-          fuzzy(a.title, q) ||
-          fuzzy(a.location, q) ||
-          fuzzy(a.city, q) ||
-          fuzzy(getCategoryLabel(a.type), q) ||
-          a.tags.some((t) => fuzzy(t, q))
-      )
+      // Dopasowanie AND po tokenach: kolejność słów nie ma znaczenia.
+      .filter((a) => matchesSearchQuery(a, q))
       .slice(0, 6);
   }, [activities, debounced]);
 
