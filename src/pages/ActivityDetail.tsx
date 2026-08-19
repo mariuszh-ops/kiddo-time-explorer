@@ -567,6 +567,7 @@ const ActivityDetail = () => {
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
+              contextLabel="sekcja Oceny rodziców"
               onAuthRequired={(value) => {
                 setAuthContext("rate");
                 if (value) {
@@ -912,6 +913,7 @@ const ActivityDetail = () => {
       {/* 6. Reviews section — FamilyFun user reviews + Google */}
       <ReviewsSection
         placeId={activity.place_id}
+        activityId={activityId}
         googleReviews={details.reviews}
         averageRating={displayRating}
         totalReviewCount={displayReviewCount}
