@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getActivities, PRICE_LEVELS } from "@/data/activities";
+import { categoryConfigs } from "@/data/categoryPages";
 import type { Activity } from "@/data/activities";
 import { fetchActivityBySlug } from "@/hooks/useActivities";
 import SimilarAttractions from "@/components/SimilarAttractions";
@@ -45,6 +46,7 @@ import ImageGallery from "@/components/ImageGallery";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import InlineRatingAction from "@/components/InlineRatingAction";
+import { useActivityRating } from "@/hooks/useActivityRating";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
@@ -112,6 +114,7 @@ const ActivityDetail = () => {
   const [showStickyHeader, setShowStickyHeader] = useState(false);
   const isMobile = useIsMobile();
   const galleryRef = useRef<HTMLElement>(null);
+  const heroSentinelRef = useRef<HTMLDivElement>(null);
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
@@ -164,27 +167,28 @@ const ActivityDetail = () => {
   const activityId = activity?.id ?? 0;
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
+  // Agregat ocen rodziców — jedyne źródło aggregateRating w JSON-LD.
+  const ownRating = useActivityRating(activityId);
 
   // Scroll to top on mount; on mobile, position title card nicely
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
 
-  // Sticky header on scroll past gallery
+  // Pasek szybkich akcji pojawia się, gdy sentinel w sekcji hero wyjdzie z
+  // widoku. Efekt musi poczekać na wyrenderowanie karty (wcześniej ref był
+  // pusty, bo komponent zwracał skeleton — pasek nigdy się nie pokazywał).
   useEffect(() => {
-    const el = galleryRef.current;
+    const el = heroSentinelRef.current;
     if (!el) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setShowStickyHeader(!entry.isIntersecting);
-      },
-      { threshold: 0, rootMargin: '0px 0px 0px 0px' }
+      ([entry]) => setShowStickyHeader(!entry.isIntersecting),
+      { threshold: 0 }
     );
-
     observer.observe(el);
     return () => observer.disconnect();
-  }, [slug]);
+  }, [slug, activity?.id]);
 
   // Auto-dismiss error after 4 seconds
   useEffect(() => {
@@ -309,6 +313,15 @@ const ActivityDetail = () => {
   const displayReviewCount = activity.google_review_count ?? (activity.reviewCount > 0 ? activity.reviewCount : null);
 
   const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
+  // Okruszek kategorii: krótka, kanoniczna trasa regionu + kategorii, jeśli
+  // kategoria istnieje w konfiguracji; inaczej ogólny listing kategorii.
+  const categoryConfig = categoryConfigs.find((c) => c.slug === activity.type);
+  const regionSlug = activity.city;
+  const regionLabel = cityLabels[activity.city]?.nominative || activity.city;
+  const regionHref = `/${regionSlug}`;
+  const categoryHref = categoryConfig
+    ? `/${regionSlug}/${categoryConfig.slug}`
+    : `/kategoria/${activity.type}`;
   const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
   const cityLocativeRaw = cityLabels[activity.city]?.locative || cityLabel;
   const cityLocative = `w ${cityLocativeRaw}`;
@@ -362,12 +375,16 @@ const ActivityDetail = () => {
               ...(activity.location ? { "addressLocality": activity.location } : {}),
               "addressCountry": "PL",
             },
-            ...(activity.reviewCount > 0 ? {
+            // Agregat WYŁĄCZNIE z ocen naszych użytkowników (RPC get_activity_rating),
+            // nigdy z rating/reviews_count pochodzących z Google. Poniżej 5 ocen
+            // klucza aggregateRating w ogóle nie emitujemy.
+            ...(ownRating.avg != null && ownRating.count >= 5 ? {
               "aggregateRating": {
                 "@type": "AggregateRating",
-                "ratingValue": activity.rating,
-                "reviewCount": activity.reviewCount,
+                "ratingValue": Number(ownRating.avg.toFixed(1)),
+                "ratingCount": ownRating.count,
                 "bestRating": "5",
+                "worstRating": "1",
               },
             } : {}),
             ...(activity.hasAgeInfo ? {
@@ -393,8 +410,9 @@ const ActivityDetail = () => {
             "@type": "BreadcrumbList",
             "itemListElement": [
               { "@type": "ListItem", "position": 1, "name": "Strona główna", "item": "https://familyfun.pl/" },
-              { "@type": "ListItem", "position": 2, "name": cityLabels[activity.city]?.nominative || activity.city, "item": `https://familyfun.pl/atrakcje/${activity.city}` },
-              { "@type": "ListItem", "position": 3, "name": activity.title },
+              { "@type": "ListItem", "position": 2, "name": regionLabel, "item": `https://familyfun.pl${regionHref}` },
+              { "@type": "ListItem", "position": 3, "name": typeLabel, "item": `https://familyfun.pl${categoryHref}` },
+              { "@type": "ListItem", "position": 4, "name": activity.title },
             ],
           },
         ] as unknown as Record<string, unknown>}
@@ -405,8 +423,10 @@ const ActivityDetail = () => {
 
       {/* Sticky header on scroll past gallery */}
       <div
+        {...(!showStickyHeader ? ({ inert: "" } as Record<string, string>) : {})}
+        aria-hidden={!showStickyHeader ? true : undefined}
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 bg-background border-b border-border/60 transition-opacity duration-300",
+          "fixed top-[72px] md:top-[88px] left-0 right-0 z-40 bg-background border-b border-border/60 transition-opacity duration-300",
           showStickyHeader ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
       >
@@ -414,6 +434,7 @@ const ActivityDetail = () => {
           <div className="flex items-center gap-3 min-w-0">
             <button
               onClick={handleBack}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="shrink-0 min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label="Wróć"
             >
@@ -434,6 +455,7 @@ const ActivityDetail = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             <Button
               onClick={handleWantToVisitClick}
+              tabIndex={showStickyHeader ? 0 : -1}
               size="sm"
               variant={wantToVisit ? "default" : "default"}
               className="h-9 px-3 text-xs sm:text-sm"
@@ -447,6 +469,7 @@ const ActivityDetail = () => {
             </Button>
             <button
               onClick={handleFavoriteClick}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
               aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
             >
@@ -457,6 +480,7 @@ const ActivityDetail = () => {
             </button>
             <button
               onClick={handleShare}
+              tabIndex={showStickyHeader ? 0 : -1}
               className="hidden sm:flex min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted items-center justify-center transition-colors"
               aria-label="Udostępnij"
             >
@@ -486,6 +510,8 @@ const ActivityDetail = () => {
 
       {/* 1. Header section with gallery */}
       <section ref={galleryRef} className="relative">
+        {/* Sentinel: gdy zniknie z widoku, odsłaniamy pasek szybkich akcji. */}
+        <div ref={heroSentinelRef} aria-hidden="true" className="absolute top-40 left-0 h-1 w-1" />
         {/* Image gallery - swipeable carousel on mobile */}
         <ImageGallery 
           images={activity.imageUrls || [activity.imageUrl]} 
@@ -497,15 +523,33 @@ const ActivityDetail = () => {
         {/* Content overlay */}
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
-            {/* Desktop: Breadcrumbs */}
-            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-4" aria-label="breadcrumb">
-              <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              <Link to={`/atrakcje/${activity.city}`} className="text-muted-foreground hover:text-foreground transition-colors">
-                {cityLabels[activity.city]?.nominative || activity.city}
+            {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
+            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0" aria-label="breadcrumb">
+              <Link to="/" className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Link
+                to={regionHref}
+                title={regionLabel}
+                className="shrink-0 max-w-[10ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {regionLabel}
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-foreground font-medium truncate max-w-[300px]">{activity.title}</span>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Link
+                to={categoryHref}
+                title={typeLabel}
+                className="shrink-0 max-w-[12ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {typeLabel}
+              </Link>
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <span
+                aria-current="page"
+                title={activity.title}
+                className="min-w-0 truncate text-foreground font-medium md:max-w-[300px]"
+              >
+                {activity.title}
+              </span>
             </nav>
             
             {/* Activity title + Google rating inline */}
