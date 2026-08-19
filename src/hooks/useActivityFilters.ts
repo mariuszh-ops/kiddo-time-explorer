@@ -4,6 +4,7 @@ import { getActivities, filterOptions, Activity, cityCenters, ensureActivitiesLo
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { matchesSearchQuery } from "@/lib/searchMatch";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -166,13 +167,7 @@ export function useActivityFilters() {
 
     // Filter by search query
     if (isSearchActive) {
-      const query = searchQuery.toLowerCase().trim();
-      result = result.filter(
-        (a) =>
-          a.title.toLowerCase().includes(query) ||
-          a.location.toLowerCase().includes(query) ||
-          a.tags.some((tag) => tag.toLowerCase().includes(query))
-      );
+      result = result.filter((a) => matchesSearchQuery(a, searchQuery));
     }
 
     // Filter by city
@@ -301,13 +296,7 @@ export function useActivityFilters() {
       // Filter to enabled cities only
       result = result.filter(a => FEATURES.ENABLED_CITIES.includes(a.city));
       if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase().trim();
-        result = result.filter(
-          (a) =>
-            a.title.toLowerCase().includes(query) ||
-            a.location.toLowerCase().includes(query) ||
-            a.tags.some((tag) => tag.toLowerCase().includes(query))
-        );
+        result = result.filter((a) => matchesSearchQuery(a, searchQuery));
       }
 
       // Apply all OTHER filters (not the one we're calculating for)

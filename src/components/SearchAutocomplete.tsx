@@ -6,6 +6,7 @@ import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { REGION_BY_SLUG } from "@/data/regions";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
+import { matchesSearchQuery, normalizeSearchText } from "@/lib/searchMatch";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 
@@ -15,21 +16,12 @@ interface SearchAutocompleteProps {
   onSearchChange: (query: string) => void;
 }
 
-function removeDiacritics(text: string): string {
-  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\u0142/g, "l").replace(/\u0141/g, "L");
-}
-
 function fuzzyMatch(text: string, query: string): boolean {
-  return removeDiacritics(text.toLowerCase()).includes(removeDiacritics(query.toLowerCase()));
+  return normalizeSearchText(text).includes(normalizeSearchText(query));
 }
 
 function matchActivity(activity: Activity, query: string): boolean {
-  return (
-    fuzzyMatch(activity.title, query) ||
-    fuzzyMatch(activity.location, query) ||
-    fuzzyMatch(activity.city, query) ||
-    activity.tags.some((t) => fuzzyMatch(t, query))
-  );
+  return matchesSearchQuery(activity, query);
 }
 
 // Get human-readable category label from type value
@@ -200,16 +192,17 @@ const SearchAutocomplete = ({
           onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder={SEARCH_PLACEHOLDER}
-          className="pl-9 pr-8 py-2 w-48 md:w-56 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
+          className="pl-9 pr-11 md:pr-8 h-11 md:h-10 w-48 md:w-56 rounded-full text-base md:text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
           autoComplete="off"
         />
         {inputValue && (
           <button
             onClick={handleClear}
             aria-label="Wyczyść wyszukiwanie"
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-muted transition-colors"
+            type="button"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
           >
-            <X className="w-3.5 h-3.5 text-muted-foreground" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         )}
       </div>
