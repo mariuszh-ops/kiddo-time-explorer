@@ -78,6 +78,13 @@ export function useActivityFilters() {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
 
+  // Dwukierunkowa synchronizacja z URL: usunięcie ?search= (np. „×" w headerze)
+  // czyści też frazę w stanie, więc nagłówek „Wyniki dla…" znika.
+  const urlSearch = searchParams.get("search") ?? "";
+  useEffect(() => {
+    setSearchQuery((prev) => (prev.trim() === urlSearch.trim() ? prev : urlSearch));
+  }, [urlSearch]);
+
   // Zapis stanu filtrów do URL (bez dokładania wpisów do historii).
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
