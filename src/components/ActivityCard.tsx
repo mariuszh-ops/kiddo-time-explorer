@@ -15,6 +15,7 @@ import { PRICE_LEVELS } from "@/data/activities";
 import { cn } from "@/lib/utils";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
+import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
@@ -91,6 +92,7 @@ const ActivityCard = ({
   imageSizes,
 }: ActivityCardProps) => {
   const { isLoggedIn, signInWithGoogle } = useAuth();
+  const hasPreferences = useFamilyPreferences();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
   const { setPendingIntent, clearPendingIntent } = usePendingIntent();
   

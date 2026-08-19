@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
-import { hasFamilyPreferences } from "@/lib/preferences";
+import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
 import { motion, AnimatePresence } from "framer-motion";
 import { getPlaceholderImage } from "@/data/placeholders";
 import {
@@ -63,6 +63,7 @@ const SavedActivityCard = ({
   google_review_count,
 }: SavedActivityCardProps) => {
   const { isLoggedIn } = useAuth();
+  const hasPreferences = useFamilyPreferences();
   const [isRemoving, setIsRemoving] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [imgSrc, setImgSrc] = useState(imageUrl);
