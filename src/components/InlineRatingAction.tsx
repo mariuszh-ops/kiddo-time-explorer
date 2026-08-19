@@ -10,9 +10,16 @@ interface InlineRatingActionProps {
   /** `rating` to liczba gwiazdek, którą gość kliknął (intencja przed logowaniem). */
   onAuthRequired: (rating?: number) => void;
   compact?: boolean;
+  /** Rozróżnia zestawy gwiazdek dla czytników ekranu, np. „sekcja Oceny rodziców". */
+  contextLabel?: string;
 }
 
-const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: InlineRatingActionProps) => {
+const InlineRatingAction = ({
+  activityId,
+  onAuthRequired,
+  compact = false,
+  contextLabel = "sekcja Oceny rodziców",
+}: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
   const { getUserRating, rateActivity } = useUserRatings();
   const [hoveredStar, setHoveredStar] = useState(0);
@@ -42,7 +49,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
               type="button"
               onClick={() => onAuthRequired(i + 1)}
               className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center cursor-pointer"
-              aria-label={`Oceń ${i + 1} z 5 gwiazdek`}
+              aria-label={`Oceń ${i + 1} z 5 gwiazdek — ${contextLabel}`}
             >
               <Star className={`${compact ? "w-5 h-5" : "w-6 h-6 md:w-7 md:h-7"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
             </button>
@@ -74,7 +81,7 @@ const InlineRatingAction = ({ activityId, onAuthRequired, compact = false }: Inl
                 onMouseEnter={() => setHoveredStar(starValue)}
                 onMouseLeave={() => setHoveredStar(0)}
                 className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-                aria-label={`Oceń ${starValue} z 5 gwiazdek`}
+                aria-label={`Oceń ${starValue} z 5 gwiazdek — ${contextLabel}`}
               >
                 <AnimatePresence mode="wait">
                   <motion.div
