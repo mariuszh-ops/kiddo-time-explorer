@@ -154,12 +154,14 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
           // Dane z poprzedniej sesji (innego użytkownika) — nie migrujemy.
           removeItem(STORAGE_KEYS.FAVORITES);
           removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+          syncGuestDataMarker();
         } else {
           const accepted = await requestGuestMigrationConsent("savedPlaces", guestCount);
           if (cancelled) return;
           if (!accepted) {
             removeItem(STORAGE_KEYS.FAVORITES);
             removeItem(STORAGE_KEYS.WANT_TO_VISIT);
+            syncGuestDataMarker();
               syncGuestDataMarker();
           } else {
             const toInsert: { user_id: string; activity_slug: string; kind: "favorite" | "want_to_visit" }[] = [];

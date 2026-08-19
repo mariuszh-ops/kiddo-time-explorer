@@ -42,7 +42,7 @@ const ratingsLabel = (count: number) => {
 const GuestDataMigrationDialog = () => {
   const [summary, setSummary] = useState<GuestMigrationSummary | null>(null);
 
-  useEffect(() => subscribeGuestMigration(setCount), []);
+  useEffect(() => subscribeGuestMigration(setSummary), []);
 
   return (
     <AlertDialog open={summary !== null}>

@@ -141,11 +141,13 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
       if (local.size > 0) {
         if (!hasFreshGuestData()) {
           removeItem(STORAGE_KEY);
+          syncGuestDataMarker();
         } else {
           const accepted = await requestGuestMigrationConsent("ratings", local.size);
           if (cancelled) return;
           if (!accepted) {
             removeItem(STORAGE_KEY);
+            syncGuestDataMarker();
           } else {
             const rows = Array.from(local.values()).map(r => ({
               user_id: user.id,
