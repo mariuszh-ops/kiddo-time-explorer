@@ -30,12 +30,12 @@
       zrzut ekranu podglądu. Podstrony nadpisują go przez SEOHead (dedupe po
       property/name).
     -->
-    <meta property="og:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="640" />
-    <meta property="og:image:alt" content="FamilyFun – sprawdzone atrakcje dla rodzin z dziećmi" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
+    <meta data-rh="true" property="og:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
+    <meta data-rh="true" property="og:image:width" content="1200" />
+    <meta data-rh="true" property="og:image:height" content="640" />
+    <meta data-rh="true" property="og:image:alt" content="FamilyFun – sprawdzone atrakcje dla rodzin z dziećmi" />
+    <meta data-rh="true" name="twitter:card" content="summary_large_image" />
+    <meta data-rh="true" name="twitter:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
 
     <!-- Fonts: preconnect + stylesheet w <head> zamiast @import w CSS (szybszy FCP) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -70,10 +70,43 @@
       gtag('config', 'G-XXXXXXXXXX');
     </script>
     -->
+    <!-- Inline krytyczny CSS: tło i ekran ładowania widoczne od pierwszej klatki
+         (bez zewnętrznych plików, więc render startuje po pobraniu samego shella). -->
+    <style>
+      html, body { margin: 0; background: #FCFAF8; color: #2f3a33; }
+      #app-loading {
+        min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 14px; padding: 24px;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
+      }
+      #app-loading .al-logo { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: #497a5c; }
+      #app-loading .al-sub { font-size: 14px; color: #6b7a70; }
+      #app-loading .al-bar { width: 180px; height: 4px; border-radius: 999px; background: #e7e1da; overflow: hidden; }
+      #app-loading .al-bar > i { display: block; width: 40%; height: 100%; border-radius: 999px; background: #497a5c; animation: al-slide 1.1s ease-in-out infinite; }
+      @keyframes al-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+      @media (prefers-reduced-motion: reduce) {
+        #app-loading .al-bar > i { animation: none; width: 100%; }
+      }
+      #app-noscript { max-width: 32rem; margin: 0 auto; padding: 24px; font-family: system-ui, sans-serif; text-align: center; }
+      #app-noscript a { color: #497a5c; }
+    </style>
   </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-loading">
+        <div class="al-logo">FamilyFun</div>
+        <p class="al-sub">Ładujemy sprawdzone atrakcje…</p>
+        <div class="al-bar" role="progressbar" aria-label="Ładowanie serwisu"><i></i></div>
+      </div>
+    </div>
+    <noscript>
+      <div id="app-noscript">
+        <h1>FamilyFun wymaga JavaScriptu</h1>
+        <p>Włącz JavaScript w przeglądarce, aby przeglądać sprawdzone atrakcje dla rodzin.
+        Jeśli potrzebujesz pomocy, <a href="/kontakt">napisz do nas</a>.</p>
+      </div>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
