@@ -118,7 +118,7 @@ const ActivityDetail = () => {
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
-  const { setPendingIntent, clearPendingIntent } = usePendingIntent();
+  const { setPendingIntent, cancelPendingIntent } = usePendingIntent();
   
   // Use saved activities context
   const { 
@@ -1017,7 +1017,8 @@ const ActivityDetail = () => {
         isOpen={isAuthModalOpen}
         onClose={() => {
           setIsAuthModalOpen(false);
-          if (!isLoggedIn) clearPendingIntent();
+          // Anulowane bez próby logowania — intencja przepada.
+          cancelPendingIntent();
         }}
         title={AUTH_COPY[authContext].title}
         description={AUTH_COPY[authContext].description}

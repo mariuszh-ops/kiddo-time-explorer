@@ -3,6 +3,7 @@ import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import EmailAuthForm from "@/components/EmailAuthForm";
+import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import {
   Dialog,
   DialogContent,
@@ -36,6 +37,7 @@ const AuthRequiredModal = ({
   const [isLoading, setIsLoading] = useState<'google' | 'email' | 'login' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [emailMode, setEmailMode] = useState<'signin' | 'signup' | 'reset'>('signin');
+  const { markAuthAttempt } = usePendingIntent();
 
   // Auto-dismiss error after 5 seconds
   useEffect(() => {
@@ -62,6 +64,8 @@ const AuthRequiredModal = ({
     
     setError(null);
     setIsLoading(type);
+    // Rozpoczęto logowanie — oczekująca intencja musi przetrwać zamknięcie modalu.
+    markAuthAttempt();
     
     try {
       await action();
@@ -161,7 +165,13 @@ const AuthRequiredModal = ({
                 <span className="text-xs text-muted-foreground">lub e-mailem</span>
                 <span className="h-px flex-1 bg-border" />
               </div>
-              <EmailAuthForm onSuccess={onClose} onModeChange={setEmailMode} />
+              <EmailAuthForm
+                onSuccess={() => {
+                  markAuthAttempt();
+                  onClose();
+                }}
+                onModeChange={setEmailMode}
+              />
             </>
           )}
         </div>

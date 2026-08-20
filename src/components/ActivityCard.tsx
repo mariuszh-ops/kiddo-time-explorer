@@ -94,7 +94,7 @@ const ActivityCard = ({
   const { isLoggedIn, signInWithGoogle } = useAuth();
   const hasPreferences = useFamilyPreferences();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
-  const { setPendingIntent, clearPendingIntent } = usePendingIntent();
+  const { setPendingIntent, cancelPendingIntent } = usePendingIntent();
   
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
@@ -325,8 +325,8 @@ const ActivityCard = ({
         isOpen={isAuthModalOpen}
         onClose={() => {
           setIsAuthModalOpen(false);
-          // Anulowane logowanie — intencja przepada.
-          if (!isLoggedIn) clearPendingIntent();
+          // Anulowane bez próby logowania — intencja przepada.
+          cancelPendingIntent();
         }}
         onGoogleClick={handleAuthAction}
         onEmailClick={handleAuthAction}
