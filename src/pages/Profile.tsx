@@ -325,6 +325,7 @@ const Profile = () => {
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </Link>
               )}
+              <DeleteAccountSection />
             </section>
 
             {/* Info links */}
