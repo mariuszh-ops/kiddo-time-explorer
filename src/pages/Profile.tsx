@@ -348,8 +348,7 @@ const Profile = () => {
               ))}
             </section>
 
-            {/* Usunięcie konta (RODO art. 17) — tylko dla zalogowanych */}
-            <DeleteAccountSection />
+
 
             {/* Logout */}
             <section className="pt-2">
