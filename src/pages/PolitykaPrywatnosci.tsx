@@ -179,14 +179,13 @@ const PolitykaPrywatnosci = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Kontakt w sprawach RODO</h2>
                 <p className="mb-4">
-                  <strong>Usunięcie konta:</strong> zalogowany użytkownik może usunąć konto samodzielnie
-                  w zakładce <a className="text-primary underline" href="/profile">Profil</a> — sekcja
-                  „Konto" → przycisk „Usuń konto" i potwierdzenie słowem USUWAM. Usuwamy wtedy zapisane
-                  miejsca, listę „chcę odwiedzić", oceny gwiazdkowe oraz dane profilu rodziny zapisane
-                  w przeglądarce. Wystawione opinie pozostają dostępne dla innych rodziców w formie
-                  zanonimizowanej (bez powiązania z Twoim kontem). Wniosek o wykreślenie samego wpisu
-                  logowania możesz też wysłać na{" "}
-                  <a className="text-primary underline" href="mailto:kontakt@familyfun.pl?subject=Wniosek%20o%20usuni%C4%99cie%20konta">kontakt@familyfun.pl</a>.
+                  <strong>Usunięcie konta:</strong> zalogowany użytkownik usuwa konto samodzielnie
+                  w zakładce <a className="text-primary underline" href="/profile">Profil</a> →
+                  sekcja „Ustawienia" → pozycja „Usuń konto" (potwierdzenie słowem USUWAM).
+                  Usuwamy wtedy ulubione miejsca, listę „chcę odwiedzić", wystawione oceny
+                  gwiazdkowe oraz dane profilu rodziny zapisane w przeglądarce, a wpis logowania
+                  kasujemy w ciągu 30 dni; opublikowane opinie pozostają dostępne dla innych
+                  rodziców w formie zanonimizowanej (bez powiązania z Twoim kontem).
                 </p>
                 <p className="mb-4">
                   Wnioski dotyczące danych osobowych oraz pytania w sprawach ochrony prywatności prosimy
