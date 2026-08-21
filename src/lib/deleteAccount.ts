@@ -8,17 +8,32 @@ import { clearAllAppStorage } from "@/lib/storage";
  *  - zapisane miejsca (ulubione, „chcę odwiedzić"),
  *  - oceny gwiazdkowe,
  * a wystawione opinie ANONIMIZUJEMY (treść zostaje, podpis traci dane osobowe).
- * Na koniec czyścimy cały lokalny magazyn i kończymy sesję, więc ponowne
- * logowanie tym samym e-mailem startuje z pustym kontem.
+ * Następnie próbujemy usunąć sam wpis logowania przez Edge Function działającą
+ * na service_role (z klienta nie da się tego zrobić). Gdy funkcja nie jest
+ * jeszcze wdrożona, zwracamy `identityPendingManualRemoval: true` — UI mówi
+ * wtedy, że konto zostanie skasowane w ciągu 30 dni.
+ *
+ * TODO(S-131): wdrożyć Edge Function `delete-account` w projekcie katalogowym
+ * (service_role → auth.admin.deleteUser(user.id)), żeby usunięcie wpisu
+ * logowania było natychmiastowe i w pełni automatyczne.
  */
 export interface DeleteAccountResult {
   ok: boolean;
-  /** Prawda, gdy sam wpis konta (tożsamość) wymaga jeszcze obsługi ręcznej. */
+  /** Prawda, gdy sam wpis konta (tożsamość) wymaga jeszcze obsługi po stronie operatora. */
   identityPendingManualRemoval: boolean;
   error?: string;
 }
 
 export const ANONYMIZED_AUTHOR = "Rodzic (konto usunięte)";
+
+async function deleteAuthIdentity(): Promise<boolean> {
+  try {
+    const { error } = await supabase.functions.invoke("delete-account", { body: {} });
+    return !error;
+  } catch {
+    return false;
+  }
+}
 
 export async function deleteAccountData(userId: string): Promise<DeleteAccountResult> {
   try {
@@ -37,12 +52,12 @@ export async function deleteAccountData(userId: string): Promise<DeleteAccountRe
       };
     }
 
+    const identityDeleted = await deleteAuthIdentity();
+
     clearAllAppStorage();
     await supabase.auth.signOut();
 
-    // Sam rekord tożsamości w systemie logowania usuwa operator na podstawie
-    // zgłoszenia — dane profilowe i treści są już wyczyszczone/anonimowe.
-    return { ok: true, identityPendingManualRemoval: true };
+    return { ok: true, identityPendingManualRemoval: !identityDeleted };
   } catch (e) {
     return {
       ok: false,

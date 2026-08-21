@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2, Loader2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,17 +17,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { deleteAccountData } from "@/lib/deleteAccount";
 
 const CONFIRM_WORDS = ["USUWAM", "USUŃ", "USUN"];
-const MAILTO =
-  "mailto:kontakt@familyfun.pl?subject=" +
-  encodeURIComponent("Wniosek o usunięcie konta") +
-  "&body=" +
-  encodeURIComponent(
-    "Proszę o trwałe usunięcie mojego konta w serwisie FamilyFun oraz powiązanych z nim danych."
-  );
 
 /**
- * S-131 (RODO art. 17) — ścieżka usunięcia konta w /profile: dwa kliknięcia
- * (»Usuń konto« → potwierdzenie w modalu po wpisaniu słowa USUWAM).
+ * S-131 (RODO art. 17) — pozycja „Usuń konto" w sekcji USTAWIENIA w /profile:
+ * klik → dialog z listą usuwanych danych + potwierdzenie słowem USUWAM.
  */
 const DeleteAccountSection = () => {
   const navigate = useNavigate();
@@ -46,7 +39,7 @@ const DeleteAccountSection = () => {
 
     if (!result.ok) {
       toast.error("Nie udało się usunąć konta", {
-        description: "Spróbuj ponownie lub napisz na kontakt@familyfun.pl.",
+        description: "Spróbuj ponownie za chwilę.",
       });
       return;
     }
@@ -54,56 +47,48 @@ const DeleteAccountSection = () => {
     setIsOpen(false);
     logout();
     navigate("/");
-    toast.success("Konto zostało usunięte", {
-      description: "Twoje zapisane miejsca i oceny zostały skasowane, a opinie zanonimizowane.",
-    });
+    if (result.identityPendingManualRemoval) {
+      toast.success("Twoje dane zostały usunięte", {
+        description: "Konto zostanie skasowane w ciągu 30 dni.",
+      });
+    } else {
+      toast.success("Twoje konto zostało usunięte");
+    }
   };
 
   return (
-    <section className="bg-card rounded-xl border border-destructive/30 overflow-hidden">
-      <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-1">
-        Konto
-      </h2>
-      <div className="px-6 pb-5 pt-2 space-y-3">
-        <p className="text-sm text-muted-foreground">
-          Masz prawo w każdej chwili usunąć konto i powiązane z nim dane (RODO art. 17).
-        </p>
-        <Button
-          variant="destructive"
-          className="w-full"
-          onClick={() => {
-            setConfirmText("");
-            setIsOpen(true);
-          }}
-        >
-          <Trash2 className="w-4 h-4 mr-2" />
-          Usuń konto
-        </Button>
-      </div>
+    <>
+      <button
+        type="button"
+        onClick={() => {
+          setConfirmText("");
+          setIsOpen(true);
+        }}
+        className="w-full flex items-center justify-between px-6 py-3.5 min-h-[44px] hover:bg-destructive/10 transition-colors text-left border-t border-border/50"
+      >
+        <div className="flex items-center gap-3">
+          <Trash2 className="w-5 h-5 text-destructive" />
+          <span className="text-sm font-medium text-destructive">Usuń konto</span>
+        </div>
+        <ChevronRight className="w-4 h-4 text-destructive/70" />
+      </button>
 
       <Dialog open={isOpen} onOpenChange={(open) => !isDeleting && setIsOpen(open)}>
         <DialogContent className="max-w-md max-h-[90svh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Usunąć konto na zawsze?</DialogTitle>
+            <DialogTitle>Usunąć konto na stałe?</DialogTitle>
             <DialogDescription asChild>
               <div className="space-y-3 text-left">
                 <p>Tej operacji nie można cofnąć. Usuniemy bezpowrotnie:</p>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Twoje ulubione miejsca,</li>
                   <li>listę „chcę odwiedzić",</li>
-                  <li>wystawione oceny gwiazdkowe,</li>
+                  <li>Twoje oceny gwiazdkowe,</li>
                   <li>dane profilu rodziny zapisane w przeglądarce.</li>
                 </ul>
                 <p>
-                  Twoje opinie o atrakcjach zostaną <strong>zanonimizowane</strong> — treść zostaje
-                  dla innych rodziców, ale bez powiązania z Tobą.
-                </p>
-                <p>
-                  Formalny wniosek o wykreślenie samego wpisu logowania możesz wysłać na{" "}
-                  <a className="text-primary underline" href={MAILTO}>
-                    kontakt@familyfun.pl
-                  </a>
-                  .
+                  Opublikowane opinie zostaną <strong>zanonimizowane</strong>, a nie skasowane — treść
+                  zostaje dla innych rodziców, ale bez powiązania z Twoim kontem.
                 </p>
               </div>
             </DialogDescription>
@@ -127,20 +112,24 @@ const DeleteAccountSection = () => {
             <Button variant="outline" onClick={() => setIsOpen(false)} disabled={isDeleting}>
               Anuluj
             </Button>
-            <Button variant="destructive" onClick={handleDelete} disabled={!canConfirm || isDeleting}>
+            <Button
+              variant="destructive"
+              onClick={handleDelete}
+              disabled={!canConfirm || isDeleting}
+            >
               {isDeleting ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Usuwam…
                 </>
               ) : (
-                "Usuń konto"
+                "Usuń konto na stałe"
               )}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </section>
+    </>
   );
 };
 

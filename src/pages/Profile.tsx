@@ -325,6 +325,7 @@ const Profile = () => {
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </Link>
               )}
+              <DeleteAccountSection />
             </section>
 
             {/* Info links */}
@@ -347,8 +348,7 @@ const Profile = () => {
               ))}
             </section>
 
-            {/* Usunięcie konta (RODO art. 17) — tylko dla zalogowanych */}
-            <DeleteAccountSection />
+
 
             {/* Logout */}
             <section className="pt-2">
