@@ -598,6 +598,35 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return result;
   }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
+  // Piny z RPC dochodzą asynchronicznie — pokaż je w liście, dopóki mapa nie
+  // policzyła własnego zbioru widocznego w viewporcie.
+  useEffect(() => {
+    if (sourceActivities.length === 0) return;
+    setVisibleActivities((prev) => (prev.length === 0 ? sourceActivities : prev));
+  }, [sourceActivities]);
+
+  // Kafle w liście / bottom sheecie: dociągamy zdjęcia i miejscowości dla
+  // widocznych pinów jedną paczką (RPC ich nie zwraca).
+  useEffect(() => {
+    const missing = displayedActivities
+      .filter((a) => a.slug && !getCachedPinDetails(a.slug))
+      .slice(0, 60)
+      .map((a) => a.slug);
+    if (missing.length === 0) return;
+    let cancelled = false;
+    void fetchPinDetails(missing)
+      .then(() => {
+        if (!cancelled) setVisibleActivities((prev) => prev.map(mergePinDetails));
+      })
+      .catch(() => {
+        /* kafle zostają z placeholderem */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [displayedActivities]);
+
+
   // Auto-fly when exactly 1 search result
   useEffect(() => {
     if (searchNormalized && displayedActivities.length === 1) {
