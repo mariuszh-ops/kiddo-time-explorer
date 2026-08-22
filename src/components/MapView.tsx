@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
+import { useMapPins } from "@/hooks/useMapPins";
+import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -203,7 +205,7 @@ function ClusteredMarkers({
         title: activity.title,
         alt: activity.title,
         keyboard: true,
-      }).bindPopup(createPopupContent(activity, isFavorite(activity.id)), {
+      }).bindPopup(createPopupContent(mergePinDetails(activity), isFavorite(activity.id)), {
         maxWidth: 240,
         className: "custom-map-popup",
         closeButton: true,
@@ -211,6 +213,20 @@ function ClusteredMarkers({
 
       marker.on("click", () => onMarkerClick(activity.id));
       marker.on("popupopen", (e: L.PopupEvent) => {
+        // Piny z rpc('get_map_pins') nie mają zdjęcia ani miejscowości —
+        // dociągamy je dopiero po otwarciu popupu (jedno zapytanie na pin).
+        if (!getCachedPinDetails(activity.slug)) {
+          void fetchPinDetails([activity.slug])
+            .then(() => {
+              if (!marker.isPopupOpen()) return;
+              marker.setPopupContent(
+                createPopupContent(mergePinDetails(activity), isFavorite(activity.id)),
+              );
+            })
+            .catch(() => {
+              /* zostaje wersja bez zdjęcia */
+            });
+        }
         const el = e.popup.getElement();
         const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
         if (!btn) return;
@@ -219,7 +235,7 @@ function ClusteredMarkers({
           ev.stopPropagation();
           const next = await toggleFavorite(activity.id, activity.slug);
           btn.outerHTML = favButtonMarkup(next);
-          marker.setPopupContent(createPopupContent(activity, next));
+          marker.setPopupContent(createPopupContent(mergePinDetails(activity), next));
         };
       });
       markersRef.current[activity.id] = marker;
@@ -458,7 +474,22 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
-  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
+
+  // Gdy żaden filtr katalogowy nie jest aktywny, piny bierzemy z jednego
+  // wywołania rpc('get_map_pins') zamiast stronicować public_activities.
+  const hasCatalogFilters = useMemo(
+    () =>
+      Object.entries(filters as Record<string, unknown>).some(([key, value]) => {
+        if (key === "sort") return false;
+        if (Array.isArray(value)) return value.length > 0;
+        return value !== undefined && value !== null && value !== "";
+      }),
+    [filters],
+  );
+  const { pins } = useMapPins(!hasCatalogFilters);
+  const sourceActivities = hasCatalogFilters ? activities : pins;
+
+  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
@@ -530,7 +561,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   }, [searchNormalized, normalizeText]);
 
   const filteredActivities = useMemo(() => {
-    let result = activities;
+    let result = sourceActivities;
     if (categoryFilters.size > 0) {
       result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
@@ -541,7 +572,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       result = result.filter(matchesSearch);
     }
     return result;
-  }, [activities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+  }, [sourceActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
@@ -566,6 +597,39 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     }
     return result;
   }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+
+  // Piny z RPC dochodzą asynchronicznie — pokaż je w liście, dopóki mapa nie
+  // policzyła własnego zbioru widocznego w viewporcie.
+  useEffect(() => {
+    if (sourceActivities.length === 0) return;
+    setVisibleActivities((prev) => (prev.length === 0 ? sourceActivities : prev));
+  }, [sourceActivities]);
+
+  // Kafle w liście / bottom sheecie: dociągamy zdjęcia i miejscowości dla
+  // widocznych pinów jedną paczką (RPC ich nie zwraca).
+  useEffect(() => {
+    const missing = displayedActivities
+      .filter((a) => a.slug && !getCachedPinDetails(a.slug))
+      .slice(0, 60)
+      .map((a) => a.slug);
+    if (missing.length === 0) return;
+    let cancelled = false;
+    // Debounce — przesuwanie mapy nie ma generować zapytania na każdą klatkę.
+    const timer = window.setTimeout(() => {
+      void fetchPinDetails(missing)
+        .then(() => {
+          if (!cancelled) setVisibleActivities((prev) => prev.map(mergePinDetails));
+        })
+        .catch(() => {
+          /* kafle zostają z placeholderem */
+        });
+    }, 350);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [displayedActivities]);
+
 
   // Auto-fly when exactly 1 search result
   useEffect(() => {
