@@ -16,6 +16,8 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
+import { useMapPins } from "@/hooks/useMapPins";
+import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
