@@ -474,7 +474,22 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
-  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(activities);
+
+  // Gdy żaden filtr katalogowy nie jest aktywny, piny bierzemy z jednego
+  // wywołania rpc('get_map_pins') zamiast stronicować public_activities.
+  const hasCatalogFilters = useMemo(
+    () =>
+      Object.entries(filters as Record<string, unknown>).some(([key, value]) => {
+        if (key === "sort") return false;
+        if (Array.isArray(value)) return value.length > 0;
+        return value !== undefined && value !== null && value !== "";
+      }),
+    [filters],
+  );
+  const { pins } = useMapPins(!hasCatalogFilters);
+  const sourceActivities = hasCatalogFilters ? activities : pins;
+
+  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
