@@ -213,6 +213,20 @@ function ClusteredMarkers({
 
       marker.on("click", () => onMarkerClick(activity.id));
       marker.on("popupopen", (e: L.PopupEvent) => {
+        // Piny z rpc('get_map_pins') nie mają zdjęcia ani miejscowości —
+        // dociągamy je dopiero po otwarciu popupu (jedno zapytanie na pin).
+        if (!getCachedPinDetails(activity.slug)) {
+          void fetchPinDetails([activity.slug])
+            .then(() => {
+              if (!marker.isPopupOpen()) return;
+              marker.setPopupContent(
+                createPopupContent(mergePinDetails(activity), isFavorite(activity.id)),
+              );
+            })
+            .catch(() => {
+              /* zostaje wersja bez zdjęcia */
+            });
+        }
         const el = e.popup.getElement();
         const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
         if (!btn) return;
@@ -221,7 +235,7 @@ function ClusteredMarkers({
           ev.stopPropagation();
           const next = await toggleFavorite(activity.id, activity.slug);
           btn.outerHTML = favButtonMarkup(next);
-          marker.setPopupContent(createPopupContent(activity, next));
+          marker.setPopupContent(createPopupContent(mergePinDetails(activity), next));
         };
       });
       markersRef.current[activity.id] = marker;
