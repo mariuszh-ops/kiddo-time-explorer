@@ -205,7 +205,7 @@ function ClusteredMarkers({
         title: activity.title,
         alt: activity.title,
         keyboard: true,
-      }).bindPopup(createPopupContent(activity, isFavorite(activity.id)), {
+      }).bindPopup(createPopupContent(mergePinDetails(activity), isFavorite(activity.id)), {
         maxWidth: 240,
         className: "custom-map-popup",
         closeButton: true,
