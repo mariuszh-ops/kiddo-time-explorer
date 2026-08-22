@@ -614,15 +614,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       .map((a) => a.slug);
     if (missing.length === 0) return;
     let cancelled = false;
-    void fetchPinDetails(missing)
-      .then(() => {
-        if (!cancelled) setVisibleActivities((prev) => prev.map(mergePinDetails));
-      })
-      .catch(() => {
-        /* kafle zostają z placeholderem */
-      });
+    // Debounce — przesuwanie mapy nie ma generować zapytania na każdą klatkę.
+    const timer = window.setTimeout(() => {
+      void fetchPinDetails(missing)
+        .then(() => {
+          if (!cancelled) setVisibleActivities((prev) => prev.map(mergePinDetails));
+        })
+        .catch(() => {
+          /* kafle zostają z placeholderem */
+        });
+    }, 350);
     return () => {
       cancelled = true;
+      window.clearTimeout(timer);
     };
   }, [displayedActivities]);
 
