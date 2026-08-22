@@ -561,7 +561,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   }, [searchNormalized, normalizeText]);
 
   const filteredActivities = useMemo(() => {
-    let result = activities;
+    let result = sourceActivities;
     if (categoryFilters.size > 0) {
       result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
     }
@@ -572,7 +572,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       result = result.filter(matchesSearch);
     }
     return result;
-  }, [activities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+  }, [sourceActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
   const handleCategoryToggle = useCallback((category: string) => {
     setSelectedCategories((prev) => {
