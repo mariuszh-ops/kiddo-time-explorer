@@ -127,10 +127,12 @@ const Index = () => {
     [topActivities, hasActiveFilters],
   );
 
-  // Widok mapy potrzebuje pełnego zbioru — dociągamy go dopiero tutaj.
+  // Widok mapy bez filtrów bierze piny z rpc('get_map_pins') (jedno zapytanie,
+  // patrz MapView) — pełny katalog dociągamy tylko wtedy, gdy filtry
+  // (województwo, wiek, dystans…) faktycznie go potrzebują.
   useEffect(() => {
-    if (viewMode === "map") ensureActivitiesLoaded();
-  }, [viewMode]);
+    if (viewMode === "map" && hasActiveFilters) ensureActivitiesLoaded();
+  }, [viewMode, hasActiveFilters]);
 
   // Onboarding
   const [showOnboarding, setShowOnboarding] = useState(false);
