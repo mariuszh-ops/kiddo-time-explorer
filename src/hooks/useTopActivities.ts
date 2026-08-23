@@ -1,8 +1,9 @@
 // Zapytania punktowe zastępujące dawne czytanie całego katalogu z pamięci.
 // - useTopActivities(limit): jeden SELECT z limitem (lekkie kolumny karty),
 // - useCatalogTotal(): jeden count z head:true (zero transferu wierszy).
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { useHomeCounts } from "@/hooks/useHomeCounts";
 import type { Activity } from "@/data/activities";
 
 const MAX_TOP = 12;
