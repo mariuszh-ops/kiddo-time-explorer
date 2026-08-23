@@ -1,8 +1,9 @@
 // Zapytania punktowe zastępujące dawne czytanie całego katalogu z pamięci.
 // - useTopActivities(limit): jeden SELECT z limitem (lekkie kolumny karty),
 // - useCatalogTotal(): jeden count z head:true (zero transferu wierszy).
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { useHomeCounts } from "@/hooks/useHomeCounts";
 import type { Activity } from "@/data/activities";
 
 const MAX_TOP = 12;
@@ -48,39 +49,15 @@ export function useTopActivities(limit = MAX_TOP): { activities: Activity[]; loa
   return { activities: activities.slice(0, limit), loading };
 }
 
-let TOTAL_CACHE: number | null = null;
-let TOTAL_INFLIGHT: Promise<number> | null = null;
-
-async function fetchTotal(): Promise<number> {
-  if (TOTAL_CACHE !== null) return TOTAL_CACHE;
-  if (TOTAL_INFLIGHT) return TOTAL_INFLIGHT;
-  TOTAL_INFLIGHT = (async () => {
-    const { count, error } = await catalogClient
-      .from("public_activities")
-      .select("place_id", { count: "exact", head: true })
-      .eq("published", true);
-    if (error) throw error;
-    TOTAL_CACHE = count ?? 0;
-    return TOTAL_CACHE;
-  })();
-  try {
-    return await TOTAL_INFLIGHT;
-  } finally {
-    TOTAL_INFLIGHT = null;
-  }
-}
-
+/**
+ * Łączna liczba opublikowanych atrakcji — liczona z rpc('get_home_counts')
+ * (te same dane, które i tak pobiera home), więc bez dodatkowego zapytania
+ * `count/head` do public_activities (odpowiedzi 206).
+ */
 export function useCatalogTotal(): number {
-  const [total, setTotal] = useState<number>(TOTAL_CACHE ?? 0);
-
-  useEffect(() => {
-    if (TOTAL_CACHE !== null) return;
-    let cancelled = false;
-    fetchTotal()
-      .then((n) => { if (!cancelled) setTotal(n); })
-      .catch(() => { /* licznik jest ozdobny — brak wartości ukrywa napis */ });
-    return () => { cancelled = true; };
-  }, []);
-
-  return total;
+  const { counts } = useHomeCounts();
+  return useMemo(
+    () => Object.values(counts.regions).reduce<number>((sum, n) => sum + (Number(n) || 0), 0),
+    [counts],
+  );
 }
