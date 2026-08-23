@@ -57,7 +57,7 @@ export function useTopActivities(limit = MAX_TOP): { activities: Activity[]; loa
 export function useCatalogTotal(): number {
   const { counts } = useHomeCounts();
   return useMemo(
-    () => Object.values(counts.regions).reduce((sum, n) => sum + (n || 0), 0),
+    () => Object.values(counts.regions).reduce<number>((sum, n) => sum + (Number(n) || 0), 0),
     [counts],
   );
 }
