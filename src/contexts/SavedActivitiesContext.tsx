@@ -60,6 +60,8 @@ interface SavedActivitiesContextType {
   wantToVisitCount: number;
   /** True dopóki listy zapisanych atrakcji nie są wiarygodne (katalog się ładuje lub trwa pierwszy select). */
   isLoading: boolean;
+  /** Ponowne pobranie zapisanych list z serwera (np. po wykonaniu odroczonej intencji gościa). */
+  refreshSaved: () => Promise<void>;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
@@ -375,6 +377,27 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     [wantToVisitIds, syncToServer]
   );
 
+  // Świeży odczyt z serwera bez migracji/dialogów — używany po wykonaniu
+  // odroczonej intencji gościa, żeby UI natychmiast pokazał stan „W ulubionych".
+  const refreshSaved = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("saved_activities")
+      .select("activity_slug, kind")
+      .eq("user_id", user.id);
+    if (error || !data) return;
+    const fav = new Set<number>();
+    const wtv = new Set<number>();
+    for (const row of data) {
+      const id = idFromSlug(row.activity_slug);
+      if (id == null) continue;
+      if (row.kind === "favorite") fav.add(id);
+      else if (row.kind === "want_to_visit") wtv.add(id);
+    }
+    setFavoriteIds(fav);
+    setWantToVisitIds(wtv);
+  }, [user]);
+
   return (
     <SavedActivitiesContext.Provider
       value={{
@@ -389,6 +412,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         favoritesCount: favorites.length,
         wantToVisitCount: wantToVisit.length,
         isLoading: dataStatus !== "success" || isLoadingSaved,
+        refreshSaved,
       }}
     >
       {children}
