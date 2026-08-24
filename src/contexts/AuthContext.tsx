@@ -37,10 +37,11 @@ interface AuthContextType {
   signIn: () => Promise<void>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<void>;
-  signInWithEmail: (email: string, password: string) => Promise<void>;
-  signUpWithEmail: (email: string, password: string) => Promise<void>;
-  resendConfirmation: (email: string) => Promise<void>;
-  resetPassword: (email: string) => Promise<void>;
+  signInWithEmail: (email: string, password: string, captchaToken?: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, captchaToken?: string) => Promise<void>;
+  resendConfirmation: (email: string, captchaToken?: string) => Promise<void>;
+  resetPassword: (email: string, captchaToken?: string) => Promise<void>;
+
 
   // Backward compat aliases for existing consumers (login/logout).
   // New code should prefer signIn/signOut.
@@ -129,40 +130,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const signInWithEmail = useCallback(async (email: string, password: string) => {
+  const signInWithEmail = useCallback(async (email: string, password: string, captchaToken?: string) => {
     rememberReturnTo();
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
+      options: { captchaToken },
     });
     if (error) throw error;
   }, []);
 
-  const signUpWithEmail = useCallback(async (email: string, password: string) => {
+  const signUpWithEmail = useCallback(async (email: string, password: string, captchaToken?: string) => {
     rememberReturnTo();
     const { error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: window.location.origin, captchaToken },
     });
     if (error) throw error;
   }, []);
 
-  const resendConfirmation = useCallback(async (email: string) => {
+  const resendConfirmation = useCallback(async (email: string, captchaToken?: string) => {
     const { error } = await supabase.auth.resend({
       type: "signup",
       email: email.trim(),
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: window.location.origin, captchaToken },
     });
     if (error) throw error;
   }, []);
 
-  const resetPassword = useCallback(async (email: string) => {
+  const resetPassword = useCallback(async (email: string, captchaToken?: string) => {
     const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
       redirectTo: window.location.origin + "/reset-password",
+      captchaToken,
     });
     if (error) throw error;
   }, []);
+
 
   const signOut = useCallback(async (): Promise<void> => {
     await supabase.auth.signOut();
