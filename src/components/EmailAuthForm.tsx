@@ -207,23 +207,27 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         </div>
       )}
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
       <div className="flex justify-center">
         <Turnstile
           ref={turnstileRef}
           siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={setCaptchaToken}
+          onSuccess={(token) => {
+            setCaptchaToken(token);
+            setCaptchaError(false);
+          }}
           onExpire={() => setCaptchaToken("")}
           onError={() => {
             setCaptchaToken("");
-            setError(TURNSTILE_ERROR_MESSAGE);
+            setCaptchaError(true);
+            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
           }}
           options={{ size: "flexible" }}
         />
       </div>
 
-      <Button type="submit" disabled={busy || !captchaToken} className="w-full">
+      {error && <p className="text-sm text-destructive">{error}</p>}
+
+      <Button type="submit" disabled={busy || (!captchaToken && !captchaError)} className="w-full">
 
         {busy ? (
           <Loader2 className="w-4 h-4 animate-spin" />
