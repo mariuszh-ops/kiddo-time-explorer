@@ -221,6 +221,18 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
             setCaptchaError(true);
             setError(TURNSTILE_UNAVAILABLE_MESSAGE);
           }}
+          onUnsupported={() => {
+            setCaptchaToken("");
+            setCaptchaError(true);
+            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+          }}
+          scriptOptions={{
+            onError: () => {
+              setCaptchaToken("");
+              setCaptchaError(true);
+              setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            },
+          }}
           options={{ size: "flexible" }}
         />
       </div>
