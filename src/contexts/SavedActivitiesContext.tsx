@@ -60,6 +60,8 @@ interface SavedActivitiesContextType {
   wantToVisitCount: number;
   /** True dopóki listy zapisanych atrakcji nie są wiarygodne (katalog się ładuje lub trwa pierwszy select). */
   isLoading: boolean;
+  /** Ponowne pobranie zapisanych list z serwera (np. po wykonaniu odroczonej intencji gościa). */
+  refreshSaved: () => Promise<void>;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
