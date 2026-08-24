@@ -76,7 +76,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Hasło musi mieć co najmniej 6 znaków.");
       return;
     }
-    if (!captchaToken) {
+    if (!captchaToken && !captchaError) {
       setError(TURNSTILE_ERROR_MESSAGE);
       return;
     }
