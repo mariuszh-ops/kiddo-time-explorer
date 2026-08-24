@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, MailCheck } from "lucide-react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
+import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, isCaptchaError } from "@/lib/turnstile";
+
 
 type Mode = "signin" | "signup" | "reset";
 
@@ -31,6 +34,15 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [info, setInfo] = useState<string | null>(null);
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
+
+  /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    turnstileRef.current?.reset();
+  };
+
 
   const setMode = (next: Mode) => {
     setModeState(next);
@@ -62,22 +74,29 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Hasło musi mieć co najmniej 6 znaków.");
       return;
     }
+    if (!captchaToken) {
+      setError(TURNSTILE_ERROR_MESSAGE);
+      return;
+    }
 
     setBusy(true);
     try {
       if (mode === "reset") {
-        await resetPassword(email);
+        await resetPassword(email, captchaToken);
         setScreen("reset-sent");
       } else if (mode === "signup") {
-        await signUpWithEmail(email, password);
+        await signUpWithEmail(email, password, captchaToken);
         setScreen("confirm");
         setCooldown(RESEND_COOLDOWN);
       } else {
-        await signInWithEmail(email, password);
+        await signInWithEmail(email, password, captchaToken);
         onSuccess?.();
       }
+      setCaptchaToken("");
+      turnstileRef.current?.reset();
     } catch (err) {
-      setError(translateAuthError(err));
+      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      resetCaptcha();
     } finally {
       setBusy(false);
     }
@@ -89,16 +108,20 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     setError(null);
     setInfo(null);
     try {
-      await resendConfirmation(email);
+      await resendConfirmation(email, captchaToken || undefined);
       setInfo("Wysłaliśmy link ponownie.");
       setCooldown(RESEND_COOLDOWN);
+      setCaptchaToken("");
+      turnstileRef.current?.reset();
     } catch (err) {
-      setError(translateAuthError(err));
+      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
       if (isEmailRateLimitError(err)) setCooldown(RESEND_COOLDOWN);
+      resetCaptcha();
     } finally {
       setBusy(false);
     }
   };
+
 
   if (screen === "confirm" || screen === "reset-sent") {
     const isConfirm = screen === "confirm";
@@ -176,7 +199,22 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <Button type="submit" disabled={busy} className="w-full">
+      <div className="flex justify-center">
+        <Turnstile
+          ref={turnstileRef}
+          siteKey={TURNSTILE_SITE_KEY}
+          onSuccess={setCaptchaToken}
+          onExpire={() => setCaptchaToken("")}
+          onError={() => {
+            setCaptchaToken("");
+            setError(TURNSTILE_ERROR_MESSAGE);
+          }}
+          options={{ size: "flexible" }}
+        />
+      </div>
+
+      <Button type="submit" disabled={busy || !captchaToken} className="w-full">
+
         {busy ? (
           <Loader2 className="w-4 h-4 animate-spin" />
         ) : mode === "reset" ? (
