@@ -36,7 +36,7 @@ const withAnonAuth = (headers: Headers): Headers => {
 
 /**
  * Fetch klienta katalogu:
- * - publiczny katalog (`public_activities`) jedzie ZAWSZE kluczem anon, więc
+ * - publiczne dane (`public_activities`, `public_reviews`) jadą ZAWSZE kluczem anon, więc
  *   nieważny token użytkownika nigdy nie blokuje listingów;
  * - 401 / PGRST301 na innych zasobach → globalne zgłoszenie martwej sesji
  *   i ponowna próba jako anonim.
@@ -44,7 +44,8 @@ const withAnonAuth = (headers: Headers): Headers => {
 const catalogFetch: typeof fetch = async (input, init) => {
   const url = urlOf(input);
   const isAuthEndpoint = url.includes("/auth/v1/");
-  const isPublicCatalog = url.includes("/rest/v1/public_activities");
+  const isPublicCatalog =
+    url.includes("/rest/v1/public_activities") || url.includes("/rest/v1/public_reviews");
 
   if (isPublicCatalog) {
     return fetch(new Request(input, { ...init, headers: withAnonAuth(headersOf(input, init)) }));
