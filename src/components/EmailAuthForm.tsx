@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
-import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, isCaptchaError } from "@/lib/turnstile";
+import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, TURNSTILE_UNAVAILABLE_MESSAGE, isCaptchaError } from "@/lib/turnstile";
 
 
 type Mode = "signin" | "signup" | "reset";
