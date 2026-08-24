@@ -35,6 +35,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaError, setCaptchaError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
