@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
-import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, isCaptchaError } from "@/lib/turnstile";
+import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, TURNSTILE_UNAVAILABLE_MESSAGE, isCaptchaError } from "@/lib/turnstile";
 
 
 type Mode = "signin" | "signup" | "reset";
@@ -35,11 +35,13 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
+  const [captchaError, setCaptchaError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
   const resetCaptcha = () => {
     setCaptchaToken("");
+    setCaptchaError(false);
     turnstileRef.current?.reset();
   };
 
@@ -74,7 +76,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Hasło musi mieć co najmniej 6 znaków.");
       return;
     }
-    if (!captchaToken) {
+    if (!captchaToken && !captchaError) {
       setError(TURNSTILE_ERROR_MESSAGE);
       return;
     }
@@ -95,7 +97,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setCaptchaToken("");
       turnstileRef.current?.reset();
     } catch (err) {
-      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      if (captchaError) {
+        setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+      } else {
+        setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      }
       resetCaptcha();
     } finally {
       setBusy(false);
@@ -114,7 +120,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setCaptchaToken("");
       turnstileRef.current?.reset();
     } catch (err) {
-      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      if (captchaError) {
+        setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+      } else {
+        setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      }
       if (isEmailRateLimitError(err)) setCooldown(RESEND_COOLDOWN);
       resetCaptcha();
     } finally {
@@ -197,23 +207,39 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         </div>
       )}
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
       <div className="flex justify-center">
         <Turnstile
           ref={turnstileRef}
           siteKey={TURNSTILE_SITE_KEY}
-          onSuccess={setCaptchaToken}
+          onSuccess={(token) => {
+            setCaptchaToken(token);
+            setCaptchaError(false);
+          }}
           onExpire={() => setCaptchaToken("")}
           onError={() => {
             setCaptchaToken("");
-            setError(TURNSTILE_ERROR_MESSAGE);
+            setCaptchaError(true);
+            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+          }}
+          onUnsupported={() => {
+            setCaptchaToken("");
+            setCaptchaError(true);
+            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+          }}
+          scriptOptions={{
+            onError: () => {
+              setCaptchaToken("");
+              setCaptchaError(true);
+              setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            },
           }}
           options={{ size: "flexible" }}
         />
       </div>
 
-      <Button type="submit" disabled={busy || !captchaToken} className="w-full">
+      {error && <p className="text-sm text-destructive">{error}</p>}
+
+      <Button type="submit" disabled={busy || (!captchaToken && !captchaError)} className="w-full">
 
         {busy ? (
           <Loader2 className="w-4 h-4 animate-spin" />
