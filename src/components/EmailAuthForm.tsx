@@ -97,7 +97,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setCaptchaToken("");
       turnstileRef.current?.reset();
     } catch (err) {
-      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      if (captchaError) {
+        setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+      } else {
+        setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      }
       resetCaptcha();
     } finally {
       setBusy(false);
