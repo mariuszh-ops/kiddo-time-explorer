@@ -88,6 +88,8 @@ interface UserRatingsContextType {
   visitedActivities: (Activity & { userRating: UserRating })[];
   // Count of visited/rated activities
   visitedCount: number;
+  /** Ponowne pobranie ocen z serwera (np. po wykonaniu odroczonej intencji gościa). */
+  refreshRatings: () => Promise<void>;
 }
 
 const UserRatingsContext = createContext<UserRatingsContextType | undefined>(undefined);
