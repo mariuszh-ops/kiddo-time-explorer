@@ -41,6 +41,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
   const resetCaptcha = () => {
     setCaptchaToken("");
+    setCaptchaError(false);
     turnstileRef.current?.reset();
   };
 
