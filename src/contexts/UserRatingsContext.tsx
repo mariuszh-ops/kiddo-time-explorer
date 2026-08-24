@@ -308,6 +308,26 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     .filter((entry): entry is Activity & { userRating: UserRating } => entry !== null)
     .sort((a, b) => b.userRating.ratedAt.getTime() - a.userRating.ratedAt.getTime());
 
+  // Świeży odczyt ocen z serwera (bez migracji/dialogów).
+  const refreshRatings = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from("user_ratings")
+      .select("activity_id, rating, review, updated_at, created_at")
+      .eq("user_id", user.id);
+    if (error || !data) return;
+    const map = new Map<number, UserRating>();
+    for (const row of data as { activity_id: number; rating: number; review: string | null; updated_at: string; created_at: string }[]) {
+      map.set(row.activity_id, {
+        activityId: row.activity_id,
+        rating: row.rating,
+        review: row.review ?? undefined,
+        ratedAt: new Date(row.updated_at ?? row.created_at),
+      });
+    }
+    setRatings(map);
+  }, [user]);
+
   return (
     <UserRatingsContext.Provider
       value={{
@@ -318,6 +338,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         removeRating,
         visitedActivities,
         visitedCount: visitedActivities.length,
+        refreshRatings,
       }}
     >
       {children}
