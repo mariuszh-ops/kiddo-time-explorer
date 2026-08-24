@@ -34,6 +34,15 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [info, setInfo] = useState<string | null>(null);
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
+  const [captchaToken, setCaptchaToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
+
+  /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
+  const resetCaptcha = () => {
+    setCaptchaToken("");
+    turnstileRef.current?.reset();
+  };
+
 
   const setMode = (next: Mode) => {
     setModeState(next);
@@ -65,22 +74,29 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Hasło musi mieć co najmniej 6 znaków.");
       return;
     }
+    if (!captchaToken) {
+      setError(TURNSTILE_ERROR_MESSAGE);
+      return;
+    }
 
     setBusy(true);
     try {
       if (mode === "reset") {
-        await resetPassword(email);
+        await resetPassword(email, captchaToken);
         setScreen("reset-sent");
       } else if (mode === "signup") {
-        await signUpWithEmail(email, password);
+        await signUpWithEmail(email, password, captchaToken);
         setScreen("confirm");
         setCooldown(RESEND_COOLDOWN);
       } else {
-        await signInWithEmail(email, password);
+        await signInWithEmail(email, password, captchaToken);
         onSuccess?.();
       }
+      setCaptchaToken("");
+      turnstileRef.current?.reset();
     } catch (err) {
-      setError(translateAuthError(err));
+      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
+      resetCaptcha();
     } finally {
       setBusy(false);
     }
@@ -92,16 +108,20 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     setError(null);
     setInfo(null);
     try {
-      await resendConfirmation(email);
+      await resendConfirmation(email, captchaToken || undefined);
       setInfo("Wysłaliśmy link ponownie.");
       setCooldown(RESEND_COOLDOWN);
+      setCaptchaToken("");
+      turnstileRef.current?.reset();
     } catch (err) {
-      setError(translateAuthError(err));
+      setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
       if (isEmailRateLimitError(err)) setCooldown(RESEND_COOLDOWN);
+      resetCaptcha();
     } finally {
       setBusy(false);
     }
   };
+
 
   if (screen === "confirm" || screen === "reset-sent") {
     const isConfirm = screen === "confirm";
