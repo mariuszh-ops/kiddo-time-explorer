@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Loader2, MailCheck } from "lucide-react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
+import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, isCaptchaError } from "@/lib/turnstile";
+
 
 type Mode = "signin" | "signup" | "reset";
 
