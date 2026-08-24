@@ -28,6 +28,15 @@ interface UserReviewRow {
   created_at: string;
 }
 
+/** Publiczny widok opinii — wyłącznie zatwierdzone, bez danych autora. */
+interface PublicReviewRow {
+  id: string;
+  place_id: string;
+  rating: number;
+  text: string | null;
+  created_at: string;
+}
+
 interface ReviewsSectionProps {
   placeId?: string;
   /** ID atrakcji — służy do podstawienia oceny wystawionej wyżej na karcie. */
@@ -168,7 +177,7 @@ const ReviewsSection = ({
       ? `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
       : null;
 
-  const [userReviews, setUserReviews] = useState<UserReviewRow[]>([]);
+  const [userReviews, setUserReviews] = useState<PublicReviewRow[]>([]);
   const [myReview, setMyReview] = useState<UserReviewRow | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -186,21 +195,37 @@ const ReviewsSection = ({
       return;
     }
     setLoading(true);
-    // RLS returns approved + own (any status) automatically.
-    const { data, error } = await supabase
-      .from("user_reviews")
-      .select("*")
+
+    // Publiczne opinie: JEDYNE źródło to widok public_reviews (tylko zatwierdzone,
+    // czytany kluczem anon). Rola anon nie ma dostępu do user_reviews.
+    const publicQuery = supabase
+      .from("public_reviews")
+      .select("id,place_id,rating,text,created_at")
       .eq("place_id", placeId)
       .order("created_at", { ascending: false });
-    if (error) {
-      console.error("Failed to load user reviews", error);
-      setLoading(false);
-      return;
+
+    // Własna opinia (również „pending") — na tokenie zalogowanego użytkownika.
+    const mineQuery = user
+      ? supabase
+          .from("user_reviews")
+          .select("*")
+          .eq("place_id", placeId)
+          .eq("user_id", user.id)
+          .maybeSingle()
+      : null;
+
+    const [publicRes, mineRes] = await Promise.all([publicQuery, mineQuery]);
+
+    if (publicRes.error) {
+      console.error("Failed to load public reviews", publicRes.error);
     }
-    const rows = (data as UserReviewRow[] | null) ?? [];
-    const mine = user ? rows.find((r) => r.user_id === user.id) ?? null : null;
+    const mine = (mineRes && !mineRes.error ? (mineRes.data as UserReviewRow | null) : null) ?? null;
     setMyReview(mine);
-    setUserReviews(rows.filter((r) => r.status === "approved"));
+
+    const rows = ((publicRes.data as PublicReviewRow[] | null) ?? []).filter(
+      (r) => !mine || r.id !== mine.id,
+    );
+    setUserReviews(rows);
     setLoading(false);
   }, [placeId, user]);
 
@@ -480,13 +505,9 @@ const ReviewsSection = ({
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
-                      <span className="text-xs font-medium text-accent-foreground">
-                        {r.author_name.charAt(0).toUpperCase()}
-                      </span>
+                      <span className="text-xs font-medium text-accent-foreground">R</span>
                     </div>
-                    <span className="text-sm font-medium text-foreground truncate">
-                      {anonymizeAuthor(r.author_name)}
-                    </span>
+                    <span className="text-sm font-medium text-foreground truncate">Rodzic</span>
                   </div>
                   <StarRow rating={r.rating} />
                 </div>
