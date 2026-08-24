@@ -18,8 +18,9 @@ const PendingIntentRunner = () => {
     toggleFavorite,
     toggleWantToVisit,
     isLoading,
+    refreshSaved,
   } = useSavedActivities();
-  const { rateActivity } = useUserRatings();
+  const { rateActivity, refreshRatings } = useUserRatings();
   const runningRef = useRef(false);
 
   useEffect(() => {
@@ -37,14 +38,17 @@ const PendingIntentRunner = () => {
           if (!isFavorite(intent.activityId)) {
             await toggleFavorite(intent.activityId, intent.slug);
           }
+          await refreshSaved();
           toast.success("Zapisano w Twoich ulubionych");
         } else if (intent.kind === "wantToVisit") {
           if (!isWantToVisit(intent.activityId)) {
             await toggleWantToVisit(intent.activityId, intent.slug);
           }
+          await refreshSaved();
           toast.success("Zapisano na liście „Chcę odwiedzić”");
         } else {
           await rateActivity(intent.activityId, intent.value);
+          await refreshRatings();
           toast.success(`Zapisano Twoją ocenę: ${intent.value}/5`);
         }
       } catch {
@@ -63,6 +67,8 @@ const PendingIntentRunner = () => {
     toggleFavorite,
     toggleWantToVisit,
     rateActivity,
+    refreshSaved,
+    refreshRatings,
     clearPendingIntent,
   ]);
 
