@@ -38,6 +38,8 @@ const ONas = lazy(() => import("./pages/ONas"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const BlogListPage = lazy(() => import("./pages/BlogListPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
+const IndexDirectory = lazy(() => import("./pages/IndexDirectory"));
+const IndexRegion = lazy(() => import("./pages/IndexRegion"));
 import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
