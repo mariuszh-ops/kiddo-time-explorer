@@ -3,12 +3,14 @@ import { Compass, Heart, Map, User } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { env } from "@/config/env";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const navRef = useRef<HTMLElement>(null);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const el = navRef.current;
@@ -108,7 +110,7 @@ const BottomNav = () => {
     { label: "Odkrywaj", icon: Compass, path: "/", isMap: false },
     { label: "Mapa", icon: Map, path: "/", isMap: true },
     { label: "Moje", icon: Heart, path: "/my-places", isMap: false },
-    { label: "Profil", icon: User, path: "/profile", isMap: false },
+    { label: isLoggedIn ? "Profil" : "Zaloguj", icon: User, path: "/profile", isMap: false },
   ];
 
   return (

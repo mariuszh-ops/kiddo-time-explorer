@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
+import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
+import PasswordRequirements from "@/components/PasswordRequirements";
 import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, TURNSTILE_UNAVAILABLE_MESSAGE, isCaptchaError } from "@/lib/turnstile";
 
 
@@ -72,8 +74,16 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Podaj adres e-mail.");
       return;
     }
-    if (mode !== "reset" && password.length < 6) {
-      setError("Hasło musi mieć co najmniej 6 znaków.");
+    // Siłę hasła walidujemy tylko przy zakładaniu konta — stare konta
+    // mają krótsze hasła i muszą móc się zalogować.
+    if (mode === "signup") {
+      const pwdError = passwordErrorMessage(password);
+      if (pwdError) {
+        setError(pwdError);
+        return;
+      }
+    } else if (mode === "signin" && !password) {
+      setError("Podaj hasło.");
       return;
     }
     if (!captchaToken && !captchaError) {
@@ -202,8 +212,9 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="min. 6 znaków"
+            placeholder={mode === "signup" ? PASSWORD_HINT : "Twoje hasło"}
           />
+          {mode === "signup" && <PasswordRequirements password={password} />}
         </div>
       )}
 
@@ -239,7 +250,16 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <Button type="submit" disabled={busy || (!captchaToken && !captchaError)} className="w-full">
+      <div className="sticky bottom-0 -mx-1 px-1 pb-1 pt-2 bg-background">
+      <Button
+        type="submit"
+        disabled={
+          busy ||
+          (!captchaToken && !captchaError) ||
+          (mode === "signup" && !checkPassword(password).ok)
+        }
+        className="w-full"
+      >
 
         {busy ? (
           <Loader2 className="w-4 h-4 animate-spin" />
@@ -251,6 +271,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           "Zaloguj się"
         )}
       </Button>
+      </div>
 
       {mode === "signup" && (
         <p className="text-xs text-muted-foreground text-center">

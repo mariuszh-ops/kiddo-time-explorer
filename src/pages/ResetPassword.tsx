@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { translateAuthError } from "@/lib/authErrors";
+import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
+import PasswordRequirements from "@/components/PasswordRequirements";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -33,8 +35,9 @@ const ResetPassword = () => {
     e.preventDefault();
     if (busy) return;
     setError(null);
-    if (password.length < 6) {
-      setError("Hasło musi mieć co najmniej 6 znaków.");
+    const pwdError = passwordErrorMessage(password);
+    if (pwdError) {
+      setError(pwdError);
       return;
     }
     setBusy(true);
@@ -76,11 +79,12 @@ const ResetPassword = () => {
                   autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="min. 6 znaków"
+                  placeholder={PASSWORD_HINT}
                 />
+                <PasswordRequirements password={password} />
               </div>
               {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" disabled={busy} className="w-full">
+              <Button type="submit" disabled={busy || !checkPassword(password).ok} className="w-full">
                 {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : "Zapisz nowe hasło"}
               </Button>
             </form>
