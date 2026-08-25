@@ -103,6 +103,13 @@ async function main() {
     urls.push({ loc: `/kategoria/${cat}`, changefreq: 'weekly', priority: '0.8' });
   }
 
+  // 2b. Strony indeksu (HTML sitemap) — linki wewnętrzne do każdej karty
+  urls.push({ loc: '/indeks', changefreq: 'weekly', priority: '0.5' });
+  for (const region of REGION_SLUGS) {
+    urls.push({ loc: `/indeks/${region}`, changefreq: 'weekly', priority: '0.5' });
+  }
+
+
   // 3. Activity detail pages — jeden wpis na atrakcję z katalogu
   for (const a of activities) {
     if (!a.slug) continue;
