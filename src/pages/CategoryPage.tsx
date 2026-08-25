@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 const MapView = lazy(() => import("@/components/MapView"));
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
+import SeoPagination from "@/components/SeoPagination";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { activityWord } from "@/lib/plural";
