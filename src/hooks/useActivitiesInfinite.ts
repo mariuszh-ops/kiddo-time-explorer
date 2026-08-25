@@ -61,7 +61,8 @@ export function useActivitiesInfinite(
     // Pierwszy fetch po zmianie filtrów pobiera wszystkie strony do `page`
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
     const isInitialFetch = page === initialPageRef.current;
-    const from = isInitialFetch ? 0 : page * pageSize;
+    // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników.
+    const from = isInitialFetch ? initialPageRef.current * pageSize : page * pageSize;
     const to = page * pageSize + pageSize - 1;
     (async () => {
       try {
@@ -110,7 +111,7 @@ export function useActivitiesInfinite(
     return () => { cancelled = true; };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = data.length < total;
+  const hasMore = initialPageRef.current * pageSize + data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 const MapView = lazy(() => import("@/components/MapView"));
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
+import SeoPagination from "@/components/SeoPagination";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { activityWord } from "@/lib/plural";
@@ -106,8 +107,9 @@ const CategoryPage = () => {
   const onlyFree = searchParams.get("free") === "1";
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
   const urlSearch = searchParams.get("search")?.trim() ?? "";
-  // ?page=2 → liczba doładowanych stron („Pokaż więcej") przywracana po powrocie wstecz.
-  const initialPage = Math.max(0, Number(searchParams.get("page") ?? "0") || 0);
+  // ?page=N (1-based) → N-ta porcja wyników. Linki paginacji renderujemy pod listą.
+  const pageParam = Math.max(1, Math.min(Number(searchParams.get("page") ?? "1") || 1, 500));
+  const initialPage = pageParam - 1;
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
@@ -160,11 +162,11 @@ const CategoryPage = () => {
     setSearchParams(new URLSearchParams(), { replace: true });
   }, [setSearchParams]);
 
-  // Trzymaj numer strony w URL, żeby powrót wstecz odtworzył doładowane karty.
+  // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
   useEffect(() => {
-    const current = Number(searchParams.get("page") ?? "0") || 0;
-    if (current !== page) {
-      updateParams({ page: page > 0 ? String(page) : undefined });
+    const current = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
+    if (current !== page + 1) {
+      updateParams({ page: page > 0 ? String(page + 1) : undefined });
     }
   }, [page, searchParams, updateParams]);
 
@@ -209,8 +211,8 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (restoredRef.current || loading || activities.length === 0) return;
-    // Czekaj, aż przywrócone strony faktycznie się doładują.
-    if (page > 0 && activities.length <= 24) return;
+    // Czekaj, aż doładowane („Pokaż więcej") strony faktycznie dojdą.
+    if (page > initialPage && activities.length <= 24) return;
     restoredRef.current = true;
     // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę listingu.
     if (!isBackNavigation) return;
@@ -337,9 +339,9 @@ const CategoryPage = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={resolvedTitle.replace(" | FamilyFun", "")}
+        title={`${resolvedTitle.replace(" | FamilyFun", "")}${pageParam > 1 ? ` — strona ${pageParam}` : ""}`}
         description={dynamicMetaDescription}
-        path={path}
+        path={pageParam > 1 ? `${path}?page=${pageParam}` : path}
         image={activities[0]?.imageUrl}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
@@ -546,9 +548,19 @@ const CategoryPage = () => {
                 variant="outline"
                 size="lg"
               >
-                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${total - activities.length})`}
+                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${Math.max(0, total - initialPage * 24 - activities.length)})`}
               </Button>
             </div>
+          )}
+
+          {/* Linki paginacji dla wyszukiwarek (crawlable, w HTML od razu) */}
+          {!isEmpty && !error && (
+            <SeoPagination
+              basePath={path}
+              searchParams={searchParams}
+              currentPage={pageParam}
+              totalPages={Math.max(1, Math.ceil(total / 24))}
+            />
           )}
 
           {/* Koniec listy */}
