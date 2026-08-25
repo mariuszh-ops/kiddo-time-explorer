@@ -210,8 +210,8 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (restoredRef.current || loading || activities.length === 0) return;
-    // Czekaj, aż przywrócone strony faktycznie się doładują.
-    if (page > 0 && activities.length <= 24) return;
+    // Czekaj, aż doładowane („Pokaż więcej") strony faktycznie dojdą.
+    if (page > initialPage && activities.length <= 24) return;
     restoredRef.current = true;
     // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę listingu.
     if (!isBackNavigation) return;
