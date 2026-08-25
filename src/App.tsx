@@ -38,6 +38,8 @@ const ONas = lazy(() => import("./pages/ONas"));
 const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 const BlogListPage = lazy(() => import("./pages/BlogListPage"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
+const IndexDirectory = lazy(() => import("./pages/IndexDirectory"));
+const IndexRegion = lazy(() => import("./pages/IndexRegion"));
 import BottomNav from "./components/BottomNav";
 import CookieConsent from "./components/CookieConsent";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -90,6 +92,8 @@ const AnimatedRoutes = () => {
             <Route path="/kontakt" element={<Kontakt />} />
             <Route path="/o-nas" element={<ONas />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+            <Route path="/indeks" element={<IndexDirectory />} />
+            <Route path="/indeks/:regionSlug" element={<IndexRegion />} />
             {FEATURES.BLOG && (
               <>
                 <Route path="/inspiracje" element={<BlogListPage />} />
