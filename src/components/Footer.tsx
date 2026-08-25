@@ -23,6 +23,9 @@ const Footer = () => {
               <Link to="/kontakt" className="hover:text-foreground transition-colors">
                 Kontakt
               </Link>
+              <Link to="/indeks" className="hover:text-foreground transition-colors">
+                Indeks atrakcji
+              </Link>
               <Link to="/regulamin" className="hover:text-foreground transition-colors">
                 Regulamin
               </Link>
