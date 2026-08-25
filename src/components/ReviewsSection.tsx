@@ -395,17 +395,30 @@ const ReviewsSection = ({
                   </span>
                 )}
               </div>
-              {myReview.status === "pending" && (
+              <div className="flex items-center gap-1">
+                {myReview.status === "pending" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                    className="min-h-[44px] min-w-[44px] px-2 text-xs"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 mr-1" />
+                    Edytuj
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="h-auto py-1 px-2 text-xs"
+                  onClick={() => setDeleteOpen(true)}
+                  disabled={deleting}
+                  aria-label="Usuń Twoją opinię"
+                  className="min-h-[44px] min-w-[44px] px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <Edit2 className="w-3.5 h-3.5 mr-1" />
-                  Edytuj
+                  <Trash2 className="w-3.5 h-3.5 mr-1" />
+                  Usuń
                 </Button>
-              )}
+              </div>
             </div>
             <StarRow rating={myReview.rating} size="md" />
             {myReview.text && (
