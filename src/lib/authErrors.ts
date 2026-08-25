@@ -25,7 +25,7 @@ export const translateAuthError = (error: unknown): string => {
     return "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.";
   }
   if (msg.includes("password should be at least") || msg.includes("weak password")) {
-    return "Hasło jest za słabe — użyj minimum 6 znaków (najlepiej dłuższego hasła).";
+    return "Hasło jest za słabe — potrzeba min. 8 znaków, małej i wielkiej litery, cyfry oraz znaku specjalnego.";
   }
   if (msg.includes("invalid login credentials")) {
     return "Nieprawidłowy e-mail lub hasło.";
