@@ -252,6 +252,7 @@ const CarouselGallery = ({
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
         activityTitle={activityTitle}
+        activityCity={activityCity}
       />
     </>
   );
