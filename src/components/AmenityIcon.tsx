@@ -41,7 +41,7 @@ interface AmenityIconProps extends LucideProps {
 const AmenityIcon = ({ name, ...props }: AmenityIconProps) => {
   const Icon = iconMap[name];
   if (!Icon) return null;
-  return <Icon {...props} />;
+  return <Icon aria-hidden="true" focusable="false" {...props} />;
 };
 
 export default AmenityIcon;

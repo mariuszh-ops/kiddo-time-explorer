@@ -516,6 +516,7 @@ const ActivityDetail = () => {
         <ImageGallery 
           images={activity.imageUrls || [activity.imageUrl]} 
           activityTitle={activity.title}
+          activityCity={activity.city}
           activityType={activity.type}
           activityId={activity.id}
         />

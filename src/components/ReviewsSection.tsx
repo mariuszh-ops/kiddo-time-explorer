@@ -504,7 +504,7 @@ const ReviewsSection = ({
               <li key={r.id} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0" aria-hidden="true">
                       <span className="text-xs font-medium text-accent-foreground">R</span>
                     </div>
                     <span className="text-sm font-medium text-foreground truncate">Rodzic</span>
@@ -520,7 +520,7 @@ const ReviewsSection = ({
               <li key={`g-${idx}`} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0">
+                    <div className="w-7 h-7 rounded-full bg-accent flex items-center justify-center shrink-0" aria-hidden="true">
                       <span className="text-xs font-medium text-accent-foreground">
                         {r.author.charAt(0).toUpperCase()}
                       </span>

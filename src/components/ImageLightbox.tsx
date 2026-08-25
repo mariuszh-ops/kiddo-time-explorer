@@ -9,7 +9,13 @@ interface ImageLightboxProps {
   isOpen: boolean;
   onClose: () => void;
   activityTitle: string;
+  activityCity?: string;
 }
+
+const makeAlt = (title: string, city: string | undefined, index: number, total: number) => {
+  const cityPart = city ? ` — ${city}` : "";
+  return `${title}${cityPart}, zdjęcie ${index + 1} z ${total}`;
+};
 
 const ImageLightbox = ({
   images,
@@ -17,6 +23,7 @@ const ImageLightbox = ({
   isOpen,
   onClose,
   activityTitle,
+  activityCity,
 }: ImageLightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
@@ -118,7 +125,7 @@ const ImageLightbox = ({
               >
                 <img
                   src={image}
-                  alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                  alt={makeAlt(activityTitle, activityCity, index, images.length)}
                   className="max-w-full max-h-full object-contain"
                 />
               </div>
@@ -180,7 +187,7 @@ const ImageLightbox = ({
             >
               <img
                 src={image}
-                alt={`Miniatura ${index + 1}`}
+                alt={makeAlt(activityTitle, activityCity, index, images.length)}
                 className="w-full h-full object-cover"
               />
             </button>

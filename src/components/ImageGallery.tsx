@@ -10,11 +10,17 @@ import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
 interface ImageGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   activityType?: string;
   activityId?: number;
 }
 
-const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
+const makeAlt = (title: string, city: string | undefined, index: number, total: number) => {
+  const cityPart = city ? ` — ${city}` : "";
+  return `${title}${cityPart}, zdjęcie ${index + 1} z ${total}`;
+};
+
+const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
@@ -49,7 +55,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
                 src={singleSrc}
                 srcSet={buildHeroSrcSet(singleSrc)}
                 sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
-                alt={activityTitle}
+                alt={makeAlt(activityTitle, activityCity, 0, 1)}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -65,6 +71,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
           activityTitle={activityTitle}
+          activityCity={activityCity}
         />
       </>
     );
@@ -76,6 +83,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
       <CarouselGallery
         images={images}
         activityTitle={activityTitle}
+        activityCity={activityCity}
         getImageSrc={getImageSrc}
         handleImageError={handleImageError}
         openLightbox={openLightbox}
@@ -93,6 +101,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
     <GridGallery
       images={images}
       activityTitle={activityTitle}
+      activityCity={activityCity}
       getImageSrc={getImageSrc}
       handleImageError={handleImageError}
       openLightbox={openLightbox}
@@ -107,6 +116,7 @@ const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId
 interface CarouselGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   getImageSrc: (image: string, index: number) => string;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
@@ -118,7 +128,7 @@ interface CarouselGalleryProps {
 }
 
 const CarouselGallery = ({
-  images, activityTitle, getImageSrc, handleImageError, openLightbox,
+  images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
   selectedIndex, setSelectedIndex, lightboxOpen, setLightboxOpen, isMobile,
 }: CarouselGalleryProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false });
@@ -155,7 +165,7 @@ const CarouselGallery = ({
                     src={getImageSrc(image, index)}
                     srcSet={index === 0 ? buildHeroSrcSet(getImageSrc(image, index)) : undefined}
                     sizes={index === 0 && buildHeroSrcSet(getImageSrc(image, index)) ? HERO_SIZES : undefined}
-                    alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                     fetchPriority={index === 0 ? "high" : undefined}
@@ -226,7 +236,7 @@ const CarouselGallery = ({
             >
               <img
                 src={getImageSrc(image, index)}
-                alt={`Miniatura ${index + 1}`}
+                alt={makeAlt(activityTitle, activityCity, index, images.length)}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"
@@ -243,6 +253,7 @@ const CarouselGallery = ({
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
         activityTitle={activityTitle}
+        activityCity={activityCity}
       />
     </>
   );
@@ -252,6 +263,7 @@ const CarouselGallery = ({
 interface GridGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   getImageSrc: (image: string, index: number) => string;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
@@ -261,7 +273,7 @@ interface GridGalleryProps {
 }
 
 const GridGallery = ({
-  images, activityTitle, getImageSrc, handleImageError, openLightbox,
+  images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
   selectedIndex, lightboxOpen, setLightboxOpen,
 }: GridGalleryProps) => {
   const gridImages = images.slice(0, 5);
@@ -281,7 +293,7 @@ const GridGallery = ({
                 src={getImageSrc(images[0], 0)}
                 srcSet={buildHeroSrcSet(getImageSrc(images[0], 0))}
                 sizes={buildHeroSrcSet(getImageSrc(images[0], 0)) ? HERO_SIZES : undefined}
-                alt={activityTitle}
+                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -308,7 +320,7 @@ const GridGallery = ({
                 src={getImageSrc(gridImages[0], 0)}
                 srcSet={buildHeroSrcSet(getImageSrc(gridImages[0], 0))}
                 sizes={buildHeroSrcSet(getImageSrc(gridImages[0], 0)) ? HERO_SIZES : undefined}
-                alt={activityTitle}
+                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
@@ -328,7 +340,7 @@ const GridGallery = ({
                 >
                   <img
                     src={getImageSrc(image, index)}
-                    alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
@@ -354,6 +366,7 @@ const GridGallery = ({
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
         activityTitle={activityTitle}
+        activityCity={activityCity}
       />
     </>
   );
