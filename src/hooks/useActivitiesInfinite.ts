@@ -111,7 +111,7 @@ export function useActivitiesInfinite(
     return () => { cancelled = true; };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = data.length < total;
+  const hasMore = initialPageRef.current * pageSize + data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
