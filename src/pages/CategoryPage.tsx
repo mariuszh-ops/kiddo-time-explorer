@@ -106,8 +106,9 @@ const CategoryPage = () => {
   const onlyFree = searchParams.get("free") === "1";
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
   const urlSearch = searchParams.get("search")?.trim() ?? "";
-  // ?page=2 → liczba doładowanych stron („Pokaż więcej") przywracana po powrocie wstecz.
-  const initialPage = Math.max(0, Number(searchParams.get("page") ?? "0") || 0);
+  // ?page=N (1-based) → N-ta porcja wyników. Linki paginacji renderujemy pod listą.
+  const pageParam = Math.max(1, Math.min(Number(searchParams.get("page") ?? "1") || 1, 500));
+  const initialPage = pageParam - 1;
 
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
