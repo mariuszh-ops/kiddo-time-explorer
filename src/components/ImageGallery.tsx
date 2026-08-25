@@ -10,11 +10,17 @@ import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
 interface ImageGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   activityType?: string;
   activityId?: number;
 }
 
-const ImageGallery = ({ images, activityTitle, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
+const makeAlt = (title: string, city: string | undefined, index: number, total: number) => {
+  const cityPart = city ? ` — ${city}` : "";
+  return `${title}${cityPart}, zdjęcie ${index + 1} z ${total}`;
+};
+
+const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
