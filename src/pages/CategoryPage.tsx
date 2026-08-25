@@ -547,9 +547,19 @@ const CategoryPage = () => {
                 variant="outline"
                 size="lg"
               >
-                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${total - activities.length})`}
+                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${Math.max(0, total - initialPage * 24 - activities.length)})`}
               </Button>
             </div>
+          )}
+
+          {/* Linki paginacji dla wyszukiwarek (crawlable, w HTML od razu) */}
+          {!isEmpty && !error && (
+            <SeoPagination
+              basePath={path}
+              searchParams={searchParams}
+              currentPage={pageParam}
+              totalPages={Math.max(1, Math.ceil(total / 24))}
+            />
           )}
 
           {/* Koniec listy */}
