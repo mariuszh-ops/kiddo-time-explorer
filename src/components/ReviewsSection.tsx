@@ -429,6 +429,33 @@ const ReviewsSection = ({
           </div>
         )}
 
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Usunąć Twoją opinię?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Opinia zniknie z karty atrakcji. Tej operacji nie można cofnąć — możesz później
+                dodać nową.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleting}>Anuluj</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? "Usuwanie…" : "Usuń opinię"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+
+
         {/* Formularz dodawania / edycji */}
         {showForm && (
           <div className="mb-4 rounded-xl border border-border bg-background/50 p-3 md:p-4">
