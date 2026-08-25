@@ -340,7 +340,7 @@ const GridGallery = ({
                 >
                   <img
                     src={getImageSrc(image, index)}
-                    alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
