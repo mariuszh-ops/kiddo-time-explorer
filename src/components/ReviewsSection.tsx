@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import { Star, MessageSquarePlus, Edit2, Check } from "lucide-react";
+import { Star, MessageSquarePlus, Edit2, Check, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -188,6 +198,8 @@ const ReviewsSection = ({
   const [authorName, setAuthorName] = useState(defaultAuthorName);
   const [isEditing, setIsEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const loadReviews = useCallback(async () => {
     if (!placeId) {
@@ -298,6 +310,39 @@ const ReviewsSection = ({
     }
   };
 
+  const handleDelete = async () => {
+    if (!myReview || !user) return;
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase
+        .from("user_reviews")
+        .delete()
+        .eq("id", myReview.id)
+        .select();
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        toast.error("Nie udało się usunąć opinii. Odśwież stronę i spróbuj ponownie.");
+        return;
+      }
+      setDeleteOpen(false);
+      setMyReview(null);
+      setIsEditing(false);
+      setRating(0);
+      setHoveredStar(0);
+      setText("");
+      setAuthorName(defaultAuthorName);
+      toast.success("Twoja opinia została usunięta.");
+      await loadReviews();
+    } catch (e) {
+      console.error(e);
+      toast.error("Nie udało się usunąć opinii. Odśwież stronę i spróbuj ponownie.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+
+
   const hasAnyReview =
     userReviews.length > 0 || googleReviews.length > 0 || myReview !== null;
   const showForm = !myReview || isEditing;
@@ -350,17 +395,30 @@ const ReviewsSection = ({
                   </span>
                 )}
               </div>
-              {myReview.status === "pending" && (
+              <div className="flex items-center gap-1">
+                {myReview.status === "pending" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsEditing(true)}
+                    className="min-h-[44px] min-w-[44px] px-2 text-xs"
+                  >
+                    <Edit2 className="w-3.5 h-3.5 mr-1" />
+                    Edytuj
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setIsEditing(true)}
-                  className="h-auto py-1 px-2 text-xs"
+                  onClick={() => setDeleteOpen(true)}
+                  disabled={deleting}
+                  aria-label="Usuń Twoją opinię"
+                  className="min-h-[44px] min-w-[44px] px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                 >
-                  <Edit2 className="w-3.5 h-3.5 mr-1" />
-                  Edytuj
+                  <Trash2 className="w-3.5 h-3.5 mr-1" />
+                  Usuń
                 </Button>
-              )}
+              </div>
             </div>
             <StarRow rating={myReview.rating} size="md" />
             {myReview.text && (
@@ -370,6 +428,33 @@ const ReviewsSection = ({
             )}
           </div>
         )}
+
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Usunąć Twoją opinię?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Opinia zniknie z karty atrakcji. Tej operacji nie można cofnąć — możesz później
+                dodać nową.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={deleting}>Anuluj</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleDelete();
+                }}
+                disabled={deleting}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {deleting ? "Usuwanie…" : "Usuń opinię"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+
 
         {/* Formularz dodawania / edycji */}
         {showForm && (
