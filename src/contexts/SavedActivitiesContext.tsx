@@ -381,6 +381,15 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   // odroczonej intencji gościa, żeby UI natychmiast pokazał stan „W ulubionych".
   const refreshSaved = useCallback(async () => {
     if (!user) return;
+    // Mapa slug→id wymaga katalogu. Bez tego żaden wiersz się nie rozwiąże
+    // i odświeżenie wyzerowałoby świeżo dodane serce.
+    if (!slugFromId(1) && getActivities().length === 0) {
+      try {
+        await loadActivities();
+      } catch {
+        return;
+      }
+    }
     const { data, error } = await supabase
       .from("saved_activities")
       .select("activity_slug, kind")
@@ -388,14 +397,19 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     if (error || !data) return;
     const fav = new Set<number>();
     const wtv = new Set<number>();
+    let unresolved = false;
     for (const row of data) {
       const id = idFromSlug(row.activity_slug);
-      if (id == null) continue;
+      if (id == null) {
+        unresolved = true;
+        continue;
+      }
       if (row.kind === "favorite") fav.add(id);
       else if (row.kind === "want_to_visit") wtv.add(id);
     }
-    setFavoriteIds(fav);
-    setWantToVisitIds(wtv);
+    // Nierozwiązane slugi (katalog niekompletny) — nie gubimy stanu optymistycznego.
+    setFavoriteIds((prev) => (unresolved ? new Set([...prev, ...fav]) : fav));
+    setWantToVisitIds((prev) => (unresolved ? new Set([...prev, ...wtv]) : wtv));
   }, [user]);
 
   return (
