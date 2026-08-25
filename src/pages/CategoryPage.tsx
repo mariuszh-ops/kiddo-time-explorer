@@ -161,11 +161,11 @@ const CategoryPage = () => {
     setSearchParams(new URLSearchParams(), { replace: true });
   }, [setSearchParams]);
 
-  // Trzymaj numer strony w URL, żeby powrót wstecz odtworzył doładowane karty.
+  // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
   useEffect(() => {
-    const current = Number(searchParams.get("page") ?? "0") || 0;
-    if (current !== page) {
-      updateParams({ page: page > 0 ? String(page) : undefined });
+    const current = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
+    if (current !== page + 1) {
+      updateParams({ page: page > 0 ? String(page + 1) : undefined });
     }
   }, [page, searchParams, updateParams]);
 
