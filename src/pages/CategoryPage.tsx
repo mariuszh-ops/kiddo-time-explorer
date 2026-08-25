@@ -338,9 +338,9 @@ const CategoryPage = () => {
   return (
     <PageTransition>
       <SEOHead
-        title={resolvedTitle.replace(" | FamilyFun", "")}
+        title={`${resolvedTitle.replace(" | FamilyFun", "")}${pageParam > 1 ? ` — strona ${pageParam}` : ""}`}
         description={dynamicMetaDescription}
-        path={path}
+        path={pageParam > 1 ? `${path}?page=${pageParam}` : path}
         image={activities[0]?.imageUrl}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
