@@ -71,6 +71,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
           activityTitle={activityTitle}
+          activityCity={activityCity}
         />
       </>
     );
