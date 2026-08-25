@@ -55,7 +55,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
                 src={singleSrc}
                 srcSet={buildHeroSrcSet(singleSrc)}
                 sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
-                alt={activityTitle}
+                alt={makeAlt(activityTitle, activityCity, 0, 1)}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
