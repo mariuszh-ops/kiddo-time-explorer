@@ -162,7 +162,7 @@ const CarouselGallery = ({
                     src={getImageSrc(image, index)}
                     srcSet={index === 0 ? buildHeroSrcSet(getImageSrc(image, index)) : undefined}
                     sizes={index === 0 && buildHeroSrcSet(getImageSrc(image, index)) ? HERO_SIZES : undefined}
-                    alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
                     loading={index === 0 ? "eager" : "lazy"}
                     decoding="async"
                     fetchPriority={index === 0 ? "high" : undefined}
