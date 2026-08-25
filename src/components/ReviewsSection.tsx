@@ -310,6 +310,39 @@ const ReviewsSection = ({
     }
   };
 
+  const handleDelete = async () => {
+    if (!myReview || !user) return;
+    setDeleting(true);
+    try {
+      const { data, error } = await supabase
+        .from("user_reviews")
+        .delete()
+        .eq("id", myReview.id)
+        .select();
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        toast.error("Nie udało się usunąć opinii. Odśwież stronę i spróbuj ponownie.");
+        return;
+      }
+      setDeleteOpen(false);
+      setMyReview(null);
+      setIsEditing(false);
+      setRating(0);
+      setHoveredStar(0);
+      setText("");
+      setAuthorName(defaultAuthorName);
+      toast.success("Twoja opinia została usunięta.");
+      await loadReviews();
+    } catch (e) {
+      console.error(e);
+      toast.error("Nie udało się usunąć opinii. Odśwież stronę i spróbuj ponownie.");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+
+
   const hasAnyReview =
     userReviews.length > 0 || googleReviews.length > 0 || myReview !== null;
   const showForm = !myReview || isEditing;
