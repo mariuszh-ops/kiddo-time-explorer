@@ -83,6 +83,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
       <CarouselGallery
         images={images}
         activityTitle={activityTitle}
+        activityCity={activityCity}
         getImageSrc={getImageSrc}
         handleImageError={handleImageError}
         openLightbox={openLightbox}
