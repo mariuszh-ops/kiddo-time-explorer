@@ -20,16 +20,20 @@
     -->
 
     <!--
-      Brak statycznych tagów og:* / twitter:* celowo: każda strona dostarcza
-      DOKŁADNIE JEDEN zestaw przez SEOHead (react-helmet-async). Statyczne tagi
-      były pierwsze w DOM i parsery social brały je zamiast unikalnych per-strona.
+      Statyczne tagi og:* / twitter:* są fallbackiem dla botów social, które nie
+      wykonują JS. Podstrony nadpisują je przez SEOHead (react-helmet-async)
+      dedykowanymi wartościami — dedupe po property/name zapewnia, że w
+      przeglądarkach z JS widoczny jest tylko jeden zestaw per-strona.
     -->
-    <!--
-      Wyjątek: og:image / twitter:image są statyczne, bo parsery social nie
-      wykonują JS. To sitewide baner marki (1200x640) — zastępuje automatyczny
-      zrzut ekranu podglądu. Podstrony nadpisują go przez SEOHead (dedupe po
-      property/name).
-    -->
+    <meta property="og:title" content="FamilyFun – sprawdzone atrakcje dla rodzin z dziećmi">
+    <meta property="og:description" content="Ponad 5000 atrakcji dla dzieci w 16 województwach — z ocenami i opiniami rodziców. Znajdź pomysł na weekend blisko siebie.">
+    <meta property="og:url" content="https://familyfun.pl/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="FamilyFun">
+    <meta property="og:locale" content="pl_PL">
+    <meta name="twitter:title" content="FamilyFun – sprawdzone atrakcje dla rodzin z dziećmi">
+    <meta name="twitter:description" content="Ponad 5000 atrakcji dla dzieci w 16 województwach — z ocenami i opiniami rodziców. Znajdź pomysł na weekend blisko siebie.">
+
     <meta data-rh="true" property="og:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
     <meta data-rh="true" property="og:image:width" content="1200" />
     <meta data-rh="true" property="og:image:height" content="640" />
