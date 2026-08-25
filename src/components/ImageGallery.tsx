@@ -235,7 +235,7 @@ const CarouselGallery = ({
             >
               <img
                 src={getImageSrc(image, index)}
-                alt={`Miniatura ${index + 1}`}
+                alt={makeAlt(activityTitle, activityCity, index, images.length)}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover"
