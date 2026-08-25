@@ -125,7 +125,7 @@ const ImageLightbox = ({
               >
                 <img
                   src={image}
-                  alt={`${activityTitle} - zdjęcie ${index + 1}`}
+                  alt={makeAlt(activityTitle, activityCity, index, images.length)}
                   className="max-w-full max-h-full object-contain"
                 />
               </div>
