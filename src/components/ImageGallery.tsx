@@ -114,6 +114,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
 interface CarouselGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   getImageSrc: (image: string, index: number) => string;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
@@ -125,7 +126,7 @@ interface CarouselGalleryProps {
 }
 
 const CarouselGallery = ({
-  images, activityTitle, getImageSrc, handleImageError, openLightbox,
+  images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
   selectedIndex, setSelectedIndex, lightboxOpen, setLightboxOpen, isMobile,
 }: CarouselGalleryProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false });
