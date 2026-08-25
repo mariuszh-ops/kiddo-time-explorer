@@ -92,6 +92,8 @@ const AnimatedRoutes = () => {
             <Route path="/kontakt" element={<Kontakt />} />
             <Route path="/o-nas" element={<ONas />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+            <Route path="/indeks" element={<IndexDirectory />} />
+            <Route path="/indeks/:regionSlug" element={<IndexRegion />} />
             {FEATURES.BLOG && (
               <>
                 <Route path="/inspiracje" element={<BlogListPage />} />
