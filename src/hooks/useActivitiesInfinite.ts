@@ -61,7 +61,8 @@ export function useActivitiesInfinite(
     // Pierwszy fetch po zmianie filtrów pobiera wszystkie strony do `page`
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
     const isInitialFetch = page === initialPageRef.current;
-    const from = isInitialFetch ? 0 : page * pageSize;
+    // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników.
+    const from = isInitialFetch ? initialPageRef.current * pageSize : page * pageSize;
     const to = page * pageSize + pageSize - 1;
     (async () => {
       try {
