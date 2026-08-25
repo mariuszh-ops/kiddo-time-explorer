@@ -198,6 +198,8 @@ const ReviewsSection = ({
   const [authorName, setAuthorName] = useState(defaultAuthorName);
   const [isEditing, setIsEditing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const loadReviews = useCallback(async () => {
     if (!placeId) {
