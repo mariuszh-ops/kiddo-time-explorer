@@ -262,6 +262,7 @@ const CarouselGallery = ({
 interface GridGalleryProps {
   images: string[];
   activityTitle: string;
+  activityCity?: string;
   getImageSrc: (image: string, index: number) => string;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
@@ -271,7 +272,7 @@ interface GridGalleryProps {
 }
 
 const GridGallery = ({
-  images, activityTitle, getImageSrc, handleImageError, openLightbox,
+  images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
   selectedIndex, lightboxOpen, setLightboxOpen,
 }: GridGalleryProps) => {
   const gridImages = images.slice(0, 5);
