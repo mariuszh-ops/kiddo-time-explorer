@@ -68,7 +68,7 @@ const ReviewsModal = ({
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center" aria-hidden="true">
                       <span className="text-sm font-medium text-accent-foreground">
                         {review.author.charAt(0)}
                       </span>
