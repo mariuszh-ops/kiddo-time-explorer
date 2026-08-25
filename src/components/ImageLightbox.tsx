@@ -187,7 +187,7 @@ const ImageLightbox = ({
             >
               <img
                 src={image}
-                alt={`Miniatura ${index + 1}`}
+                alt={makeAlt(activityTitle, activityCity, index, images.length)}
                 className="w-full h-full object-cover"
               />
             </button>
