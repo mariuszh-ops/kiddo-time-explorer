@@ -88,14 +88,23 @@ const PolitykaPrywatnosci = () => {
                   <li>dostawcy narzędzi analitycznych (Plausible, Google Analytics — jeśli włączone);</li>
                   <li>dostawcy map: OpenStreetMap (dane mapy) oraz CARTO (kafle mapy) — otrzymują adres IP przy pobieraniu kafli;</li>
                   <li>Google Fonts (dostawca czcionek) — otrzymuje adres IP przy pobieraniu plików czcionek;</li>
+                  <li>
+                    Cloudflare (Turnstile) — zabezpieczenie antyspamowe formularza logowania:
+                    przetwarza adres IP i sygnały przeglądarki po swojej stronie, podstawa art. 6 ust. 1 lit. f RODO
+                    (uzasadniony interes — ochrona przed nadużyciami);
+                  </li>
+                  <li>Cloudflare Email Routing — odbiór poczty na adresy @familyfun.pl i przekazywanie jej na skrzynkę operacyjną;</li>
+                  <li>home.pl — serwer poczty wychodzącej dla adresu kontakt@familyfun.pl;</li>
+                  <li>Resend (dostarczanie przez Amazon SES) — wysyłka e-maili transakcyjnych (np. linki do logowania, potwierdzenia);</li>
                   <li>podmioty świadczące pomoc prawną lub księgową administratora — w zakresie niezbędnym.</li>
                 </ul>
                 <p className="mb-4">
                   Część dostawców może przetwarzać dane poza EOG; w takim wypadku administrator zapewnia
                   odpowiednie zabezpieczenia (standardowe klauzule umowne UE). Aktualni podprocesorzy:
-                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2),
-                  OpenStreetMap i CARTO (dane oraz kafle mapy) oraz Google (logowanie Google OAuth,
-                  Google Fonts).
+                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2,
+                  Turnstile, Email Routing), OpenStreetMap i CARTO (dane oraz kafle mapy), Google
+                  (logowanie Google OAuth, Google Fonts), home.pl (poczta wychodząca) oraz Resend
+                  (dostarczanie przez Amazon SES).
                 </p>
               </section>
 
