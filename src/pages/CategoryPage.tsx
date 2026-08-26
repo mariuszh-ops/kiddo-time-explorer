@@ -463,17 +463,7 @@ const CategoryPage = () => {
 
           {/* Stan błędu — wyłącznie ten blok, bez pustego stanu filtrów */}
           {isError && (
-            <div className="flex flex-col items-center justify-center py-20 text-center px-4">
-              <div aria-live="polite">
-                <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
-                  Nie udało się pobrać atrakcji
-                </h2>
-                <p className="text-muted-foreground mb-6 max-w-md">
-                  Spróbuj odświeżyć stronę za chwilę.
-                </p>
-              </div>
-              <Button onClick={refetch}>Spróbuj ponownie</Button>
-            </div>
+            <ActivityLoadError onRetry={refetch} />
           )}
 
           {/* Empty state */}
