@@ -25,7 +25,7 @@ const PolitykaPrywatnosci = () => {
               Polityka prywatności
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 3 sierpnia 2026 r.
+              Ostatnia aktualizacja: 26 sierpnia 2026 r.
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -49,6 +49,14 @@ const PolitykaPrywatnosci = () => {
                   <li>dane techniczne przeglądarki (adres IP, rodzaj urządzenia, ustawienia językowe) zbierane w logach serwera;</li>
                   <li>dane analityczne w formie zanonimizowanej (Plausible / Google Analytics 4, jeśli włączony).</li>
                 </ul>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Dane dzieci</h2>
+                <p className="mb-4">
+                  Serwis nie zbiera żadnych danych o dzieciach — filtr wieku jest wyłącznie
+                  parametrem wyszukiwania i nie tworzy profilu dziecka.
+                </p>
               </section>
 
               <section>
@@ -80,14 +88,23 @@ const PolitykaPrywatnosci = () => {
                   <li>dostawcy narzędzi analitycznych (Plausible, Google Analytics — jeśli włączone);</li>
                   <li>dostawcy map: OpenStreetMap (dane mapy) oraz CARTO (kafle mapy) — otrzymują adres IP przy pobieraniu kafli;</li>
                   <li>Google Fonts (dostawca czcionek) — otrzymuje adres IP przy pobieraniu plików czcionek;</li>
+                  <li>
+                    Cloudflare (Turnstile) — zabezpieczenie antyspamowe formularza logowania:
+                    przetwarza adres IP i sygnały przeglądarki po swojej stronie, podstawa art. 6 ust. 1 lit. f RODO
+                    (uzasadniony interes — ochrona przed nadużyciami);
+                  </li>
+                  <li>Cloudflare Email Routing — odbiór poczty na adresy @familyfun.pl i przekazywanie jej na skrzynkę operacyjną;</li>
+                  <li>home.pl — serwer poczty wychodzącej dla adresu kontakt@familyfun.pl;</li>
+                  <li>Resend (dostarczanie przez Amazon SES) — wysyłka e-maili transakcyjnych (np. linki do logowania, potwierdzenia);</li>
                   <li>podmioty świadczące pomoc prawną lub księgową administratora — w zakresie niezbędnym.</li>
                 </ul>
                 <p className="mb-4">
                   Część dostawców może przetwarzać dane poza EOG; w takim wypadku administrator zapewnia
                   odpowiednie zabezpieczenia (standardowe klauzule umowne UE). Aktualni podprocesorzy:
-                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2),
-                  OpenStreetMap i CARTO (dane oraz kafle mapy) oraz Google (logowanie Google OAuth,
-                  Google Fonts).
+                  Supabase (hosting bazy danych i uwierzytelnianie), Cloudflare (hosting zdjęć — R2,
+                  Turnstile, Email Routing), OpenStreetMap i CARTO (dane oraz kafle mapy), Google
+                  (logowanie Google OAuth, Google Fonts), home.pl (poczta wychodząca) oraz Resend
+                  (dostarczanie przez Amazon SES).
                 </p>
               </section>
 
@@ -136,12 +153,14 @@ const PolitykaPrywatnosci = () => {
                 <p className="mb-4">
                   Dane konta przechowujemy do momentu jego usunięcia przez użytkownika. Treści publiczne
                   (opinie, zgłoszenia) mogą być przechowywane po usunięciu konta w formie zanonimizowanej.
-                  Logi techniczne przechowywane są przez okres niezbędny dla bezpieczeństwa Serwisu,
-                  nie dłużej niż 12 miesięcy.
+                  Szczegółowe okresy przechowywania poszczególnych kategorii danych wymieniono poniżej.
                 </p>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Zgłoszenia nowych atrakcji</strong> — przez czas niezbędny do weryfikacji zgłoszenia i ewentualnego dodania obiektu do katalogu.</li>
                   <li><strong>Skrót (hash) adresu IP z formularzy</strong> — przechowywany razem ze zgłoszeniem, do którego się odnosi.</li>
+                  <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia, po czym są nieodwracalnie usuwane.</li>
+                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia.</li>
+                  <li><strong>Logi techniczne</strong> — nie dłużej niż 12 miesięcy.</li>
                 </ul>
               </section>
 
