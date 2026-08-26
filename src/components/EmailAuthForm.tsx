@@ -25,6 +25,8 @@ interface EmailAuthFormProps {
 }
 
 const RESEND_COOLDOWN = 30;
+const TURNSTILE_TIMEOUT_MS = 8000;
+
 
 const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
   const { signInWithEmail, signUpWithEmail, resendConfirmation, resetPassword } = useAuth();
@@ -39,12 +41,23 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaError, setCaptchaError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
+  const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
   const resetCaptcha = () => {
     setCaptchaToken("");
     setCaptchaError(false);
     turnstileRef.current?.reset();
+  };
+
+  /** Zablokuj logowanie hasłem, gdy widget nie wystartuje (adblock / DNS / timeout). */
+  const markCaptchaUnavailable = () => {
+    if (captchaTimeoutRef.current) {
+      clearTimeout(captchaTimeoutRef.current);
+      captchaTimeoutRef.current = null;
+    }
+    setCaptchaError(true);
+    setError(TURNSTILE_UNAVAILABLE_MESSAGE);
   };
 
 
@@ -63,6 +76,23 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
     return () => clearTimeout(t);
   }, [cooldown]);
+
+  useEffect(() => {
+    // Jeśli widget Turnstile nie załaduje się w czasie (adblock/filtr DNS),
+    // traktujemy to jako awarię zabezpieczenia i blokujemy logowanie hasłem.
+    captchaTimeoutRef.current = setTimeout(() => {
+      if (!captchaToken) {
+        markCaptchaUnavailable();
+      }
+    }, TURNSTILE_TIMEOUT_MS);
+
+    return () => {
+      if (captchaTimeoutRef.current) {
+        clearTimeout(captchaTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -223,25 +253,26 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           ref={turnstileRef}
           siteKey={TURNSTILE_SITE_KEY}
           onSuccess={(token) => {
+            if (captchaTimeoutRef.current) {
+              clearTimeout(captchaTimeoutRef.current);
+              captchaTimeoutRef.current = null;
+            }
             setCaptchaToken(token);
             setCaptchaError(false);
+            setError((prev) =>
+              prev === TURNSTILE_UNAVAILABLE_MESSAGE ? null : prev
+            );
           }}
           onExpire={() => setCaptchaToken("")}
           onError={() => {
-            setCaptchaToken("");
-            setCaptchaError(true);
-            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            markCaptchaUnavailable();
           }}
           onUnsupported={() => {
-            setCaptchaToken("");
-            setCaptchaError(true);
-            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            markCaptchaUnavailable();
           }}
           scriptOptions={{
             onError: () => {
-              setCaptchaToken("");
-              setCaptchaError(true);
-              setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+              markCaptchaUnavailable();
             },
           }}
           options={{ size: "flexible" }}
@@ -255,7 +286,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         type="submit"
         disabled={
           busy ||
-          (!captchaToken && !captchaError) ||
+          !captchaToken ||
           (mode === "signup" && !checkPassword(password).ok)
         }
         className="w-full"
