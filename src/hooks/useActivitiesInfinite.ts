@@ -4,6 +4,9 @@ import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
 
+const QUERY_TIMEOUT_MS = 15000;
+
+
 export interface UseActivitiesInfiniteResult {
   data: Activity[];
   total: number;
