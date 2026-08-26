@@ -41,12 +41,23 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaError, setCaptchaError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
+  const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
   const resetCaptcha = () => {
     setCaptchaToken("");
     setCaptchaError(false);
     turnstileRef.current?.reset();
+  };
+
+  /** Zablokuj logowanie hasłem, gdy widget nie wystartuje (adblock / DNS / timeout). */
+  const markCaptchaUnavailable = () => {
+    if (captchaTimeoutRef.current) {
+      clearTimeout(captchaTimeoutRef.current);
+      captchaTimeoutRef.current = null;
+    }
+    setCaptchaError(true);
+    setError(TURNSTILE_UNAVAILABLE_MESSAGE);
   };
 
 
