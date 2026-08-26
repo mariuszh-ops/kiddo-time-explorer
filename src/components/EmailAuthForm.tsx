@@ -253,25 +253,26 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           ref={turnstileRef}
           siteKey={TURNSTILE_SITE_KEY}
           onSuccess={(token) => {
+            if (captchaTimeoutRef.current) {
+              clearTimeout(captchaTimeoutRef.current);
+              captchaTimeoutRef.current = null;
+            }
             setCaptchaToken(token);
             setCaptchaError(false);
+            setError((prev) =>
+              prev === TURNSTILE_UNAVAILABLE_MESSAGE ? null : prev
+            );
           }}
           onExpire={() => setCaptchaToken("")}
           onError={() => {
-            setCaptchaToken("");
-            setCaptchaError(true);
-            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            markCaptchaUnavailable();
           }}
           onUnsupported={() => {
-            setCaptchaToken("");
-            setCaptchaError(true);
-            setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+            markCaptchaUnavailable();
           }}
           scriptOptions={{
             onError: () => {
-              setCaptchaToken("");
-              setCaptchaError(true);
-              setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+              markCaptchaUnavailable();
             },
           }}
           options={{ size: "flexible" }}
