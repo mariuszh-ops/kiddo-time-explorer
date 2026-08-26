@@ -3,6 +3,9 @@ import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/l
 import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
 
+const QUERY_TIMEOUT_MS = 15000;
+
+
 export interface UseActivitiesFilters {
   region?: string;
   type?: string;
