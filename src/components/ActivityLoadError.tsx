@@ -24,7 +24,7 @@ const ActivityLoadError = ({ onRetry, isRetrying = false }: ActivityLoadErrorPro
 
           {/* Headline */}
           <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
-            Nie udało się załadować atrakcji
+            Nie udało się wczytać atrakcji
           </h2>
 
           {/* Supporting text */}
@@ -52,7 +52,7 @@ const ActivityLoadError = ({ onRetry, isRetrying = false }: ActivityLoadErrorPro
             ) : (
               <span className="flex items-center gap-2">
                 <RefreshCw className="w-4 h-4" />
-                Odśwież listę
+                Spróbuj ponownie
               </span>
             )}
           </Button>

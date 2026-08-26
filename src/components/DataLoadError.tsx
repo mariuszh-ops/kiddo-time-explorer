@@ -9,7 +9,7 @@ const DataLoadError = () => {
           <WifiOff aria-hidden="true" className="w-7 h-7 text-destructive" />
         </div>
         <h2 className="text-lg md:text-xl font-serif font-medium text-foreground mb-2">
-          Nie udało się załadować atrakcji
+          Nie udało się wczytać atrakcji
         </h2>
         <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
           Sprawdź połączenie z internetem i spróbuj ponownie. Jeśli problem się powtarza — daj nam znać.
