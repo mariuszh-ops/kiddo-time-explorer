@@ -52,6 +52,14 @@ const PolitykaPrywatnosci = () => {
               </section>
 
               <section>
+                <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Dane dzieci</h2>
+                <p className="mb-4">
+                  Serwis nie zbiera żadnych danych o dzieciach — filtr wieku jest wyłącznie
+                  parametrem wyszukiwania i nie tworzy profilu dziecka.
+                </p>
+              </section>
+
+              <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Cel przetwarzania danych</h2>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>utrzymanie konta i umożliwienie korzystania z funkcji wymagających logowania (zapisane miejsca, wystawianie opinii);</li>
