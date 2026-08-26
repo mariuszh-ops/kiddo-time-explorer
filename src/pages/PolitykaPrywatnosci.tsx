@@ -153,12 +153,14 @@ const PolitykaPrywatnosci = () => {
                 <p className="mb-4">
                   Dane konta przechowujemy do momentu jego usunięcia przez użytkownika. Treści publiczne
                   (opinie, zgłoszenia) mogą być przechowywane po usunięciu konta w formie zanonimizowanej.
-                  Logi techniczne przechowywane są przez okres niezbędny dla bezpieczeństwa Serwisu,
-                  nie dłużej niż 12 miesięcy.
+                  Szczegółowe okresy przechowywania poszczególnych kategorii danych wymieniono poniżej.
                 </p>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Zgłoszenia nowych atrakcji</strong> — przez czas niezbędny do weryfikacji zgłoszenia i ewentualnego dodania obiektu do katalogu.</li>
                   <li><strong>Skrót (hash) adresu IP z formularzy</strong> — przechowywany razem ze zgłoszeniem, do którego się odnosi.</li>
+                  <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia, po czym są nieodwracalnie usuwane.</li>
+                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia.</li>
+                  <li><strong>Logi techniczne</strong> — nie dłużej niż 12 miesięcy.</li>
                 </ul>
               </section>
 
