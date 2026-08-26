@@ -60,6 +60,7 @@ export function useActivitiesInfinite(
 
   useEffect(() => {
     let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const keyAtStart = filterKey;
     // Pierwszy fetch po zmianie filtrów pobiera wszystkie strony do `page`
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
@@ -67,9 +68,20 @@ export function useActivitiesInfinite(
     // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników.
     const from = isInitialFetch ? initialPageRef.current * pageSize : page * pageSize;
     const to = page * pageSize + pageSize - 1;
+
+    const failWithTimeout = () => {
+      if (cancelled) return;
+      cancelled = true;
+      setError(new Error("Przekroczono czas oczekiwania na odpowiedź serwera."));
+      setLoading(false);
+      setLoadingMore(false);
+    };
+
     (async () => {
       try {
         if (!isInitialFetch) setLoadingMore(true);
+        else setLoading(true);
+        timeoutId = setTimeout(failWithTimeout, QUERY_TIMEOUT_MS);
         let q = catalogClient
           .from("public_activities")
           .select(CARD_COLUMNS, isInitialFetch ? { count: "exact" } : {})
@@ -97,6 +109,10 @@ export function useActivitiesInfinite(
         q = q.range(from, to);
 
         const { data: rows, count, error: err } = await q;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
         const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, from + i)) ?? [];
@@ -105,13 +121,20 @@ export function useActivitiesInfinite(
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
       } finally {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         if (!cancelled) {
           setLoading(false);
           setLoadingMore(false);
         }
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
   const hasMore = initialPageRef.current * pageSize + data.length < total;
