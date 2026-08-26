@@ -25,7 +25,7 @@ const PolitykaPrywatnosci = () => {
               Polityka prywatności
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 3 sierpnia 2026 r.
+              Ostatnia aktualizacja: 26 sierpnia 2026 r.
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
