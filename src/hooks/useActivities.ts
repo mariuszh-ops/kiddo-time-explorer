@@ -49,11 +49,20 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
 
   useEffect(() => {
     let cancelled = false;
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
     setLoading(true);
     setError(null);
 
+    const failWithTimeout = () => {
+      if (cancelled) return;
+      cancelled = true;
+      setError(new Error("Przekroczono czas oczekiwania na odpowiedź serwera."));
+      setLoading(false);
+    };
+
     (async () => {
       try {
+        timeoutId = setTimeout(failWithTimeout, QUERY_TIMEOUT_MS);
         let q = catalogClient
           .from("public_activities")
           .select(CARD_COLUMNS, { count: "exact" })
@@ -83,6 +92,10 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
         }
         q = q.range(page * pageSize, page * pageSize + pageSize - 1);
         const { data: rows, count, error: err } = await q;
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         if (err) throw err;
         if (cancelled) return;
         setData((rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, i)) ?? []);
@@ -90,11 +103,18 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
       } catch (e) {
         if (!cancelled) setError(e instanceof Error ? e : new Error(String(e)));
       } finally {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
         if (!cancelled) setLoading(false);
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
   }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain, ageMin, ageMax, onlyFree, searchTerm]);
 
   return { data, total, loading, error };
