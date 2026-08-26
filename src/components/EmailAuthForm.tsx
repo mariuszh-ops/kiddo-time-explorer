@@ -25,6 +25,8 @@ interface EmailAuthFormProps {
 }
 
 const RESEND_COOLDOWN = 30;
+const TURNSTILE_TIMEOUT_MS = 8000;
+
 
 const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
   const { signInWithEmail, signUpWithEmail, resendConfirmation, resetPassword } = useAuth();
