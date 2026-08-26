@@ -77,6 +77,23 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     return () => clearTimeout(t);
   }, [cooldown]);
 
+  useEffect(() => {
+    // Jeśli widget Turnstile nie załaduje się w czasie (adblock/filtr DNS),
+    // traktujemy to jako awarię zabezpieczenia i blokujemy logowanie hasłem.
+    captchaTimeoutRef.current = setTimeout(() => {
+      if (!captchaToken) {
+        markCaptchaUnavailable();
+      }
+    }, TURNSTILE_TIMEOUT_MS);
+
+    return () => {
+      if (captchaTimeoutRef.current) {
+        clearTimeout(captchaTimeoutRef.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (busy) return;
