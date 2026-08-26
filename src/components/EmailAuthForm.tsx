@@ -286,7 +286,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         type="submit"
         disabled={
           busy ||
-          (!captchaToken && !captchaError) ||
+          !captchaToken ||
           (mode === "signup" && !checkPassword(password).ok)
         }
         className="w-full"
