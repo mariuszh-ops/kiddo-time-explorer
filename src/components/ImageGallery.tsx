@@ -300,7 +300,7 @@ interface GridGalleryProps {
   images: string[];
   activityTitle: string;
   activityCity?: string;
-  getImageSrc: (image: string, index: number) => string;
+  getImageSrc: (image: string, index: number) => string | null;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
   selectedIndex: number;
@@ -314,6 +314,8 @@ const GridGallery = ({
 }: GridGalleryProps) => {
   const gridImages = images.slice(0, 5);
   const remainingCount = images.length - 5;
+  const mainSrc = getImageSrc(gridImages[0], 0);
+
 
   return (
     <>
