@@ -63,8 +63,8 @@ export const env = {
   supabaseUrl: optionalEnv(metaEnv.VITE_SUPABASE_URL as string),
   supabaseAnonKey: optionalEnv(metaEnv.VITE_SUPABASE_ANON_KEY as string),
 
-  // Observability — optional
-  sentryDsn: optionalEnv(metaEnv.VITE_SENTRY_DSN as string),
+
+
 
   // Feature flag overrides — used during testing to enable features per-environment
   // without touching featureFlags.ts

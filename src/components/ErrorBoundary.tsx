@@ -2,6 +2,7 @@ import { Component, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { reportClientError } from "@/lib/errorReporter";
 
 interface Props {
   children: ReactNode;
@@ -25,6 +26,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught:", error, errorInfo);
+    reportClientError("boundary", error, errorInfo.componentStack ?? undefined);
   }
 
   handleReset = () => {

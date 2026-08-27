@@ -12,8 +12,8 @@ interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL?: string;
   readonly VITE_SUPABASE_ANON_KEY?: string;
 
-  // Observability
-  readonly VITE_SENTRY_DSN?: string;
+
+
 
   // Feature flag overrides
   readonly VITE_ENABLE_ONBOARDING?: string;
