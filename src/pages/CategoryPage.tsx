@@ -145,6 +145,31 @@ const CategoryPage = () => {
     initialPage,
   );
 
+  // Mapa musi pokazywać WSZYSTKIE piny spełniające filtry, nie tylko
+  // wczytaną stronę listingu (24). Piny bierzemy z tego samego cache co home
+  // (rpc get_map_pins) i filtrujemy po stronie klienta tak samo jak backend.
+  const mapEnabled = FEATURES.MAP_VIEW && viewMode === "map";
+  const { pins } = useMapPins(mapEnabled);
+  const mapActivities = useMemo(() => {
+    if (!mapEnabled) return [];
+    const term = urlSearch.length >= 2 ? urlSearch.toLowerCase() : "";
+    return pins.filter((p) => {
+      if (citySlug && p.city !== citySlug) return false;
+      if (effectiveType && p.type !== effectiveType) return false;
+      if (onlyFree && !p.isFree) return false;
+      if (ageOption) {
+        if (!p.hasAgeInfo) return false;
+        if (p.ageMin > ageOption.max || p.ageMax < ageOption.min) return false;
+      }
+      if (term) {
+        const haystack = `${p.title} ${p.location}`.toLowerCase();
+        if (!haystack.includes(term)) return false;
+      }
+      return true;
+    });
+  }, [mapEnabled, pins, citySlug, effectiveType, onlyFree, ageOption, urlSearch]);
+
+
   const updateParams = useCallback(
     (patch: Record<string, string | undefined | null>) => {
       setSearchParams(
