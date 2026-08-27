@@ -9,7 +9,7 @@ import type { Activity } from "@/data/activities";
 /**
  * Kolejność pól w json_build_array w definicji public.get_map_pins():
  * 0 place_id, 1 slug, 2 name, 3 type, 4 lat, 5 lng, 6 rating,
- * 7 reviews_count, 8 age_min, 9 age_max, 10 is_free
+ * 7 reviews_count, 8 age_min, 9 age_max, 10 is_free, 11 region, 12 city
  */
 export type MapPinTuple = [
   string,
@@ -23,6 +23,8 @@ export type MapPinTuple = [
   number | null,
   number | null,
   boolean | null,
+  string | null,
+  string | null,
 ];
 
 export function pinTupleToActivity(t: MapPinTuple): Activity {
@@ -31,8 +33,8 @@ export function pinTupleToActivity(t: MapPinTuple): Activity {
     slug: t[1],
     name: t[2],
     type: t[3],
-    region: null,
-    city: null,
+    region: t[11] ?? null,
+    city: t[12] ?? null,
     address: null,
     lat: t[4],
     lng: t[5],
@@ -53,6 +55,7 @@ export function pinTupleToActivity(t: MapPinTuple): Activity {
   };
   return mapCatalogRow(row);
 }
+
 
 let pinsCache: Activity[] | null = null;
 let pinsInflight: Promise<Activity[]> | null = null;
@@ -75,6 +78,10 @@ export function fetchMapPins(): Promise<Activity[]> {
   });
   return pinsInflight;
 }
+
+/** Alias czytelniejszy w widokach listingowych (ten sam cache). */
+export const getMapPins = fetchMapPins;
+
 
 export interface PinDetails {
   imageUrl?: string;
