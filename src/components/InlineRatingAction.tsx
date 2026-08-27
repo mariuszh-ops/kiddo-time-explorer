@@ -14,6 +14,17 @@ interface InlineRatingActionProps {
   contextLabel?: string;
 }
 
+/** Polska forma liczby ocen: „1 ocena", „2 oceny", „5 ocen". */
+const formatRatingCount = (count: number): string => {
+  if (count === 1) return "1 ocena";
+  const lastTwo = count % 100;
+  const last = count % 10;
+  if (last >= 2 && last <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) {
+    return `${count} oceny`;
+  }
+  return `${count} ocen`;
+};
+
 const InlineRatingAction = ({
   activityId,
   onAuthRequired,
@@ -25,6 +36,7 @@ const InlineRatingAction = ({
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
   const aggregate = useActivityRating(activityId, userRating);
+  const hasRated = userRating !== null;
 
   const handleStarClick = (rating: number) => {
     if (!isLoggedIn) {
@@ -34,51 +46,38 @@ const InlineRatingAction = ({
     void rateActivity(activityId, rating);
   };
 
-  const hasRated = userRating !== null;
+  const displayValue = hoveredStar || userRating || 0;
+  const canShowAggregate = aggregate.count >= 5 && aggregate.avg != null;
+  const formattedAvg = canShowAggregate
+    ? aggregate.avg.toFixed(1).replace(".", ",")
+    : null;
 
-  // Guest state
-  if (!isLoggedIn) {
-    return (
-    <div className={compact ? "" : "py-3"}>
-      <div className="flex flex-col gap-1.5">
-        {!compact && <p className="text-sm font-medium text-foreground">Oceń tę atrakcję</p>}
-        <div className="flex items-center gap-1">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onAuthRequired(i + 1)}
-              className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center cursor-pointer"
-              aria-label={`Oceń ${i + 1} z 5 gwiazdek — ${contextLabel}`}
-            >
-              <Star className={`${compact ? "w-5 h-5" : "w-6 h-6 md:w-7 md:h-7"} text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors`} />
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground">Zaloguj się, aby ocenić</p>
-      </div>
-    </div>
-    );
-  }
+  const titleText = !isLoggedIn || !hasRated
+    ? "Oceń tę atrakcję"
+    : "Dziękujemy za ocenę!";
+  const helperText = !isLoggedIn
+    ? "Zaloguj się, aby ocenić"
+    : hasRated
+      ? `Twoja ocena: ${userRating}/5`
+      : "Kliknij gwiazdkę, aby ocenić";
 
-  // Logged in
   return (
     <div className={compact ? "" : "py-3"}>
       <div className="flex flex-col gap-1.5">
-        <p className="text-sm font-medium text-foreground">
-          {hasRated ? "Dziękujemy za ocenę!" : "Oceń tę atrakcję"}
-        </p>
+        {!compact && (
+          <p className="text-sm font-medium text-foreground">{titleText}</p>
+        )}
         <div className="flex items-center gap-1">
           {Array.from({ length: 5 }).map((_, i) => {
             const starValue = i + 1;
-            const isFilled = starValue <= (hoveredStar || userRating || 0);
+            const isFilled = starValue <= displayValue;
 
             return (
               <button
                 key={i}
                 type="button"
                 onClick={() => handleStarClick(starValue)}
-                onMouseEnter={() => setHoveredStar(starValue)}
+                onMouseEnter={() => isLoggedIn && setHoveredStar(starValue)}
                 onMouseLeave={() => setHoveredStar(0)}
                 className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
                 aria-label={`Oceń ${starValue} z 5 gwiazdek — ${contextLabel}`}
@@ -103,25 +102,14 @@ const InlineRatingAction = ({
             );
           })}
         </div>
-        {hasRated ? (
-          <div className="text-xs text-muted-foreground space-y-0.5">
-            <p>Twoja ocena: {userRating}/5</p>
-            {aggregate.count > 0 && aggregate.avg != null && (
-              <p>
-                Ocena rodziców: ⭐ {aggregate.avg.toFixed(1)} ({aggregate.count} opinii)
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className="text-xs text-muted-foreground space-y-0.5">
-            <p>Kliknij gwiazdkę, aby ocenić</p>
-            {aggregate.count > 0 && aggregate.avg != null && (
-              <p>
-                Ocena rodziców: ⭐ {aggregate.avg.toFixed(1)} ({aggregate.count} opinii)
-              </p>
-            )}
-          </div>
-        )}
+        <div className="text-xs text-muted-foreground space-y-0.5">
+          <p>{helperText}</p>
+          {canShowAggregate && (
+            <p>
+              Ocena rodziców: ⭐ {formattedAvg} ({formatRatingCount(aggregate.count)})
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
