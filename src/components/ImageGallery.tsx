@@ -136,7 +136,7 @@ interface CarouselGalleryProps {
   images: string[];
   activityTitle: string;
   activityCity?: string;
-  getImageSrc: (image: string, index: number) => string;
+  getImageSrc: (image: string, index: number) => string | null;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
   selectedIndex: number;
@@ -145,6 +145,7 @@ interface CarouselGalleryProps {
   setLightboxOpen: (v: boolean) => void;
   isMobile: boolean;
 }
+
 
 const CarouselGallery = ({
   images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
