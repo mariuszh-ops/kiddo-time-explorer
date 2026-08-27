@@ -7,6 +7,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState, useEffect, useRef } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.webp";
+import familyFunLogo190 from "@/assets/familyfun-logo-190.webp.asset.json";
+
 import { env } from "@/config/env";
 import HeaderSearch from "@/components/HeaderSearch";
 import { REGION_SLUGS } from "@/data/regions";
