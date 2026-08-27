@@ -35,6 +35,8 @@ import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 import NotFound from "@/pages/NotFound";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useMapPins } from "@/hooks/useMapPins";
+import { fetchFilteredSlugs } from "@/lib/mapPins";
+
 
 
 const BASE_URL = "https://familyfun.pl";
@@ -150,10 +152,63 @@ const CategoryPage = () => {
   // (rpc get_map_pins) i filtrujemy po stronie klienta tak samo jak backend.
   const mapEnabled = FEATURES.MAP_VIEW && viewMode === "map";
   const { pins } = useMapPins(mapEnabled);
+
+  // Filtry, których NIE ma w tuplach get_map_pins (min / auto=0 / amenities).
+  // Dla nich dociągamy z katalogu same slugi spełniające komplet warunków.
+  const amenitiesKey = urlAmenities.join(",");
+  const needsSlugFilter =
+    urlMinRating > 0 || !includeUncertain || urlAmenities.length > 0;
+  const [allowedSlugs, setAllowedSlugs] = useState<Set<string> | null>(null);
+
+  useEffect(() => {
+    if (!mapEnabled || !needsSlugFilter) {
+      setAllowedSlugs(null);
+      return;
+    }
+    let cancelled = false;
+    setAllowedSlugs(null);
+    fetchFilteredSlugs({
+      region: citySlug,
+      type: effectiveType,
+      amenities: urlAmenities,
+      minRating: urlMinRating,
+      includeUncertain,
+      onlyFree,
+      ageMin: ageOption?.min,
+      ageMax: ageOption?.max,
+      search: urlSearch,
+    })
+      .then((set) => {
+        if (!cancelled) setAllowedSlugs(set);
+      })
+      .catch(() => {
+        if (!cancelled) setAllowedSlugs(new Set());
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    mapEnabled,
+    needsSlugFilter,
+    citySlug,
+    effectiveType,
+    amenitiesKey,
+    urlMinRating,
+    includeUncertain,
+    onlyFree,
+    ageOption?.min,
+    ageOption?.max,
+    urlSearch,
+  ]);
+
   const mapActivities = useMemo(() => {
     if (!mapEnabled) return [];
+    // Dopóki zbiór slugów się nie wczyta, nie pokazujemy nadmiaru pinów.
+    if (needsSlugFilter && !allowedSlugs) return [];
     const term = urlSearch.length >= 2 ? urlSearch.toLowerCase() : "";
     return pins.filter((p) => {
+      if (needsSlugFilter && !allowedSlugs!.has(p.slug)) return false;
       if (citySlug && p.city !== citySlug) return false;
       if (effectiveType && p.type !== effectiveType) return false;
       if (onlyFree && !p.isFree) return false;
@@ -167,7 +222,8 @@ const CategoryPage = () => {
       }
       return true;
     });
-  }, [mapEnabled, pins, citySlug, effectiveType, onlyFree, ageOption, urlSearch]);
+  }, [mapEnabled, pins, citySlug, effectiveType, onlyFree, ageOption, urlSearch, needsSlugFilter, allowedSlugs]);
+
 
 
   const updateParams = useCallback(
