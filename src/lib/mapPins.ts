@@ -147,3 +147,52 @@ export function mergePinDetails(activity: Activity): Activity {
     amenities: d.amenities ?? activity.amenities,
   };
 }
+
+
+export interface MapSlugFilters {
+  region?: string;
+  type?: string;
+  amenities?: string[];
+  minRating?: number;
+  includeUncertain?: boolean;
+  onlyFree?: boolean;
+  ageMin?: number;
+  ageMax?: number;
+  search?: string;
+}
+
+/**
+ * Zbiór slugów spełniających KOMPLET filtrów listingu — używany tylko wtedy,
+ * gdy aktywny jest filtr, którego nie ma w tuplach get_map_pins
+ * (min / auto=0 / amenities). Jedno lekkie zapytanie (same slugi), stronicowane
+ * paczkami po 1000, bo PostgREST zwraca maksymalnie tyle wierszy naraz.
+ */
+export async function fetchFilteredSlugs(f: MapSlugFilters): Promise<Set<string>> {
+  const CHUNK = 1000;
+  const out = new Set<string>();
+  for (let page = 0; page < 20; page++) {
+    let q = catalogClient
+      .from("public_activities")
+      .select("slug")
+      .eq("published", true);
+    if (f.region) q = q.eq("region", f.region);
+    if (f.type) q = q.eq("type", f.type);
+    if (f.amenities && f.amenities.length > 0)
+      q = q.contains("amenities", JSON.stringify(f.amenities));
+    if (typeof f.minRating === "number" && f.minRating > 0) q = q.gte("rating", f.minRating);
+    if (f.includeUncertain === false) q = q.eq("uncertain", false);
+    if (f.onlyFree) q = q.eq("is_free", true);
+    const term = (f.search ?? "").trim();
+    if (term.length >= 2) q = q.or(`name.ilike.%${term}%,city.ilike.%${term}%`);
+    if (typeof f.ageMin === "number" && typeof f.ageMax === "number")
+      q = q.lte("age_min", f.ageMax).gte("age_max", f.ageMin);
+    q = q.order("slug", { ascending: true }).range(page * CHUNK, page * CHUNK + CHUNK - 1);
+
+    const { data, error } = await q;
+    if (error) throw error;
+    const rows = (data as unknown as { slug: string }[] | null) ?? [];
+    for (const r of rows) if (r.slug) out.add(r.slug);
+    if (rows.length < CHUNK) break;
+  }
+  return out;
+}
