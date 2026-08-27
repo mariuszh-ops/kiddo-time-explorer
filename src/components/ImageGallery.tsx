@@ -175,26 +175,34 @@ const CarouselGallery = ({
         <div className="md:rounded-xl overflow-hidden relative bg-muted">
           <div className="overflow-hidden cursor-pointer touch-pan-y" ref={emblaRef}>
             <div className="flex">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className="flex-none w-full aspect-[16/9] max-h-[400px]"
-                  onClick={() => !isMobile && openLightbox(index)}
-                >
-                  <img
-                    src={getImageSrc(image, index)}
-                    srcSet={index === 0 ? buildHeroSrcSet(getImageSrc(image, index)) : undefined}
-                    sizes={index === 0 && buildHeroSrcSet(getImageSrc(image, index)) ? HERO_SIZES : undefined}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    fetchPriority={index === 0 ? "high" : undefined}
-                    className="w-full h-full object-cover object-center"
-                    draggable={false}
-                    onError={() => handleImageError(index)}
-                  />
-                </div>
-              ))}
+              {images.map((image, index) => {
+                const slideSrc = getImageSrc(image, index);
+                return (
+                  <div
+                    key={index}
+                    className="flex-none w-full aspect-[16/9] max-h-[400px]"
+                    onClick={() => !isMobile && slideSrc && openLightbox(index)}
+                  >
+                    {slideSrc === null ? (
+                      <ImageErrorPlaceholder />
+                    ) : (
+                      <img
+                        src={slideSrc}
+                        srcSet={index === 0 ? buildHeroSrcSet(slideSrc) : undefined}
+                        sizes={index === 0 && buildHeroSrcSet(slideSrc) ? HERO_SIZES : undefined}
+                        alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        fetchPriority={index === 0 ? "high" : undefined}
+                        className="w-full h-full object-cover object-center"
+                        draggable={false}
+                        onError={() => handleImageError(index)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
             </div>
           </div>
 
