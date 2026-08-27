@@ -103,12 +103,15 @@ const Header = () => {
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px] -ml-2 md:-ml-3">
             <img
               src={familyFunLogo}
+              srcSet={`${familyFunLogo190.url} 190w, ${familyFunLogo} 379w`}
+              sizes="190px"
               alt="FamilyFun"
               width={379}
               height={260}
               fetchPriority="high"
               className="h-[96px] md:h-[130px] w-auto object-contain"
             />
+
           </Link>
 
           {/* Navigation */}
