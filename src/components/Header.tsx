@@ -177,7 +177,8 @@ const Header = () => {
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
                 aria-label="Zaloguj się"
-                className="flex min-h-11 gap-2 px-2 text-muted-foreground hover:text-foreground sm:px-3"
+                className="flex min-h-11 min-w-11 gap-2 px-2 text-muted-foreground hover:text-foreground sm:px-3"
+
               >
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Zaloguj się</span>

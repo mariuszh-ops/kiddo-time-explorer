@@ -37,7 +37,7 @@ const SeoPagination = ({ basePath, searchParams, currentPage, totalPages }: SeoP
       <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
         {currentPage > 1 && (
           <li>
-            <Link to={hrefFor(currentPage - 1)} rel="prev" className="hover:text-primary hover:underline">
+            <Link to={hrefFor(currentPage - 1)} rel="prev" className="hover:text-primary hover:underline inline-flex items-center justify-center min-h-11 min-w-11 px-2 rounded-sm">
               Poprzednia
             </Link>
           </li>
@@ -48,11 +48,11 @@ const SeoPagination = ({ basePath, searchParams, currentPage, totalPages }: SeoP
             <li key={n} className="flex items-center gap-3">
               {prev !== undefined && n - prev > 1 && <span aria-hidden="true">…</span>}
               {n === currentPage ? (
-                <span aria-current="page" className="font-medium text-foreground">
+                <span aria-current="page" className="font-medium text-foreground inline-flex items-center justify-center min-h-11 min-w-11 px-2 rounded-sm">
                   {n}
                 </span>
               ) : (
-                <Link to={hrefFor(n)} className="hover:text-primary hover:underline">
+                <Link to={hrefFor(n)} className="hover:text-primary hover:underline inline-flex items-center justify-center min-h-11 min-w-11 px-2 rounded-sm">
                   {n}
                 </Link>
               )}
@@ -61,7 +61,7 @@ const SeoPagination = ({ basePath, searchParams, currentPage, totalPages }: SeoP
         })}
         {currentPage < totalPages && (
           <li>
-            <Link to={hrefFor(currentPage + 1)} rel="next" className="hover:text-primary hover:underline">
+            <Link to={hrefFor(currentPage + 1)} rel="next" className="hover:text-primary hover:underline inline-flex items-center justify-center min-h-11 min-w-11 px-2 rounded-sm">
               Następna
             </Link>
           </li>
@@ -69,6 +69,7 @@ const SeoPagination = ({ basePath, searchParams, currentPage, totalPages }: SeoP
       </ul>
     </nav>
   );
+
 };
 
 export default SeoPagination;

@@ -6,10 +6,11 @@ const SkipLink = () => {
       href="#main-content"
       className={cn(
         "sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100]",
-        "inline-flex items-center justify-center rounded-lg px-4 py-3",
+        "inline-flex items-center justify-center rounded-lg px-4 py-3 min-h-11 min-w-11",
         "bg-primary text-primary-foreground text-sm font-medium shadow-lg",
         "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
       )}
+
     >
       Przejdź do treści
     </a>
