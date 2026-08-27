@@ -357,20 +357,25 @@ const GridGallery = ({
             {/* Main large image — spans 2 cols, 2 rows */}
             <div
               className="col-span-2 row-span-2 cursor-pointer overflow-hidden"
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
             >
-              <img
-                src={getImageSrc(gridImages[0], 0)}
-                srcSet={buildHeroSrcSet(getImageSrc(gridImages[0], 0))}
-                sizes={buildHeroSrcSet(getImageSrc(gridImages[0], 0)) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
-                onError={() => handleImageError(0)}
-              />
+              {mainSrc === null ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={mainSrc}
+                  srcSet={buildHeroSrcSet(mainSrc)}
+                  sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
+
             {/* Right side — up to 4 smaller images */}
             {gridImages.slice(1).map((image, i) => {
               const index = i + 1;
