@@ -251,29 +251,37 @@ const CarouselGallery = ({
       {/* Thumbnails desktop */}
       <div className="hidden md:block relative z-20 bg-background container py-3 pb-6">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className={cn(
-                "flex-none w-20 h-14 rounded-lg overflow-hidden border-2 transition-all",
-                selectedIndex === index
-                  ? "border-primary ring-1 ring-primary"
-                  : "border-transparent opacity-70 hover:opacity-100"
-              )}
-            >
-              <img
-                src={getImageSrc(image, index)}
-                alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover"
-                onError={() => handleImageError(index)}
-              />
-            </button>
-          ))}
+          {images.map((image, index) => {
+            const thumbSrc = getImageSrc(image, index);
+            return (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={cn(
+                  "flex-none w-20 h-14 rounded-lg overflow-hidden border-2 transition-all",
+                  selectedIndex === index
+                    ? "border-primary ring-1 ring-primary"
+                    : "border-transparent opacity-70 hover:opacity-100"
+                )}
+              >
+                {thumbSrc === null ? (
+                  <ImageErrorPlaceholder />
+                ) : (
+                  <img
+                    src={thumbSrc}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                    onError={() => handleImageError(index)}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
+
 
       <ImageLightbox
         images={images}
