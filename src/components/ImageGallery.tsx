@@ -6,6 +6,8 @@ import ImageLightbox from "./ImageLightbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
+import ImageErrorPlaceholder from "./ImageErrorPlaceholder";
+
 
 interface ImageGalleryProps {
   images: string[];
