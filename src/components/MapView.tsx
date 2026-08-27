@@ -60,7 +60,7 @@ const getRatingBorderColor = (rating: number): string => {
 const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false, isFav = false) => {
   const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
   const borderColor = isActive ? "#1a1a1a" : getRatingBorderColor(rating);
-  const size = isActive ? 46 : 36;
+  const size = isActive ? 46 : 40;
   const borderW = isActive ? 3 : 2.5;
   const fontSize = isActive ? 22 : 18;
   const radius = isActive ? 10 : 8;
@@ -144,7 +144,7 @@ const createPopupContent = (activity: Activity, isFav: boolean) => {
 // Cluster icon creator
 const createClusterIcon = (cluster: L.MarkerCluster) => {
   const count = cluster.getChildCount();
-  const size = count < 10 ? 36 : count < 50 ? 42 : 48;
+  const size = count < 10 ? 40 : count < 50 ? 44 : 48;
   return L.divIcon({
     html: `<div style="
       width:${size}px;height:${size}px;border-radius:50%;
