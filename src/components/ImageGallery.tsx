@@ -6,6 +6,8 @@ import ImageLightbox from "./ImageLightbox";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
+import ImageErrorPlaceholder from "./ImageErrorPlaceholder";
+
 
 interface ImageGalleryProps {
   images: string[];
@@ -24,15 +26,25 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [placeholderImages, setPlaceholderImages] = useState<Set<number>>(new Set());
   const isMobile = useIsMobile();
   const fallbackImage = getPlaceholderImage(activityType, activityId);
 
+  const showPlaceholder = (index: number) => {
+    setPlaceholderImages(prev => new Set(prev).add(index));
+  };
+
   const getImageSrc = (image: string, index: number) => {
+    if (placeholderImages.has(index)) return null;
     return failedImages.has(index) ? fallbackImage : image;
   };
 
   const handleImageError = (index: number) => {
-    setFailedImages(prev => new Set(prev).add(index));
+    if (failedImages.has(index)) {
+      showPlaceholder(index);
+    } else {
+      setFailedImages(prev => new Set(prev).add(index));
+    }
   };
 
   const openLightbox = (index: number) => {
@@ -40,33 +52,39 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
     setLightboxOpen(true);
   };
 
+
   // 0 or 1 image — no counter, no arrows
   if (images.length <= 1) {
     const singleSrc = images.length === 1 ? getImageSrc(images[0], 0) : fallbackImage;
+    const showSinglePlaceholder = singleSrc === null || placeholderImages.has(0);
     return (
       <>
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden bg-muted">
             <div
               className="aspect-[16/9] max-h-[400px] w-full overflow-hidden cursor-pointer"
-              onClick={() => images.length === 1 && openLightbox(0)}
+              onClick={() => images.length === 1 && !showSinglePlaceholder && openLightbox(0)}
             >
-              <img
-                src={singleSrc}
-                srcSet={buildHeroSrcSet(singleSrc)}
-                sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, 1)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center"
-                onError={() => handleImageError(0)}
-              />
+              {showSinglePlaceholder ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={singleSrc}
+                  srcSet={buildHeroSrcSet(singleSrc)}
+                  sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, 1)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
           </div>
         </div>
         <ImageLightbox
-          images={images.length === 1 ? images : []}
+          images={images.length === 1 && !showSinglePlaceholder ? images : []}
           initialIndex={0}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
@@ -76,6 +94,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
       </>
     );
   }
+
 
   // 2-3 images — carousel
   if (images.length <= 3) {
@@ -117,7 +136,7 @@ interface CarouselGalleryProps {
   images: string[];
   activityTitle: string;
   activityCity?: string;
-  getImageSrc: (image: string, index: number) => string;
+  getImageSrc: (image: string, index: number) => string | null;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
   selectedIndex: number;
@@ -126,6 +145,7 @@ interface CarouselGalleryProps {
   setLightboxOpen: (v: boolean) => void;
   isMobile: boolean;
 }
+
 
 const CarouselGallery = ({
   images, activityTitle, activityCity, getImageSrc, handleImageError, openLightbox,
@@ -155,26 +175,34 @@ const CarouselGallery = ({
         <div className="md:rounded-xl overflow-hidden relative bg-muted">
           <div className="overflow-hidden cursor-pointer touch-pan-y" ref={emblaRef}>
             <div className="flex">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className="flex-none w-full aspect-[16/9] max-h-[400px]"
-                  onClick={() => !isMobile && openLightbox(index)}
-                >
-                  <img
-                    src={getImageSrc(image, index)}
-                    srcSet={index === 0 ? buildHeroSrcSet(getImageSrc(image, index)) : undefined}
-                    sizes={index === 0 && buildHeroSrcSet(getImageSrc(image, index)) ? HERO_SIZES : undefined}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    fetchPriority={index === 0 ? "high" : undefined}
-                    className="w-full h-full object-cover object-center"
-                    draggable={false}
-                    onError={() => handleImageError(index)}
-                  />
-                </div>
-              ))}
+              {images.map((image, index) => {
+                const slideSrc = getImageSrc(image, index);
+                return (
+                  <div
+                    key={index}
+                    className="flex-none w-full aspect-[16/9] max-h-[400px]"
+                    onClick={() => !isMobile && slideSrc && openLightbox(index)}
+                  >
+                    {slideSrc === null ? (
+                      <ImageErrorPlaceholder />
+                    ) : (
+                      <img
+                        src={slideSrc}
+                        srcSet={index === 0 ? buildHeroSrcSet(slideSrc) : undefined}
+                        sizes={index === 0 && buildHeroSrcSet(slideSrc) ? HERO_SIZES : undefined}
+                        alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        fetchPriority={index === 0 ? "high" : undefined}
+                        className="w-full h-full object-cover object-center"
+                        draggable={false}
+                        onError={() => handleImageError(index)}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
             </div>
           </div>
 
@@ -223,29 +251,37 @@ const CarouselGallery = ({
       {/* Thumbnails desktop */}
       <div className="hidden md:block relative z-20 bg-background container py-3 pb-6">
         <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-          {images.map((image, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              className={cn(
-                "flex-none w-20 h-14 rounded-lg overflow-hidden border-2 transition-all",
-                selectedIndex === index
-                  ? "border-primary ring-1 ring-primary"
-                  : "border-transparent opacity-70 hover:opacity-100"
-              )}
-            >
-              <img
-                src={getImageSrc(image, index)}
-                alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover"
-                onError={() => handleImageError(index)}
-              />
-            </button>
-          ))}
+          {images.map((image, index) => {
+            const thumbSrc = getImageSrc(image, index);
+            return (
+              <button
+                key={index}
+                onClick={() => scrollTo(index)}
+                className={cn(
+                  "flex-none w-20 h-14 rounded-lg overflow-hidden border-2 transition-all",
+                  selectedIndex === index
+                    ? "border-primary ring-1 ring-primary"
+                    : "border-transparent opacity-70 hover:opacity-100"
+                )}
+              >
+                {thumbSrc === null ? (
+                  <ImageErrorPlaceholder />
+                ) : (
+                  <img
+                    src={thumbSrc}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover"
+                    onError={() => handleImageError(index)}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
       </div>
+
 
       <ImageLightbox
         images={images}
@@ -264,7 +300,7 @@ interface GridGalleryProps {
   images: string[];
   activityTitle: string;
   activityCity?: string;
-  getImageSrc: (image: string, index: number) => string;
+  getImageSrc: (image: string, index: number) => string | null;
   handleImageError: (index: number) => void;
   openLightbox: (index: number) => void;
   selectedIndex: number;
@@ -278,6 +314,8 @@ const GridGallery = ({
 }: GridGalleryProps) => {
   const gridImages = images.slice(0, 5);
   const remainingCount = images.length - 5;
+  const mainSrc = getImageSrc(gridImages[0], 0);
+
 
   return (
     <>
@@ -287,65 +325,80 @@ const GridGallery = ({
           <div className="md:hidden relative">
             <div
               className="aspect-[16/9] max-h-[400px] w-full cursor-pointer"
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
             >
-              <img
-                src={getImageSrc(images[0], 0)}
-                srcSet={buildHeroSrcSet(getImageSrc(images[0], 0))}
-                sizes={buildHeroSrcSet(getImageSrc(images[0], 0)) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center"
-                onError={() => handleImageError(0)}
-              />
+              {mainSrc === null ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={mainSrc}
+                  srcSet={buildHeroSrcSet(mainSrc)}
+                  sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
             <button
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
               className="absolute bottom-3 right-3 bg-background/90 hover:bg-background text-foreground px-3 py-1.5 rounded-full text-sm font-medium shadow-md transition-colors"
             >
               Pokaż wszystkie ({images.length})
             </button>
           </div>
 
+
           {/* Desktop: Airbnb grid */}
           <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-1.5 max-h-[400px]">
             {/* Main large image — spans 2 cols, 2 rows */}
             <div
               className="col-span-2 row-span-2 cursor-pointer overflow-hidden"
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
             >
-              <img
-                src={getImageSrc(gridImages[0], 0)}
-                srcSet={buildHeroSrcSet(getImageSrc(gridImages[0], 0))}
-                sizes={buildHeroSrcSet(getImageSrc(gridImages[0], 0)) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
-                onError={() => handleImageError(0)}
-              />
+              {mainSrc === null ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={mainSrc}
+                  srcSet={buildHeroSrcSet(mainSrc)}
+                  sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
+
             {/* Right side — up to 4 smaller images */}
             {gridImages.slice(1).map((image, i) => {
               const index = i + 1;
+              const cellSrc = getImageSrc(image, index);
               const isLast = index === gridImages.length - 1 && remainingCount > 0;
               return (
                 <div
                   key={index}
                   className="cursor-pointer overflow-hidden relative"
-                  onClick={() => openLightbox(index)}
+                  onClick={() => cellSrc && openLightbox(index)}
                 >
-                  <img
-                    src={getImageSrc(image, index)}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
-                    onError={() => handleImageError(index)}
-                  />
+                  {cellSrc === null ? (
+                    <ImageErrorPlaceholder />
+                  ) : (
+                    <img
+                      src={cellSrc}
+                      alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                      onError={() => handleImageError(index)}
+                    />
+                  )}
                   {isLast && (
                     <div className="absolute inset-0 bg-foreground/40 flex items-center justify-center">
                       <span className="text-background text-lg font-semibold">
@@ -357,6 +410,7 @@ const GridGallery = ({
               );
             })}
           </div>
+
         </div>
       </div>
 

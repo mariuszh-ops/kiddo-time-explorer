@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
+
 
 interface ImageLightboxProps {
   images: string[];
@@ -26,10 +27,12 @@ const ImageLightbox = ({
   activityCity,
 }: ImageLightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: false,
     startIndex: initialIndex 
   });
+
 
   // Update carousel when opening with different index
   useEffect(() => {
@@ -123,15 +126,24 @@ const ImageLightbox = ({
                 key={index}
                 className="flex-none w-full h-full flex items-center justify-center p-4"
               >
-                <img
-                  src={image}
-                  alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                  className="max-w-full max-h-full object-contain"
-                />
+                {failedImages.has(index) ? (
+                  <div className="flex flex-col items-center justify-center text-background/70">
+                    <Camera className="w-12 h-12 mb-2" aria-hidden="true" />
+                    <span className="text-sm">Brak zdjęcia</span>
+                  </div>
+                ) : (
+                  <img
+                    src={image}
+                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                    className="max-w-full max-h-full object-contain"
+                    onError={() => setFailedImages(prev => new Set(prev).add(index))}
+                  />
+                )}
               </div>
             ))}
           </div>
         </div>
+
 
         {/* Navigation arrows */}
         {images.length > 1 && (

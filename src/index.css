@@ -245,12 +245,26 @@
 .custom-map-popup .leaflet-popup-close-button {
   top: 4px;
   right: 6px;
-  font-size: 18px;
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 22px !important;
+  line-height: 44px !important;
   color: #fff;
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   z-index: 10;
+  text-align: center;
+}
+
+/* Leaflet attribution links must meet mobile touch-target minimums. */
+.leaflet-control-attribution a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
 }
 
 .custom-map-popup .leaflet-popup-close-button:hover {
   color: #fff;
 }
+

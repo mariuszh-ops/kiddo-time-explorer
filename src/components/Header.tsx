@@ -7,6 +7,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useState, useEffect, useRef } from "react";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import familyFunLogo from "@/assets/familyfun-logo.webp";
+import familyFunLogo190 from "@/assets/familyfun-logo-190.webp.asset.json";
+
 import { env } from "@/config/env";
 import HeaderSearch from "@/components/HeaderSearch";
 import { REGION_SLUGS } from "@/data/regions";
@@ -101,12 +103,15 @@ const Header = () => {
           <Link to="/" className="flex items-center group min-h-[44px] min-w-[44px] -ml-2 md:-ml-3">
             <img
               src={familyFunLogo}
+              srcSet={`${familyFunLogo190.url} 190w, ${familyFunLogo} 379w`}
+              sizes="190px"
               alt="FamilyFun"
               width={379}
               height={260}
               fetchPriority="high"
               className="h-[96px] md:h-[130px] w-auto object-contain"
             />
+
           </Link>
 
           {/* Navigation */}
@@ -172,7 +177,8 @@ const Header = () => {
                 size="sm"
                 onClick={() => setIsAuthModalOpen(true)}
                 aria-label="Zaloguj się"
-                className="flex min-h-11 gap-2 px-2 text-muted-foreground hover:text-foreground sm:px-3"
+                className="flex min-h-11 min-w-11 gap-2 px-2 text-muted-foreground hover:text-foreground sm:px-3"
+
               >
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Zaloguj się</span>

@@ -1,6 +1,8 @@
-import { useState, useCallback, memo } from "react";
+import { useState, useCallback, memo, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { buildSrcSet, GRID_SIZES } from "@/lib/imageSrcSet";
+import ImageErrorPlaceholder from "@/components/ImageErrorPlaceholder";
+
 
 const CATEGORY_PLACEHOLDER_COLORS: Record<string, string> = {
   "sala-zabaw": "#E91E63",
@@ -45,13 +47,33 @@ const LazyImage = memo(({
   sizes,
 }: LazyImageProps) => {
   const [isLoaded, setIsLoaded] = useState(() => loadedImages.has(src));
+  const [hasError, setHasError] = useState(false);
+  const prevSrcRef = useRef(src);
+
+  // Gdy rodzic podmienia źródło (np. fallback po błędzie), resetujemy stan błędu
+  // w layout effect, żeby placeholder nie migał przed nowym obrazem.
+  useLayoutEffect(() => {
+    if (prevSrcRef.current !== src) {
+      prevSrcRef.current = src;
+      setHasError(false);
+    }
+  }, [src]);
 
   const handleLoad = useCallback(() => {
     loadedImages.add(src);
     setIsLoaded(true);
   }, [src]);
 
+  const handleError = useCallback(() => {
+    onError?.();
+    setHasError(true);
+  }, [onError]);
+
   const srcSet = buildSrcSet(src);
+
+  if (hasError) {
+    return <ImageErrorPlaceholder className={className} />;
+  }
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -82,7 +104,7 @@ const LazyImage = memo(({
           className
         )}
         onLoad={handleLoad}
-        onError={onError}
+        onError={handleError}
       />
     </div>
   );
