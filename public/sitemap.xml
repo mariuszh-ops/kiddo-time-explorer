@@ -1699,12 +1699,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/alpaki-w-polsce-hodowla-sprzedaz-import-i-alpakoterapia-bujenka</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/alpaki-warszawa-dobre-miejsce-farma-alpak-ursynow-warszawa-i-okolice</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -12241,6 +12235,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://familyfun.pl/atrakcje/manufaktura-rozwoju-i-radosci-chojnice</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://familyfun.pl/atrakcje/manufaktura-wspinania-lodz</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -12662,12 +12662,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/mini-golf-adventure-gosciniec-marzymieta-wielkopolska-poznan-kornik-minigolf-czm</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/mini-golf-sarbinowo</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -15325,12 +15319,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/muzeum-regionalne-w-chojnowie</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/muzeum-regionalne-w-czluchowie</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -15963,12 +15951,6 @@
   <url>
     <loc>https://familyfun.pl/atrakcje/muzeum-zamkowe-w-pszczynie</loc>
     <lastmod>2026-08-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/muzeum-zamkowe-w-zamku-krolewskim-w-sandomierzu</loc>
-    <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -17563,12 +17545,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/palac-ernsta-schona-w-sosnowcu-sosnowiec</loc>
-    <lastmod>2026-08-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/palac-fryderyka-von-oppersdorffa-polska-cerekiew</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
@@ -17672,12 +17648,6 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/palac-rodu-von-hoym-brzeg-dolny</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/palac-rodziny-poznanskich-lodz</loc>
     <lastmod>2026-08-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -19411,14 +19381,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://familyfun.pl/atrakcje/piaseczynsko-grojecka-kolej-waskotorowa-piaseczno</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://familyfun.pl/atrakcje/piaseczynsko-grojeckie-towarzystwo-kolei-waskotorowej-piaseczno</loc>
-    <lastmod>2026-08-06</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -24266,7 +24230,7 @@
   </url>
   <url>
     <loc>https://familyfun.pl/atrakcje/skolnity-stacja-gorna-wisla</loc>
-    <lastmod>2026-08-13</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -25365,12 +25329,6 @@
   <url>
     <loc>https://familyfun.pl/atrakcje/strefa-rozrywki-wroclaw-2</loc>
     <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/strefa-sportu-i-rehabilitacji-szkola-plywania-jaworzno</loc>
-    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -28899,12 +28857,6 @@
   <url>
     <loc>https://familyfun.pl/atrakcje/wybuchowe-urodziny-mierzyn</loc>
     <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://familyfun.pl/atrakcje/wyciag-krzeselkowy-skolnity-stacja-dolna-wisla</loc>
-    <lastmod>2026-08-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
