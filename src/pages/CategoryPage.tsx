@@ -35,6 +35,8 @@ import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 import NotFound from "@/pages/NotFound";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useMapPins } from "@/hooks/useMapPins";
+import { fetchFilteredSlugs } from "@/lib/mapPins";
+
 
 
 const BASE_URL = "https://familyfun.pl";
