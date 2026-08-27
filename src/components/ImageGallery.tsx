@@ -26,21 +26,32 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
+  const [placeholderImages, setPlaceholderImages] = useState<Set<number>>(new Set());
   const isMobile = useIsMobile();
   const fallbackImage = getPlaceholderImage(activityType, activityId);
 
+  const showPlaceholder = (index: number) => {
+    setPlaceholderImages(prev => new Set(prev).add(index));
+  };
+
   const getImageSrc = (image: string, index: number) => {
+    if (placeholderImages.has(index)) return null;
     return failedImages.has(index) ? fallbackImage : image;
   };
 
   const handleImageError = (index: number) => {
-    setFailedImages(prev => new Set(prev).add(index));
+    if (failedImages.has(index)) {
+      showPlaceholder(index);
+    } else {
+      setFailedImages(prev => new Set(prev).add(index));
+    }
   };
 
   const openLightbox = (index: number) => {
     setSelectedIndex(index);
     setLightboxOpen(true);
   };
+
 
   // 0 or 1 image — no counter, no arrows
   if (images.length <= 1) {
