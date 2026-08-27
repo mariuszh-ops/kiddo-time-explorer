@@ -1,6 +1,8 @@
-import { useState, useCallback, memo } from "react";
+import { useState, useCallback, memo, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { buildSrcSet, GRID_SIZES } from "@/lib/imageSrcSet";
+import ImageErrorPlaceholder from "@/components/ImageErrorPlaceholder";
+
 
 const CATEGORY_PLACEHOLDER_COLORS: Record<string, string> = {
   "sala-zabaw": "#E91E63",
