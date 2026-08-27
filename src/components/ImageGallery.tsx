@@ -325,27 +325,32 @@ const GridGallery = ({
           <div className="md:hidden relative">
             <div
               className="aspect-[16/9] max-h-[400px] w-full cursor-pointer"
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
             >
-              <img
-                src={getImageSrc(images[0], 0)}
-                srcSet={buildHeroSrcSet(getImageSrc(images[0], 0))}
-                sizes={buildHeroSrcSet(getImageSrc(images[0], 0)) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, images.length)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center"
-                onError={() => handleImageError(0)}
-              />
+              {mainSrc === null ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={mainSrc}
+                  srcSet={buildHeroSrcSet(mainSrc)}
+                  sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
             <button
-              onClick={() => openLightbox(0)}
+              onClick={() => mainSrc && openLightbox(0)}
               className="absolute bottom-3 right-3 bg-background/90 hover:bg-background text-foreground px-3 py-1.5 rounded-full text-sm font-medium shadow-md transition-colors"
             >
               Pokaż wszystkie ({images.length})
             </button>
           </div>
+
 
           {/* Desktop: Airbnb grid */}
           <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-1.5 max-h-[400px]">
