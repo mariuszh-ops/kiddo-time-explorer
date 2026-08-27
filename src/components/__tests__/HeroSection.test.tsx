@@ -22,7 +22,8 @@ describe("HeroSection — CTA visibility on short screens (600–720px)", () => 
     const { container } = render(<HeroSection onExplore={() => {}} />);
     const heroBox = container.querySelector("section > div") as HTMLElement;
     expect(heroBox).toBeTruthy();
-    const mh = heroBox.style.maxHeight;
+    // Ograniczenie zywe jest w klasie Tailwind (max-h-[calc(...)]), nie w style.
+    const mh = heroBox.style.maxHeight || heroBox.className;
     expect(mh).toContain("var(--header-h");
     expect(mh).toContain("var(--bottom-nav-h");
     // Hero celowo używa 60svh (miejsce na HomeSearch + karty nad foldem)
