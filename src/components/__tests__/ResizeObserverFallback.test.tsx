@@ -30,18 +30,28 @@ const setDevMode = (isDev: boolean) => {
 
 const renderHeader = async () => {
   const { default: Header } = await import("@/components/Header");
+  const { PendingIntentProvider } = await import(
+    "@/contexts/PendingIntentContext"
+  );
   return render(
     <MemoryRouter>
-      <Header />
+      <PendingIntentProvider>
+        <Header />
+      </PendingIntentProvider>
     </MemoryRouter>
   );
 };
 
 const renderBottomNav = async () => {
   const { default: BottomNav } = await import("@/components/BottomNav");
+  const { PendingIntentProvider } = await import(
+    "@/contexts/PendingIntentContext"
+  );
   return render(
     <MemoryRouter>
-      <BottomNav />
+      <PendingIntentProvider>
+        <BottomNav />
+      </PendingIntentProvider>
     </MemoryRouter>
   );
 };

@@ -21,7 +21,12 @@ const AuthReturnHandler = () => {
       }
       if (!returnTo) return;
       // Guard: only same-origin, path-only redirects.
-      if (!returnTo.startsWith("/") || returnTo.startsWith("//")) return;
+      if (
+        !returnTo.startsWith("/") ||
+        returnTo.startsWith("//") ||
+        returnTo.startsWith("/\\")
+      )
+        return;
       const current = window.location.pathname + window.location.search;
       if (returnTo === current) return;
       navigate(returnTo, { replace: true });
