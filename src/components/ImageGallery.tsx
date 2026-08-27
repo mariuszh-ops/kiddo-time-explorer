@@ -379,21 +379,26 @@ const GridGallery = ({
             {/* Right side — up to 4 smaller images */}
             {gridImages.slice(1).map((image, i) => {
               const index = i + 1;
+              const cellSrc = getImageSrc(image, index);
               const isLast = index === gridImages.length - 1 && remainingCount > 0;
               return (
                 <div
                   key={index}
                   className="cursor-pointer overflow-hidden relative"
-                  onClick={() => openLightbox(index)}
+                  onClick={() => cellSrc && openLightbox(index)}
                 >
-                  <img
-                    src={getImageSrc(image, index)}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
-                    onError={() => handleImageError(index)}
-                  />
+                  {cellSrc === null ? (
+                    <ImageErrorPlaceholder />
+                  ) : (
+                    <img
+                      src={cellSrc}
+                      alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
+                      onError={() => handleImageError(index)}
+                    />
+                  )}
                   {isLast && (
                     <div className="absolute inset-0 bg-foreground/40 flex items-center justify-center">
                       <span className="text-background text-lg font-semibold">
@@ -405,6 +410,7 @@ const GridGallery = ({
               );
             })}
           </div>
+
         </div>
       </div>
 
