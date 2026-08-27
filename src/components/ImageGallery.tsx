@@ -56,30 +56,35 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
   // 0 or 1 image — no counter, no arrows
   if (images.length <= 1) {
     const singleSrc = images.length === 1 ? getImageSrc(images[0], 0) : fallbackImage;
+    const showSinglePlaceholder = singleSrc === null || placeholderImages.has(0);
     return (
       <>
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden bg-muted">
             <div
               className="aspect-[16/9] max-h-[400px] w-full overflow-hidden cursor-pointer"
-              onClick={() => images.length === 1 && openLightbox(0)}
+              onClick={() => images.length === 1 && !showSinglePlaceholder && openLightbox(0)}
             >
-              <img
-                src={singleSrc}
-                srcSet={buildHeroSrcSet(singleSrc)}
-                sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
-                alt={makeAlt(activityTitle, activityCity, 0, 1)}
-                loading="eager"
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-cover object-center"
-                onError={() => handleImageError(0)}
-              />
+              {showSinglePlaceholder ? (
+                <ImageErrorPlaceholder />
+              ) : (
+                <img
+                  src={singleSrc}
+                  srcSet={buildHeroSrcSet(singleSrc)}
+                  sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
+                  alt={makeAlt(activityTitle, activityCity, 0, 1)}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  className="w-full h-full object-cover object-center"
+                  onError={() => handleImageError(0)}
+                />
+              )}
             </div>
           </div>
         </div>
         <ImageLightbox
-          images={images.length === 1 ? images : []}
+          images={images.length === 1 && !showSinglePlaceholder ? images : []}
           initialIndex={0}
           isOpen={lightboxOpen}
           onClose={() => setLightboxOpen(false)}
@@ -89,6 +94,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
       </>
     );
   }
+
 
   // 2-3 images — carousel
   if (images.length <= 3) {
