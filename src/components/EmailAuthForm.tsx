@@ -304,29 +304,6 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       </Button>
       </div>
 
-      {mode === "signup" && (
-        <p className="text-xs text-muted-foreground text-center">
-          Zakładając konto akceptujesz{" "}
-          <a
-            href="/regulamin"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline"
-          >
-            Regulamin
-          </a>{" "}
-          i{" "}
-          <a
-            href="/polityka-prywatnosci"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary underline"
-          >
-            Politykę prywatności
-          </a>
-          .
-        </p>
-      )}
 
       <div className="flex items-center justify-between gap-2 text-sm">
         <button

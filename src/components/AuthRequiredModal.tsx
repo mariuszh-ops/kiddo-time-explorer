@@ -158,6 +158,18 @@ const AuthRequiredModal = ({
             )}
           </Button>
 
+          <p className="text-xs text-muted-foreground text-center leading-relaxed">
+            Kontynuując, akceptujesz{" "}
+            <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Regulamin
+            </a>
+            . Zasady przetwarzania danych opisuje{" "}
+            <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Polityka prywatności
+            </a>
+            .
+          </p>
+
           {!googleOnly && (
             <>
               <div className="flex items-center gap-3 py-1">
