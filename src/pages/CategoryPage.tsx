@@ -519,13 +519,13 @@ const CategoryPage = () => {
                 <div className="flex gap-2 mb-4">
                   <button
                     onClick={() => setViewMode("grid")}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+                    className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors min-h-10 min-w-[72px] ${viewMode === "grid" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
                   >
                     Lista
                   </button>
                   <button
                     onClick={() => setViewMode("map")}
-                    className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
+                    className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors min-h-10 min-w-[72px] ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
                   >
                     Mapa
                   </button>
