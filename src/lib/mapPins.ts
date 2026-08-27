@@ -79,6 +79,10 @@ export function fetchMapPins(): Promise<Activity[]> {
   return pinsInflight;
 }
 
+/** Alias czytelniejszy w widokach listingowych (ten sam cache). */
+export const getMapPins = fetchMapPins;
+
+
 export interface PinDetails {
   imageUrl?: string;
   location?: string;
