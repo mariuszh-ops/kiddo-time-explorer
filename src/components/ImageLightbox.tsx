@@ -27,10 +27,12 @@ const ImageLightbox = ({
   activityCity,
 }: ImageLightboxProps) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: false,
     startIndex: initialIndex 
   });
+
 
   // Update carousel when opening with different index
   useEffect(() => {
