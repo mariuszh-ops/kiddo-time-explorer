@@ -486,7 +486,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }),
     [filters],
   );
-  const { pins } = useMapPins(!hasCatalogFilters);
+  const { pins, error: pinsError, refetch: refetchPins } = useMapPins(!hasCatalogFilters);
+  const mapPinsFailed = !hasCatalogFilters && pinsError != null;
   const sourceActivities = hasCatalogFilters ? activities : pins;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
