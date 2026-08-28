@@ -52,6 +52,7 @@ import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
