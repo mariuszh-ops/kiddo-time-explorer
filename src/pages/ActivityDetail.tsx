@@ -118,6 +118,7 @@ const ActivityDetail = () => {
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
+  const { aggregateRefreshKey } = useUserRatings();
   const { setPendingIntent, cancelPendingIntent } = usePendingIntent();
   
   // Use saved activities context
