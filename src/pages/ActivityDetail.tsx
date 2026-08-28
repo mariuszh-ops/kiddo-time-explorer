@@ -88,6 +88,25 @@ const formatReviewCount = (count: number): string => {
   return `${formatted} ${suffix}`;
 };
 
+/** Skrócona forma liczby ocen Google: ">268 tys. ocen", "1,2 tys. ocen" itp. */
+const formatGoogleReviewCount = (count: number): string => {
+  if (count >= 1000) {
+    const tys = Math.floor(count / 1000);
+    const suffix = tys === 1
+      ? "ocena"
+      : tys % 10 >= 2 && tys % 10 <= 4 && !(tys % 100 >= 12 && tys % 100 <= 14)
+        ? "oceny"
+        : "ocen";
+    return `>${tys} tys. ${suffix}`;
+  }
+  const suffix = count === 1
+    ? "ocena"
+    : count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)
+      ? "oceny"
+      : "ocen";
+  return `${count} ${suffix}`;
+};
+
 
 const ActivityDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -562,15 +581,12 @@ const ActivityDetail = () => {
               </h1>
               {displayRating != null && (
                 <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-primary text-primary" />
-                    <span className="text-sm sm:text-lg font-bold text-foreground">{displayRating.toFixed(1)}</span>
-                  </div>
-                  <span className="text-xs sm:text-sm text-muted-foreground sm:text-foreground">
-                    ·{" "}
-                    {displayReviewCount != null ? formatReviewCount(displayReviewCount) : "brak opinii"}
+                  <span className="text-sm sm:text-lg font-bold text-foreground">
+                    {displayRating.toFixed(1).replace(".", ",")} w Google
                   </span>
-                  <span className="text-xs text-muted-foreground">· Google</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">
+                    ({displayReviewCount != null ? formatGoogleReviewCount(displayReviewCount) : "brak ocen"})
+                  </span>
                 </div>
               )}
             </div>
