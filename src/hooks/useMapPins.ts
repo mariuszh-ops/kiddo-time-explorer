@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { fetchMapPins } from "@/lib/mapPins";
 import type { Activity } from "@/data/activities";
 
@@ -11,6 +11,11 @@ export function useMapPins(enabled = true) {
   const [pins, setPins] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<Error | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
+
+  const refetch = useCallback(() => {
+    setRetryKey((k) => k + 1);
+  }, []);
 
   useEffect(() => {
     if (!enabled) {
@@ -19,6 +24,7 @@ export function useMapPins(enabled = true) {
     }
     let cancelled = false;
     setLoading(true);
+    setError(null);
     fetchMapPins()
       .then((data) => {
         if (!cancelled) {
@@ -35,7 +41,8 @@ export function useMapPins(enabled = true) {
     return () => {
       cancelled = true;
     };
-  }, [enabled]);
+  }, [enabled, retryKey]);
 
-  return { pins, loading, error };
+  return { pins, loading, error, refetch };
 }
+

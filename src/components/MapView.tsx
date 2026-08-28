@@ -6,7 +6,7 @@ import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid, MapPin, Heart } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
@@ -486,7 +486,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }),
     [filters],
   );
-  const { pins } = useMapPins(!hasCatalogFilters);
+  const { pins, error: pinsError, refetch: refetchPins } = useMapPins(!hasCatalogFilters);
+  const mapPinsFailed = !hasCatalogFilters && pinsError != null;
   const sourceActivities = hasCatalogFilters ? activities : pins;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
@@ -708,7 +709,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          Lista · {displayedActivities.length}
+          {mapPinsFailed ? "Lista" : `Lista · ${displayedActivities.length}`}
         </button>
 
         {/* Accessible custom zoom controls (mobile) */}
@@ -744,6 +745,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onShowAll={handleShowAll}
+          error={mapPinsFailed ? pinsError : null}
+          onRetry={refetchPins}
         />
       </div>
     );
@@ -754,34 +757,54 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     <div className="flex" style={{ height: "calc(100vh - 64px - 52px)" }}>
       {/* Sidebar */}
       <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
-        <div className="p-3 border-b border-border space-y-2">
-          <span className="text-sm text-muted-foreground font-medium">
-            {displayedActivities.length} atrakcji w widoku
-          </span>
-          <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} />
-        </div>
-        <div
-          className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
-        >
-          {displayedActivities.length === 0 ? (
-            <div className="py-12 text-center text-sm text-muted-foreground px-4">
-              Brak atrakcji w tym obszarze — oddal mapę lub przesuń
-            </div>
-          ) : (
-            displayedActivities.map((activity) => (
-              <div
-                key={activity.id}
-                ref={(el) => { cardRefs.current[activity.id] = el; }}
+        {mapPinsFailed ? (
+          <div className="flex flex-col items-center justify-center gap-3 h-full min-h-[300px] text-center px-6">
+            <AlertCircle className="w-10 h-10 text-destructive" />
+            <p className="text-sm text-muted-foreground">
+              Nie udało się wczytać mapy
+            </p>
+            {refetchPins && (
+              <button
+                onClick={refetchPins}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
               >
-                <MiniActivityCard
-                  activity={activity}
-                  isHighlighted={highlightedId === activity.id}
-                  onCardClick={handleCardClick}
-                />
-              </div>
-            ))
-          )}
-        </div>
+                <RefreshCw className="w-4 h-4" />
+                Spróbuj ponownie
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="p-3 border-b border-border space-y-2">
+              <span className="text-sm text-muted-foreground font-medium">
+                {displayedActivities.length} atrakcji w widoku
+              </span>
+              <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} />
+            </div>
+            <div
+              className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
+            >
+              {displayedActivities.length === 0 ? (
+                <div className="py-12 text-center text-sm text-muted-foreground px-4">
+                  Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                </div>
+              ) : (
+                displayedActivities.map((activity) => (
+                  <div
+                    key={activity.id}
+                    ref={(el) => { cardRefs.current[activity.id] = el; }}
+                  >
+                    <MiniActivityCard
+                      activity={activity}
+                      isHighlighted={highlightedId === activity.id}
+                      onCardClick={handleCardClick}
+                    />
+                  </div>
+                ))
+              )}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Map */}
@@ -810,7 +833,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
         {/* Count label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
-          {displayedActivities.length} atrakcji w widoku
+          {mapPinsFailed ? "Nie udało się wczytać mapy" : `${displayedActivities.length} atrakcji w widoku`}
         </div>
 
         {/* Accessible custom zoom controls */}

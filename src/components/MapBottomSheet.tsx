@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check, Heart, Search, X, MapPin } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart, Search, X, MapPin, AlertCircle, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -22,6 +22,8 @@ interface MapBottomSheetProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onShowAll?: () => void;
+  error?: Error | null;
+  onRetry?: () => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -68,6 +70,8 @@ export default function MapBottomSheet({
   searchQuery,
   onSearchChange,
   onShowAll,
+  error,
+  onRetry,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
@@ -271,9 +275,11 @@ export default function MapBottomSheet({
     }
   }, [localSearch, sheetState, updateState]);
 
-  const headerText = searchQuery.trim()
-    ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
-    : `${visibleActivities.length} atrakcji w widoku`;
+  const headerText = error
+    ? "Nie udało się wczytać mapy"
+    : searchQuery.trim()
+      ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
+      : `${visibleActivities.length} atrakcji w widoku`;
 
   const showList = sheetState !== "peek";
 
@@ -357,7 +363,23 @@ export default function MapBottomSheet({
             fading ? "opacity-50" : "opacity-100"
           )}
         >
-          {sortedActivities.length === 0 ? (
+          {error ? (
+            <div className="flex flex-col items-center justify-center gap-3 h-40 text-center px-4">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+              <p className="text-sm text-muted-foreground">
+                Nie udało się wczytać mapy
+              </p>
+              {onRetry && (
+                <button
+                  onClick={onRetry}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Spróbuj ponownie
+                </button>
+              )}
+            </div>
+          ) : sortedActivities.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
               <p className="text-sm text-muted-foreground">
                 Brak atrakcji w tym obszarze — oddal mapę lub przesuń
