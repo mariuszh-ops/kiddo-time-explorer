@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, lazy, Suspense } from "react";
+import { useEffect, useMemo, useRef, useState, lazy, Suspense } from "react";
 import { Activity } from "@/data/activities";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import ActivityCard from "@/components/ActivityCard";
@@ -39,8 +39,32 @@ type Enriched = Activity & { distanceKm: number };
 
 const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
   const [candidates, setCandidates] = useState<Enriched[] | null>(null);
+  // Sekcja leży pod fałdą — zapytanie odpalamy dopiero, gdy zbliża się do
+  // viewportu. Pierwsze malowanie karty atrakcji to wtedy JEDNO zapytanie
+  // do public_activities (sama atrakcja), a nie dwa.
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [inView, setInView] = useState(false);
 
   useEffect(() => {
+    if (inView) return;
+    const el = sentinelRef.current;
+    if (!el) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) setInView(true);
+      },
+      { rootMargin: "600px 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [inView]);
+
+  useEffect(() => {
+    if (!inView) return;
     let cancelled = false;
     setCandidates(null);
     (async () => {
@@ -69,7 +93,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
       setCandidates(mapped);
     })();
     return () => { cancelled = true; };
-  }, [activity.type, activity.city, activity.place_id, activity.latitude, activity.longitude]);
+  }, [inView, activity.type, activity.city, activity.place_id, activity.latitude, activity.longitude]);
 
   const result = useMemo<{ items: Enriched[]; mode: Mode; radiusKm: number } | null>(() => {
     if (!candidates) return null;
@@ -95,7 +119,9 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
     return { items: byRating.slice(0, 12), mode: "region", radiusKm: 0 };
   }, [candidates]);
 
-  if (!result || result.items.length === 0) return null;
+  if (!result || result.items.length === 0) {
+    return <div ref={sentinelRef} aria-hidden="true" className="h-px" />;
+  }
   const { items, mode, radiusKm } = result;
   const typeLabel = TYPE_LABELS_PLURAL[activity.type] || "atrakcje";
   const heading = mode === "radius"
