@@ -833,7 +833,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
         {/* Count label */}
         <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
-          {displayedActivities.length} atrakcji w widoku
+          {mapPinsFailed ? "Nie udało się wczytać mapy" : `${displayedActivities.length} atrakcji w widoku`}
         </div>
 
         {/* Accessible custom zoom controls */}
