@@ -46,6 +46,9 @@ export function useActivityRating(activityId: number, refreshKey?: unknown): Act
   );
 
   useEffect(() => {
+    // Karta atrakcji renderuje się chwilę z activityId === 0 (katalog jeszcze
+    // się wczytuje) — nie ma po co pytać o agregat nieistniejącej atrakcji.
+    if (!activityId) return;
     let cancelled = false;
     const cached = cache.get(cacheKey);
     if (cached) {
