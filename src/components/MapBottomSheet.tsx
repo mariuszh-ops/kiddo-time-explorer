@@ -363,7 +363,23 @@ export default function MapBottomSheet({
             fading ? "opacity-50" : "opacity-100"
           )}
         >
-          {sortedActivities.length === 0 ? (
+          {error ? (
+            <div className="flex flex-col items-center justify-center gap-3 h-40 text-center px-4">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+              <p className="text-sm text-muted-foreground">
+                Nie udało się wczytać mapy
+              </p>
+              {onRetry && (
+                <button
+                  onClick={onRetry}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Spróbuj ponownie
+                </button>
+              )}
+            </div>
+          ) : sortedActivities.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
               <p className="text-sm text-muted-foreground">
                 Brak atrakcji w tym obszarze — oddal mapę lub przesuń
