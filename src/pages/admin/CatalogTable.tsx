@@ -141,7 +141,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       .update({ admin_hidden: next })
       .eq("place_id", row.place_id);
     if (error) {
-      toast.error("Nie udało się zapisać", { description: error.message });
+      console.error(error.message);
+      toast.error("Nie udało się zapisać", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows((prev) =>
         prev.map((r) => (r.place_id === row.place_id ? { ...r, admin_hidden: !next } : r)),
       );
