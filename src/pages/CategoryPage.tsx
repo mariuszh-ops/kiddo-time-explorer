@@ -45,6 +45,7 @@ const BASE_URL = "https://familyfun.pl";
 const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 const pluralizeActivities = activityWord;
+const DEFAULT_SORT: SortOption = "reviews";
 
 const CategoryPage = () => {
   const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string; regionSlug?: string }>();
@@ -102,7 +103,7 @@ const CategoryPage = () => {
   // obiekty 5.0★ z kilkudziesięcioma opiniami ponad znane kotwice (zoo/aquaparki).
   const rawSort = searchParams.get("sort");
   const urlSort: SortOption =
-    rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : "reviews";
+    rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : DEFAULT_SORT;
   // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
   const includeUncertain = searchParams.get("auto") !== "0";
   // ?age=0-2 | 3-5 | 6-9 | 10-13 | 14-16
@@ -321,7 +322,7 @@ const CategoryPage = () => {
     (urlType && !categorySlug ? true : false) ||
     urlAmenities.length > 0 ||
     urlMinRating > 0 ||
-    urlSort !== "rating" ||
+    urlSort !== DEFAULT_SORT ||
     !includeUncertain ||
     Boolean(urlAge) ||
     onlyFree ||
@@ -490,7 +491,7 @@ const CategoryPage = () => {
             minRating={urlMinRating}
             onMinRatingChange={(v) => updateParams({ min: v > 0 ? String(v) : undefined })}
             sort={urlSort}
-            onSortChange={(v) => updateParams({ sort: v === "reviews" ? undefined : v })}
+            onSortChange={(v) => updateParams({ sort: v === DEFAULT_SORT ? undefined : v })}
             hasActiveFilters={hasActiveFilters}
             onClearAll={clearAll}
             includeUncertain={includeUncertain}
