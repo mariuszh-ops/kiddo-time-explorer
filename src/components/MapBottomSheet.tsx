@@ -275,9 +275,11 @@ export default function MapBottomSheet({
     }
   }, [localSearch, sheetState, updateState]);
 
-  const headerText = searchQuery.trim()
-    ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
-    : `${visibleActivities.length} atrakcji w widoku`;
+  const headerText = error
+    ? "Nie udało się wczytać mapy"
+    : searchQuery.trim()
+      ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
+      : `${visibleActivities.length} atrakcji w widoku`;
 
   const showList = sheetState !== "peek";
 
