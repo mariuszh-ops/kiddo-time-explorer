@@ -66,12 +66,15 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
   const [sp, setSp] = useSearchParams();
   const page = Math.max(1, parseInt(sp.get("p") ?? "1", 10) || 1);
 
-  const setPage = (p: number) => {
-    const next = new URLSearchParams(sp);
-    if (p <= 1) next.delete("p");
-    else next.set("p", String(p));
-    setSp(next, { replace: true });
-  };
+  const setPage = useCallback(
+    (p: number) => {
+      const next = new URLSearchParams(sp);
+      if (p <= 1) next.delete("p");
+      else next.set("p", String(p));
+      setSp(next, { replace: true });
+    },
+    [sp, setSp],
+  );
 
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [total, setTotal] = useState(0);
