@@ -103,7 +103,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
     if (requestId !== requestIdRef.current) return; // odrzuć wynik przestarzałego żądania
 
     if (error) {
-      toast.error("Nie udało się pobrać danych", { description: error.message });
+      console.error(error.message);
+      toast.error("Nie udało się pobrać danych", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows([]);
       setTotal(0);
     } else {
@@ -138,7 +141,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       .update({ admin_hidden: next })
       .eq("place_id", row.place_id);
     if (error) {
-      toast.error("Nie udało się zapisać", { description: error.message });
+      console.error(error.message);
+      toast.error("Nie udało się zapisać", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows((prev) =>
         prev.map((r) => (r.place_id === row.place_id ? { ...r, admin_hidden: !next } : r)),
       );
@@ -155,7 +161,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       .update({ admin_hidden: hidden })
       .in("place_id", ids);
     if (error) {
-      toast.error("Akcja masowa nie powiodła się", { description: error.message });
+      console.error(error.message);
+      toast.error("Akcja masowa nie powiodła się", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
     } else {
       toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${ids.length} pozycji`);
       fetchData();
