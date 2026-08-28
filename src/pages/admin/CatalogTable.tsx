@@ -123,6 +123,7 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       prevReloadKeyRef.current = reloadKey;
       if (page !== 1) setPage(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadKey, page, setPage]);
 
   const toggleHidden = async (row: CatalogRow) => {
