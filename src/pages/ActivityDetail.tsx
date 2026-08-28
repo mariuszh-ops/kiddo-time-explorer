@@ -52,6 +52,7 @@ import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -118,6 +119,7 @@ const ActivityDetail = () => {
   
   // Use auth context
   const { isLoggedIn, login } = useAuth();
+  const { aggregateRefreshKey } = useUserRatings();
   const { setPendingIntent, cancelPendingIntent } = usePendingIntent();
   
   // Use saved activities context
@@ -168,7 +170,7 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
   // Agregat ocen rodziców — jedyne źródło aggregateRating w JSON-LD.
-  const ownRating = useActivityRating(activityId);
+  const ownRating = useActivityRating(activityId, aggregateRefreshKey);
 
   // Scroll to top on mount; on mobile, position title card nicely
   useEffect(() => {
