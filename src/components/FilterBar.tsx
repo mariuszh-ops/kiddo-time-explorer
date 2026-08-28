@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import { activityCount, activityWord, verbPl } from "@/lib/plural";
@@ -49,7 +49,7 @@ const getCapitalCityGenitive = (cityValue: string): string => {
 // Prefetch katalogu tylko dla kontrolek, które go faktycznie potrzebują.
 // Przełącznik lista/mapa jest z tego wyłączony (data-no-prefetch) — widok mapy
 // bez filtrów żyje z rpc('get_map_pins') i nie ma po co ściągać całego katalogu.
-const maybePrefetchCatalog = (e: React.SyntheticEvent) => {
+const maybePrefetchCatalog = (e: SyntheticEvent) => {
   const target = e.target as HTMLElement | null;
   if (target?.closest?.("[data-no-prefetch]")) return;
   ensureActivitiesLoaded();
