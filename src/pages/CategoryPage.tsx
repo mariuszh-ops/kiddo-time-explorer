@@ -44,6 +44,7 @@ const BASE_URL = "https://familyfun.pl";
 
 const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
+const pluralizeActivities = activityWord;
 const DEFAULT_SORT: SortOption = "reviews";
 
 const CategoryPage = () => {
