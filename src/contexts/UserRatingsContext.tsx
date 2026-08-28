@@ -90,6 +90,8 @@ interface UserRatingsContextType {
   visitedCount: number;
   /** Ponowne pobranie ocen z serwera (np. po wykonaniu odroczonej intencji gościa). */
   refreshRatings: () => Promise<void>;
+  /** Klucz odświeżania agregatu ocen — zmienia się po udanym zapisie/usunięciu. */
+  aggregateRefreshKey: number;
 }
 
 const UserRatingsContext = createContext<UserRatingsContextType | undefined>(undefined);
@@ -97,6 +99,7 @@ const UserRatingsContext = createContext<UserRatingsContextType | undefined>(und
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
+  const [aggregateRefreshKey, setAggregateRefreshKey] = useState(0);
   const previousUserIdRef = useRef(user?.id);
   // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
   useDataStatus();
@@ -266,6 +269,8 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         return newMap;
       });
       toast.error("Nie udało się zapisać oceny. Spróbuj ponownie.");
+    } else {
+      setAggregateRefreshKey(k => k + 1);
     }
   }, [ratings, syncToServer, user]);
 
@@ -295,6 +300,8 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     if (!ok) {
       setRatings(prev => new Map(prev).set(activityId, previous));
       toast.error("Nie udało się usunąć oceny. Spróbuj ponownie.");
+    } else {
+      setAggregateRefreshKey(k => k + 1);
     }
   }, [ratings, syncToServer]);
 
@@ -339,6 +346,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         visitedActivities,
         visitedCount: visitedActivities.length,
         refreshRatings,
+        aggregateRefreshKey,
       }}
     >
       {children}

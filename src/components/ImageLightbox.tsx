@@ -13,9 +13,8 @@ interface ImageLightboxProps {
   activityCity?: string;
 }
 
-const makeAlt = (title: string, city: string | undefined, index: number, total: number) => {
-  const cityPart = city ? ` — ${city}` : "";
-  return `${title}${cityPart}, zdjęcie ${index + 1} z ${total}`;
+const makeAlt = (title: string, index: number, total: number) => {
+  return `${title} — zdjęcie ${index + 1} z ${total}`;
 };
 
 const ImageLightbox = ({
@@ -134,7 +133,7 @@ const ImageLightbox = ({
                 ) : (
                   <img
                     src={image}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                    alt={makeAlt(activityTitle, index, images.length)}
                     className="max-w-full max-h-full object-contain"
                     onError={() => setFailedImages(prev => new Set(prev).add(index))}
                   />
@@ -199,7 +198,7 @@ const ImageLightbox = ({
             >
               <img
                 src={image}
-                alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                alt={makeAlt(activityTitle, index, images.length)}
                 className="w-full h-full object-cover"
               />
             </button>
