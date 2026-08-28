@@ -121,7 +121,6 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
 
   // If reloadKey changed (filters changed), reset page to 1 without extra refetch.
   const prevReloadKeyRef = useRef(reloadKey);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (prevReloadKeyRef.current !== reloadKey) {
       prevReloadKeyRef.current = reloadKey;
