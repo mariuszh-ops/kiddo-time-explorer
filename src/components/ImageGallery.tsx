@@ -71,7 +71,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
                   src={singleSrc}
                   srcSet={buildHeroSrcSet(singleSrc)}
                   sizes={buildHeroSrcSet(singleSrc) ? HERO_SIZES : undefined}
-                  alt={makeAlt(activityTitle, activityCity, 0, 1)}
+                  alt={makeAlt(activityTitle, 0, 1)}
                   loading="eager"
                   decoding="async"
                   fetchPriority="high"
@@ -189,7 +189,7 @@ const CarouselGallery = ({
                         src={slideSrc}
                         srcSet={index === 0 ? buildHeroSrcSet(slideSrc) : undefined}
                         sizes={index === 0 && buildHeroSrcSet(slideSrc) ? HERO_SIZES : undefined}
-                        alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                        alt={makeAlt(activityTitle, index, images.length)}
                         loading={index === 0 ? "eager" : "lazy"}
                         decoding="async"
                         fetchPriority={index === 0 ? "high" : undefined}
@@ -268,7 +268,7 @@ const CarouselGallery = ({
                 ) : (
                   <img
                     src={thumbSrc}
-                    alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                    alt={makeAlt(activityTitle, index, images.length)}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover"
@@ -333,7 +333,7 @@ const GridGallery = ({
                   src={mainSrc}
                   srcSet={buildHeroSrcSet(mainSrc)}
                   sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
-                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  alt={makeAlt(activityTitle, 0, images.length)}
                   loading="eager"
                   decoding="async"
                   fetchPriority="high"
@@ -365,7 +365,7 @@ const GridGallery = ({
                   src={mainSrc}
                   srcSet={buildHeroSrcSet(mainSrc)}
                   sizes={buildHeroSrcSet(mainSrc) ? HERO_SIZES : undefined}
-                  alt={makeAlt(activityTitle, activityCity, 0, images.length)}
+                  alt={makeAlt(activityTitle, 0, images.length)}
                   loading="eager"
                   decoding="async"
                   fetchPriority="high"
@@ -391,7 +391,7 @@ const GridGallery = ({
                   ) : (
                     <img
                       src={cellSrc}
-                      alt={makeAlt(activityTitle, activityCity, index, images.length)}
+                      alt={makeAlt(activityTitle, index, images.length)}
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-300"
