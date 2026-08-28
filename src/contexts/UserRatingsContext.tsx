@@ -269,6 +269,8 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         return newMap;
       });
       toast.error("Nie udało się zapisać oceny. Spróbuj ponownie.");
+    } else {
+      setAggregateRefreshKey(k => k + 1);
     }
   }, [ratings, syncToServer, user]);
 
@@ -298,6 +300,8 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     if (!ok) {
       setRatings(prev => new Map(prev).set(activityId, previous));
       toast.error("Nie udało się usunąć oceny. Spróbuj ponownie.");
+    } else {
+      setAggregateRefreshKey(k => k + 1);
     }
   }, [ratings, syncToServer]);
 
@@ -342,6 +346,7 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
         visitedActivities,
         visitedCount: visitedActivities.length,
         refreshRatings,
+        aggregateRefreshKey,
       }}
     >
       {children}

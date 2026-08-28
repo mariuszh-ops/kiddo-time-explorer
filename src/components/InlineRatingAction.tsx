@@ -32,10 +32,10 @@ const InlineRatingAction = ({
   contextLabel = "sekcja Oceny rodziców",
 }: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
-  const { getUserRating, rateActivity } = useUserRatings();
+  const { getUserRating, rateActivity, aggregateRefreshKey } = useUserRatings();
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
-  const aggregate = useActivityRating(activityId, userRating);
+  const aggregate = useActivityRating(activityId, aggregateRefreshKey);
   const hasRated = userRating !== null;
 
   const handleStarClick = (rating: number) => {
