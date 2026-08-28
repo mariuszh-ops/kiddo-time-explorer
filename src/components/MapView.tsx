@@ -745,6 +745,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onShowAll={handleShowAll}
+          error={mapPinsFailed ? pinsError : null}
+          onRetry={refetchPins}
         />
       </div>
     );
