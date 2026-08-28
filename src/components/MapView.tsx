@@ -6,7 +6,7 @@ import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid, MapPin, Heart } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
