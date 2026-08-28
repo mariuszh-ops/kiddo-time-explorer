@@ -322,7 +322,7 @@ const CategoryPage = () => {
     (urlType && !categorySlug ? true : false) ||
     urlAmenities.length > 0 ||
     urlMinRating > 0 ||
-    urlSort !== "rating" ||
+    urlSort !== DEFAULT_SORT ||
     !includeUncertain ||
     Boolean(urlAge) ||
     onlyFree ||
