@@ -88,6 +88,25 @@ const formatReviewCount = (count: number): string => {
   return `${formatted} ${suffix}`;
 };
 
+/** Skrócona forma liczby ocen Google: ">268 tys. ocen", "1,2 tys. ocen" itp. */
+const formatGoogleReviewCount = (count: number): string => {
+  if (count >= 1000) {
+    const tys = Math.floor(count / 1000);
+    const suffix = tys === 1
+      ? "ocena"
+      : tys % 10 >= 2 && tys % 10 <= 4 && !(tys % 100 >= 12 && tys % 100 <= 14)
+        ? "oceny"
+        : "ocen";
+    return `>${tys} tys. ${suffix}`;
+  }
+  const suffix = count === 1
+    ? "ocena"
+    : count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)
+      ? "oceny"
+      : "ocen";
+  return `${count} ${suffix}`;
+};
+
 
 const ActivityDetail = () => {
   const { slug } = useParams<{ slug: string }>();
