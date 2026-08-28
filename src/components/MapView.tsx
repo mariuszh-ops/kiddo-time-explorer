@@ -359,13 +359,20 @@ function MapInvalidateSize() {
 function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boolean }) {
   const map = useMap();
   const isFirstRender = useRef(true);
+  // `skip` snapshotujemy z PIERWSZEGO renderu. Prop ten zmienia się po mount,
+  // bo ViewportFilter od razu zapisuje center/zoom do URL (lat/lng/zoom),
+  // przez co savedMapState staje się nie-nullowe ZANIM dojdą przefiltrowane
+  // piny — i fitBounds nigdy by nie odpalił (mapa zostaje na zoom=11,
+  // licznik „w widoku" pokazuje ułamek wyników). Honorujemy tylko stan,
+  // który był w URL przy wejściu na stronę.
+  const initialSkipRef = useRef(skip);
 
   useEffect(() => {
     if (activities.length === 0) return;
-    // On first render, skip if restoring saved map state
+    // On first render, skip if restoring saved map state from the entry URL
     if (isFirstRender.current) {
       isFirstRender.current = false;
-      if (skip) return;
+      if (initialSkipRef.current) return;
     }
 
     const coords = activities.map((a) => [a.latitude, a.longitude] as [number, number]);
