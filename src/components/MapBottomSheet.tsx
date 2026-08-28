@@ -22,6 +22,8 @@ interface MapBottomSheetProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onShowAll?: () => void;
+  error?: Error | null;
+  onRetry?: () => void;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
