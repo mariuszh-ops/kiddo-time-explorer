@@ -17,9 +17,8 @@ interface ImageGalleryProps {
   activityId?: number;
 }
 
-const makeAlt = (title: string, city: string | undefined, index: number, total: number) => {
-  const cityPart = city ? ` — ${city}` : "";
-  return `${title}${cityPart}, zdjęcie ${index + 1} z ${total}`;
+const makeAlt = (title: string, index: number, total: number) => {
+  return `${title} — zdjęcie ${index + 1} z ${total}`;
 };
 
 const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inne", activityId = 1 }: ImageGalleryProps) => {
