@@ -491,7 +491,7 @@ const CategoryPage = () => {
             minRating={urlMinRating}
             onMinRatingChange={(v) => updateParams({ min: v > 0 ? String(v) : undefined })}
             sort={urlSort}
-            onSortChange={(v) => updateParams({ sort: v === "reviews" ? undefined : v })}
+            onSortChange={(v) => updateParams({ sort: v === DEFAULT_SORT ? undefined : v })}
             hasActiveFilters={hasActiveFilters}
             onClearAll={clearAll}
             includeUncertain={includeUncertain}
