@@ -103,7 +103,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
     if (requestId !== requestIdRef.current) return; // odrzuć wynik przestarzałego żądania
 
     if (error) {
-      toast.error("Nie udało się pobrać danych", { description: error.message });
+      console.error(error.message);
+      toast.error("Nie udało się pobrać danych", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows([]);
       setTotal(0);
     } else {
