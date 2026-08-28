@@ -103,7 +103,7 @@ const CategoryPage = () => {
   // obiekty 5.0★ z kilkudziesięcioma opiniami ponad znane kotwice (zoo/aquaparki).
   const rawSort = searchParams.get("sort");
   const urlSort: SortOption =
-    rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : "reviews";
+    rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : DEFAULT_SORT;
   // ?auto=0 → ukryj klasyfikowane automatycznie. Domyślnie widoczne (auto brak / auto=1).
   const includeUncertain = searchParams.get("auto") !== "0";
   // ?age=0-2 | 3-5 | 6-9 | 10-13 | 14-16
