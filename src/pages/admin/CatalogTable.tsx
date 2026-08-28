@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
@@ -66,12 +66,15 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
   const [sp, setSp] = useSearchParams();
   const page = Math.max(1, parseInt(sp.get("p") ?? "1", 10) || 1);
 
-  const setPage = (p: number) => {
-    const next = new URLSearchParams(sp);
-    if (p <= 1) next.delete("p");
-    else next.set("p", String(p));
-    setSp(next, { replace: true });
-  };
+  const setPage = useCallback(
+    (p: number) => {
+      const next = new URLSearchParams(sp);
+      if (p <= 1) next.delete("p");
+      else next.set("p", String(p));
+      setSp(next, { replace: true });
+    },
+    [sp, setSp],
+  );
 
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [total, setTotal] = useState(0);
@@ -81,7 +84,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
+  const requestIdRef = useRef(0);
+
   const fetchData = useCallback(async () => {
+    const requestId = ++requestIdRef.current;
     setLoading(true);
     setSelected(new Set());
     const from = (page - 1) * PAGE_SIZE;
@@ -91,9 +97,11 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       .from("public_activities")
       .select("*", { count: "exact" })
       .range(from, to);
-    const q = buildQuery(base);
+    const q = buildQuery(base).order("place_id", { ascending: true });
 
     const { data, error, count } = await q;
+    if (requestId !== requestIdRef.current) return; // odrzuć wynik przestarzałego żądania
+
     if (error) {
       toast.error("Nie udało się pobrać danych", { description: error.message });
       setRows([]);
@@ -112,10 +120,13 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
   }, [reloadKey, page]);
 
   // If reloadKey changed (filters changed), reset page to 1 without extra refetch.
+  const prevReloadKeyRef = useRef(reloadKey);
   useEffect(() => {
-    if (page !== 1) setPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reloadKey]);
+    if (prevReloadKeyRef.current !== reloadKey) {
+      prevReloadKeyRef.current = reloadKey;
+      if (page !== 1) setPage(1);
+    }
+  }, [reloadKey, page, setPage]);
 
   const toggleHidden = async (row: CatalogRow) => {
     const next = !row.admin_hidden;
