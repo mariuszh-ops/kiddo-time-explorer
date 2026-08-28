@@ -91,6 +91,9 @@ export interface PinDetails {
 }
 
 const detailsCache = new Map<string, PinDetails>();
+// Slugi, dla których zapytanie już leci — bez tego przesuwanie mapy odpalało
+// kilka równoległych paczek o (w dużej części) te same wiersze.
+const detailsPending = new Set<string>();
 
 export function getCachedPinDetails(slug: string): PinDetails | undefined {
   return detailsCache.get(slug);
@@ -101,8 +104,10 @@ export function getCachedPinDetails(slug: string): PinDetails | undefined {
  * województwo, udogodnienia). Jedno zapytanie na paczkę, bez stronicowania.
  */
 export async function fetchPinDetails(slugs: string[]): Promise<Map<string, PinDetails>> {
-  const missing = slugs.filter((s) => s && !detailsCache.has(s));
+  const missing = slugs.filter((s) => s && !detailsCache.has(s) && !detailsPending.has(s));
   if (missing.length > 0) {
+    missing.forEach((s) => detailsPending.add(s));
+    try {
     const { data, error } = await catalogClient
       .from("public_activities")
       .select("slug,image_url,city,region,amenities")
@@ -125,6 +130,9 @@ export async function fetchPinDetails(slugs: string[]): Promise<Map<string, PinD
     }
     // Slugi bez wiersza oznaczamy jako „sprawdzone", żeby nie pytać w kółko.
     for (const s of missing) if (!detailsCache.has(s)) detailsCache.set(s, {});
+    } finally {
+      missing.forEach((s) => detailsPending.delete(s));
+    }
   }
   const out = new Map<string, PinDetails>();
   for (const s of slugs) {
