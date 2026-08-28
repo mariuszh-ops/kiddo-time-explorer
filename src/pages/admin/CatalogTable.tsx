@@ -161,7 +161,10 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       .update({ admin_hidden: hidden })
       .in("place_id", ids);
     if (error) {
-      toast.error("Akcja masowa nie powiodła się", { description: error.message });
+      console.error(error.message);
+      toast.error("Akcja masowa nie powiodła się", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
     } else {
       toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${ids.length} pozycji`);
       fetchData();
