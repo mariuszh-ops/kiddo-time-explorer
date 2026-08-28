@@ -89,7 +89,6 @@ const AdminKatalog = () => {
       q = q.order(sortDef.key, { ascending: sortDef.asc, nullsFirst: false });
       return q;
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       state.q, state.region, state.type, state.visibility, state.free,
       state.uncertain, state.featured, state.hasImage, state.sort,
