@@ -70,6 +70,8 @@ export default function MapBottomSheet({
   searchQuery,
   onSearchChange,
   onShowAll,
+  error,
+  onRetry,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
