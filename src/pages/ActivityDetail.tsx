@@ -581,15 +581,12 @@ const ActivityDetail = () => {
               </h1>
               {displayRating != null && (
                 <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-primary text-primary" />
-                    <span className="text-sm sm:text-lg font-bold text-foreground">{displayRating.toFixed(1)}</span>
-                  </div>
-                  <span className="text-xs sm:text-sm text-muted-foreground sm:text-foreground">
-                    ·{" "}
-                    {displayReviewCount != null ? formatReviewCount(displayReviewCount) : "brak opinii"}
+                  <span className="text-sm sm:text-lg font-bold text-foreground">
+                    {displayRating.toFixed(1).replace(".", ",")} w Google
                   </span>
-                  <span className="text-xs text-muted-foreground">· Google</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">
+                    ({displayReviewCount != null ? formatGoogleReviewCount(displayReviewCount) : "brak ocen"})
+                  </span>
                 </div>
               )}
             </div>
