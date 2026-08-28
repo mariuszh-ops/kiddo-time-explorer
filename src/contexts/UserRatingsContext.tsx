@@ -90,6 +90,8 @@ interface UserRatingsContextType {
   visitedCount: number;
   /** Ponowne pobranie ocen z serwera (np. po wykonaniu odroczonej intencji gościa). */
   refreshRatings: () => Promise<void>;
+  /** Klucz odświeżania agregatu ocen — zmienia się po udanym zapisie/usunięciu. */
+  aggregateRefreshKey: number;
 }
 
 const UserRatingsContext = createContext<UserRatingsContextType | undefined>(undefined);
@@ -97,6 +99,7 @@ const UserRatingsContext = createContext<UserRatingsContextType | undefined>(und
 export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const [ratings, setRatings] = useState<Map<number, UserRating>>(() => loadRatings());
+  const [aggregateRefreshKey, setAggregateRefreshKey] = useState(0);
   const previousUserIdRef = useRef(user?.id);
   // Re-render po załadowaniu katalogu — visitedActivities liczone z getActivities().
   useDataStatus();
