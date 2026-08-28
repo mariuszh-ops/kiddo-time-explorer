@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { env } from "@/config/env";
+import { trackEvent } from "@/lib/analytics";
 import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
 import { resetGuestMigrationConsent } from "@/lib/guestMigration";
 

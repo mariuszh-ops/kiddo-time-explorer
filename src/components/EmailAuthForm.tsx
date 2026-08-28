@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackEvent } from "@/lib/analytics";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
 import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
 import PasswordRequirements from "@/components/PasswordRequirements";

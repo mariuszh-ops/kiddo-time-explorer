@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackEvent } from "@/lib/analytics";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
 
