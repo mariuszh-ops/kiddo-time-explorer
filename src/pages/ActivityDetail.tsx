@@ -170,7 +170,7 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
   // Agregat ocen rodziców — jedyne źródło aggregateRating w JSON-LD.
-  const ownRating = useActivityRating(activityId);
+  const ownRating = useActivityRating(activityId, aggregateRefreshKey);
 
   // Scroll to top on mount; on mobile, position title card nicely
   useEffect(() => {
