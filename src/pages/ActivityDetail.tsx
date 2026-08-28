@@ -897,6 +897,7 @@ const ActivityDetail = () => {
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent("directions_click", { slug: activity.slug })}
                     className="text-sm text-primary active:opacity-70 inline-flex items-center gap-1 mt-1 min-h-[40px] md:min-h-0"
                   >
                     Otwórz w Mapach
@@ -917,6 +918,7 @@ const ActivityDetail = () => {
                       href={details.website}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => trackEvent("website_click", { slug: activity.slug })}
                       className="inline-flex items-center gap-1.5 px-3 py-2 min-h-[40px] md:min-h-0 bg-secondary text-secondary-foreground text-sm rounded-full active:opacity-70 transition-opacity"
                     >
                       Otwórz stronę

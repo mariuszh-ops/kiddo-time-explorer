@@ -116,6 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Google sign-in error:", error);
       throw error;
     }
+    trackEvent("login", { method: "google" });
   };
 
   const signInWithGoogle = useCallback(signInWithGoogleImpl, []);

@@ -129,10 +129,12 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         setScreen("reset-sent");
       } else if (mode === "signup") {
         await signUpWithEmail(email, password, captchaToken);
+        trackEvent("signup", { method: "email" });
         setScreen("confirm");
         setCooldown(RESEND_COOLDOWN);
       } else {
         await signInWithEmail(email, password, captchaToken);
+        trackEvent("login", { method: "email" });
         onSuccess?.();
       }
       setCaptchaToken("");

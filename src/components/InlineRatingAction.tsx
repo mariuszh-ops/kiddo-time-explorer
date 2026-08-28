@@ -44,6 +44,7 @@ const InlineRatingAction = ({
       onAuthRequired(rating);
       return;
     }
+    trackEvent("rating_set", { rating });
     void rateActivity(activityId, rating);
   };
 

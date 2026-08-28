@@ -298,6 +298,7 @@ const ReviewsSection = ({
         .from("user_reviews")
         .upsert(payload, { onConflict: "place_id,user_id" });
       if (error) throw error;
+      trackEvent("review_submit");
       toast.success("Dziękujemy! Twoja opinia pojawi się po weryfikacji.", {
         duration: 3500,
       });
