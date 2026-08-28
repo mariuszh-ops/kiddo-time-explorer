@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { env } from "@/config/env";
+import { trackEvent } from "@/lib/analytics";
 import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
 import { resetGuestMigrationConsent } from "@/lib/guestMigration";
 
@@ -115,6 +116,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       console.error("Google sign-in error:", error);
       throw error;
     }
+    trackEvent("login", { method: "google" });
   };
 
   const signInWithGoogle = useCallback(signInWithGoogleImpl, []);

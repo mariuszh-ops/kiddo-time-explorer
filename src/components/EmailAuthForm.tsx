@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
+import { trackEvent } from "@/lib/analytics";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
 import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
 import PasswordRequirements from "@/components/PasswordRequirements";
@@ -128,10 +129,12 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         setScreen("reset-sent");
       } else if (mode === "signup") {
         await signUpWithEmail(email, password, captchaToken);
+        trackEvent("signup", { method: "email" });
         setScreen("confirm");
         setCooldown(RESEND_COOLDOWN);
       } else {
         await signInWithEmail(email, password, captchaToken);
+        trackEvent("login", { method: "email" });
         onSuccess?.();
       }
       setCaptchaToken("");
