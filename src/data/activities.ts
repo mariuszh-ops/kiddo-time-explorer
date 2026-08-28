@@ -96,7 +96,6 @@ export function subscribeDataStatus(listener: () => void): () => void {
 export async function loadActivities(): Promise<Activity[]> {
   if (_loaded) return _activities;
   if (_inflight) return _inflight;
-  console.log("[TRACE-ENSURE]", new Error("load").stack);
   _setStatus("loading");
   _inflight = _loadActivitiesInner().finally(() => {
     _inflight = null;
@@ -111,7 +110,6 @@ export async function loadActivities(): Promise<Activity[]> {
  */
 export function ensureActivitiesLoaded(): void {
   if (_loaded || _inflight || _status === "error") return;
-  console.log("[TRACE-ENSURE]", new Error("ensure").stack);
   void loadActivities().catch(() => {
     /* status "error" obsługują widoki */
   });
