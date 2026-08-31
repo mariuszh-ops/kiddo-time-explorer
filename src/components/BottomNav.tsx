@@ -98,12 +98,12 @@ const BottomNav = () => {
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate("/", { replace: true });
+    navigate("/");
   };
 
   const handleMapClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate("/?view=map", { replace: true });
+    navigate("/?view=map");
   };
 
   const navItems = [
