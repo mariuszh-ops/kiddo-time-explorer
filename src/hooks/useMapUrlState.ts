@@ -44,24 +44,22 @@ export function useMapUrlState(
     };
   }, [rawLat, rawLng, rawZoom, rawCats]);
 
+  // Przełączenie lista ↔ mapa to świadoma zmiana ekranu → wpis w historii (push).
   const setViewMode = useCallback(
     (mode: "grid" | "map") => {
       if (!isStillOnThisRoute()) return;
-      setSearchParams(
-        (prev) => {
-          if (mode === "map") {
-            prev.set("view", "map");
-          } else {
-            prev.delete("view");
-            prev.delete("lat");
-            prev.delete("lng");
-            prev.delete("zoom");
-            prev.delete("cats");
-          }
-          return prev;
-        },
-        { replace: true },
-      );
+      setSearchParams((prev) => {
+        if (mode === "map") {
+          prev.set("view", "map");
+        } else {
+          prev.delete("view");
+          prev.delete("lat");
+          prev.delete("lng");
+          prev.delete("zoom");
+          prev.delete("cats");
+        }
+        return prev;
+      });
     },
     [setSearchParams, isStillOnThisRoute],
   );
