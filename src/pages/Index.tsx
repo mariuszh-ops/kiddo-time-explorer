@@ -90,6 +90,12 @@ const Index = () => {
 
   // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
   const showAll = searchParams.get("all") === "1";
+  const dataStatus = useDataStatus();
+  // Katalog ładuje się leniwie — flaga musi być true także w momencie tuż po
+  // kliknięciu "Zobacz wszystkie", zanim ensureActivitiesLoaded() przestawi status.
+  const katalogSieLaduje =
+    dataStatus === "loading" ||
+    ((showAll || hasActiveFilters) && dataStatus === "idle");
   useEffect(() => {
     if (showAll) ensureActivitiesLoaded();
   }, [showAll]);
