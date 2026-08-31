@@ -19,6 +19,7 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
+import { useDataStatus } from "@/hooks/useDataStatus";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
