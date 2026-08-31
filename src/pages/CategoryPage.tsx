@@ -227,8 +227,13 @@ const CategoryPage = () => {
 
 
 
+  // Świadome zmiany filtrów idą pushem (jeden filtr = jeden wpis w historii).
+  // { replace: true } zostaje wyłącznie dla automatycznych zapisów stanu (np. ?page=).
   const updateParams = useCallback(
-    (patch: Record<string, string | undefined | null>) => {
+    (
+      patch: Record<string, string | undefined | null>,
+      options?: { replace?: boolean },
+    ) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -238,21 +243,21 @@ const CategoryPage = () => {
           }
           return next;
         },
-        { replace: true },
+        { replace: options?.replace ?? false },
       );
     },
     [setSearchParams],
   );
 
   const clearAll = useCallback(() => {
-    setSearchParams(new URLSearchParams(), { replace: true });
+    setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
 
   // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
   useEffect(() => {
     const current = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
     if (current !== page + 1) {
-      updateParams({ page: page > 0 ? String(page + 1) : undefined });
+      updateParams({ page: page > 0 ? String(page + 1) : undefined }, { replace: true });
     }
   }, [page, searchParams, updateParams]);
 
