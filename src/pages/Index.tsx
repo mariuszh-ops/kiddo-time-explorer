@@ -19,6 +19,7 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
+import { useDataStatus } from "@/hooks/useDataStatus";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -89,6 +90,12 @@ const Index = () => {
 
   // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
   const showAll = searchParams.get("all") === "1";
+  const dataStatus = useDataStatus();
+  // Katalog ładuje się leniwie — flaga musi być true także w momencie tuż po
+  // kliknięciu "Zobacz wszystkie", zanim ensureActivitiesLoaded() przestawi status.
+  const katalogSieLaduje =
+    dataStatus === "loading" ||
+    ((showAll || hasActiveFilters) && dataStatus === "idle");
   useEffect(() => {
     if (showAll) ensureActivitiesLoaded();
   }, [showAll]);
@@ -280,6 +287,7 @@ const Index = () => {
           onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
           filters={filters}
           mapReturnAction={() => handleViewModeChange("map")}
+          isLoading={katalogSieLaduje}
         />
       ) : hasActiveFilters || showAll ? (
         <ActivityGrid 
@@ -288,6 +296,7 @@ const Index = () => {
           onClearFilters={clearAllFilters}
           onClearFiltersKeepCity={clearFiltersKeepCity}
           filters={filters}
+          isLoading={katalogSieLaduje}
         />
       ) : (
         <>
