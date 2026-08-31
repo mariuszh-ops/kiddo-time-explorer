@@ -287,6 +287,7 @@ const Index = () => {
           onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
           filters={filters}
           mapReturnAction={() => handleViewModeChange("map")}
+          isLoading={katalogSieLaduje}
         />
       ) : hasActiveFilters || showAll ? (
         <ActivityGrid 
@@ -295,6 +296,7 @@ const Index = () => {
           onClearFilters={clearAllFilters}
           onClearFiltersKeepCity={clearFiltersKeepCity}
           filters={filters}
+          isLoading={katalogSieLaduje}
         />
       ) : (
         <>
