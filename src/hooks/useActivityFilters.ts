@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getActivities, filterOptions, Activity, cityCenters, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
@@ -39,15 +39,14 @@ let persistedFilters: Filters = {};
 let persistedSearchQuery: string = "";
 
 // URL <-> filters mapping. Nazwy parametrów spójne ze stronami /kategoria/* i /atrakcje/*.
-function filtersFromParams(params: URLSearchParams): { filters: Filters; search: string } | null {
+// Brak parametru w adresie oznacza BRAK filtra — adres jest źródłem prawdy.
+function filtersFromParams(params: URLSearchParams): { filters: Filters; search: string } {
   const region = params.get("region") ?? undefined;
   const age = params.get("age") ?? undefined;
   const typeRaw = params.get("type");
   const sort = params.get("sort") ?? undefined;
   const distRaw = params.get("dist");
   const search = params.get("search") ?? "";
-
-  if (!region && !age && !typeRaw && !sort && !distRaw && !search) return null;
 
   const next: Filters = {};
   if (region) next.city = region;
@@ -59,12 +58,19 @@ function filtersFromParams(params: URLSearchParams): { filters: Filters; search:
   return { filters: next, search };
 }
 
+// Porównanie po wartości — chroni przed pętlą URL ⇄ stan.
+function sameFilters(a: Filters, b: Filters): boolean {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
 export function useActivityFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
   const initialFromUrl = filtersFromParams(new URLSearchParams(window.location.search));
-  // Initialize from persisted state
-  const [filters, setFilters] = useState<Filters>(initialFromUrl?.filters ?? persistedFilters);
-  const [searchQuery, setSearchQuery] = useState(initialFromUrl?.search ?? persistedSearchQuery);
+  // Adres wygrywa z pamięcią modułu: brak parametrów = brak filtrów.
+  const [filters, setFilters] = useState<Filters>(initialFromUrl.filters);
+  const [searchQuery, setSearchQuery] = useState(initialFromUrl.search);
+  // Pierwszy zapis stanu do URL ma nadpisać wpis (nie dokładać pustego do historii).
+  const firstUrlWriteRef = useRef(true);
   // Katalog ładuje się asynchronicznie — bez tej zależności memo policzyłoby
   // się raz na pustej tablicy i utknęło do pierwszej interakcji z filtrem.
   const dataStatus = useDataStatus();
@@ -78,14 +84,16 @@ export function useActivityFilters() {
     persistedSearchQuery = searchQuery;
   }, [searchQuery]);
 
-  // Dwukierunkowa synchronizacja z URL: usunięcie ?search= (np. „×" w headerze)
-  // czyści też frazę w stanie, więc nagłówek „Wyniki dla…" znika.
-  const urlSearch = searchParams.get("search") ?? "";
+  // Kierunek URL → stan dla wszystkich parametrów (m.in. „wstecz” w przeglądarce):
+  // po cofnięciu ekran musi odpowiadać adresowi.
+  const paramsKey = searchParams.toString();
   useEffect(() => {
-    setSearchQuery((prev) => (prev.trim() === urlSearch.trim() ? prev : urlSearch));
-  }, [urlSearch]);
+    const { filters: urlFilters, search } = filtersFromParams(new URLSearchParams(paramsKey));
+    setFilters((prev) => (sameFilters(prev, urlFilters) ? prev : urlFilters));
+    setSearchQuery((prev) => (prev.trim() === search.trim() ? prev : search));
+  }, [paramsKey]);
 
-  // Zapis stanu filtrów do URL (bez dokładania wpisów do historii).
+  // Zapis stanu filtrów do URL — świadoma zmiana filtra tworzy wpis w historii.
   useEffect(() => {
     const next = new URLSearchParams(searchParams);
     const setOrDelete = (key: string, value?: string) => {
@@ -99,10 +107,12 @@ export function useActivityFilters() {
     setOrDelete("dist", filters.city && filters.distance ? String(filters.distance) : undefined);
     setOrDelete("search", searchQuery.trim() || undefined);
     if (next.toString() !== searchParams.toString()) {
-      setSearchParams(next, { replace: true });
+      setSearchParams(next, firstUrlWriteRef.current ? { replace: true } : undefined);
     }
+    firstUrlWriteRef.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, searchQuery]);
+
 
   // Filtrowanie/wyszukiwanie po stronie klienta wymaga pełnego zbioru —
   // dociągamy go dopiero, gdy użytkownik faktycznie użyje filtra lub szukajki.
