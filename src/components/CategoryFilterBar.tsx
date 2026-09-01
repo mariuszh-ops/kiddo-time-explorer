@@ -80,13 +80,22 @@ export interface CategoryFilterBarProps {
   onOnlyFreeChange: (value: boolean) => void;
 }
 
-const RATING_OPTIONS = [
+export const RATING_OPTIONS = [
   { value: 0, label: "Dowolna ocena" },
-  { value: 3, label: "3.0+" },
-  { value: 3.5, label: "3.5+" },
-  { value: 4, label: "4.0+" },
-  { value: 4.5, label: "4.5+" },
+  { value: 4.5, label: "4,5+" },
+  { value: 4.8, label: "4,8+" },
 ];
+
+/** Maps a raw minimum rating (including legacy URL values) to the closest
+ *  available UI threshold so the control always shows a meaningful label. */
+function toDisplayRating(minRating: number): number {
+  if (minRating <= 0) return 0;
+  const thresholds = RATING_OPTIONS.map((r) => r.value).filter((v) => v > 0);
+  for (const t of thresholds) {
+    if (t >= minRating) return t;
+  }
+  return thresholds[thresholds.length - 1];
+}
 
 const SORT_OPTIONS: { value: SortOption; label: string }[] = [
   { value: "reviews", label: "Najpopularniejsze" },
