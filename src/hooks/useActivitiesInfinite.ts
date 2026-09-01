@@ -147,7 +147,7 @@ export function useActivitiesInfinite(
     };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = initialPageRef.current * pageSize + data.length < total;
+  const hasMore = (startPageActiveRef.current ? initialPageRef.current : 0) * pageSize + data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
