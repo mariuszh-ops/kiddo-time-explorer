@@ -230,7 +230,7 @@ const CategoryFilterBar = ({
 
       {/* Min rating */}
       <Select
-        value={String(minRating)}
+        value={String(toDisplayRating(minRating))}
         onValueChange={(v) => onMinRatingChange(Number(v))}
       >
         <SelectTrigger
