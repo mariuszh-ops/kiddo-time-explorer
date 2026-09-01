@@ -41,6 +41,10 @@ export function useActivitiesInfinite(
   const [total, setTotal] = useState(0);
   // Strona startowa czytana raz — późniejsze zmiany URL nie resetują listy.
   const initialPageRef = useRef(Math.max(0, Math.min(initialPage, 20)));
+  // Klucz filtrów, dla którego strona startowa jeszcze obowiązuje.
+  const initialFilterKeyRef = useRef(filterKey);
+  // Po pierwszej zmianie filtrów strona startowa jest „zużyta” — resety idą na 0.
+  const startPageActiveRef = useRef(true);
   const [page, setPage] = useState(initialPageRef.current);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -51,7 +55,10 @@ export function useActivitiesInfinite(
   // Reset kiedy zmieniają się filtry
   useEffect(() => {
     activeKey.current = filterKey;
-    setPage(initialPageRef.current);
+    if (filterKey !== initialFilterKeyRef.current) {
+      startPageActiveRef.current = false;
+    }
+    setPage(startPageActiveRef.current ? initialPageRef.current : 0);
     setData([]);
     setTotal(0);
     setError(null);
@@ -64,10 +71,13 @@ export function useActivitiesInfinite(
     const keyAtStart = filterKey;
     // Pierwszy fetch po zmianie filtrów pobiera wszystkie strony do `page`
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
-    const isInitialFetch = page === initialPageRef.current;
-    // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników.
-    const from = isInitialFetch ? initialPageRef.current * pageSize : page * pageSize;
+    const startPage = startPageActiveRef.current ? initialPageRef.current : 0;
+    const isInitialFetch = page === startPage;
+    // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników;
+    // po zmianie filtra zapytanie zaczyna się od wiersza 0.
+    const from = isInitialFetch ? startPage * pageSize : page * pageSize;
     const to = page * pageSize + pageSize - 1;
+
 
     const failWithTimeout = () => {
       if (cancelled) return;
