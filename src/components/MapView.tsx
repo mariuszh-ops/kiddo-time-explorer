@@ -342,12 +342,12 @@ function ViewportFilter({
     moveend: () => {
       reportViewport();
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 400);
+      timerRef.current = setTimeout(filterByBounds, 200);
     },
     zoomend: () => {
       reportViewport();
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 400);
+      timerRef.current = setTimeout(filterByBounds, 200);
     },
   });
 
