@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { formatRatingPl } from "@/lib/formatRating";
 
 interface SavedActivityCardProps {
   id: number;
@@ -247,7 +248,7 @@ const SavedActivityCard = ({
               <div className="flex items-center gap-1.5">
                 <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
                   <Star className="w-4 h-4 fill-primary text-primary" />
-                  <span className="font-bold text-foreground">{google_rating.toFixed(1)}</span>
+                  <span className="font-bold text-foreground">{formatRatingPl(google_rating)}</span>
                 </div>
                 <span className="text-sm text-muted-foreground">
                   · {formatReviewBucket(google_review_count)}

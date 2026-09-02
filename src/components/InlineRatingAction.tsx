@@ -5,6 +5,7 @@ import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useActivityRating } from "@/hooks/useActivityRating";
 import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatRatingPl } from "@/lib/formatRating";
 
 interface InlineRatingActionProps {
   activityId: number;
@@ -51,7 +52,7 @@ const InlineRatingAction = ({
   const displayValue = hoveredStar || userRating || 0;
   const canShowAggregate = aggregate.count >= 5 && aggregate.avg != null;
   const formattedAvg = canShowAggregate
-    ? aggregate.avg.toFixed(1).replace(".", ",")
+    ? formatRatingPl(aggregate.avg)
     : null;
 
   const titleText = !isLoggedIn || !hasRated

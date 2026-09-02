@@ -59,6 +59,7 @@ import { toast } from "sonner";
 import { useShare } from "@/hooks/useShare";
 import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
+import { formatRatingPl } from "@/lib/formatRating";
 
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
@@ -360,7 +361,7 @@ const ActivityDetail = () => {
   const seoDescription = activity.description?.trim()
     ? truncateAtWord(activity.description.trim(), 155)
     : displayRating != null && displayReviewCount != null
-      ? `${typeLabel} ${cityLocative}. Ocena ${displayRating.toFixed(1)}/5 (${formatReviewCount(displayReviewCount)}).`
+      ? `${typeLabel} ${cityLocative}. Ocena ${formatRatingPl(displayRating)}/5 (${formatReviewCount(displayReviewCount)}).`
       : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
   
   // Number of reviews to show initially (1-2 on mobile)
@@ -468,7 +469,7 @@ const ActivityDetail = () => {
               {displayRating != null && (
                 <div className="flex items-center gap-1 shrink-0">
                   <Star className="w-3.5 h-3.5 fill-primary text-primary" />
-                  <span className="text-xs text-muted-foreground">{displayRating.toFixed(1)}</span>
+                  <span className="text-xs text-muted-foreground">{formatRatingPl(displayRating)}</span>
                 </div>
               )}
             </div>
@@ -582,7 +583,7 @@ const ActivityDetail = () => {
               {displayRating != null && (
                 <div className="shrink-0 flex items-center gap-1.5 sm:flex-col sm:items-end sm:gap-0.5">
                   <span className="text-sm sm:text-lg font-bold text-foreground">
-                    {displayRating.toFixed(1).replace(".", ",")} w Google
+                    {formatRatingPl(displayRating)} w Google
                   </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">
                     ({displayReviewCount != null ? formatGoogleReviewCount(displayReviewCount) : "brak ocen"})

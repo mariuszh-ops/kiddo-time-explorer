@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
+import { formatRatingPl } from "@/lib/formatRating";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
@@ -243,7 +244,7 @@ const ActivityCard = ({
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
                     <Star className="w-4 h-4 fill-primary text-primary" />
-                    <span className="font-bold text-foreground">{displayRating.toFixed(1)}</span>
+                    <span className="font-bold text-foreground">{formatRatingPl(displayRating)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
                     · {formatReviewCount(displayReviewCount)}

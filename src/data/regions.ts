@@ -45,11 +45,33 @@ export const REGION_BY_SLUG: Record<string, Region> = REGIONS.reduce(
  * przekierowania w routingu (`/atrakcje/warszawa` → `/atrakcje/mazowieckie`).
  */
 export const LEGACY_CITY_TO_REGION: Record<string, string> = {
+  // Klucz NIE może być równy slugowi województwa — legacy sprawdzane jest przed REGION_SLUGS.
   warszawa: "mazowieckie",
   krakow: "malopolskie",
   wroclaw: "dolnoslaskie",
   trojmiasto: "pomorskie",
+  gdansk: "pomorskie",
+  gdynia: "pomorskie",
+  sopot: "pomorskie",
   poznan: "wielkopolskie",
   slask: "slaskie",
+  katowice: "slaskie",
+  sosnowiec: "slaskie",
+  gliwice: "slaskie",
+  zabrze: "slaskie",
+  czestochowa: "slaskie",
+  bytom: "slaskie",
   lodz: "lodzkie",
+  szczecin: "zachodniopomorskie",
+  bydgoszcz: "kujawsko-pomorskie",
+  torun: "kujawsko-pomorskie",
+  lublin: "lubelskie",
+  bialystok: "podlaskie",
+  rzeszow: "podkarpackie",
+  kielce: "swietokrzyskie",
+  olsztyn: "warminsko-mazurskie",
+  opole: "opolskie",
+  "zielona-gora": "lubuskie",
+  gorzow: "lubuskie",
+  "gorzow-wielkopolski": "lubuskie",
 };

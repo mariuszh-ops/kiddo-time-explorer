@@ -645,8 +645,10 @@ const CategoryPage = () => {
             </div>
           )}
 
-          {/* Linki paginacji dla wyszukiwarek (crawlable, w HTML od razu) */}
-          {!isEmpty && !error && (
+          {/* Linki paginacji dla wyszukiwarek (crawlable, w HTML od razu).
+              W widoku mapy NIE renderujemy: mapa nie jest stronicowana, a klik w numer
+              gubił kadr i widok (audyt 325: J-15). */}
+          {!isEmpty && !error && !mapEnabled && (
             <SeoPagination
               basePath={path}
               searchParams={searchParams}

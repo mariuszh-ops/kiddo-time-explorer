@@ -65,6 +65,9 @@ const SEOHead = ({
       {isFallbackImage && <meta property="og:image:height" content="640" />}
       {!isFallbackImage && imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
       {!isFallbackImage && imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
+      {!isFallbackImage && !imageWidth && /\.webp(\?|$)/i.test(ogImage) && (
+        <meta property="og:image:type" content="image/webp" />
+      )}
       <meta property="og:image:alt" content={title} />
 
       <meta name="twitter:card" content="summary_large_image" />

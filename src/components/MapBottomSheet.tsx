@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import MapCategoryChips from "./MapCategoryChips";
+import { formatRatingPl } from "@/lib/formatRating";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -495,7 +496,7 @@ function SheetActivityCard({
         <div className="flex items-center gap-2 mt-1">
           <span className="flex items-center gap-1 text-xs font-medium text-foreground">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            {activity.rating.toFixed(1)}
+            {formatRatingPl(activity.rating)}
           </span>
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>

@@ -20,6 +20,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { trackEvent } from "@/lib/analytics";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
+import { formatRatingPl } from "@/lib/formatRating";
 
 interface GoogleReview {
   author: string;
@@ -139,7 +140,7 @@ const ExpandableText = ({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2 inline-flex items-center min-h-[40px] md:min-h-0"
+            className="mt-1 text-xs font-medium text-primary hover:underline underline-offset-2 inline-flex items-center justify-center min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0"
           >
             {expanded ? "mniej" : "więcej"}
           </button>
@@ -364,7 +365,7 @@ const ReviewsSection = ({
                   <div className="flex items-center gap-1">
                     <Star className="w-4 h-4 fill-primary text-primary" />
                     <span className="text-lg font-bold text-foreground">
-                      {averageRating.toFixed(1)}
+                      {formatRatingPl(averageRating)}
                     </span>
                   </div>
                 )}

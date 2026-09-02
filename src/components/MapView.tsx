@@ -18,6 +18,7 @@ import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
+import { formatRatingPl } from "@/lib/formatRating";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -131,7 +132,7 @@ const createPopupContent = (activity: Activity, isFav: boolean) => {
       <div style="padding:8px 10px;">
         <div style="font-weight:600;font-size:14px;margin-bottom:4px;color:#1a1a1a;">${activity.title}</div>
         <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#666;">
-          <span style="color:#f59e0b;">★</span> ${activity.rating.toFixed(1)}
+          <span style="color:#f59e0b;">★</span> ${formatRatingPl(activity.rating)}
           <span style="margin-left:4px;">${activity.ageRange}</span>
         </div>
         <div style="font-size:12px;color:#888;margin-top:2px;">${activity.location}</div>
@@ -957,7 +958,7 @@ function MiniActivityCard({
         <div className="flex items-center gap-2 mt-1.5">
           <span className="flex items-center gap-1 text-xs font-medium text-foreground">
             <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-            {activity.rating.toFixed(1)}
+            {formatRatingPl(activity.rating)}
           </span>
           <span className="text-xs text-muted-foreground">{activity.ageRange}</span>
         </div>

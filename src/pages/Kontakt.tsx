@@ -8,7 +8,7 @@ import SEOHead from "@/components/SEOHead";
 const Kontakt = () => {
   return (
     <PageTransition>
-      <SEOHead title="Kontakt" description="Skontaktuj się z zespołem FamilyFun." path="/kontakt" />
+      <SEOHead title="Kontakt" description="Masz pytanie o atrakcję, chcesz zgłosić błąd w danych albo dodać nowe miejsce? Napisz do zespołu FamilyFun — odpowiadamy na każdą wiadomość." path="/kontakt" />
       <div className="min-h-screen bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
