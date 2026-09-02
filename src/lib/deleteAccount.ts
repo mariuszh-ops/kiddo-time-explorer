@@ -4,65 +4,35 @@ import { clearAllAppStorage } from "@/lib/storage";
 /**
  * RODO art. 17 — usunięcie danych konta.
  *
- * Kasujemy WSZYSTKIE dane użytkownika, do których uprawniają go polityki RLS:
- *  - zapisane miejsca (ulubione, „chcę odwiedzić"),
- *  - oceny gwiazdkowe,
- * a wystawione opinie ANONIMIZUJEMY (treść zostaje, podpis traci dane osobowe).
- * Następnie próbujemy usunąć sam wpis logowania przez Edge Function działającą
- * na service_role (z klienta nie da się tego zrobić). Gdy funkcja nie jest
- * jeszcze wdrożona, zwracamy `identityPendingManualRemoval: true` — UI mówi
- * wtedy, że konto zostanie skasowane w ciągu 30 dni.
- *
- * TODO(S-131): wdrożyć Edge Function `delete-account` w projekcie katalogowym
- * (service_role → auth.admin.deleteUser(user.id)), żeby usunięcie wpisu
- * logowania było natychmiastowe i w pełni automatyczne.
+ * Kolejność jest krytyczna: najpierw Edge Function `delete-account` (service_role)
+ * kasuje dane w bazie i sam wpis logowania. Dopiero po odpowiedzi {ok:true}
+ * czyścimy localStorage i wylogowujemy. Gdy żądanie się nie powiedzie —
+ * NIE kasujemy niczego lokalnie i zwracamy błąd do UI.
  */
 export interface DeleteAccountResult {
   ok: boolean;
-  /** Prawda, gdy sam wpis konta (tożsamość) wymaga jeszcze obsługi po stronie operatora. */
-  identityPendingManualRemoval: boolean;
   error?: string;
 }
 
 export const ANONYMIZED_AUTHOR = "Rodzic (konto usunięte)";
 
-async function deleteAuthIdentity(): Promise<boolean> {
+export async function deleteAccountData(_userId: string): Promise<DeleteAccountResult> {
   try {
-    const { error } = await supabase.functions.invoke("delete-account", { body: {} });
-    return !error;
-  } catch {
-    return false;
-  }
-}
+    const { data, error } = await supabase.functions.invoke("delete-account", { body: {} });
 
-export async function deleteAccountData(userId: string): Promise<DeleteAccountResult> {
-  try {
-    const [saved, ratings, reviews] = await Promise.all([
-      supabase.from("saved_activities").delete().eq("user_id", userId),
-      supabase.from("user_ratings").delete().eq("user_id", userId),
-      supabase.from("user_reviews").update({ author_name: ANONYMIZED_AUTHOR }).eq("user_id", userId),
-    ]);
-
-    const failed = [saved.error, ratings.error, reviews.error].filter(Boolean);
-    if (failed.length > 0) {
+    if (error || !data || (data as { ok?: boolean }).ok !== true) {
       return {
         ok: false,
-        identityPendingManualRemoval: true,
-        error: failed[0]?.message ?? "Nie udało się usunąć danych.",
+        error: error?.message ?? (data as { error?: string } | null)?.error ?? "Nie udało się usunąć konta.",
       };
     }
 
-    const identityDeleted = await deleteAuthIdentity();
-
+    // Dopiero teraz sprzątamy lokalnie.
     clearAllAppStorage();
     await supabase.auth.signOut();
 
-    return { ok: true, identityPendingManualRemoval: !identityDeleted };
+    return { ok: true };
   } catch (e) {
-    return {
-      ok: false,
-      identityPendingManualRemoval: true,
-      error: e instanceof Error ? e.message : "Nieznany błąd",
-    };
+    return { ok: false, error: e instanceof Error ? e.message : "Nieznany błąd" };
   }
 }
