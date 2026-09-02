@@ -5,9 +5,14 @@ import { Button } from "@/components/ui/button";
 interface ActivityLoadErrorProps {
   onRetry: () => void;
   isRetrying?: boolean;
+  message?: string;
 }
 
-const ActivityLoadError = ({ onRetry, isRetrying = false }: ActivityLoadErrorProps) => {
+const ActivityLoadError = ({
+  onRetry,
+  isRetrying = false,
+  message = "Coś poszło nie tak. Spróbuj ponownie za chwilę.",
+}: ActivityLoadErrorProps) => {
   return (
     <section className="bg-background py-8 md:py-12">
       <div className="container">
@@ -29,7 +34,7 @@ const ActivityLoadError = ({ onRetry, isRetrying = false }: ActivityLoadErrorPro
 
           {/* Supporting text */}
           <p className="text-muted-foreground mb-8">
-            Coś poszło nie tak. Spróbuj ponownie za chwilę.
+            {message}
           </p>
 
           {/* Retry button */}
