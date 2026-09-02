@@ -38,22 +38,14 @@ const DeleteAccountSection = () => {
     setIsDeleting(false);
 
     if (!result.ok) {
-      toast.error("Nie udało się usunąć konta", {
-        description: "Spróbuj ponownie za chwilę.",
-      });
+      toast.error("Nie udało się usunąć konta — spróbuj ponownie");
       return;
     }
 
     setIsOpen(false);
     logout();
     navigate("/");
-    if (result.identityPendingManualRemoval) {
-      toast.success("Twoje dane zostały usunięte", {
-        description: "Konto zostanie skasowane w ciągu 30 dni.",
-      });
-    } else {
-      toast.success("Twoje konto zostało usunięte");
-    }
+    toast.success("Twoje konto zostało usunięte");
   };
 
   return (
