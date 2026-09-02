@@ -281,10 +281,12 @@ function ViewportFilter({
   activities,
   onVisibleChange,
   onCenterChange,
+  onViewportSave,
 }: {
   activities: Activity[];
   onVisibleChange: (visible: Activity[]) => void;
   onCenterChange?: (center: [number, number]) => void;
+  onViewportSave?: () => void;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -299,19 +301,31 @@ function ViewportFilter({
     onCenterChange?.([c.lat, c.lng]);
   }, [map, activities, onVisibleChange, onCenterChange]);
 
+  // Zapis kadru do URL — NATYCHMIAST przy moveend/zoomend (bez debounce),
+  // z odczytem getCenter()/getZoom() w momencie zapisu. Debounce 400 ms
+  // poniżej dotyczy wyłącznie przeliczania listy widocznych pinów.
+  const reportViewport = useCallback(() => {
+    onViewportSave?.();
+  }, [onViewportSave]);
+
   // Initial filter after map loads
   useEffect(() => {
     // Small delay to let fitBounds settle
-    const t = setTimeout(filterByBounds, 100);
+    const t = setTimeout(() => {
+      filterByBounds();
+      reportViewport();
+    }, 100);
     return () => clearTimeout(t);
-  }, [filterByBounds]);
+  }, [filterByBounds, reportViewport]);
 
   useMapEvents({
     moveend: () => {
+      reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 400);
     },
     zoomend: () => {
+      reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 400);
     },
@@ -500,7 +514,24 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+    () => new Set([...(filters.type ?? []), ...(savedMapState?.selectedCategories ?? [])]),
+  );
+  // Kategoria z trasy/filtra listingu (np. /kategoria/zoo, ?type=zoo) zawsze
+  // zasila chipsy — także gdy zmieni się przy zamontowanej mapie.
+  const routeTypesKey = (filters.type ?? []).join(",");
+  useEffect(() => {
+    if (!filters.type || filters.type.length === 0) return;
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      for (const t of filters.type!) {
+        if (!next.has(t)) { next.add(t); changed = true; }
+      }
+      return changed ? next : prev;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routeTypesKey]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -530,9 +561,14 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onSaveMapState, selectedCategories]);
 
-  // Live sync (center/zoom/chipsy) — zapisywane od razu, żeby URL był aktualny
-  // przed nawigacją do karty atrakcji (unmount jest już za późno dla historii).
-  useEffect(() => {
+  // Live sync (center/zoom/chipsy) — zapis przy KAŻDYM moveend/zoomend,
+  // wykonywany w ViewportFilter (poniżej) przez handleViewportSave.
+  // Środek i zoom są odczytywane z map.getCenter()/getZoom() w momencie
+  // zapisu — wcześniejsza wersja szła przez stan Reacta ustawiany w
+  // debounce 400 ms, więc po przeciągnięciu myszą do URL trafiała wartość
+  // sprzed ostatniego moveend (albo zapis nie dochodził wcale, gdy
+  // nawigacja do karty wyprzedziła timer).
+  const handleViewportSave = useCallback(() => {
     const map = mapInstanceRef.current;
     if (!map || !onSaveMapState) return;
     const c = map.getCenter();
@@ -541,8 +577,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       zoom: map.getZoom(),
       selectedCategories,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveMapCenter, selectedCategories, onSaveMapState]);
+  }, [onSaveMapState, selectedCategories]);
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
@@ -705,7 +740,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
         </MapContainer>
@@ -832,7 +867,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
