@@ -500,7 +500,24 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(savedMapState?.selectedCategories ?? new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+    () => new Set([...(filters.type ?? []), ...(savedMapState?.selectedCategories ?? [])]),
+  );
+  // Kategoria z trasy/filtra listingu (np. /kategoria/zoo, ?type=zoo) zawsze
+  // zasila chipsy — także gdy zmieni się przy zamontowanej mapie.
+  const routeTypesKey = (filters.type ?? []).join(",");
+  useEffect(() => {
+    if (!filters.type || filters.type.length === 0) return;
+    setSelectedCategories((prev) => {
+      const next = new Set(prev);
+      let changed = false;
+      for (const t of filters.type!) {
+        if (!next.has(t)) { next.add(t); changed = true; }
+      }
+      return changed ? next : prev;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routeTypesKey]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});

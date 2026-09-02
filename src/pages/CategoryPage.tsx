@@ -605,7 +605,12 @@ const CategoryPage = () => {
                   <MapView
                     activities={mapActivities}
 
-                    filters={{ city: citySlug }}
+                    filters={{
+                      city: citySlug,
+                      // Kategoria ze ścieżki (/kategoria/zoo, /malopolskie/zoo) ma
+                      // działać na mapie tak samo jak ?type= — zasila piny i chipsy.
+                      type: effectiveType ? [effectiveType] : undefined,
+                    }}
                     onViewModeChange={(mode) => setViewMode(mode)}
                     savedMapState={savedMapState}
                     onSaveMapState={handleSaveMapState}
