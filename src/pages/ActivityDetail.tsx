@@ -50,6 +50,7 @@ import { useActivityRating } from "@/hooks/useActivityRating";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
+import ActivityLoadError from "@/components/ActivityLoadError";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
@@ -156,6 +157,9 @@ const ActivityDetail = () => {
   // w globalnej liście. Lista może być pusta na pierwszym wejściu.
   const [activity, setActivity] = useState<Activity | null>(null);
   const [detailStatus, setDetailStatus] = useState<"loading" | "success" | "not-found" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const refetch = () => setReloadKey((k) => k + 1);
 
   useEffect(() => {
     if (!slug) { setDetailStatus("not-found"); return; }
@@ -183,7 +187,7 @@ const ActivityDetail = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [slug]);
+  }, [slug, reloadKey]);
 
   const activitiesLoaded = detailStatus !== "loading";
   const activityId = activity?.id ?? 0;
@@ -307,8 +311,24 @@ const ActivityDetail = () => {
   // activity lookup moved above
   
   // Activities still loading → mirror final layout with a skeleton (no white screen, no jump).
-  if (!activitiesLoaded) {
+  if (detailStatus === "loading") {
     return <ActivityDetailSkeleton />;
+  }
+
+  // Query failed (5xx / timeout / offline) → explicit error UI with retry.
+  if (detailStatus === "error") {
+    return (
+      <PageTransition>
+        <Header />
+        <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
+          <ActivityLoadError
+            onRetry={refetch}
+            message="Sprawdź połączenie i spróbuj ponownie."
+          />
+        </main>
+        <Footer />
+      </PageTransition>
+    );
   }
 
   // Activities loaded but slug doesn't match → real 404, do not loop on the skeleton.
