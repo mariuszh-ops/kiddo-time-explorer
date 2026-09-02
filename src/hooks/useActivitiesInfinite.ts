@@ -73,9 +73,10 @@ export function useActivitiesInfinite(
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
     const startPage = startPageActiveRef.current ? initialPageRef.current : 0;
     const isInitialFetch = page === startPage;
-    // Strona startowa (?page=N) pokazuje dokładnie N-tą porcję wyników;
-    // po zmianie filtra zapytanie zaczyna się od wiersza 0.
-    const from = isInitialFetch ? startPage * pageSize : page * pageSize;
+    // Strona startowa (?page=N) przywraca całą listę od początku do N-tej
+    // porcji w JEDNYM zapytaniu (0..N*pageSize-1) — tak jak przed wejściem
+    // w kartę atrakcji. Po zmianie filtra zapytanie zaczyna się od wiersza 0.
+    const from = isInitialFetch ? 0 : page * pageSize;
     const to = page * pageSize + pageSize - 1;
 
 
@@ -147,7 +148,7 @@ export function useActivitiesInfinite(
     };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = (startPageActiveRef.current ? initialPageRef.current : 0) * pageSize + data.length < total;
+  const hasMore = data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
