@@ -324,26 +324,30 @@ function ViewportFilter({
     onViewportSave?.();
   }, [onViewportSave]);
 
-  // Initial filter after map loads
+  // Pierwsze przeliczenie: natychmiast po gotowości mapy ORAZ po każdej zmianie
+  // zbioru atrakcji (piny z RPC dochodzą asynchronicznie). Bez tego licznik
+  // pokazywał cały katalog do pierwszego moveend/zoomend.
   useEffect(() => {
-    // Small delay to let fitBounds settle
+    map.whenReady(() => filterByBounds());
+    // fitBounds/invalidateSize mogą jeszcze zmienić kadr — przelicz ponownie
     const t = setTimeout(() => {
       filterByBounds();
       reportViewport();
     }, 100);
     return () => clearTimeout(t);
-  }, [filterByBounds, reportViewport]);
+  }, [map, filterByBounds, reportViewport]);
+
 
   useMapEvents({
     moveend: () => {
       reportViewport();
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 400);
+      timerRef.current = setTimeout(filterByBounds, 200);
     },
     zoomend: () => {
       reportViewport();
       clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 400);
+      timerRef.current = setTimeout(filterByBounds, 200);
     },
   });
 
@@ -527,7 +531,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const mapPinsFailed = !hasCatalogFilters && pinsError != null;
   const sourceActivities = hasCatalogFilters ? activities : pins;
 
-  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
+  const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
@@ -657,12 +661,10 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return result;
   }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
-  // Piny z RPC dochodzą asynchronicznie — pokaż je w liście, dopóki mapa nie
-  // policzyła własnego zbioru widocznego w viewporcie.
-  useEffect(() => {
-    if (sourceActivities.length === 0) return;
-    setVisibleActivities((prev) => (prev.length === 0 ? sourceActivities : prev));
-  }, [sourceActivities]);
+  // Uwaga: NIE zasilamy tu visibleActivities całym katalogiem. Jedynym źródłem
+  // prawdy jest zbiór przefiltrowany przez kadr mapy (ViewportFilter), który
+  // przelicza się także przy pierwszym renderze.
+
 
   // Kafle w liście / bottom sheecie: dociągamy zdjęcia i miejscowości dla
   // widocznych pinów jedną paczką (RPC ich nie zwraca).
@@ -755,7 +757,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
@@ -882,7 +885,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
-          <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
