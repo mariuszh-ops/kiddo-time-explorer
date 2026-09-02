@@ -247,7 +247,7 @@ const ActivityCard = ({
                     <span className="font-bold text-foreground">{formatRatingPl(displayRating)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    · {formatReviewCount(displayReviewCount)}
+                    · {formatReviewCount(displayReviewCount)}{google_review_count != null ? " w Google" : ""}
                   </span>
                 </div>
               </div>
