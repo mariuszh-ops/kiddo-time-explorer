@@ -323,7 +323,6 @@ const ActivityDetail = () => {
         <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
           <ActivityLoadError
             onRetry={refetch}
-            isRetrying={detailStatus === "loading"}
             message="Sprawdź połączenie i spróbuj ponownie."
           />
         </main>
