@@ -187,7 +187,7 @@ const ActivityDetail = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [slug]);
+  }, [slug, reloadKey]);
 
   const activitiesLoaded = detailStatus !== "loading";
   const activityId = activity?.id ?? 0;
