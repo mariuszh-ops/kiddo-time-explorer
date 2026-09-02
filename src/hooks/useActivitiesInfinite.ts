@@ -148,7 +148,9 @@ export function useActivitiesInfinite(
     };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = initialPageRef.current * pageSize + data.length < total || (!startPageActiveRef.current && data.length < total);
+  // Offset pierwszej pobranej porcji (przy wejściu z ?page=N lista zaczyna się od N-tej strony).
+  const startOffset = (startPageActiveRef.current ? initialPageRef.current : 0) * pageSize;
+  const hasMore = startOffset + data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
