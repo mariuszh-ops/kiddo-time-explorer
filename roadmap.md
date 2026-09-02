@@ -1,7 +1,8 @@
 # Roadmap
 
 ## W toku
-- [ ] Start od góry przy wejściu na listing (scrollRestoration manual + scrollTo po danych)
+- [x] Start od góry przy wejściu na listing (scrollRestoration manual + scrollTo po danych) — ZWERYFIKOWANE
+- [ ] /kategoria/:categorySlug → Mapa gubi kategorię
 
 ## Kolejka
 - [ ] /kategoria/:categorySlug → Mapa gubi kategorię (selectedCategories z parametru trasy; licznik mapy = licznik listingu; powrót zachowuje ścieżkę; też /:regionSlug/:categorySlug)
