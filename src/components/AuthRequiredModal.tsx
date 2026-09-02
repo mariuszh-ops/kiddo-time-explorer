@@ -41,6 +41,52 @@ const AuthRequiredModal = ({
   const [emailMode, setEmailMode] = useState<'signin' | 'signup' | 'reset'>('signin');
   const { markAuthAttempt } = usePendingIntent();
 
+  // A) „Wstecz" zamyka wyłącznie modal, strona zostaje.
+  // Przy otwarciu dokładamy pusty wpis historii (ten sam URL, inny stan),
+  // przy zamknięciu go zdejmujemy. Dzięki temu przycisk „wstecz" w przeglądarce
+  // cofa tylko do poprzedniego wpisu, nie zmieniając adresu strony.
+  const pushedRef = useRef(false);
+  const programmaticCloseRef = useRef(false);
+
+  useEffect(() => {
+    if (isOpen && !pushedRef.current) {
+      window.history.pushState({ [MODAL_HISTORY_KEY]: true }, "", window.location.href);
+      pushedRef.current = true;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      if (programmaticCloseRef.current) {
+        programmaticCloseRef.current = false;
+        return;
+      }
+      if (pushedRef.current && !event.state?.[MODAL_HISTORY_KEY]) {
+        pushedRef.current = false;
+        onClose();
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!isOpen && pushedRef.current) {
+      programmaticCloseRef.current = true;
+      window.history.back();
+      pushedRef.current = false;
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (pushedRef.current && window.history.state?.[MODAL_HISTORY_KEY]) {
+        window.history.replaceState({}, "", window.location.href);
+        pushedRef.current = false;
+      }
+    };
+  }, []);
+
   // Auto-dismiss error after 5 seconds
   useEffect(() => {
     if (error) {
