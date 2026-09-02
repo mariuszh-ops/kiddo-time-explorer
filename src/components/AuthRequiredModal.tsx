@@ -1,8 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const MODAL_HISTORY_KEY = "authModalOpen";
 import { Button } from "@/components/ui/button";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
@@ -13,6 +11,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+
+const MODAL_HISTORY_KEY = "authModalOpen";
 
 interface AuthRequiredModalProps {
   isOpen: boolean;
