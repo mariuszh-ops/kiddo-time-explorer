@@ -281,10 +281,12 @@ function ViewportFilter({
   activities,
   onVisibleChange,
   onCenterChange,
+  onViewportSave,
 }: {
   activities: Activity[];
   onVisibleChange: (visible: Activity[]) => void;
   onCenterChange?: (center: [number, number]) => void;
+  onViewportSave?: () => void;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -299,19 +301,31 @@ function ViewportFilter({
     onCenterChange?.([c.lat, c.lng]);
   }, [map, activities, onVisibleChange, onCenterChange]);
 
+  // Zapis kadru do URL — NATYCHMIAST przy moveend/zoomend (bez debounce),
+  // z odczytem getCenter()/getZoom() w momencie zapisu. Debounce 400 ms
+  // poniżej dotyczy wyłącznie przeliczania listy widocznych pinów.
+  const reportViewport = useCallback(() => {
+    onViewportSave?.();
+  }, [onViewportSave]);
+
   // Initial filter after map loads
   useEffect(() => {
     // Small delay to let fitBounds settle
-    const t = setTimeout(filterByBounds, 100);
+    const t = setTimeout(() => {
+      filterByBounds();
+      reportViewport();
+    }, 100);
     return () => clearTimeout(t);
-  }, [filterByBounds]);
+  }, [filterByBounds, reportViewport]);
 
   useMapEvents({
     moveend: () => {
+      reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 400);
     },
     zoomend: () => {
+      reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 400);
     },
