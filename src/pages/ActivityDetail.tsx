@@ -157,6 +157,9 @@ const ActivityDetail = () => {
   // w globalnej liście. Lista może być pusta na pierwszym wejściu.
   const [activity, setActivity] = useState<Activity | null>(null);
   const [detailStatus, setDetailStatus] = useState<"loading" | "success" | "not-found" | "error">("loading");
+  const [reloadKey, setReloadKey] = useState(0);
+
+  const refetch = () => setReloadKey((k) => k + 1);
 
   useEffect(() => {
     if (!slug) { setDetailStatus("not-found"); return; }
