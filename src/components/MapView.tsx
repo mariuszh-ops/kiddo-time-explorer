@@ -740,7 +740,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton bottomOffset={locateBottomOffset} />
         </MapContainer>
@@ -867,7 +867,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapRefCapture mapRef={mapInstanceRef} />
           <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
           <ClusteredMarkers activities={filteredActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
           <LocateButton />
         </MapContainer>
