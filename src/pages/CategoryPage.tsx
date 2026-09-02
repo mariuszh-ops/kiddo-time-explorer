@@ -253,14 +253,8 @@ const CategoryPage = () => {
     setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
 
-  // Numer strony poza zakresem (?page=999) → ostatnia REALNA strona.
+  // Ostatnia realna strona (hook sam cofa się na nią przy ?page poza zakresem).
   const totalPages = Math.max(1, Math.ceil(total / 24));
-  useEffect(() => {
-    if (loading || total === 0) return;
-    if (pageParam > totalPages) {
-      updateParams({ page: totalPages > 1 ? String(totalPages) : undefined }, { replace: true });
-    }
-  }, [loading, total, totalPages, pageParam, updateParams]);
 
   // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
   useEffect(() => {

@@ -126,6 +126,14 @@ export function useActivitiesInfinite(
         }
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
+        // ?page poza zakresem → cofnij się na ostatnią REALNĄ stronę.
+        if (isInitialFetch && typeof count === "number" && count > 0 && from >= count) {
+          const lastPage = Math.ceil(count / pageSize) - 1;
+          setTotal(count);
+          initialPageRef.current = lastPage;
+          setPage(lastPage);
+          return;
+        }
         const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, from + i)) ?? [];
         setData((prev) => (isInitialFetch ? mapped : [...prev, ...mapped]));
         if (isInitialFetch && typeof count === "number") setTotal(count);
