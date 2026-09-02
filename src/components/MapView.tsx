@@ -547,33 +547,23 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onSaveMapState, selectedCategories]);
 
-  // Live sync (center/zoom/chipsy) — zapisywane od razu, żeby URL był aktualny
-  // przed nawigacją do karty atrakcji (unmount jest już za późno dla historii).
-  // Zapis subskrybuje moveend BEZPOŚREDNIO na instancji Leaflet i czyta
-  // getCenter()/getZoom() w momencie zapisu. Wcześniejsza wersja szła przez
-  // stan Reacta (liveMapCenter ustawiany w debounce 400 ms), więc po
-  // przeciągnięciu myszą do historii trafiała wartość sprzed ostatniego
-  // moveend (albo zapis nie dochodził wcale, gdy nawigacja wyprzedziła timer).
-  useEffect(() => {
+  // Live sync (center/zoom/chipsy) — zapis przy KAŻDYM moveend/zoomend,
+  // wykonywany w ViewportFilter (poniżej) przez handleViewportSave.
+  // Środek i zoom są odczytywane z map.getCenter()/getZoom() w momencie
+  // zapisu — wcześniejsza wersja szła przez stan Reacta ustawiany w
+  // debounce 400 ms, więc po przeciągnięciu myszą do URL trafiała wartość
+  // sprzed ostatniego moveend (albo zapis nie dochodził wcale, gdy
+  // nawigacja do karty wyprzedziła timer).
+  const handleViewportSave = useCallback(() => {
     const map = mapInstanceRef.current;
     if (!map || !onSaveMapState) return;
-    const save = () => {
-      const c = map.getCenter();
-      onSaveMapState({
-        center: [c.lat, c.lng],
-        zoom: map.getZoom(),
-        selectedCategories,
-      });
-    };
-    map.on("moveend", save);
-    // Zapis początkowy (po fitBounds / przywróceniu stanu) — żeby URL był
-    // kompletny jeszcze przed pierwszą interakcją użytkownika.
-    save();
-    return () => {
-      map.off("moveend", save);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategories, onSaveMapState]);
+    const c = map.getCenter();
+    onSaveMapState({
+      center: [c.lat, c.lng],
+      zoom: map.getZoom(),
+      selectedCategories,
+    });
+  }, [onSaveMapState, selectedCategories]);
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
