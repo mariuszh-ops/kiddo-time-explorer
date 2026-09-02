@@ -531,7 +531,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const mapPinsFailed = !hasCatalogFilters && pinsError != null;
   const sourceActivities = hasCatalogFilters ? activities : pins;
 
-  const [visibleActivities, setVisibleActivities] = useState<Activity[]>(sourceActivities);
+  const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
