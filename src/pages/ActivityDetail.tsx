@@ -311,8 +311,25 @@ const ActivityDetail = () => {
   // activity lookup moved above
   
   // Activities still loading → mirror final layout with a skeleton (no white screen, no jump).
-  if (!activitiesLoaded) {
+  if (detailStatus === "loading") {
     return <ActivityDetailSkeleton />;
+  }
+
+  // Query failed (5xx / timeout / offline) → explicit error UI with retry.
+  if (detailStatus === "error") {
+    return (
+      <PageTransition>
+        <Header />
+        <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
+          <ActivityLoadError
+            onRetry={refetch}
+            isRetrying={detailStatus === "loading"}
+            message="Sprawdź połączenie i spróbuj ponownie."
+          />
+        </main>
+        <Footer />
+      </PageTransition>
+    );
   }
 
   // Activities loaded but slug doesn't match → real 404, do not loop on the skeleton.
