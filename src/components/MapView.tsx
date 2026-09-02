@@ -549,17 +549,31 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   // Live sync (center/zoom/chipsy) — zapisywane od razu, żeby URL był aktualny
   // przed nawigacją do karty atrakcji (unmount jest już za późno dla historii).
+  // Zapis subskrybuje moveend BEZPOŚREDNIO na instancji Leaflet i czyta
+  // getCenter()/getZoom() w momencie zapisu. Wcześniejsza wersja szła przez
+  // stan Reacta (liveMapCenter ustawiany w debounce 400 ms), więc po
+  // przeciągnięciu myszą do historii trafiała wartość sprzed ostatniego
+  // moveend (albo zapis nie dochodził wcale, gdy nawigacja wyprzedziła timer).
   useEffect(() => {
     const map = mapInstanceRef.current;
     if (!map || !onSaveMapState) return;
-    const c = map.getCenter();
-    onSaveMapState({
-      center: [c.lat, c.lng],
-      zoom: map.getZoom(),
-      selectedCategories,
-    });
+    const save = () => {
+      const c = map.getCenter();
+      onSaveMapState({
+        center: [c.lat, c.lng],
+        zoom: map.getZoom(),
+        selectedCategories,
+      });
+    };
+    map.on("moveend", save);
+    // Zapis początkowy (po fitBounds / przywróceniu stanu) — żeby URL był
+    // kompletny jeszcze przed pierwszą interakcją użytkownika.
+    save();
+    return () => {
+      map.off("moveend", save);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [liveMapCenter, selectedCategories, onSaveMapState]);
+  }, [selectedCategories, onSaveMapState]);
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>
