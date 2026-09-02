@@ -50,9 +50,7 @@ const AuthRequiredModal = ({
 
   useEffect(() => {
     if (isOpen && !pushedRef.current) {
-      console.log("[AuthModal] pushing state, before length:", window.history.length, "state:", window.history.state);
       window.history.pushState({ [MODAL_HISTORY_KEY]: true }, "", window.location.href);
-      console.log("[AuthModal] after push length:", window.history.length, "state:", window.history.state);
       pushedRef.current = true;
     }
   }, [isOpen]);
