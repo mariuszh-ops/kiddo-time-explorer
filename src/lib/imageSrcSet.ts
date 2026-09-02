@@ -29,6 +29,22 @@ export function buildSrcSet(src: string): string | undefined {
   return undefined;
 }
 
+/**
+ * Nie każda atrakcja ma w R2 warianty -320/-480/-640 (np. zdjęcia wgrane
+ * później). Gdy przeglądarka wybierze taki wariant i dostanie 404, zdejmujemy
+ * srcset — wtedy ponowi próbę z oryginałem z `src` zamiast pokazać dziurę.
+ * Zwraca `true`, jeśli podjęto taką próbę (czyli NIE należy jeszcze uznawać
+ * obrazu za zepsuty).
+ */
+export function fallbackToOriginal(img: HTMLImageElement): boolean {
+  if (img.srcset && /-(320|480|640)\.webp$/i.test(img.currentSrc || "")) {
+    img.srcset = "";
+    img.sizes = "";
+    return true;
+  }
+  return false;
+}
+
 /** Rozmiary dla kafla w karuzeli (~211 px na telefonie). */
 export const CAROUSEL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px";
 /** Rozmiary dla kafla w siatce listingu. */

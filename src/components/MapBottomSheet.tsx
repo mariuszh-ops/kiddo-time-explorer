@@ -7,6 +7,7 @@ import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import MapCategoryChips from "./MapCategoryChips";
 import { formatRatingPl } from "@/lib/formatRating";
+import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -469,10 +470,14 @@ function SheetActivityCard({
       ) : (
         <img
           src={activity.imageUrl}
+          srcSet={buildSrcSet(activity.imageUrl)}
+          sizes="64px"
           alt={activity.title}
           className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
           loading="lazy"
-          onError={() => setImgError(true)}
+          onError={(e) => {
+            if (!fallbackToOriginal(e.currentTarget)) setImgError(true);
+          }}
         />
       )}
       <div className="flex-1 min-w-0 py-0.5 pr-6">

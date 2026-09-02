@@ -5,6 +5,7 @@ import { UserRating, useUserRatings } from "@/contexts/UserRatingsContext";
 import { useMyPendingReviews } from "@/hooks/useMyPendingReviews";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
+import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 interface VisitedActivityCardProps {
   activity: Activity & { userRating: UserRating };
@@ -32,9 +33,14 @@ const VisitedActivityCard = ({ activity }: VisitedActivityCardProps) => {
         <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg overflow-hidden shrink-0 bg-muted">
           <img
             src={activity.imageUrl}
+            srcSet={buildSrcSet(activity.imageUrl)}
+            sizes="(max-width: 768px) 80px, 96px"
             alt={activity.title}
             loading="lazy"
             decoding="async"
+            onError={(e) => {
+              fallbackToOriginal(e.currentTarget);
+            }}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>

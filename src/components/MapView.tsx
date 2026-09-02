@@ -19,6 +19,7 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
+import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -123,12 +124,19 @@ const favButtonMarkup = (isFav: boolean) => `
     <svg viewBox="0 0 24 24" width="18" height="18" fill="${isFav ? "#ef4444" : "none"}" stroke="${isFav ? "#ef4444" : "#ffffff"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
   </button>`;
 
+// Popup Leafleta budujemy jako HTML, wiec srcset/sizes wstawiamy tekstem.
+// Kadr 220x120 px -> przegladarka wybierze wariant 320w zamiast oryginalu 1200 px.
+const popupSrcSetAttrs = (src?: string | null) => {
+  const set = buildSrcSet(src ?? "");
+  return set ? ` srcset="${set}" sizes="220px"` : "";
+};
+
 const createPopupContent = (activity: Activity, isFav: boolean) => {
   return `
     <div style="position:relative;width:220px;">
     ${favButtonMarkup(isFav)}
     <a href="/atrakcje/${activity.slug}" style="text-decoration:none;color:inherit;display:block;width:220px;">
-      <img src="${activity.imageUrl}" alt="${activity.title}" loading="lazy" onerror="this.style.display='none'" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
+      <img src="${activity.imageUrl}"${popupSrcSetAttrs(activity.imageUrl)} alt="${activity.title}" loading="lazy" onerror="if(this.srcset){this.srcset='';this.sizes='';}else{this.style.display='none';}" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
       <div style="padding:8px 10px;">
         <div style="font-weight:600;font-size:14px;margin-bottom:4px;color:#1a1a1a;">${activity.title}</div>
         <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#666;">
@@ -938,10 +946,14 @@ function MiniActivityCard({
       ) : (
         <img
           src={activity.imageUrl}
+          srcSet={buildSrcSet(activity.imageUrl)}
+          sizes="80px"
           alt={activity.title}
           className="w-20 h-20 rounded-lg object-cover flex-shrink-0"
           loading="lazy"
-          onError={() => setImgError(true)}
+          onError={(e) => {
+            if (!fallbackToOriginal(e.currentTarget)) setImgError(true);
+          }}
         />
       )}
       <div className="flex-1 min-w-0 py-0.5">

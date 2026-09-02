@@ -9,6 +9,7 @@ import { persistSearchInHistory } from "@/lib/searchHistory";
 import { matchesSearchQuery, normalizeSearchText } from "@/lib/searchMatch";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
+import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 interface SearchAutocompleteProps {
   activities: Activity[];
@@ -258,10 +259,14 @@ const SearchAutocomplete = ({
                     >
                       <img
                         src={activity.imageUrl}
+                        srcSet={buildSrcSet(activity.imageUrl)}
+                        sizes="40px"
                         alt={activity.title}
                         className="w-10 h-10 rounded-lg object-cover shrink-0 bg-muted"
                         loading="lazy"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        onError={(e) => {
+                          if (!fallbackToOriginal(e.currentTarget)) e.currentTarget.style.display = 'none';
+                        }}
                       />
                       <div className="min-w-0 flex-1">
                         <span className="text-sm font-medium text-foreground truncate block">
