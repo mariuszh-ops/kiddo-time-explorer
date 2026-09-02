@@ -50,6 +50,7 @@ import { useActivityRating } from "@/hooks/useActivityRating";
 import OpeningHoursDisplay from "@/components/OpeningHoursDisplay";
 import { buildOpeningHoursSpecification } from "@/lib/openingHoursSchema";
 import ActivityDetailSkeleton from "@/components/ActivityDetailSkeleton";
+import ActivityLoadError from "@/components/ActivityLoadError";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
