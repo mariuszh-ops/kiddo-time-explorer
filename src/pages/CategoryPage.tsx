@@ -115,7 +115,7 @@ const CategoryPage = () => {
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
   const urlSearch = searchParams.get("search")?.trim() ?? "";
   // ?page=N (1-based) → N-ta porcja wyników. Linki paginacji renderujemy pod listą.
-  const pageParam = Math.max(1, Math.min(Number(searchParams.get("page") ?? "1") || 1, 500));
+  const pageParam = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
   const initialPage = pageParam - 1;
 
   // If a category is set in the route, it wins over any URL ?type=
@@ -252,6 +252,9 @@ const CategoryPage = () => {
   const clearAll = useCallback(() => {
     setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
+
+  // Ostatnia realna strona (hook sam cofa się na nią przy ?page poza zakresem).
+  const totalPages = Math.max(1, Math.ceil(total / 24));
 
   // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
   useEffect(() => {
@@ -653,7 +656,7 @@ const CategoryPage = () => {
               basePath={path}
               searchParams={searchParams}
               currentPage={pageParam}
-              totalPages={Math.max(1, Math.ceil(total / 24))}
+              totalPages={totalPages}
             />
           )}
 

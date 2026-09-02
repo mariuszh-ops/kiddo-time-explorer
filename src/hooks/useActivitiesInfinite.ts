@@ -22,7 +22,8 @@ export interface UseActivitiesInfiniteResult {
 }
 
 /**
- * Serwerowa paginacja z akumulacją stron. Domyślnie 24 rekordy per strona
+ * Serwerowa paginacja. Strona N pobiera dokładnie swoje `pageSize` rekordów
+ * (`?page=N` to punkt wejścia, nie kumulacja 1..N). Domyślnie 24 rekordy per strona
  * (`.range()` w Supabase, `count: 'exact'` tylko przy pierwszej stronie).
  * Zmiana filtrów resetuje stronę i akumulację.
  */
@@ -40,7 +41,7 @@ export function useActivitiesInfinite(
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
   // Strona startowa czytana raz — późniejsze zmiany URL nie resetują listy.
-  const initialPageRef = useRef(Math.max(0, Math.min(initialPage, 20)));
+  const initialPageRef = useRef(Math.max(0, initialPage));
   // Klucz filtrów, dla którego strona startowa jeszcze obowiązuje.
   const initialFilterKeyRef = useRef(filterKey);
   // Po pierwszej zmianie filtrów strona startowa jest „zużyta” — resety idą na 0.
@@ -73,10 +74,9 @@ export function useActivitiesInfinite(
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
     const startPage = startPageActiveRef.current ? initialPageRef.current : 0;
     const isInitialFetch = page === startPage;
-    // Strona startowa (?page=N) przywraca całą listę od początku do N-tej
-    // porcji w JEDNYM zapytaniu (0..N*pageSize-1) — tak jak przed wejściem
-    // w kartę atrakcji. Po zmianie filtra zapytanie zaczyna się od wiersza 0.
-    const from = isInitialFetch ? 0 : page * pageSize;
+    // Każda strona pobiera WYŁĄCZNIE swoje `pageSize` pozycji — brak kumulacji
+    // stron 1..N (dawny sufit 504 wierszy). „Pokaż więcej" dokleja kolejne porcje.
+    const from = page * pageSize;
     const to = page * pageSize + pageSize - 1;
 
 
@@ -88,45 +88,72 @@ export function useActivitiesInfinite(
       setLoadingMore(false);
     };
 
+    const buildQuery = (headOnly: boolean) => {
+      let q = catalogClient
+        .from("public_activities")
+        .select(headOnly ? "place_id" : CARD_COLUMNS, headOnly ? { count: "exact", head: true } : isInitialFetch ? { count: "exact" } : {})
+        .eq("published", true);
+      if (region) q = q.eq("region", region);
+      if (type) q = q.eq("type", type);
+      if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
+      if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
+      if (!includeUncertain) q = q.eq("uncertain", false);
+      if (onlyFree) q = q.eq("is_free", true);
+      if (searchTerm.length >= 2) {
+        q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
+      }
+      // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
+      if (typeof ageMin === "number" && typeof ageMax === "number") {
+        q = q.lte("age_min", ageMax).gte("age_max", ageMin);
+      }
+      if (sort === "name") q = q.order("name", { ascending: true });
+      else if (sort === "reviews")
+        q = q.order("reviews_count", { ascending: false, nullsFirst: false })
+             .order("rating", { ascending: false, nullsFirst: false });
+      else
+        q = q.order("rating", { ascending: false, nullsFirst: false })
+             .order("reviews_count", { ascending: false, nullsFirst: false });
+      return q;
+    };
+
     (async () => {
       try {
         if (!isInitialFetch) setLoadingMore(true);
         else setLoading(true);
         timeoutId = setTimeout(failWithTimeout, QUERY_TIMEOUT_MS);
-        let q = catalogClient
-          .from("public_activities")
-          .select(CARD_COLUMNS, isInitialFetch ? { count: "exact" } : {})
-          .eq("published", true);
-        if (region) q = q.eq("region", region);
-        if (type) q = q.eq("type", type);
-        if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
-        if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
-        if (!includeUncertain) q = q.eq("uncertain", false);
-        if (onlyFree) q = q.eq("is_free", true);
-        if (searchTerm.length >= 2) {
-          q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
-        }
-        // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
-        if (typeof ageMin === "number" && typeof ageMax === "number") {
-          q = q.lte("age_min", ageMax).gte("age_max", ageMin);
-        }
-        if (sort === "name") q = q.order("name", { ascending: true });
-        else if (sort === "reviews")
-          q = q.order("reviews_count", { ascending: false, nullsFirst: false })
-               .order("rating", { ascending: false, nullsFirst: false });
-        else
-          q = q.order("rating", { ascending: false, nullsFirst: false })
-               .order("reviews_count", { ascending: false, nullsFirst: false });
-        q = q.range(from, to);
 
-        const { data: rows, count, error: err } = await q;
+        let effectiveFrom = from;
+        let effectiveTo = to;
+        // Wejście z ?page=N poza zakresem → policz wyniki i cofnij na ostatnią REALNĄ stronę.
+        if (isInitialFetch && page > 0) {
+          const { count: headCount, error: headErr } = await buildQuery(true);
+          if (headErr) throw headErr;
+          if (cancelled || activeKey.current !== keyAtStart) return;
+          const totalRows = headCount ?? 0;
+          if (totalRows === 0) {
+            setData([]);
+            setTotal(0);
+            return;
+          }
+          const lastPage = Math.ceil(totalRows / pageSize) - 1;
+          if (page > lastPage) {
+            setTotal(totalRows);
+            initialPageRef.current = lastPage;
+            setPage(lastPage);
+            return;
+          }
+          effectiveFrom = page * pageSize;
+          effectiveTo = effectiveFrom + pageSize - 1;
+        }
+
+        const { data: rows, count, error: err } = await buildQuery(false).range(effectiveFrom, effectiveTo);
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
         }
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
-        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, from + i)) ?? [];
+        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, effectiveFrom + i)) ?? [];
         setData((prev) => (isInitialFetch ? mapped : [...prev, ...mapped]));
         if (isInitialFetch && typeof count === "number") setTotal(count);
       } catch (e) {
@@ -148,7 +175,9 @@ export function useActivitiesInfinite(
     };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = data.length < total;
+  // Offset pierwszej pobranej porcji (przy wejściu z ?page=N lista zaczyna się od N-tej strony).
+  const startOffset = (startPageActiveRef.current ? initialPageRef.current : 0) * pageSize;
+  const hasMore = startOffset + data.length < total;
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
