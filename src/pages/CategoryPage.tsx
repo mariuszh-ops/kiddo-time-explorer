@@ -305,8 +305,13 @@ const CategoryPage = () => {
     // Czekaj, aż doładowane („Pokaż więcej") strony faktycznie dojdą.
     if (page > initialPage && activities.length <= 24) return;
     restoredRef.current = true;
-    // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę listingu.
-    if (!isBackNavigation) return;
+    // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę
+    // listingu. Reset powtarzamy po dojściu kart: dokument urósł od pierwszego
+    // scrollTo(0,0) i bez tego klatka mogła zostać z dalszej części strony.
+    if (!isBackNavigation) {
+      window.scrollTo(0, 0);
+      return;
+    }
     let saved = 0;
     try {
       saved = Number(sessionStorage.getItem(scrollKey) ?? "0") || 0;
