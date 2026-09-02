@@ -22,7 +22,8 @@ export interface UseActivitiesInfiniteResult {
 }
 
 /**
- * Serwerowa paginacja z akumulacją stron. Domyślnie 24 rekordy per strona
+ * Serwerowa paginacja. Strona N pobiera dokładnie swoje `pageSize` rekordów
+ * (`?page=N` to punkt wejścia, nie kumulacja 1..N). Domyślnie 24 rekordy per strona
  * (`.range()` w Supabase, `count: 'exact'` tylko przy pierwszej stronie).
  * Zmiana filtrów resetuje stronę i akumulację.
  */
@@ -40,7 +41,7 @@ export function useActivitiesInfinite(
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
   // Strona startowa czytana raz — późniejsze zmiany URL nie resetują listy.
-  const initialPageRef = useRef(Math.max(0, Math.min(initialPage, 20)));
+  const initialPageRef = useRef(Math.max(0, initialPage));
   // Klucz filtrów, dla którego strona startowa jeszcze obowiązuje.
   const initialFilterKeyRef = useRef(filterKey);
   // Po pierwszej zmianie filtrów strona startowa jest „zużyta” — resety idą na 0.
@@ -73,10 +74,9 @@ export function useActivitiesInfinite(
     // (przywrócenie stanu „Pokaż więcej" po powrocie wstecz).
     const startPage = startPageActiveRef.current ? initialPageRef.current : 0;
     const isInitialFetch = page === startPage;
-    // Strona startowa (?page=N) przywraca całą listę od początku do N-tej
-    // porcji w JEDNYM zapytaniu (0..N*pageSize-1) — tak jak przed wejściem
-    // w kartę atrakcji. Po zmianie filtra zapytanie zaczyna się od wiersza 0.
-    const from = isInitialFetch ? 0 : page * pageSize;
+    // Każda strona pobiera WYŁĄCZNIE swoje `pageSize` pozycji — brak kumulacji
+    // stron 1..N (dawny sufit 504 wierszy). „Pokaż więcej" dokleja kolejne porcje.
+    const from = page * pageSize;
     const to = page * pageSize + pageSize - 1;
 
 
@@ -148,7 +148,7 @@ export function useActivitiesInfinite(
     };
   }, [filterKey, page, pageSize, region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm, reloadToken]);
 
-  const hasMore = data.length < total;
+  const hasMore = initialPageRef.current * pageSize + data.length < total || (!startPageActiveRef.current && data.length < total);
   const loadMore = () => {
     if (!loading && !loadingMore && hasMore) setPage((p) => p + 1);
   };
