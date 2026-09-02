@@ -661,12 +661,10 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return result;
   }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
-  // Piny z RPC dochodzą asynchronicznie — pokaż je w liście, dopóki mapa nie
-  // policzyła własnego zbioru widocznego w viewporcie.
-  useEffect(() => {
-    if (sourceActivities.length === 0) return;
-    setVisibleActivities((prev) => (prev.length === 0 ? sourceActivities : prev));
-  }, [sourceActivities]);
+  // Uwaga: NIE zasilamy tu visibleActivities całym katalogiem. Jedynym źródłem
+  // prawdy jest zbiór przefiltrowany przez kadr mapy (ViewportFilter), który
+  // przelicza się także przy pierwszym renderze.
+
 
   // Kafle w liście / bottom sheecie: dociągamy zdjęcia i miejscowości dla
   // widocznych pinów jedną paczką (RPC ich nie zwraca).
