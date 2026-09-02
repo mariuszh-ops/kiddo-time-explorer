@@ -324,15 +324,19 @@ function ViewportFilter({
     onViewportSave?.();
   }, [onViewportSave]);
 
-  // Initial filter after map loads
+  // Pierwsze przeliczenie: natychmiast po gotowości mapy ORAZ po każdej zmianie
+  // zbioru atrakcji (piny z RPC dochodzą asynchronicznie). Bez tego licznik
+  // pokazywał cały katalog do pierwszego moveend/zoomend.
   useEffect(() => {
-    // Small delay to let fitBounds settle
+    map.whenReady(() => filterByBounds());
+    // fitBounds/invalidateSize mogą jeszcze zmienić kadr — przelicz ponownie
     const t = setTimeout(() => {
       filterByBounds();
       reportViewport();
     }, 100);
     return () => clearTimeout(t);
-  }, [filterByBounds, reportViewport]);
+  }, [map, filterByBounds, reportViewport]);
+
 
   useMapEvents({
     moveend: () => {
