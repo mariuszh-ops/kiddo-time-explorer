@@ -88,53 +88,72 @@ export function useActivitiesInfinite(
       setLoadingMore(false);
     };
 
+    const buildQuery = (headOnly: boolean) => {
+      let q = catalogClient
+        .from("public_activities")
+        .select(headOnly ? "place_id" : CARD_COLUMNS, headOnly ? { count: "exact", head: true } : isInitialFetch ? { count: "exact" } : {})
+        .eq("published", true);
+      if (region) q = q.eq("region", region);
+      if (type) q = q.eq("type", type);
+      if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
+      if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
+      if (!includeUncertain) q = q.eq("uncertain", false);
+      if (onlyFree) q = q.eq("is_free", true);
+      if (searchTerm.length >= 2) {
+        q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
+      }
+      // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
+      if (typeof ageMin === "number" && typeof ageMax === "number") {
+        q = q.lte("age_min", ageMax).gte("age_max", ageMin);
+      }
+      if (sort === "name") q = q.order("name", { ascending: true });
+      else if (sort === "reviews")
+        q = q.order("reviews_count", { ascending: false, nullsFirst: false })
+             .order("rating", { ascending: false, nullsFirst: false });
+      else
+        q = q.order("rating", { ascending: false, nullsFirst: false })
+             .order("reviews_count", { ascending: false, nullsFirst: false });
+      return q;
+    };
+
     (async () => {
       try {
         if (!isInitialFetch) setLoadingMore(true);
         else setLoading(true);
         timeoutId = setTimeout(failWithTimeout, QUERY_TIMEOUT_MS);
-        let q = catalogClient
-          .from("public_activities")
-          .select(CARD_COLUMNS, isInitialFetch ? { count: "exact" } : {})
-          .eq("published", true);
-        if (region) q = q.eq("region", region);
-        if (type) q = q.eq("type", type);
-        if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
-        if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
-        if (!includeUncertain) q = q.eq("uncertain", false);
-        if (onlyFree) q = q.eq("is_free", true);
-        if (searchTerm.length >= 2) {
-          q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
-        }
-        // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
-        if (typeof ageMin === "number" && typeof ageMax === "number") {
-          q = q.lte("age_min", ageMax).gte("age_max", ageMin);
-        }
-        if (sort === "name") q = q.order("name", { ascending: true });
-        else if (sort === "reviews")
-          q = q.order("reviews_count", { ascending: false, nullsFirst: false })
-               .order("rating", { ascending: false, nullsFirst: false });
-        else
-          q = q.order("rating", { ascending: false, nullsFirst: false })
-               .order("reviews_count", { ascending: false, nullsFirst: false });
-        q = q.range(from, to);
 
-        const { data: rows, count, error: err } = await q;
+        let effectiveFrom = from;
+        let effectiveTo = to;
+        // Wejście z ?page=N poza zakresem → policz wyniki i cofnij na ostatnią REALNĄ stronę.
+        if (isInitialFetch && page > 0) {
+          const { count: headCount, error: headErr } = await buildQuery(true);
+          if (headErr) throw headErr;
+          if (cancelled || activeKey.current !== keyAtStart) return;
+          const totalRows = headCount ?? 0;
+          if (totalRows === 0) {
+            setData([]);
+            setTotal(0);
+            return;
+          }
+          const lastPage = Math.ceil(totalRows / pageSize) - 1;
+          if (page > lastPage) {
+            setTotal(totalRows);
+            initialPageRef.current = lastPage;
+            setPage(lastPage);
+            return;
+          }
+          effectiveFrom = page * pageSize;
+          effectiveTo = effectiveFrom + pageSize - 1;
+        }
+
+        const { data: rows, count, error: err } = await buildQuery(false).range(effectiveFrom, effectiveTo);
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
         }
         if (err) throw err;
         if (cancelled || activeKey.current !== keyAtStart) return;
-        // ?page poza zakresem → cofnij się na ostatnią REALNĄ stronę.
-        if (isInitialFetch && typeof count === "number" && count > 0 && from >= count) {
-          const lastPage = Math.ceil(count / pageSize) - 1;
-          setTotal(count);
-          initialPageRef.current = lastPage;
-          setPage(lastPage);
-          return;
-        }
-        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, from + i)) ?? [];
+        const mapped = (rows as unknown as CatalogRow[] | null)?.map((r, i) => mapCatalogRow(r, effectiveFrom + i)) ?? [];
         setData((prev) => (isInitialFetch ? mapped : [...prev, ...mapped]));
         if (isInitialFetch && typeof count === "number") setTotal(count);
       } catch (e) {
