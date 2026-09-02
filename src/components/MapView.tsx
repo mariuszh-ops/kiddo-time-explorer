@@ -128,7 +128,14 @@ const favButtonMarkup = (isFav: boolean) => `
 // Kadr 220x120 px -> przegladarka wybierze wariant 320w zamiast oryginalu 1200 px.
 const popupSrcSetAttrs = (src?: string | null) => {
   const set = buildSrcSet(src ?? "");
-  return set ? ` srcset="${set}" sizes="220px"` : "";
+  if (!set) return "";
+  // Kadr popupu to 220x120 px. Bez odciecia kandydata 1200w telefon z DPR 3
+  // (220 x 3 = 660 px) siegnalby po oryginal, a wariant 640 px w zupelnosci wystarcza.
+  const bezOryginalu = set
+    .split(", ")
+    .filter((k) => !/\s1200w$/.test(k))
+    .join(", ");
+  return ` srcset="${bezOryginalu}" sizes="220px"`;
 };
 
 const createPopupContent = (activity: Activity, isFav: boolean) => {
