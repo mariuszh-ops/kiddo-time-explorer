@@ -103,7 +103,7 @@ const FilterBar = ({
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && !hideSearch && (
-              <div className="mb-3 [&_>*]:w-full">
+              <div className="mb-3 w-full [&_input]:!w-full">
                 <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
                   <SearchAutocomplete
                     activities={getActivities()}
