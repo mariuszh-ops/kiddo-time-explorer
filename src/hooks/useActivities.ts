@@ -120,14 +120,22 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
   return { data, total, loading, error };
 }
 
-/** Pobiera pojedynczą atrakcję po slug (dla strony szczegółów). */
+/**
+ * Pobiera pojedynczą atrakcję po slug (dla strony szczegółów).
+ * `null` oznacza WYŁĄCZNIE „nie ma takiego wiersza" (pusta tablica z PostgREST).
+ * Awaria (błąd, timeout, uszkodzone body) leci wyjątkiem, żeby karta pokazała
+ * komunikat o błędzie zamiast udawać 404 (audyt: J-02).
+ */
 export async function fetchActivityBySlug(slug: string): Promise<Activity | null> {
   const { data, error } = await catalogClient
     .from("public_activities")
     .select("*")
     .eq("slug", slug)
-    .maybeSingle();
+    .limit(1);
   if (error) throw error;
-  if (!data) return null;
-  return mapCatalogRow(data as CatalogRow);
+  // Poprawna odpowiedź to zawsze tablica. Cokolwiek innego (np. body `null`
+  // z uszkodzonej odpowiedzi 200) to awaria, nie brak atrakcji.
+  if (!Array.isArray(data)) throw new Error("Nieprawidłowa odpowiedź serwera katalogu");
+  if (data.length === 0) return null;
+  return mapCatalogRow(data[0] as CatalogRow);
 }

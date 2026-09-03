@@ -182,6 +182,8 @@ const ReviewsSection = ({
   const [userReviews, setUserReviews] = useState<PublicReviewRow[]>([]);
   const [myReview, setMyReview] = useState<UserReviewRow | null>(null);
   const [loading, setLoading] = useState(true);
+  // Awaria public_reviews nie może wyglądać jak „nikt nie dodał opinii" (audyt: L-05).
+  const [loadError, setLoadError] = useState(false);
 
   // Form state
   const [rating, setRating] = useState(0);
@@ -199,6 +201,7 @@ const ReviewsSection = ({
       return;
     }
     setLoading(true);
+    setLoadError(false);
 
     // Publiczne opinie: JEDYNE źródło to widok public_reviews (tylko zatwierdzone,
     // czytany kluczem anon). Rola anon nie ma dostępu do user_reviews.
@@ -222,6 +225,7 @@ const ReviewsSection = ({
 
     if (publicRes.error) {
       console.error("Failed to load public reviews", publicRes.error);
+      setLoadError(true);
     }
     const mine = (mineRes && !mineRes.error ? (mineRes.data as UserReviewRow | null) : null) ?? null;
     setMyReview(mine);
@@ -297,7 +301,24 @@ const ReviewsSection = ({
       await loadReviews();
     } catch (e) {
       console.error(e);
-      toast.error("Nie udało się zapisać opinii. Spróbuj ponownie.");
+      // Limit „5 opinii na godzinę" pilnuje trigger i to on niesie treść dla
+      // użytkownika — komunikat ogólny sugerowałby awarię i kolejne próby
+      // (audyt: N-06). Ten sam wzorzec co formularz zgłoszeń.
+      const err = e as { code?: string; message?: string; status?: number };
+      const msg = (err?.message || "").toLowerCase();
+      const isRateLimit =
+        err?.code === "P0001" ||
+        err?.code === "PT429" ||
+        err?.status === 429 ||
+        msg.includes("na godzinę") ||
+        msg.includes("rate") ||
+        msg.includes("too many") ||
+        msg.includes("zbyt wiele");
+      if (isRateLimit && err?.message?.trim()) {
+        toast.error(err.message);
+      } else {
+        toast.error("Nie udało się zapisać opinii. Spróbuj ponownie.");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -571,6 +592,21 @@ const ReviewsSection = ({
           </div>
         )}
 
+        {/* Awaria wczytywania — komunikat zamiast cichej pustki (L-05) */}
+        {!loading && loadError && (
+          <div
+            role="alert"
+            className="mb-3 rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 flex flex-wrap items-center justify-between gap-2"
+          >
+            <span className="text-sm text-foreground">
+              Nie udało się wczytać opinii rodziców.
+            </span>
+            <Button variant="outline" size="sm" onClick={() => loadReviews()}>
+              Spróbuj ponownie
+            </Button>
+          </div>
+        )}
+
         {/* Lista opinii: najpierw FamilyFun (approved), potem Google */}
         {loading ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
@@ -617,7 +653,7 @@ const ReviewsSection = ({
             ))}
           </ul>
         ) : (
-          !showForm && (
+          !showForm && !loadError && (
             <div className="py-6 text-center text-sm text-muted-foreground">
               Jeszcze nikt nie dodał opinii.
             </div>

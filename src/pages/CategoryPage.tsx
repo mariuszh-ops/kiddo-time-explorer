@@ -152,7 +152,7 @@ const CategoryPage = () => {
   // wczytaną stronę listingu (24). Piny bierzemy z tego samego cache co home
   // (rpc get_map_pins) i filtrujemy po stronie klienta tak samo jak backend.
   const mapEnabled = FEATURES.MAP_VIEW && viewMode === "map";
-  const { pins } = useMapPins(mapEnabled);
+  const { pins, error: pinsError, refetch: refetchPins } = useMapPins(mapEnabled);
 
   // Filtry, których NIE ma w tuplach get_map_pins (min / auto=0 / amenities).
   // Dla nich dociągamy z katalogu same slugi spełniające komplet warunków.
@@ -547,8 +547,10 @@ const CategoryPage = () => {
             </div>
           )}
 
-          {/* Licznik — ukryty przy błędzie, bo „0 atrakcji" byłoby nieprawdą */}
-          {!isError && (
+          {/* Licznik — ukryty przy błędzie, bo „0 atrakcji" byłoby nieprawdą.
+              Tak samo przy awarii pinów mapy: liczba z listingu opisywałaby
+              pustą mapę i kłamała (audyt: J-01). */}
+          {!isError && !(mapEnabled && pinsError) && (
             <p
               className="text-sm text-muted-foreground mb-4 min-h-5"
               aria-live="polite"
@@ -617,6 +619,8 @@ const CategoryPage = () => {
                     onViewModeChange={(mode) => setViewMode(mode)}
                     savedMapState={savedMapState}
                     onSaveMapState={handleSaveMapState}
+                    pinsError={pinsError}
+                    onPinsRetry={refetchPins}
                   />
                 </Suspense>
               ) : (

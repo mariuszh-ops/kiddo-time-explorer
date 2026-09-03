@@ -508,9 +508,13 @@ interface MapViewProps {
   onViewModeChange?: (mode: "grid" | "map", visibleActivities?: Activity[]) => void;
   savedMapState?: SavedMapState | null;
   onSaveMapState?: (state: SavedMapState) => void;
+  /** Błąd pobrania pinów po stronie rodzica (gdy to on woła useMapPins). */
+  pinsError?: Error | null;
+  /** Ponowienie pobrania pinów rodzica — parą do `pinsError`. */
+  onPinsRetry?: () => void;
 }
 
-const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry }: MapViewProps) => {
   const isMobile = useIsMobile();
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
@@ -527,8 +531,14 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }),
     [filters],
   );
-  const { pins, error: pinsError, refetch: refetchPins } = useMapPins(!hasCatalogFilters);
-  const mapPinsFailed = !hasCatalogFilters && pinsError != null;
+  const { pins, error: ownPinsError, refetch: refetchOwnPins } = useMapPins(!hasCatalogFilters);
+  // Awaria pinów przychodzi z dwóch stron: z własnego hooka (mapa bez filtrów
+  // katalogu) albo od rodzica, który sam woła useMapPins (CategoryPage z filtrem
+  // regionu/kategorii). Bez tej drugiej ścieżki mapa regionu przy 500/429 udawała
+  // pustkę: 0 pinów, zero komunikatu (audyt: J-01 / A-11).
+  const pinsFetchError = pinsError ?? (!hasCatalogFilters ? ownPinsError : null);
+  const mapPinsFailed = pinsFetchError != null;
+  const refetchPins = pinsError != null ? onPinsRetry : refetchOwnPins;
   const sourceActivities = hasCatalogFilters ? activities : pins;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
@@ -806,7 +816,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
           onShowAll={handleShowAll}
-          error={mapPinsFailed ? pinsError : null}
+          error={pinsFetchError}
           onRetry={refetchPins}
         />
       </div>

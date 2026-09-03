@@ -16,7 +16,10 @@ const TABS = [
   { to: "/admin/dashboard", label: "Dashboard", badge: null },
 ];
 
-type AdminStatus = "checking" | "allowed" | "denied";
+// "denied" = is_admin zwróciło false (odmowa). "error" = nie udało się
+// sprawdzić uprawnień (5xx/sieć) — administrator ma dostać ponowienie,
+// a nie komunikat, że stracił dostęp (audyt: L-04).
+type AdminStatus = "checking" | "allowed" | "denied" | "error";
 
 const AdminLayout = () => {
   const { isLoggedIn, user, signInWithGoogle, signOut } = useAuth();
@@ -24,6 +27,7 @@ const AdminLayout = () => {
   const location = useLocation();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [status, setStatus] = useState<AdminStatus>("checking");
+  const [adminCheckKey, setAdminCheckKey] = useState(0);
   const [stats, setStats] = useState<AdminStats | null>(null);
 
   // Auth gate — open existing sign-in flow if not logged in.
@@ -45,15 +49,19 @@ const AdminLayout = () => {
       try {
         const { data, error } = await catalogClient.rpc("is_admin");
         if (cancelled) return;
-        setStatus(!error && data === true ? "allowed" : "denied");
+        if (error) {
+          setStatus("error");
+          return;
+        }
+        setStatus(data === true ? "allowed" : "denied");
       } catch {
-        if (!cancelled) setStatus("denied");
+        if (!cancelled) setStatus("error");
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [isLoggedIn, user?.id]);
+  }, [isLoggedIn, user?.id, adminCheckKey]);
 
   // Jedno wywołanie admin_stats na wejściu do panelu — używamy do badge'y
   // przy zakładkach ORAZ przekazujemy dalej do AdminDashboard przez outlet context.
@@ -100,6 +108,17 @@ const AdminLayout = () => {
         <div className="min-h-screen flex items-center justify-center text-muted-foreground">
           <Loader2 className="w-5 h-5 animate-spin mr-2" />
           Sprawdzanie uprawnień…
+        </div>
+      ) : status === "error" ? (
+        <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center">
+          <h1 className="text-2xl font-semibold">Nie udało się sprawdzić uprawnień</h1>
+          <p className="text-muted-foreground max-w-md">
+            To chwilowy problem z połączeniem, a nie brak dostępu do panelu.
+          </p>
+          <div className="flex flex-wrap gap-2 justify-center">
+            <Button onClick={() => setAdminCheckKey((k) => k + 1)}>Spróbuj ponownie</Button>
+            <Button variant="outline" onClick={() => navigate("/")}>Wróć na stronę główną</Button>
+          </div>
         </div>
       ) : status === "denied" ? (
         <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center">

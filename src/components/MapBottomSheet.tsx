@@ -311,7 +311,19 @@ export default function MapBottomSheet({
           <span className="text-xs text-muted-foreground font-medium truncate">
             {headerText}
           </span>
-          {/* Sort button */}
+          {/* Przy awarii pinów nie ma czego sortować, a panel startuje zwinięty —
+              to jedyne miejsce, gdzie ponowienie jest widoczne od razu (audyt: J-01). */}
+          {error ? (
+            onRetry && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onRetry(); }}
+                className="shrink-0 flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-accent"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                Spróbuj ponownie
+              </button>
+            )
+          ) : (
           <div
             ref={sortRef}
             className="relative shrink-0"
@@ -347,6 +359,7 @@ export default function MapBottomSheet({
               </div>
             )}
           </div>
+          )}
         </div>
       </div>
 
