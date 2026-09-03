@@ -66,7 +66,9 @@ const DeleteAccountSection = () => {
       </button>
 
       <Dialog open={isOpen} onOpenChange={(open) => !isDeleting && setIsOpen(open)}>
-        <DialogContent className="max-w-md max-h-[90svh] overflow-y-auto">
+        {/* K-13: pytanie o nieodwracalne usuniecie konta to alertdialog, nie zwykly dialog.
+            Radix rozklada `role` po swoim domyslnym, wiec wystarczy nadpisac atrybut. */}
+        <DialogContent role="alertdialog" className="max-w-md max-h-[90svh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Usunąć konto na stałe?</DialogTitle>
             <DialogDescription asChild>

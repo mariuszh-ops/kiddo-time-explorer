@@ -60,8 +60,11 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
       <>
         <div className="md:container md:pt-6">
           <div className="md:rounded-xl overflow-hidden bg-muted">
-            <div
-              className="aspect-[16/9] max-h-[400px] w-full overflow-hidden cursor-pointer"
+            <button
+              type="button"
+              className="block aspect-[16/9] max-h-[400px] w-full overflow-hidden cursor-pointer"
+              aria-label={`Powiększ zdjęcie: ${activityTitle}`}
+              disabled={images.length !== 1 || showSinglePlaceholder}
               onClick={() => images.length === 1 && !showSinglePlaceholder && openLightbox(0)}
             >
               {showSinglePlaceholder ? (
@@ -79,7 +82,7 @@ const ImageGallery = ({ images, activityTitle, activityCity, activityType = "inn
                   onError={() => handleImageError(0)}
                 />
               )}
-            </div>
+            </button>
           </div>
         </div>
         <ImageLightbox
@@ -177,9 +180,12 @@ const CarouselGallery = ({
               {images.map((image, index) => {
                 const slideSrc = getImageSrc(image, index);
                 return (
-                  <div
+                  <button
                     key={index}
-                    className="flex-none w-full aspect-[16/9] max-h-[400px]"
+                    type="button"
+                    className="block flex-none w-full aspect-[16/9] max-h-[400px]"
+                    aria-label={`Powiększ zdjęcie ${index + 1} z ${images.length}: ${activityTitle}`}
+                    disabled={isMobile}
                     onClick={() => !isMobile && slideSrc && openLightbox(index)}
                   >
                     {slideSrc === null ? (
@@ -198,7 +204,7 @@ const CarouselGallery = ({
                         onError={() => handleImageError(index)}
                       />
                     )}
-                  </div>
+                  </button>
                 );
               })}
 
@@ -322,8 +328,10 @@ const GridGallery = ({
         <div className="md:rounded-xl overflow-hidden bg-muted">
           {/* Mobile: show first image + counter */}
           <div className="md:hidden relative">
-            <div
-              className="aspect-[16/9] max-h-[400px] w-full cursor-pointer"
+            <button
+              type="button"
+              className="block aspect-[16/9] max-h-[400px] w-full cursor-pointer"
+              aria-label={`Powiększ zdjęcie: ${activityTitle}`}
               onClick={() => mainSrc && openLightbox(0)}
             >
               {mainSrc === null ? (
@@ -341,7 +349,7 @@ const GridGallery = ({
                   onError={() => handleImageError(0)}
                 />
               )}
-            </div>
+            </button>
             <button
               onClick={() => mainSrc && openLightbox(0)}
               className="absolute bottom-3 right-3 bg-background/90 hover:bg-background text-foreground px-3 py-1.5 rounded-full text-sm font-medium shadow-md transition-colors"
@@ -354,8 +362,10 @@ const GridGallery = ({
           {/* Desktop: Airbnb grid */}
           <div className="hidden md:grid grid-cols-4 grid-rows-2 gap-1.5 max-h-[400px]">
             {/* Main large image — spans 2 cols, 2 rows */}
-            <div
+            <button
+              type="button"
               className="col-span-2 row-span-2 cursor-pointer overflow-hidden"
+              aria-label={`Powiększ zdjęcie: ${activityTitle}`}
               onClick={() => mainSrc && openLightbox(0)}
             >
               {mainSrc === null ? (
@@ -373,7 +383,7 @@ const GridGallery = ({
                   onError={() => handleImageError(0)}
                 />
               )}
-            </div>
+            </button>
 
             {/* Right side — up to 4 smaller images */}
             {gridImages.slice(1).map((image, i) => {
@@ -381,9 +391,11 @@ const GridGallery = ({
               const cellSrc = getImageSrc(image, index);
               const isLast = index === gridImages.length - 1 && remainingCount > 0;
               return (
-                <div
+                <button
                   key={index}
+                  type="button"
                   className="cursor-pointer overflow-hidden relative"
+                  aria-label={`Powiększ zdjęcie ${index + 1} z ${images.length}: ${activityTitle}`}
                   onClick={() => cellSrc && openLightbox(index)}
                 >
                   {cellSrc === null ? (
@@ -405,7 +417,7 @@ const GridGallery = ({
                       </span>
                     </div>
                   )}
-                </div>
+                </button>
               );
             })}
           </div>

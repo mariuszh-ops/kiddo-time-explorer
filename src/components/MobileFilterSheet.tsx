@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
-import { X, MapPin } from "lucide-react";
+import { X, MapPin, Check } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
 import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -43,6 +42,47 @@ interface MobileFilterSheetProps {
 
 // DisabledFilterSection removed - distance is now integrated with city filter
 
+/**
+ * K-07: wiersz opcji byl <button> z Radixowym <Checkbox> (czyli drugim <button>)
+ * w srodku — axe: nested-interactive + button-name na 30 wezlach, a znacznik 16 px
+ * lamal target-size. Teraz wiersz to JEDEN przycisk role="checkbox" z jawna nazwa,
+ * a kwadracik jest czysto dekoracyjny.
+ */
+const FilterOptionRow = ({
+  label,
+  count,
+  checked,
+  onToggle,
+}: {
+  label: string;
+  count: number;
+  checked: boolean;
+  onToggle: () => void;
+}) => (
+  <button
+    type="button"
+    role="checkbox"
+    aria-checked={checked}
+    aria-label={`${label} (${count})`}
+    onClick={onToggle}
+    className="flex items-center justify-between w-full min-h-11 py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
+  >
+    <span className="flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className={cn(
+          "h-4 w-4 shrink-0 rounded-sm border border-primary flex items-center justify-center",
+          checked && "bg-primary text-primary-foreground",
+        )}
+      >
+        {checked && <Check className="h-4 w-4" />}
+      </span>
+      <span className="text-sm text-foreground">{label}</span>
+    </span>
+    <span className="text-xs text-muted-foreground">({count})</span>
+  </button>
+);
+
 const FilterSection = ({
   title,
   options,
@@ -59,20 +99,13 @@ const FilterSection = ({
       <h3 className="text-base font-semibold text-foreground mb-3">{title}</h3>
       <div className="space-y-2">
         {options.map((option) => (
-          <button
+          <FilterOptionRow
             key={option.value}
-            onClick={() => onSelect(selectedValue === option.value ? undefined : option.value)}
-            className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <Checkbox
-                checked={selectedValue === option.value}
-                className="pointer-events-none"
-              />
-              <span className="text-sm text-foreground">{option.label}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">({option.count})</span>
-          </button>
+            label={option.label}
+            count={option.count}
+            checked={selectedValue === option.value}
+            onToggle={() => onSelect(selectedValue === option.value ? undefined : option.value)}
+          />
         ))}
       </div>
     </div>
@@ -95,20 +128,13 @@ const MultiFilterSection = ({
       <h3 className="text-base font-semibold text-foreground mb-3">{title}</h3>
       <div className="space-y-2">
         {options.map((option) => (
-          <button
+          <FilterOptionRow
             key={option.value}
-            onClick={() => onToggle(option.value)}
-            className="flex items-center justify-between w-full py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <Checkbox
-                checked={selectedValues.includes(option.value)}
-                className="pointer-events-none"
-              />
-              <span className="text-sm text-foreground">{option.label}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">({option.count})</span>
-          </button>
+            label={option.label}
+            count={option.count}
+            checked={selectedValues.includes(option.value)}
+            onToggle={() => onToggle(option.value)}
+          />
         ))}
       </div>
     </div>
@@ -163,7 +189,13 @@ const MobileFilterSheet = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl p-0 flex flex-col">
+      {/* K-07: SheetContent dokłada własny przycisk "Zamknij" w tym samym rogu,
+          co nasz "Zamknij filtry" — dwa nachodzące na siebie cele dotykowe.
+          Zostaje ten z pełniejszą nazwą. */}
+      <SheetContent
+        side="bottom"
+        className="h-[90vh] rounded-t-2xl p-0 flex flex-col [&>button[aria-label=Zamknij]]:hidden"
+      >
         {/* Header */}
         <SheetHeader className="flex-shrink-0 px-4 py-3 border-b border-border">
           <div className="flex items-center justify-between">

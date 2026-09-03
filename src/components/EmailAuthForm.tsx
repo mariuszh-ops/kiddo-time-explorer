@@ -39,6 +39,9 @@ const RESEND_COOLDOWN = 60;
 // Po wyrenderowaniu nie ma limitu — czekamy na kliknięcie użytkownika.
 const TURNSTILE_TIMEOUT_MS = 15000;
 
+/** Tyle, ile sprawdza przegladarka dla type="email" — bez pretensji do RFC. */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
 const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
   const { signInWithEmail, signUpWithEmail, resendConfirmation, resetPassword } = useAuth();
@@ -47,7 +50,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** K-13: ktore pole obwiniamy — steruje aria-invalid i fokusem po submicie. */
+  const [errorField, setErrorField] = useState<"email" | "password" | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
@@ -85,6 +92,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
 
   const setMode = (next: Mode) => {
     setModeState(next);
+    setErrorField(null);
     onModeChange?.(next);
   };
 
@@ -118,10 +126,28 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     e.preventDefault();
     if (busy) return;
     setError(null);
+    setErrorField(null);
     setInfo(null);
 
+    // K-13: `noValidate` na formularzu wylacza angielski dymek przegladarki,
+    // wiec format adresu sprawdzamy sami i po polsku.
+    const failEmail = (message: string) => {
+      setError(message);
+      setErrorField("email");
+      emailRef.current?.focus();
+    };
+    const failPassword = (message: string) => {
+      setError(message);
+      setErrorField("password");
+      passwordRef.current?.focus();
+    };
+
     if (!email.trim()) {
-      setError("Podaj adres e-mail.");
+      failEmail("Podaj adres e-mail.");
+      return;
+    }
+    if (!EMAIL_PATTERN.test(email.trim())) {
+      failEmail("Podaj poprawny adres e-mail, np. rodzina@example.com.");
       return;
     }
     // Siłę hasła walidujemy tylko przy zakładaniu konta — stare konta
@@ -129,11 +155,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     if (mode === "signup") {
       const pwdError = passwordErrorMessage(password);
       if (pwdError) {
-        setError(pwdError);
+        failPassword(pwdError);
         return;
       }
     } else if (mode === "signin" && !password) {
-      setError("Podaj hasło.");
+      failPassword("Podaj hasło.");
       return;
     }
     // Bez tokenu nie wysyłamy nic — także wtedy, gdy widget zgłosił awarię
@@ -216,8 +242,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           <span className="font-medium text-foreground break-all">{email}</span>.
           {isConfirm && " Kliknij go, aby aktywować konto."}
         </p>
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {info && <p className="text-sm text-muted-foreground">{info}</p>}
+        {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+        {info && <p role="status" className="text-sm text-muted-foreground">{info}</p>}
         <div className="flex flex-col gap-2 w-full pt-1">
           {isConfirm && (
             <Button variant="outline" onClick={resend} disabled={busy || cooldown > 0} className="w-full">
@@ -248,16 +274,19 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
+    <form onSubmit={submit} className="flex flex-col gap-3" noValidate>
       <div className="space-y-1.5">
         <Label htmlFor="auth-email">E-mail</Label>
         <Input
           id="auth-email"
+          ref={emailRef}
           type="email"
           autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="rodzina@example.com"
+          aria-invalid={errorField === "email" || undefined}
+          aria-describedby={errorField === "email" ? "auth-error" : undefined}
         />
       </div>
 
@@ -266,11 +295,14 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           <Label htmlFor="auth-password">Hasło</Label>
           <Input
             id="auth-password"
+            ref={passwordRef}
             type="password"
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder={mode === "signup" ? PASSWORD_HINT : "Twoje hasło"}
+            aria-invalid={errorField === "password" || undefined}
+            aria-describedby={errorField === "password" ? "auth-error" : undefined}
           />
           {mode === "signup" && <PasswordRequirements password={password} />}
         </div>
@@ -308,7 +340,11 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         />
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {error && (
+        <p id="auth-error" role="alert" className="text-sm text-destructive">
+          {error}
+        </p>
+      )}
 
       <div className="sticky bottom-0 -mx-1 px-1 pb-1 pt-2 bg-background">
       <Button

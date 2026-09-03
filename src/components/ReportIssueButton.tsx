@@ -139,7 +139,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
               >
                 {CATEGORIES.map((c) => (
                   <div key={c.value} className="flex items-center gap-2">
-                    <RadioGroupItem id={`cat-${c.value}`} value={c.value} />
+                    <RadioGroupItem id={`cat-${c.value}`} value={c.value} aria-label={c.label} />
                     <Label htmlFor={`cat-${c.value}`} className="font-normal cursor-pointer">
                       {c.label}
                     </Label>
@@ -170,6 +170,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
               <Input
                 id="issue-email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="opcjonalnie"

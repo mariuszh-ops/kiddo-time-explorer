@@ -228,18 +228,22 @@ const Index = () => {
           }
         }}
       />
+      {/* Global header with navigation — landmark banner MUSI byc poza <main> (K-02) */}
+      <Header />
       <main
         id="main-content"
         className={cn(
-          "min-h-screen bg-background pb-20 md:pb-0 transition-opacity duration-150",
-          isMobile && viewMode === 'map' && "h-screen overflow-hidden pb-0"
+          "bg-background pb-20 md:pb-0 transition-opacity duration-150",
+          isMobile && viewMode === 'map'
+            // Header jest teraz rodzenstwem main, wiec wysokosc liczymy bez niego,
+            // inaczej strona w trybie mapy urosla by o pasek naglowka.
+            ? "h-[calc(100vh-var(--header-h,72px))] overflow-hidden pb-0"
+            : "min-h-[calc(100vh-var(--header-h,72px))]"
         )}
         style={{ 
           opacity: isScrollRestored ? 1 : 0
         }}
       >
-      {/* Global header with navigation */}
-      <Header />
 
       {/* Hero section — hidden in map view */}
       <div
@@ -370,9 +374,9 @@ const Index = () => {
       )}
       </div>
 
-      {/* Hide footer on mobile map view */}
-      {!(isMobile && viewMode === 'map') && <Footer />}
     </main>
+      {/* Hide footer on mobile map view — landmark contentinfo poza <main> (K-02) */}
+      {!(isMobile && viewMode === 'map') && <Footer />}
       <AnimatePresence>
         {showOnboarding && <OnboardingModal onComplete={handleOnboardingComplete} />}
       </AnimatePresence>

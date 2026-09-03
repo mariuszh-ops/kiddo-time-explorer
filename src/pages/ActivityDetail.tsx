@@ -442,9 +442,9 @@ const ActivityDetail = () => {
           },
         ] as unknown as Record<string, unknown>}
       />
-      <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
-      {/* Global header — same on mobile and desktop */}
+      {/* Global header — same on mobile and desktop; landmark banner poza <main> (K-02) */}
       <Header />
+      <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
 
       {/* Sticky header on scroll past gallery */}
       <div
@@ -1054,8 +1054,9 @@ const ActivityDetail = () => {
         onEmailClick={handleAuthAction}
         onLoginClick={handleAuthAction}
       />
-      <Footer />
     </main>
+      {/* landmark contentinfo poza <main> (K-02) */}
+      <Footer />
     </PageTransition>
   );
 };

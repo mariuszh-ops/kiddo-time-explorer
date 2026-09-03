@@ -498,6 +498,7 @@ const ReviewsSection = ({
                     onMouseLeave={() => setHoveredStar(0)}
                     className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
                     aria-label={`Oceń ${v} z 5 gwiazdek — formularz opinii`}
+                    aria-pressed={v === rating}
                   >
                     <Star
                       className={cn(
@@ -535,18 +536,29 @@ const ReviewsSection = ({
               <p className="text-xs text-muted-foreground mt-1">Widoczne publicznie</p>
             </div>
 
+            <Label htmlFor="review-text" className="sr-only">
+              Twoja opinia (opcjonalnie)
+            </Label>
             <Textarea
+              id="review-text"
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, REVIEW_MAX))}
               placeholder="Co warto wiedzieć innym rodzicom? (opcjonalnie)"
               className="resize-none min-h-[100px]"
               maxLength={REVIEW_MAX}
-              onFocus={() => {
+              onFocus={(e) => {
                 if (!isLoggedIn) onAuthRequired();
+                // K-24: na telefonie klawiatura ekranowa zaslaniala pole.
+                e.currentTarget.scrollIntoView({ block: "center" });
               }}
             />
             <div className="flex items-center justify-between mt-1.5">
-              <p className="text-xs text-muted-foreground">
+              <p
+                id="review-text-counter"
+                className="text-xs text-muted-foreground"
+                aria-live="polite"
+                aria-atomic="true"
+              >
                 {text.length}/{REVIEW_MAX}
               </p>
               <div className="flex gap-2">

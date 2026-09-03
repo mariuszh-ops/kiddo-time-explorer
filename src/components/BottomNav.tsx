@@ -1,16 +1,59 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Compass, Heart, Map, User } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { env } from "@/config/env";
 import { useAuth } from "@/contexts/AuthContext";
 
+
+/** Pola, w ktorych telefon podnosi klawiature ekranowa. */
+const TYPING_INPUT_TYPES = new Set([
+  "text", "search", "email", "url", "tel", "password", "number", "date", "datetime-local", "month", "time", "week",
+]);
+
+const isTypingElement = (el: Element | null): boolean => {
+  if (!el) return false;
+  if (el instanceof HTMLTextAreaElement) return true;
+  if (el instanceof HTMLInputElement) return TYPING_INPUT_TYPES.has(el.type);
+  return el instanceof HTMLElement && el.isContentEditable;
+};
 
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const navRef = useRef<HTMLElement>(null);
   const { isLoggedIn } = useAuth();
+  /**
+   * K-24: przy otwartej klawiaturze dolna nawigacja zostawala nad nia i zaslaniala
+   * pole opinii (bottom 472 > nav 436). Chowamy pasek, gdy fokus siedzi w polu
+   * tekstowym ALBO gdy widoczny viewport skurczyl sie o wiecej niz 150 px.
+   */
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const check = () => {
+      // Pasek i tak nie istnieje od md w gore — nie ma po co przeliczac i re-renderowac.
+      if (window.matchMedia("(min-width: 768px)").matches) {
+        setKeyboardOpen(false);
+        return;
+      }
+      const typing = isTypingElement(document.activeElement);
+      const shrunk = vv ? vv.height < window.innerHeight - 150 : false;
+      setKeyboardOpen(typing || shrunk);
+    };
+    check();
+    document.addEventListener("focusin", check);
+    document.addEventListener("focusout", check);
+    vv?.addEventListener("resize", check);
+    window.addEventListener("resize", check);
+    return () => {
+      document.removeEventListener("focusin", check);
+      document.removeEventListener("focusout", check);
+      vv?.removeEventListener("resize", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
 
   useEffect(() => {
     const el = navRef.current;
@@ -117,7 +160,10 @@ const BottomNav = () => {
     <nav
       ref={navRef}
       aria-label="Nawigacja dolna"
-      className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden bg-background shadow-[0_-2px_10px_rgba(0,0,0,0.08)]"
+      className={cn(
+        "fixed bottom-0 left-0 right-0 z-50 flex md:hidden bg-background shadow-[0_-2px_10px_rgba(0,0,0,0.08)]",
+        keyboardOpen && "hidden"
+      )}
       style={{
         height: 'calc(64px + env(safe-area-inset-bottom, 0px))',
         paddingBottom: 'env(safe-area-inset-bottom, 0px)',
