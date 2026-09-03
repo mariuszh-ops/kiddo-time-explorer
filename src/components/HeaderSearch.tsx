@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Search, X } from "lucide-react";
 import { REGION_SLUGS } from "@/data/regions";
+import { trackEvent } from "@/lib/analytics";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 
 /**
@@ -43,6 +44,7 @@ const HeaderSearch = () => {
       clearSearchParam();
       return;
     }
+    trackEvent("search", { source: "header", len: q.length });
     if (keepsContext) {
       const next = new URLSearchParams(searchParams);
       next.set("search", q);

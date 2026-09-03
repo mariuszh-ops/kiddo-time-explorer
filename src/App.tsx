@@ -1,10 +1,11 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Suspense, lazy, useEffect } from "react";
 import { trackPageView } from "@/lib/analytics";
+import { RealNavigationTypeContext } from "@/lib/navigationType";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
@@ -63,8 +64,12 @@ const AnalyticsTracker = () => {
 // Animated routes component to access location for AnimatePresence
 const AnimatedRoutes = () => {
   const location = useLocation();
-  
+  // Prawdziwy typ nawigacji. Wewnątrz <Routes location={…}> react-router raportuje
+  // zawsze "POP" — dlatego czytamy go tutaj i rozdajemy kontekstem.
+  const navigationType = useNavigationType();
+
   return (
+    <RealNavigationTypeContext.Provider value={navigationType}>
     <ErrorBoundary fallbackLevel="page" key={location.pathname}>
       <Suspense fallback={<HomeSkeleton />}>
         <AnimatePresence mode="popLayout" initial={false}>
@@ -109,6 +114,7 @@ const AnimatedRoutes = () => {
         </AnimatePresence>
       </Suspense>
     </ErrorBoundary>
+    </RealNavigationTypeContext.Provider>
   );
 };
 

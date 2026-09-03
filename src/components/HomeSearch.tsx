@@ -8,6 +8,7 @@ import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { matchesSearchQuery } from "@/lib/searchMatch";
+import { trackEvent } from "@/lib/analytics";
 
 function normalize(text: string): string {
   return text
@@ -131,6 +132,7 @@ const HomeSearch = () => {
 
   const submitSearch = () => {
     if (!value.trim()) return;
+    trackEvent("search", { source: "home", len: value.trim().length });
     navigate(`/?search=${encodeURIComponent(value.trim())}`);
     setIsOpen(false);
     inputRef.current?.blur();

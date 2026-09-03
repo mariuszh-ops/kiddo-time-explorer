@@ -1,4 +1,4 @@
-import { useParams, Link, Navigate, useSearchParams, useLocation, useNavigationType } from "react-router-dom";
+import { useParams, Link, Navigate, useSearchParams, useLocation } from "react-router-dom";
 import { useMemo, useState, lazy, Suspense, useCallback, useEffect, useLayoutEffect, useRef } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -36,6 +36,8 @@ import NotFound from "@/pages/NotFound";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useMapPins } from "@/hooks/useMapPins";
 import { fetchFilteredSlugs } from "@/lib/mapPins";
+import { useRealNavigationType } from "@/lib/navigationType";
+import { trackEvent } from "@/lib/analytics";
 
 
 
@@ -131,6 +133,7 @@ const CategoryPage = () => {
     loadMore,
     page,
     refetch,
+    goToPage,
   } = useActivitiesInfinite(
     {
     region: citySlug,
@@ -256,17 +259,44 @@ const CategoryPage = () => {
   // Ostatnia realna strona (hook sam cofa się na nią przy ?page poza zakresem).
   const totalPages = Math.max(1, Math.ceil(total / 24));
 
-  // Trzymaj numer strony (1-based) w URL, żeby powrót wstecz odtworzył widok.
+  // Numer strony żyje w DWÓCH miejscach i musi płynąć w OBIE strony:
+  //   URL → stan   klik w numer w SeoPagination (<Link>) albo „wstecz",
+  //   stan → URL   „Pokaż więcej" zapisuje osiągniętą stronę (replace).
+  // Wcześniej istniał tylko drugi kierunek, więc efekt natychmiast cofał
+  // ?page= wpisane przez <Link> i paginacja SEO była martwa dla człowieka (K-03).
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const pageJumpRef = useRef(false);
+  const lastPageParamRef = useRef(pageParam);
   useEffect(() => {
-    const current = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
-    if (current !== page + 1) {
+    if (pageParam !== lastPageParamRef.current) {
+      lastPageParamRef.current = pageParam;
+      if (pageParam - 1 !== page) {
+        pageJumpRef.current = true;
+        goToPage(pageParam - 1);
+        window.scrollTo(0, 0);
+      }
+      return;
+    }
+    if (pageParam !== page + 1) {
+      lastPageParamRef.current = page > 0 ? page + 1 : 1;
       updateParams({ page: page > 0 ? String(page + 1) : undefined }, { replace: true });
     }
-  }, [page, searchParams, updateParams]);
+  }, [pageParam, page, goToPage, updateParams]);
+
+  // Po dojściu nowej porcji: góra listy + fokus na H1. Bez tego klawiatura
+  // zostaje na dole strony, przy linku, którego już nie ma.
+  useEffect(() => {
+    if (!pageJumpRef.current || loading) return;
+    pageJumpRef.current = false;
+    window.scrollTo(0, 0);
+    headingRef.current?.focus({ preventScroll: true });
+  }, [loading, activities.length]);
 
   // Zapamiętaj i przywróć pozycję scrolla dla tego widoku (klucz = ścieżka + filtry).
   const location = useLocation();
-  const navigationType = useNavigationType();
+  // NIE useNavigationType(): wewnątrz <Routes location={…}> react-router zawsze
+  // zwraca "POP", przez co reset scrolla nigdy się nie wykonywał (F-12).
+  const navigationType = useRealNavigationType();
   // Nawigacja „w przód" na listing (PUSH) zawsze startuje od góry strony —
   // bez tego SPA zachowuje scroll z poprzedniego widoku (np. przewiniętej home).
   const scrollKey = `ff:scroll:${location.pathname}?${new URLSearchParams(
@@ -492,7 +522,11 @@ const CategoryPage = () => {
 
           {/* H1 + Description */}
           <div className="mb-8">
-            <h1 className="text-2xl md:text-3xl font-serif text-foreground mb-2">
+            <h1
+              ref={headingRef}
+              tabIndex={-1}
+              className="text-2xl md:text-3xl font-serif text-foreground mb-2 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
               {resolvedH1}
             </h1>
             <p className="text-muted-foreground max-w-2xl">
@@ -504,7 +538,10 @@ const CategoryPage = () => {
           <CategoryFilterBar
             type={effectiveType}
             typeLocked={Boolean(categorySlug)}
-            onTypeChange={(v) => updateParams({ type: v })}
+            onTypeChange={(v) => {
+              if (v) trackEvent("filter_type", { type: v, source: "listing" });
+              updateParams({ type: v });
+            }}
             amenities={urlAmenities}
             onAmenitiesChange={(next) =>
               updateParams({ amenities: next.length ? next.join(",") : undefined })
@@ -518,7 +555,10 @@ const CategoryPage = () => {
             includeUncertain={includeUncertain}
             onIncludeUncertainChange={(v) => updateParams({ auto: v ? undefined : "0" })}
             age={urlAge}
-            onAgeChange={(v) => updateParams({ age: v ?? undefined })}
+            onAgeChange={(v) => {
+              if (v) trackEvent("filter_age", { age: v, source: "listing" });
+              updateParams({ age: v ?? undefined });
+            }}
             onlyFree={onlyFree}
             onOnlyFreeChange={(v) => updateParams({ free: v ? "1" : undefined })}
           />
@@ -619,7 +659,10 @@ const CategoryPage = () => {
                     Lista
                   </button>
                   <button
-                    onClick={() => setViewMode("map")}
+                    onClick={() => {
+                      trackEvent("map_open", { source: "listing" });
+                      setViewMode("map");
+                    }}
                     className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium border transition-colors min-h-10 min-w-[72px] ${viewMode === "map" ? "bg-primary text-primary-foreground border-primary" : "bg-secondary text-foreground border-border hover:bg-muted"}`}
                   >
                     Mapa

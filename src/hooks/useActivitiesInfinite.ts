@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
@@ -17,6 +17,12 @@ export interface UseActivitiesInfiniteResult {
   loadMore: () => void;
   /** Numer ostatnio doładowanej strony (0 = pierwsza). */
   page: number;
+  /**
+   * Skok na wskazaną stronę jako NOWY punkt wejścia (klik w numer w paginacji
+   * SEO albo ?page= zmienione z zewnątrz). Pobiera wyłącznie swoje `pageSize`
+   * rekordów — inaczej niż `loadMore`, które dokleja kolejną porcję.
+   */
+  goToPage: (page: number) => void;
   /** Ponawia bieżące zapytanie (bez przeładowania strony). */
   refetch: () => void;
 }
@@ -186,6 +192,18 @@ export function useActivitiesInfinite(
     setLoading(true);
     setReloadToken((t) => t + 1);
   };
+  const goToPage = useCallback((next: number) => {
+    const target = Math.max(0, next);
+    // Nowy punkt wejścia: strona startowa przesuwa się na `target`, więc
+    // najbliższy fetch jest „initial" (zamiana danych + świeży count),
+    // a nie doklejeniem porcji jak przy „Pokaż więcej".
+    initialPageRef.current = target;
+    startPageActiveRef.current = true;
+    setData([]);
+    setError(null);
+    setLoading(true);
+    setPage(target);
+  }, []);
 
-  return { data, total, loading, loadingMore, hasMore, error, loadMore, page, refetch };
+  return { data, total, loading, loadingMore, hasMore, error, loadMore, page, refetch, goToPage };
 }

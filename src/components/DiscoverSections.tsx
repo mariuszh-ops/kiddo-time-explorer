@@ -1,5 +1,6 @@
 import { Suspense, lazy, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import ActivityCard from "@/components/ActivityCard";
 // Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
 const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
@@ -112,6 +113,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                   <Link
                     key={city.value}
                     to={`/${city.value}`}
+                    onClick={() => trackEvent("filter_city", { city: city.value, source: "tiles" })}
                     className={`group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
                     style={{ backgroundColor: city.bg }}
                   >
@@ -172,6 +174,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
               <Link
                 key={opt.value}
                 to={`/kategoria/${opt.value}`}
+                onClick={() => trackEvent("filter_type", { type: opt.value, source: "tiles" })}
                 className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
               >
                 <h3 className="font-semibold text-gray-800 text-sm break-words">{opt.label}</h3>

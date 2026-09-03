@@ -3,6 +3,7 @@ import { AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
+import { trackEvent } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -103,6 +104,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
       return;
     }
     markReported(placeId);
+    trackEvent("report_submit", { category: parsed.data.category });
     toast.success("Dziękujemy! Sprawdzimy to.");
     setOpen(false);
     setMessage("");

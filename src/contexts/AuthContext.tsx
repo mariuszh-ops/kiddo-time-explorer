@@ -174,6 +174,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 
   const signOut = useCallback(async (): Promise<void> => {
+    // Przed signOut: zaraz potem leci window.location.assign i żądanie
+    // analityki nie zdążyłoby wyjść.
+    trackEvent("logout");
     await supabase.auth.signOut();
     wipeLocalUserData();
     setIsDemoMode(false);

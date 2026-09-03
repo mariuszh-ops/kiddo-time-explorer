@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { trackEvent } from "@/lib/analytics";
 import { ChevronDown } from "lucide-react";
 import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { cityLabels } from "@/data/categoryPages";
@@ -65,7 +66,10 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
               <Link
                 key={slug}
                 to={`/atrakcje/${slug}`}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  trackEvent("filter_city", { city: slug, source: "breadcrumb" });
+                  setOpen(false);
+                }}
                 className="flex items-center justify-between px-4 py-2 text-sm transition-colors hover:bg-[#F3F7F2]"
                 style={{
                   color: isActive ? "#2F6B4F" : undefined,
