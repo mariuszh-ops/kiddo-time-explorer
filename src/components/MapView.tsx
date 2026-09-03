@@ -17,9 +17,13 @@ import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
+import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
+
+/** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
+const PORCJA_LISTY = 30;
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -115,6 +119,32 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
   });
 };
 
+// L-01 (stored-XSS): dymek Leafleta to JEDYNE miejsce, gdzie dane katalogu
+// trafiaja do innerHTML — wszystko inne renderuje React, ktory escapuje sam.
+// Kazda wartosc pochodzaca z danych (nazwa, miejscowosc, wiek, adres zdjecia)
+// musi przejsc przez escapeHtml, inaczej nazwa z `<` wykonuje kod w przegladarce.
+const escapeHtml = (v: unknown): string =>
+  String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+/** Adres obrazka: dopuszczamy tylko http(s):// oraz sciezki wlasnego serwisu. */
+const safeImageUrl = (raw?: string | null): string => {
+  const s = String(raw ?? "").trim();
+  if (!s) return "";
+  if (!/^https?:\/\//i.test(s) && !s.startsWith("/")) return "";
+  let norm = s;
+  try {
+    norm = encodeURI(decodeURI(s));
+  } catch {
+    norm = encodeURI(s);
+  }
+  return escapeHtml(norm);
+};
+
 // Popup content for pin click
 const favButtonMarkup = (isFav: boolean) => `
   <button type="button" data-fav-toggle="1" aria-pressed="${isFav}"
@@ -135,22 +165,27 @@ const popupSrcSetAttrs = (src?: string | null) => {
     .split(", ")
     .filter((k) => !/\s1200w$/.test(k))
     .join(", ");
-  return ` srcset="${bezOryginalu}" sizes="220px"`;
+  return ` srcset="${escapeHtml(bezOryginalu)}" sizes="220px"`;
 };
 
 const createPopupContent = (activity: Activity, isFav: boolean) => {
+  const tytul = escapeHtml(activity.title);
+  const zdjecie = safeImageUrl(activity.imageUrl);
+  const obrazek = zdjecie
+    ? `<img src="${zdjecie}"${popupSrcSetAttrs(activity.imageUrl)} alt="${tytul}" loading="lazy" onerror="if(this.srcset){this.srcset='';this.sizes='';}else{this.style.display='none';}" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />`
+    : "";
   return `
     <div style="position:relative;width:220px;">
     ${favButtonMarkup(isFav)}
-    <a href="/atrakcje/${activity.slug}" style="text-decoration:none;color:inherit;display:block;width:220px;">
-      <img src="${activity.imageUrl}"${popupSrcSetAttrs(activity.imageUrl)} alt="${activity.title}" loading="lazy" onerror="if(this.srcset){this.srcset='';this.sizes='';}else{this.style.display='none';}" style="width:100%;height:120px;object-fit:cover;border-radius:8px 8px 0 0;" />
+    <a href="/atrakcje/${escapeHtml(activity.slug)}" style="text-decoration:none;color:inherit;display:block;width:220px;">
+      ${obrazek}
       <div style="padding:8px 10px;">
-        <div style="font-weight:600;font-size:14px;margin-bottom:4px;color:#1a1a1a;">${activity.title}</div>
+        <div style="font-weight:600;font-size:14px;margin-bottom:4px;color:#1a1a1a;">${tytul}</div>
         <div style="display:flex;align-items:center;gap:4px;font-size:12px;color:#666;">
-          <span style="color:#f59e0b;">★</span> ${formatRatingPl(activity.rating)}
-          <span style="margin-left:4px;">${activity.ageRange}</span>
+          <span style="color:#f59e0b;">★</span> ${escapeHtml(formatRatingPl(activity.rating))}
+          <span style="margin-left:4px;">${escapeHtml(activity.ageRange)}</span>
         </div>
-        <div style="font-size:12px;color:#888;margin-top:2px;">${activity.location}</div>
+        <div style="font-size:12px;color:#888;margin-top:2px;">${escapeHtml(activity.location)}</div>
       </div>
     </a>
     </div>
@@ -197,9 +232,18 @@ function ClusteredMarkers({
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const activityMapRef = useRef<Record<number, Activity>>({});
+  // Ktory dymek jest otwarty i czy wlasnie przebudowujemy grupe markerow.
+  const otwartyIdRef = useRef<number | null>(null);
+  const przebudowaRef = useRef(false);
 
   // Build markers
   useEffect(() => {
+    // Dymek przezywa przebudowe grupy. Klikniecie pinu przy krawedzi kadru
+    // wyzwala autoPan -> moveend -> ViewportFilter oddaje NOWA tablice ->
+    // ten efekt leci od nowa -> cleanup robi removeLayer -> Leaflet zamyka
+    // dymek po ~250-500 ms. Zapamietujemy wiec, co bylo otwarte, i po
+    // zlozeniu nowej grupy otwieramy to samo ponownie.
+    const doOtwarcia = otwartyIdRef.current;
     if (clusterGroupRef.current) {
       map.removeLayer(clusterGroupRef.current);
     }
@@ -221,38 +265,63 @@ function ClusteredMarkers({
         title: activity.title,
         alt: activity.title,
         keyboard: true,
-      }).bindPopup(createPopupContent(mergePinDetails(activity), isFavorite(activity.id)), {
+      });
+
+      // K-06: tresc dymku budujemy LENIWIE (Leaflet przyjmuje funkcje), wiec przy
+      // kazdym otwarciu bierze aktualny stan cache szczegolow. Wersja z gotowym
+      // stringiem lepila dymek raz, przy tworzeniu markera — gdy szczegoly (zdjecie)
+      // doszly pozniej, dymek do konca zycia pokazywal placeholder.svg.
+      const trescDymku = () =>
+        createPopupContent(mergePinDetails(activity), isFavorite(activity.id));
+      marker.bindPopup(trescDymku, {
         maxWidth: 240,
         className: "custom-map-popup",
         closeButton: true,
       });
 
       marker.on("click", () => onMarkerClick(activity.id));
+      // Zamkniecie w trakcie przebudowy grupy nie liczy sie jako decyzja
+      // uzytkownika — inaczej skasowaloby pamiec o otwartym dymku.
+      marker.on("popupclose", () => {
+        if (!przebudowaRef.current) otwartyIdRef.current = null;
+      });
       marker.on("popupopen", (e: L.PopupEvent) => {
-        // Piny z rpc('get_map_pins') nie mają zdjęcia ani miejscowości —
-        // dociągamy je dopiero po otwarciu popupu (jedno zapytanie na pin).
+        otwartyIdRef.current = activity.id;
+        const popup = e.popup;
+        // Podpiecie kontrolek dymku — wolane tez po kazdej podmianie tresci,
+        // bo podmiana innerHTML kasuje wczesniejsze handlery.
+        const podepnij = () => {
+          const el = popup.getElement();
+          // K-05: domyslny przycisk Leafleta ma aria-label="Close popup" (po angielsku).
+          const zamknij = el?.querySelector<HTMLElement>(".leaflet-popup-close-button");
+          if (zamknij) {
+            zamknij.setAttribute("aria-label", "Zamknij dymek");
+            zamknij.setAttribute("title", "Zamknij dymek");
+          }
+          const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
+          if (!btn) return;
+          btn.onclick = async (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            const next = await toggleFavorite(activity.id, activity.slug);
+            btn.outerHTML = favButtonMarkup(next);
+            podepnij();
+          };
+        };
+        podepnij();
+        // Piny z rpc('get_map_pins') nie maja zdjecia ani miejscowosci — jesli
+        // szczegolow nie ma w cache, dociagamy je dla TEGO pinu i odswiezamy dymek.
         if (!getCachedPinDetails(activity.slug)) {
           void fetchPinDetails([activity.slug])
             .then(() => {
               if (!marker.isPopupOpen()) return;
-              marker.setPopupContent(
-                createPopupContent(mergePinDetails(activity), isFavorite(activity.id)),
-              );
+              popup.update();
+              podepnij();
             })
             .catch(() => {
               /* zostaje wersja bez zdjęcia */
             });
         }
-        const el = e.popup.getElement();
-        const btn = el?.querySelector<HTMLButtonElement>("[data-fav-toggle]");
-        if (!btn) return;
-        btn.onclick = async (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          const next = await toggleFavorite(activity.id, activity.slug);
-          btn.outerHTML = favButtonMarkup(next);
-          marker.setPopupContent(createPopupContent(mergePinDetails(activity), next));
-        };
       });
       markersRef.current[activity.id] = marker;
       activityMapRef.current[activity.id] = activity;
@@ -261,8 +330,26 @@ function ClusteredMarkers({
 
     map.addLayer(group);
     clusterGroupRef.current = group;
+    przebudowaRef.current = false;
+
+    // Odtworzenie dymku po przebudowie. autoPan wylaczamy na czas otwarcia,
+    // bo kolejne przesuniecie mapy wywolaloby ten efekt jeszcze raz.
+    if (doOtwarcia !== null) {
+      const marker = markersRef.current[doOtwarcia];
+      // Gdy pin wpadl do klastra, jego dymek nie ma sie gdzie pokazac.
+      if (marker && group.getVisibleParent(marker) === marker) {
+        const popup = marker.getPopup();
+        const autoPan = popup?.options.autoPan;
+        if (popup) popup.options.autoPan = false;
+        marker.openPopup();
+        if (popup) popup.options.autoPan = autoPan;
+      } else {
+        otwartyIdRef.current = null;
+      }
+    }
 
     return () => {
+      przebudowaRef.current = true;
       if (clusterGroupRef.current) {
         map.removeLayer(clusterGroupRef.current);
       }
@@ -283,6 +370,26 @@ function ClusteredMarkers({
       else marker.setZIndexOffset(0);
     });
   }, [highlightedId, markersRef, isFavorite]);
+
+  // K-05 pkt 3: Escape na markerze NIE zamykal dymku. Leaflet ma
+  // `closeOnEscapeKey`, ale nasluchuje zdarzenia 'keydown' na MAPIE, a gdy fokus
+  // siedzi na markerze, Leaflet kieruje zdarzenie do warstwy (markera) i mapa go
+  // nie widzi. Jeden nasluch w fazie przechwytywania na kontenerze zalatwia
+  // oba przypadki (fokus na markerze i fokus w dymku).
+  useEffect(() => {
+    const kontener = map.getContainer();
+    const naKlawisz = (e: KeyboardEvent) => {
+      if (e.key !== "Escape" && e.key !== "Esc") return;
+      if (!kontener.querySelector(".leaflet-popup")) return;
+      const zrodlo = (e.target as HTMLElement | null)?.closest(".leaflet-popup");
+      map.closePopup();
+      // Fokus zostaje na markerze; jesli byl w dymku (element znika), wracamy na mape.
+      if (zrodlo) kontener.focus({ preventScroll: true });
+      e.stopPropagation();
+    };
+    kontener.addEventListener("keydown", naKlawisz, true);
+    return () => { kontener.removeEventListener("keydown", naKlawisz, true); };
+  }, [map]);
 
   // Listen for clicks on empty map area to deselect
   useMapEvents({
@@ -429,15 +536,22 @@ function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boo
 }
 
 // Geolocation button
-function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
-  const map = useMap();
+// K-05: renderowany POZA <MapContainer>, dlatego mapa idzie refem, nie useMap().
+function LocateButton({
+  bottomOffset,
+  mapRef,
+}: {
+  bottomOffset?: string;
+  mapRef: React.MutableRefObject<L.Map | null>;
+}) {
   const [locating, setLocating] = useState(false);
   const [denied, setDenied] = useState(false);
   const markerRef = useRef<L.CircleMarker | null>(null);
   const pulseRef = useRef<L.CircleMarker | null>(null);
 
   const handleLocate = useCallback(() => {
-    if (denied || locating) return;
+    const map = mapRef.current;
+    if (!map || denied || locating) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -471,7 +585,7 @@ function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
       },
       { enableHighAccuracy: false, timeout: 8000 }
     );
-  }, [map, denied, locating]);
+  }, [mapRef, denied, locating]);
 
   return (
     <button
@@ -483,12 +597,52 @@ function LocateButton({ bottomOffset }: { bottomOffset?: string }) {
         denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
       )}
       style={bottomOffset ? { bottom: bottomOffset } : undefined}
+      aria-label="Moja lokalizacja"
       title="Moja lokalizacja"
     >
       <LocateFixed className={cn("w-5 h-5", locating ? "animate-pulse text-primary" : "text-foreground")} />
     </button>
   );
 }
+/**
+ * Kontrolki mapy (zoom + lokalizacja) w JEDNYM bloku, renderowanym w DOM
+ * PRZED lista boczna. Wczesniej lezaly wewnatrz kontenera mapy, czyli za
+ * cala lista — zeby przybliżyć mape klawiatura, trzeba bylo przejsc Tabem
+ * przez 686 kafli (finding K-05). Sa pozycjonowane absolutnie, wiec
+ * przeniesienie w DOM nie zmienia tego, gdzie sie rysuja.
+ */
+function MapControls({
+  mapRef,
+  locateBottomOffset,
+}: {
+  mapRef: React.MutableRefObject<L.Map | null>;
+  locateBottomOffset?: string;
+}) {
+  return (
+    <>
+      <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+        <button
+          type="button"
+          aria-label="Przybliż mapę"
+          onClick={() => mapRef.current?.zoomIn()}
+          className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+        >
+          +
+        </button>
+        <button
+          type="button"
+          aria-label="Oddal mapę"
+          onClick={() => mapRef.current?.zoomOut()}
+          className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+        >
+          −
+        </button>
+      </div>
+      <LocateButton mapRef={mapRef} bottomOffset={locateBottomOffset} />
+    </>
+  );
+}
+
 // MapRefCapture — stores map instance for external use
 function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
   const map = useMap();
@@ -676,30 +830,16 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // przelicza się także przy pierwszym renderze.
 
 
-  // Kafle w liście / bottom sheecie: dociągamy zdjęcia i miejscowości dla
-  // widocznych pinów jedną paczką (RPC ich nie zwraca).
+  // A-10: lista pod mapa pokazuje kafle porcjami. Wczesniej renderowala CALY
+  // kadr (na home 4 907 linkow w DOM) i dociagala szczegoly dla wszystkich
+  // pinow partiami po 60 — ~82 zapytania ≈ 1,1 MB na jedno otwarcie mapy.
+  // Teraz szczegoly ida tylko za tym, co faktycznie widac na liscie.
+  const [listLimit, setListLimit] = useState(PORCJA_LISTY);
   useEffect(() => {
-    const missing = displayedActivities
-      .filter((a) => a.slug && !getCachedPinDetails(a.slug))
-      .slice(0, 60)
-      .map((a) => a.slug);
-    if (missing.length === 0) return;
-    let cancelled = false;
-    // Debounce — przesuwanie mapy nie ma generować zapytania na każdą klatkę.
-    const timer = window.setTimeout(() => {
-      void fetchPinDetails(missing)
-        .then(() => {
-          if (!cancelled) setVisibleActivities((prev) => prev.map(mergePinDetails));
-        })
-        .catch(() => {
-          /* kafle zostają z placeholderem */
-        });
-    }, 350);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
+    setListLimit(PORCJA_LISTY);
   }, [displayedActivities]);
+  const kafleListy = useMergedPinDetails(displayedActivities, listLimit);
+  const zostaloWLiscie = Math.max(0, displayedActivities.length - kafleListy.length);
 
 
   // Auto-fly when exactly 1 search result
@@ -752,6 +892,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
     return (
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
+        {/* K-05: kontrolki mapy w DOM PRZED mapa i lista */}
+        <MapControls mapRef={mapInstanceRef} locateBottomOffset={locateBottomOffset} />
         <MapContainer
           center={mapCenter}
           zoom={initialZoom}
@@ -771,7 +913,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
-          <LocateButton bottomOffset={locateBottomOffset} />
         </MapContainer>
 
         {/* Back to list button (mobile) */}
@@ -782,26 +923,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <LayoutGrid className="w-4 h-4" />
           {mapPinsFailed ? "Lista" : `Lista · ${displayedActivities.length}`}
         </button>
-
-        {/* Accessible custom zoom controls (mobile) */}
-        <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
-          <button
-            type="button"
-            aria-label="Przybliż mapę"
-            onClick={() => mapInstanceRef.current?.zoomIn()}
-            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
-          >
-            +
-          </button>
-          <button
-            type="button"
-            aria-label="Oddal mapę"
-            onClick={() => mapInstanceRef.current?.zoomOut()}
-            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
-          >
-            −
-          </button>
-        </div>
 
         {/* Draggable bottom sheet */}
         <MapBottomSheet
@@ -825,7 +946,10 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   // Desktop: sidebar left + map right
   return (
-    <div className="flex" style={{ height: "calc(100vh - 64px - 52px)" }}>
+    <div className="flex relative" style={{ height: "calc(100vh - 64px - 52px)" }}>
+      {/* K-05: kontrolki mapy w DOM PRZED lista boczna (Tab trafia w nie od razu) */}
+      <MapControls mapRef={mapInstanceRef} />
+
       {/* Sidebar */}
       <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
         {mapPinsFailed ? (
@@ -847,9 +971,16 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
         ) : (
           <>
             <div className="p-3 border-b border-border space-y-2">
-              <span className="text-sm text-muted-foreground font-medium">
+              {/* K-10: jedyna live region licznika — nakladka na mapie ma aria-hidden,
+                  zeby czytnik nie ogłaszał tej samej liczby dwa razy. */}
+              <p
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className="text-sm text-muted-foreground font-medium"
+              >
                 {displayedActivities.length} atrakcji w widoku
-              </span>
+              </p>
               <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} />
             </div>
             <div
@@ -873,18 +1004,29 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
                   )}
                 </div>
               ) : (
-                displayedActivities.map((activity) => (
-                  <div
-                    key={activity.id}
-                    ref={(el) => { cardRefs.current[activity.id] = el; }}
-                  >
-                    <MiniActivityCard
-                      activity={activity}
-                      isHighlighted={highlightedId === activity.id}
-                      onCardClick={handleCardClick}
-                    />
-                  </div>
-                ))
+                <>
+                  {kafleListy.map((activity) => (
+                    <div
+                      key={activity.id}
+                      ref={(el) => { cardRefs.current[activity.id] = el; }}
+                    >
+                      <MiniActivityCard
+                        activity={activity}
+                        isHighlighted={highlightedId === activity.id}
+                        onCardClick={handleCardClick}
+                      />
+                    </div>
+                  ))}
+                  {zostaloWLiscie > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setListLimit((n) => n + PORCJA_LISTY)}
+                      className="w-full py-2.5 rounded-xl border border-border bg-background hover:bg-muted text-sm font-medium text-foreground cursor-pointer"
+                    >
+                      Pokaż więcej ({zostaloWLiscie})
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </>
@@ -911,34 +1053,17 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
-          <LocateButton />
         </MapContainer>
         
 
-        {/* Count label */}
-        <div className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm">
+        {/* Count label — duplikat wizualny licznika z listy (K-10: nie ogłaszamy dwa razy) */}
+        <div
+          aria-hidden="true"
+          className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm"
+        >
           {mapPinsFailed ? "Nie udało się wczytać mapy" : `${displayedActivities.length} atrakcji w widoku`}
         </div>
 
-        {/* Accessible custom zoom controls */}
-        <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
-          <button
-            type="button"
-            aria-label="Przybliż mapę"
-            onClick={() => mapInstanceRef.current?.zoomIn()}
-            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
-          >
-            +
-          </button>
-          <button
-            type="button"
-            aria-label="Oddal mapę"
-            onClick={() => mapInstanceRef.current?.zoomOut()}
-            className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
-          >
-            −
-          </button>
-        </div>
       </div>
     </div>
   );

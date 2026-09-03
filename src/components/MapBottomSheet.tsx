@@ -8,6 +8,7 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import MapCategoryChips from "./MapCategoryChips";
 import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
+import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -33,6 +34,8 @@ const HEADER_HEIGHT = 56;
 const BOTTOM_NAV_HEIGHT = 64;
 
 const PEEK_HEIGHT = 140;
+/** Ile kafli lista w szufladzie renderuje na raz (A-10 — reszta po „Pokaż więcej"). */
+const PORCJA_LISTY = 30;
 const getHalfHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.5;
 const getFullHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.9;
 
@@ -122,6 +125,15 @@ export default function MapBottomSheet({
     }
     return arr;
   }, [visibleActivities, sortMode, mapCenter, distancesMap]);
+
+  // A-10: renderujemy porcjami i tylko dla renderowanych kafli dociagamy
+  // szczegoly (zdjecie, miejscowosc) — nie dla calego kadru mapy.
+  const [listLimit, setListLimit] = useState(PORCJA_LISTY);
+  useEffect(() => {
+    setListLimit(PORCJA_LISTY);
+  }, [visibleActivities]);
+  const kafle = useMergedPinDetails(sortedActivities, listLimit);
+  const zostalo = Math.max(0, sortedActivities.length - kafle.length);
 
   const updateState = useCallback((state: SheetState) => {
     setSheetState(state);
@@ -308,7 +320,12 @@ export default function MapBottomSheet({
       >
         <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
         <div className="flex items-center justify-between w-full px-3">
-          <span className="text-xs text-muted-foreground font-medium truncate">
+          <span
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className="text-xs text-muted-foreground font-medium truncate"
+          >
             {headerText}
           </span>
           {/* Przy awarii pinów nie ma czego sortować, a panel startuje zwinięty —
@@ -411,7 +428,7 @@ export default function MapBottomSheet({
             </div>
           ) : (
             <div className="space-y-2">
-              {sortedActivities.map((activity) => (
+              {kafle.map((activity) => (
                 <SheetActivityCard
                   key={activity.id}
                   activity={activity}
@@ -420,6 +437,15 @@ export default function MapBottomSheet({
                   distance={sortMode === "nearest" ? distancesMap.get(activity.id) : undefined}
                 />
               ))}
+              {zostalo > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setListLimit((n) => n + PORCJA_LISTY)}
+                  className="w-full py-2.5 rounded-xl border border-border bg-background hover:bg-muted text-sm font-medium text-foreground cursor-pointer"
+                >
+                  Pokaż więcej ({zostalo})
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -149,13 +149,21 @@ const FilterBar = ({
                 )}
               </div>
 
-              {/* Results feedback - only when filters active */}
-              {hasActiveFilters && (
-                <span className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{filterCounts.filtered}</span>{" "}
-                  {formatAttractionWord(filterCounts.filtered)}
-                </span>
-              )}
+              {/* Results feedback — live region obecna od wejscia na strone (K-10),
+                  inaczej czytnik nie oglasza pierwszej zmiany filtra. */}
+              <span
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+                className={hasActiveFilters ? "text-sm text-muted-foreground" : "sr-only"}
+              >
+                {hasActiveFilters ? (
+                  <>
+                    <span className="font-medium text-foreground">{filterCounts.filtered}</span>{" "}
+                    {formatAttractionWord(filterCounts.filtered)}
+                  </>
+                ) : null}
+              </span>
             </div>
           </div>
         </section>
@@ -352,12 +360,18 @@ const FilterBar = ({
         </div>
       </section>
 
-      {/* Results feedback - outside sticky, scrolls normally */}
-      {hasActiveFilters && (
-        <div className="container py-2 text-sm text-muted-foreground">
+      {/* Results feedback - outside sticky, scrolls normally.
+          Live region jest w DOM od wejscia (K-10) — pusta, gdy nie ma filtrow. */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className={hasActiveFilters ? "container py-2 text-sm text-muted-foreground" : "sr-only"}
+      >
+        {hasActiveFilters ? (
           <span className="font-medium text-foreground">{getFeedbackText()}</span>
-        </div>
-      )}
+        ) : null}
+      </div>
     </>
   );
 };
