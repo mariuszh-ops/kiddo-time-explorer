@@ -2,6 +2,7 @@ import { Suspense, lazy, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import ActivityCard from "@/components/ActivityCard";
+import { ActivityGridSkeleton } from "@/components/ActivityCardSkeleton";
 // Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
 const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
 import { filterOptions } from "@/data/activities";
@@ -41,7 +42,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
   const regionCounts = homeCounts.regions;
   const typeCounts = homeCounts.types;
   // Jedno zapytanie z limitem zamiast filtrowania całego katalogu w pamięci.
-  const { activities } = useTopActivities(12);
+  const { activities, loading: topLoading } = useTopActivities(12);
 
   const topRated = useMemo(() => {
     return activities
@@ -59,34 +60,41 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
   return (
     <div className="bg-background">
       {/* Section 1: Featured places — raised above city tiles so real cards appear first */}
-      {featuredActivities.length > 0 && (
+      {/* Sekcja rezerwuje wysokosc juz w czasie ladowania (szkielet 1:1 z karta).
+          Wczesniej montowala sie dopiero po danych i spychala wszystko nizej
+          o ~4000 px — stad CLS 0,40 na home (N-03). */}
+      {(topLoading || featuredActivities.length > 0) && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="🏆" title="Polecane miejsca" subtitle="Najlepiej oceniane atrakcje przez rodziców" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featuredActivities.map((activity) => (
-              <ActivityCard
-                key={activity.id}
-                id={activity.id}
-                title={activity.title}
-                location={activity.location}
-                rating={activity.rating}
-                reviewCount={activity.reviewCount}
-                ageRange={activity.ageRange}
-                matchPercentage={activity.matchPercentage}
-                imageUrl={activity.imageUrl}
-                tags={activity.tags}
-                type={activity.type}
-                isEvent={FEATURES.EVENTS ? activity.isEvent : false}
-                eventDate={activity.eventDate}
-                slug={activity.slug}
-                amenities={activity.amenities}
-                priceLevel={activity.priceLevel}
-                isRecommended={activity.isRecommended}
-                google_rating={activity.google_rating}
-                google_review_count={activity.google_review_count}
-              />
-            ))}
-          </div>
+          {topLoading ? (
+            <ActivityGridSkeleton count={10} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {featuredActivities.map((activity) => (
+                <ActivityCard
+                  key={activity.id}
+                  id={activity.id}
+                  title={activity.title}
+                  location={activity.location}
+                  rating={activity.rating}
+                  reviewCount={activity.reviewCount}
+                  ageRange={activity.ageRange}
+                  matchPercentage={activity.matchPercentage}
+                  imageUrl={activity.imageUrl}
+                  tags={activity.tags}
+                  type={activity.type}
+                  isEvent={FEATURES.EVENTS ? activity.isEvent : false}
+                  eventDate={activity.eventDate}
+                  slug={activity.slug}
+                  amenities={activity.amenities}
+                  priceLevel={activity.priceLevel}
+                  isRecommended={activity.isRecommended}
+                  google_rating={activity.google_rating}
+                  google_review_count={activity.google_review_count}
+                />
+              ))}
+            </div>
+          )}
           <div className="mt-6 text-center">
             <Link
               to="/?all=1"

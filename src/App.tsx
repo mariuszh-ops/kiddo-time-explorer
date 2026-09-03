@@ -3,8 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { Suspense, lazy, useEffect } from "react";
-import { trackPageView } from "@/lib/analytics";
+import { Suspense, lazy } from "react";
 import { RealNavigationTypeContext } from "@/lib/navigationType";
 import { HelmetProvider } from "react-helmet-async";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -52,14 +51,9 @@ import PendingIntentRunner from "./components/PendingIntentRunner";
 import SessionExpiredHandler from "./components/SessionExpiredHandler";
 import GuestDataMigrationDialog from "./components/GuestDataMigrationDialog";
 
-// SPA pageview tracking
-const AnalyticsTracker = () => {
-  const location = useLocation();
-  useEffect(() => {
-    trackPageView(location.pathname);
-  }, [location.pathname]);
-  return null;
-};
+// Pageview: liczy je WYLACZNIE skrypt Plausible z index.html (script.js sam
+// sledzi History API, wiec nawigacje SPA tez sa raportowane). Nie dodawac tu
+// wlasnego trackPageView — kazda odslona byla wtedy liczona dwa razy (N-01).
 
 // Animated routes component to access location for AnimatePresence
 const AnimatedRoutes = () => {
@@ -140,7 +134,6 @@ const App = () => {
                     <GuestDataMigrationDialog />
                     <BrowserRouter>
                       <SkipLink />
-                      <AnalyticsTracker />
                       <AuthReturnHandler />
                       <AnimatedRoutes />
                       <BottomNav />

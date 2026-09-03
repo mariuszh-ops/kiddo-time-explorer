@@ -18,6 +18,10 @@ export const GA4_MEASUREMENT_ID = ""; // np. "G-XXXXXXXXXX"
 // Unified tracking API
 // ====================================
 
+// UWAGA: przy providerze "plausible" NIE wolac tego z aplikacji — skrypt
+// script.js z index.html sam wysyla pageview (takze przy nawigacji SPA),
+// wiec drugie wywolanie liczy odslone dwa razy (N-01). Funkcja zostaje dla
+// wariantu ga4 / script.manual.js.
 export function trackPageView(path: string) {
   if (ANALYTICS_PROVIDER === "plausible" && window.plausible) {
     window.plausible("pageview", { u: window.location.origin + path });

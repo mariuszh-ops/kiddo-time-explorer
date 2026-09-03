@@ -47,13 +47,38 @@
     <!-- Obrazy atrakcji: własna domena CDN (Cloudflare R2) -->
     <link rel="preconnect" href="https://img.familyfun.pl" crossorigin />
     <link rel="dns-prefetch" href="https://img.familyfun.pl" />
+    <!-- Preload hero: statycznie w <head>, zeby obraz LCP ruszyl juz przy parsowaniu
+         HTML, a nie dopiero po starcie Reacta (dawniej wstrzykiwal go Helmet
+         w src/pages/Index.tsx — 60 % czasu LCP to bylo czekanie na JS).
+         Warunek na sciezce zostawia podstrony bez ostrzezenia "preloaded but not used".
+         Musi stac PRZED arkuszem fontow: arkusz blokuje wykonanie kolejnych skryptow. -->
+    <script>
+      if (location.pathname === "/") {
+        var heroPreload = document.createElement("link");
+        heroPreload.rel = "preload";
+        heroPreload.as = "image";
+        heroPreload.setAttribute(
+          "imagesrcset",
+          "/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
+        );
+        heroPreload.setAttribute("imagesizes", "100vw");
+        heroPreload.setAttribute("fetchpriority", "high");
+        document.head.appendChild(heroPreload);
+      }
+    </script>
+
+    <!-- Fonty bez blokowania renderu: media="print" nie blokuje pierwszego malowania,
+         onload przelacza na "all". `display=swap` i tak podmienia kroj po pobraniu,
+         wiec kolejnosc FOUT sie nie zmienia — znika tylko blokada renderu (791 ms). -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap"
+      media="print"
+      onload="this.media='all'; this.onload=null;"
     />
-
-    <!-- Preload hero jest wstrzykiwany dynamicznie tylko na stronie głównej (src/pages/Index.tsx),
-         żeby uniknąć warninga "preloaded but not used" na podstronach. -->
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" />
+    </noscript>
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#497a5c" />
