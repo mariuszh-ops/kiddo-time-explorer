@@ -1,21 +1,21 @@
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, useEffect, useCallback } from "react";
+import { CATEGORY_ORDER, CATEGORY_LABELS, CATEGORY_EMOJI } from "@/data/categoryLabels";
 
 export const FAVORITES_CHIP_KEY = "_favorites";
 
-const CATEGORIES = [
+// Etykiety i kolejnosc bierzemy z @/data/categoryLabels — chipy mapy mialy
+// wlasna, krotsza liste („Plac zabaw”, „Sport”, „Zoo”, „Park”, „Inne”), przez
+// co ta sama kategoria nazywala sie inaczej na mapie i w filtrach (BA-H-08).
+const CATEGORIES: { key: string; label: string; emoji: string }[] = [
   { key: FAVORITES_CHIP_KEY, label: "Ulubione", emoji: "❤️" },
-  { key: "sala-zabaw", label: "Sale zabaw", emoji: "🎠" },
-  { key: "plac-zabaw", label: "Plac zabaw", emoji: "🛝" },
-  { key: "park-rozrywki", label: "Parki rozrywki", emoji: "🎢" },
-  { key: "centra-rozrywki", label: "Centra rozrywki", emoji: "🎮" },
-  { key: "muzeum-teatr", label: "Muzea i teatry", emoji: "🎭" },
-  { key: "sport", label: "Sport", emoji: "⚽" },
-  { key: "zoo", label: "Zoo", emoji: "🦁" },
-  { key: "park", label: "Park", emoji: "🌳" },
-  { key: "inne", label: "Inne", emoji: "📌" },
-] as const;
+  ...CATEGORY_ORDER.map((key) => ({
+    key,
+    label: CATEGORY_LABELS[key],
+    emoji: CATEGORY_EMOJI[key],
+  })),
+];
 
 interface MapCategoryChipsProps {
   selected: Set<string>;

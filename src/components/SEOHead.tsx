@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { buildSeoTitle } from "@/lib/seoTitle";
 
 const SITE_NAME = "FamilyFun";
 const BASE_URL = "https://familyfun.pl";
@@ -40,8 +41,9 @@ const SEOHead = ({
   publishedTime,
   modifiedTime,
 }: SEOHeadProps) => {
-  // Nie doklejaj brandu, jeśli tytuł już go zawiera (np. seoTitle z categoryPages).
-  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  // Brand doklejany tylko raz (seoTitle z categoryPages już go ma), a całość
+  // przycinana do 65 znaków — dłuższe tytuły Google i tak ucina (BC-E-02).
+  const fullTitle = buildSeoTitle(title);
   const canonicalUrl = `${BASE_URL}${path}`;
   const ogImage = toAbsoluteImage(image);
   const isFallbackImage = ogImage === FALLBACK_IMAGE;

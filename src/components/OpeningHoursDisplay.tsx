@@ -14,6 +14,10 @@ const DAY_ABBREV: Record<string, string> = {
 
 const DAY_ORDER = ["niedziela", "poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota"];
 
+// W danych bywa „Zamknięte” z wielkiej litery (9 wierszy na 20 kartach,
+// audyt 400: BA-H-06) — w środku zdania piszemy małą, niezależnie od źródła.
+const CLOSED_LABEL = "zamknięte";
+
 const OpeningHoursDisplay = ({ hours }: OpeningHoursDisplayProps) => {
   // Akceptujemy zarówno "poniedziałek: 9-17|wtorek: ..." jak i format
   // wielolinijkowy (nowe linie z Supabase / Google Places).
@@ -44,7 +48,7 @@ const OpeningHoursDisplay = ({ hours }: OpeningHoursDisplayProps) => {
               {DAY_ABBREV[day] || day}
             </span>
             <span className={isToday ? "font-semibold text-foreground" : isClosed ? "font-medium text-[#b91c1c]" : "text-muted-foreground"}>
-              {time || "—"}
+              {time ? (isClosed ? CLOSED_LABEL : time) : "—"}
             </span>
           </div>
         );

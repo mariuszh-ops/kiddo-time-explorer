@@ -18,18 +18,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AMENITIES } from "@/data/amenities";
+import { CATEGORY_TYPE_OPTIONS } from "@/data/categoryLabels";
 
-export const CATEGORY_TYPES: { value: string; label: string }[] = [
-  { value: "sala-zabaw", label: "Sale zabaw" },
-  { value: "plac-zabaw", label: "Place zabaw" },
-  { value: "park-rozrywki", label: "Parki rozrywki" },
-  { value: "centra-rozrywki", label: "Centra rozrywki" },
-  { value: "muzeum-teatr", label: "Muzea i teatry" },
-  { value: "sport", label: "Sport i ruch" },
-  { value: "zoo", label: "Zoo i zwierzęta" },
-  { value: "park", label: "Parki i natura" },
-  { value: "inne", label: "Inne" },
-];
+export const CATEGORY_TYPES: { value: string; label: string }[] = CATEGORY_TYPE_OPTIONS;
 
 /** Udogodnienia rzadkie, których nie pokazujemy jako filtry w UI. */
 const HIDDEN_AMENITY_FILTERS = new Set([

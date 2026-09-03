@@ -212,11 +212,15 @@ const BlogPostPage = () => {
 
   return (
     <PageTransition>
+      {/* og:image z public/og/blog/ — zdjęcia wpisów mają 800x450, a Facebook
+          wymaga 1200x630 (audyt 400: BC-E-05). Generator: scripts/og_blog.py */}
       <SEOHead
         title={post.title}
         description={post.excerpt}
         path={`/inspiracje/${post.slug}`}
-        image={post.imageUrl}
+        image={`/og/blog/${post.slug}.jpg`}
+        imageWidth={1200}
+        imageHeight={630}
         type="article"
         publishedTime={post.publishedAt}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}

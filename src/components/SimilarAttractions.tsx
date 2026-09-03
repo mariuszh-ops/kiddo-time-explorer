@@ -144,7 +144,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
             />
             {mode === "radius" && (
               <p className="mt-1 text-xs text-muted-foreground">
-                {a.distanceKm.toFixed(1)} km od tej atrakcji
+                {a.distanceKm.toFixed(1).replace(".", ",")} km od tej atrakcji
               </p>
             )}
           </div>

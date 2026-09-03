@@ -62,6 +62,7 @@ import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, formatReviewCountGoogle, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
+import { buildActivityTitle, fitsSeoTitle } from "@/lib/seoTitle";
 
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
@@ -343,7 +344,13 @@ const ActivityDetail = () => {
   const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
   const cityLocativeRaw = cityLabels[activity.city]?.locative || cityLabel;
   const cityLocative = `w ${cityLocativeRaw}`;
-  const seoTitle = `${activity.title} — ${typeLabel} ${cityLocative}`;
+  // Pelna forma tylko wtedy, gdy miesci sie w 65 znakach; przy dlugiej nazwie
+  // zostaje „{nazwa} — {region} | FamilyFun” z nazwa ucinana na granicy slowa
+  // (audyt 400: BC-E-02, BA-H-07).
+  const seoTitleFull = `${activity.title} — ${typeLabel} ${cityLocative}`;
+  const seoTitle = fitsSeoTitle(seoTitleFull)
+    ? seoTitleFull
+    : buildActivityTitle(activity.title, regionLabel);
   const fallbackDescription = `${typeLabel} ${cityLocative} — sprawdź godziny otwarcia i opinie rodziców.`;
   const activityDescription = activity.description?.trim() || fallbackDescription;
   // Meta description: pierwsze ~155 znaków opisu atrakcji (z odcięciem na granicy słowa).

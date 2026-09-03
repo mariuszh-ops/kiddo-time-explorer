@@ -285,6 +285,8 @@ const Index = () => {
           activities={mapVisibleActivities} 
           hasActiveFilters={true}
           onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           filters={filters}
           mapReturnAction={() => handleViewModeChange("map")}
           isLoading={katalogSieLaduje}
@@ -295,6 +297,8 @@ const Index = () => {
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearAllFilters}
           onClearFiltersKeepCity={clearFiltersKeepCity}
+          searchQuery={searchQuery}
+          onClearSearch={() => setSearchQuery("")}
           filters={filters}
           isLoading={katalogSieLaduje}
         />

@@ -3,5 +3,7 @@ Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /my-places
+Disallow: /reset-password
+Disallow: /.lovable/
 
 Sitemap: https://familyfun.pl/sitemap.xml

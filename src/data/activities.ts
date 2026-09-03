@@ -3,6 +3,7 @@
 // został usunięty. Przy awarii sieci nie używamy żadnego fallbacku —
 // widoki katalogu bramkuje DataGate i pokazuje ekran błędu (DataLoadError).
 import { REGIONS } from "@/data/regions";
+import { CATEGORY_TYPE_OPTIONS } from "@/data/categoryLabels";
 
 export interface Activity {
   id: number;
@@ -242,17 +243,7 @@ export const filterOptions = {
     { value: "10-13", label: "10–13 lat", min: 10, max: 13 },
     { value: "14-16", label: "14+", min: 14, max: 16 },
   ],
-  type: [
-    { value: "sala-zabaw", label: "Sale zabaw" },
-    { value: "plac-zabaw", label: "Place zabaw" },
-    { value: "park-rozrywki", label: "Parki rozrywki" },
-    { value: "centra-rozrywki", label: "Centra rozrywki" },
-    { value: "muzeum-teatr", label: "Muzea i teatry" },
-    { value: "sport", label: "Sport i ruch" },
-    { value: "zoo", label: "Zoo i zwierzęta" },
-    { value: "park", label: "Parki i natura" },
-    { value: "inne", label: "Inne" },
-  ],
+  type: CATEGORY_TYPE_OPTIONS,
   indoor: [
     { value: "indoor", label: "Pod dachem" },
     { value: "outdoor", label: "Na zewnątrz" },

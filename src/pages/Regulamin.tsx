@@ -8,7 +8,7 @@ import SEOHead from "@/components/SEOHead";
 const Regulamin = () => {
   return (
     <PageTransition>
-      <SEOHead title="Regulamin serwisu" description="Regulamin korzystania z serwisu FamilyFun." path="/regulamin" />
+      <SEOHead title="Regulamin serwisu" description="Zasady korzystania z serwisu FamilyFun: konto rodzica, dodawanie opinii i ocen, zgłaszanie atrakcji, prawa i obowiązki użytkownika oraz kontakt." path="/regulamin" />
       <div className="min-h-screen bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">

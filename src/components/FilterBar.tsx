@@ -92,7 +92,9 @@ const FilterBar = ({
       const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
       return `${count} w promieniu ${filters.distance} km od centrum ${cityName}${suffix}`;
     }
-    return `${count} ${verbPl(filterCounts.filtered, "spełnia", "spełniają")} wybrane filtry`;
+    // Przy zerze „Brak atrakcji spełnia wybrane filtry” było niegramatyczne (K-21).
+    if (filterCounts.filtered === 0) return "Żadna atrakcja nie spełnia wybranych filtrów";
+    return `${count} ${verbPl(filterCounts.filtered, "pasuje", "pasują")} do wybranych filtrów`;
   };
 
   // Mobile layout

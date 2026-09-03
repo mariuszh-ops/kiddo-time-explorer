@@ -856,8 +856,21 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
               className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
             >
               {displayedActivities.length === 0 ? (
-                <div className="py-12 text-center text-sm text-muted-foreground px-4">
-                  Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                /* Bez przycisku pusty stan był ślepą uliczką: kadr poza Polską
+                   nie ma jak wrócić do pinów (audyt 400: K-21). */
+                <div className="py-12 text-center px-4 flex flex-col items-center gap-3">
+                  <p className="text-sm text-muted-foreground">
+                    Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                  </p>
+                  {filteredActivities.length > 0 && (
+                    <button
+                      onClick={handleShowAll}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      Pokaż wszystkie atrakcje
+                    </button>
+                  )}
                 </div>
               ) : (
                 displayedActivities.map((activity) => (

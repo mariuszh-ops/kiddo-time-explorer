@@ -35,6 +35,16 @@ znaleźć miejsca dopasowane do wieku dzieci i preferencji rodziny.
 2. Nowe miejsca dodaje się przez panel `/admin` (zakładka Katalog)
 3. Publikacja: `published = true` oraz `admin_hidden = false`
 
+## Jak ukryć atrakcję (runbook panelu)
+
+1. Panel `/admin` → Katalog → przełącznik **Widoczna** przy karcie
+2. **Po ukryciu karty kliknij Publish w Lovable** — `sitemap.xml` powstaje
+   w prebuildzie, więc do najbliższego wdrożenia Google nadal widzi w niej
+   ukryty adres i trafia na „Nie znaleziono strony" z HTTP 200 (soft-404).
+
+Docelowo sitemapa ma być generowana z bazy bez pełnego deployu — to kryterium
+**H-11** wyboru hostingu (migracja D-13). Do tego czasu obowiązuje punkt 2.
+
 ## Jak dodać artykuł na blogu
 
 1. Utwórz nowy plik w `/content/blog/[slug].md`

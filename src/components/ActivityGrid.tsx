@@ -15,6 +15,9 @@ export interface ActivityGridProps {
   hasActiveFilters?: boolean;
   onClearFilters?: () => void;
   onClearFiltersKeepCity?: () => void;
+  /** Fraza z ?search= — pusty stan ma mówić o niej, nie o filtrach (K-21). */
+  searchQuery?: string;
+  onClearSearch?: () => void;
   isLoading?: boolean;
   hasError?: boolean;
   onRetry?: () => void;
@@ -45,7 +48,7 @@ const useGridCols = () => {
 const roundUp = (n: number, cols: number, max: number) =>
   Math.min(Math.ceil(n / cols) * cols, max);
 
-const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFiltersKeepCity, isLoading, hasError, onRetry, filters = {}, mapReturnAction, paginate = true }: ActivityGridProps) => {
+const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFiltersKeepCity, searchQuery, onClearSearch, isLoading, hasError, onRetry, filters = {}, mapReturnAction, paginate = true }: ActivityGridProps) => {
   const [rawVisibleCount, setRawVisibleCount] = useState(ITEMS_PER_PAGE);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const cols = useGridCols();
@@ -148,6 +151,8 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
           <div className="container">
             <EmptyFilterState
               onClearFilters={onClearFiltersKeepCity ?? onClearFilters ?? (() => {})}
+              searchQuery={searchQuery}
+              onClearSearch={onClearSearch}
             />
           </div>
         </section>

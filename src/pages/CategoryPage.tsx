@@ -371,6 +371,13 @@ const CategoryPage = () => {
   const resolvedH1 = resolveCityText(effectiveConfig.h1, citySlug || "");
   const resolvedBodyDescription = resolveCityText(effectiveConfig.description, citySlug || "");
 
+  // Strony 2+ dostaja krotsza forme, zeby „— strona N” zmiescilo sie w 65
+  // znakach bez ucinania wojewodztwa (inaczej dwa regiony mialyby ten sam
+  // <title> po skroceniu — audyt 400: BC-E-02).
+  const pagedTitle = `${effectiveConfig.label} ${citySlug ? `w ${effectiveCityLabel.locative}` : ""}`
+    .replace(/\s+/g, " ")
+    .trim();
+
   const path = citySlug
     ? (categorySlug ? `/${citySlug}/${categorySlug}` : `/${citySlug}`)
     : `/kategoria/${categorySlug}`;
@@ -437,11 +444,12 @@ const CategoryPage = () => {
 
   return (
     <PageTransition>
+      {/* Bez `image`: zdjęcie pierwszej atrakcji bywa niższe niż 630 px i
+          Facebook przycinał podgląd (BC-E-05). Baner sitewide ma 1200x640. */}
       <SEOHead
-        title={`${resolvedTitle.replace(" | FamilyFun", "")}${pageParam > 1 ? ` — strona ${pageParam}` : ""}`}
+        title={pageParam > 1 ? `${pagedTitle} — strona ${pageParam}` : resolvedTitle.replace(" | FamilyFun", "")}
         description={dynamicMetaDescription}
         path={pageParam > 1 ? `${path}?page=${pageParam}` : path}
-        image={activities[0]?.imageUrl}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <Header />
@@ -568,16 +576,31 @@ const CategoryPage = () => {
           {/* Empty state */}
           {isError ? null : isEmpty ? (
             <div className="flex flex-col items-center justify-center py-20 text-center px-4">
+              {/* Po wpisaniu frazy rada o filtrach była nie na temat — rodzic
+                  żadnych filtrów nie ustawiał (audyt 400: K-21). */}
               <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
-                Nic nie pasuje do wybranych filtrów
+                {urlSearch
+                  ? `Nie znaleźliśmy „${urlSearch}”`
+                  : "Nic nie pasuje do wybranych filtrów"}
               </h2>
               <p className="text-muted-foreground mb-6 max-w-md">
-                Spróbuj poluzować filtry — zmień kategorię, obniż minimalną ocenę
-                albo odznacz część udogodnień.
+                {urlSearch
+                  ? "Sprawdź pisownię albo wpisz miasto lub kategorię."
+                  : "Spróbuj poluzować filtry — zmień kategorię, obniż minimalną ocenę albo odznacz część udogodnień."}
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
+                {urlSearch && (
+                  <Button onClick={() => updateParams({ search: undefined, page: undefined })}>
+                    Wyczyść wyszukiwanie
+                  </Button>
+                )}
                 {hasActiveFilters && (
-                  <Button onClick={clearAll}>Wyczyść filtry</Button>
+                  <Button
+                    onClick={clearAll}
+                    variant={urlSearch ? "outline" : "default"}
+                  >
+                    Wyczyść filtry
+                  </Button>
                 )}
                 <Button asChild variant={hasActiveFilters ? "outline" : "default"}>
                   <Link to="/">Wróć na stronę główną</Link>

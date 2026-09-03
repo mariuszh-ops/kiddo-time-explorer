@@ -20,13 +20,16 @@ export interface CategoryConfig {
   filterFn: (activity: Activity, citySlug: string) => boolean;
 }
 
-// {city} placeholder is replaced with "w {locative}" form at runtime
+// {city} placeholder is replaced with "w {locative}" form at runtime.
+// UWAGA: `seoTitle` musi zmiescic sie w 65 znakach po podstawieniu
+// najdluzszego wojewodztwa („w Warminsko-Mazurskiem”) — dluzsze tytuly
+// Google ucina, a SEOHead doklei do nich „…” (audyt 400: BC-E-02).
 export const categoryConfigs: CategoryConfig[] = [
   {
     slug: "",
     emoji: "📍",
     label: "Wszystkie atrakcje",
-    seoTitle: "Atrakcje dla dzieci {city} — sprawdzone przez rodziców | FamilyFun",
+    seoTitle: "Atrakcje dla dzieci {city} | FamilyFun",
     seoDescription: "Odkryj najlepsze atrakcje dla dzieci {city}. Place zabaw, muzea, parki trampolin i więcej. Opinie i oceny od rodziców, godziny otwarcia, ceny.",
     h1: "Atrakcje dla dzieci {city}",
     description: "Sprawdzone miejsca na wspólny czas z dzieckiem {city}. Każda atrakcja oceniona przez rodziców — znajdź idealną na dziś.",
@@ -36,7 +39,7 @@ export const categoryConfigs: CategoryConfig[] = [
     slug: "sala-zabaw",
     emoji: "🏠",
     label: "Sale zabaw",
-    seoTitle: "Sale zabaw dla dzieci {city} — ranking rodziców | FamilyFun",
+    seoTitle: "Sale zabaw dla dzieci {city} | FamilyFun",
     seoDescription: "Najlepsze sale zabaw {city} ocenione przez rodziców. Sprawdź godziny, ceny, udogodnienia i opinie innych rodzin.",
     h1: "Sale zabaw {city}",
     description: "Ranking sal zabaw ocenionych przez rodziców. Sprawdź, które mają przewijalnie, parking i są dostępne dla wózków.",
@@ -46,7 +49,7 @@ export const categoryConfigs: CategoryConfig[] = [
     slug: "plac-zabaw",
     emoji: "🎪",
     label: "Place zabaw",
-    seoTitle: "Place zabaw {city} dla dzieci — ranking rodziców | FamilyFun",
+    seoTitle: "Place zabaw dla dzieci {city} | FamilyFun",
     seoDescription: "Najlepsze place zabaw {city} ocenione przez rodziców. Sprawdź godziny, ceny, udogodnienia i opinie innych rodzin.",
     h1: "Place zabaw {city}",
     description: "Ranking placów zabaw ocenionych przez rodziców. Sprawdź, które mają przewijalnie, parking i są dostępne dla wózków.",
@@ -66,7 +69,7 @@ export const categoryConfigs: CategoryConfig[] = [
     slug: "centra-rozrywki",
     emoji: "🎮",
     label: "Centra rozrywki",
-    seoTitle: "Centra rozrywki dla dzieci {city} — escape roomy, VR, laser tag | FamilyFun",
+    seoTitle: "Centra rozrywki dla dzieci {city} | FamilyFun",
     seoDescription: "Najlepsze kryte centra rozrywki {city}: escape roomy, pokoje zagadek, VR, laser tag i salony gier. Opinie rodziców, ceny, godziny otwarcia.",
     h1: "Centra rozrywki {city}",
     description: "Kryte centra rozrywki ocenione przez rodziców: escape roomy, pokoje zagadek, VR, laser tag, salony gier. Idealne na deszczowy dzień.",
@@ -106,7 +109,7 @@ export const categoryConfigs: CategoryConfig[] = [
     slug: "park",
     emoji: "🌳",
     label: "Parki i natura",
-    seoTitle: "Parki i tereny zielone dla dzieci {city} | FamilyFun",
+    seoTitle: "Parki i natura dla dzieci {city} | FamilyFun",
     seoDescription: "Najlepsze parki i tereny zielone {city} dla rodzin z dziećmi. Sprawdź opinie rodziców, udogodnienia i godziny otwarcia.",
     h1: "Parki i natura {city}",
     description: "Parki miejskie, tereny zielone i miejsca na świeżym powietrzu idealne na rodzinne spacery. Ocenione przez rodziców.",
@@ -115,7 +118,7 @@ export const categoryConfigs: CategoryConfig[] = [
   {
     slug: "inne",
     emoji: "✨",
-    label: "Inne",
+    label: "Inne atrakcje",
     seoTitle: "Inne atrakcje dla dzieci {city} | FamilyFun",
     seoDescription: "Odkryj unikalne atrakcje dla dzieci {city}. Sprawdzone miejsca ocenione przez rodziców.",
     h1: "Inne atrakcje {city}",
