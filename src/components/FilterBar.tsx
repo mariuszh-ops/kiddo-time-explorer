@@ -174,27 +174,29 @@ const FilterBar = ({
     );
   }
 
-  // Desktop layout (unchanged)
+  // Desktop layout
   return (
     <>
-      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border" onPointerDownCapture={maybePrefetchCatalog} onFocusCapture={maybePrefetchCatalog}>
+      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border">
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
             {/* Combined City + Distance filter — shown only when multiple cities enabled */}
             {FEATURES.ENABLED_CITIES.length > 1 && (
-              <CityFilterDropdown
-                cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
-                selectedCity={filters.city}
-                selectedDistance={filters.distance}
-                hasAnyFilter={filterCounts.hasAnyFilter}
-                filteredCount={filterCounts.filtered}
-                onCitySelect={(value) => onUpdateFilter("city", value)}
-                onDistanceChange={(value) => onUpdateFilter("distance", value)}
-              />
+              <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                <CityFilterDropdown
+                  cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
+                  selectedCity={filters.city}
+                  selectedDistance={filters.distance}
+                  hasAnyFilter={filterCounts.hasAnyFilter}
+                  filteredCount={filterCounts.filtered}
+                  onCitySelect={(value) => onUpdateFilter("city", value)}
+                  onDistanceChange={(value) => onUpdateFilter("distance", value)}
+                />
+              </span>
             )}
-            
-            <div>
+
+            <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
               <FilterDropdown
                 label="Wiek dziecka"
                 options={filterCounts.age}
@@ -202,9 +204,9 @@ const FilterBar = ({
                 hasAnyFilter={filterCounts.hasAnyFilter}
                 onSelect={(value) => onUpdateFilter("age", value)}
               />
-            </div>
-            
-            <div>
+            </span>
+
+            <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
               <MultiFilterDropdown
                 label="Kategoria"
                 options={filterCounts.type}
@@ -213,8 +215,8 @@ const FilterBar = ({
                 onToggle={onToggleTypeFilter}
                 onClear={() => onUpdateFilter("type", undefined)}
               />
-            </div>
-            
+            </span>
+
             {/* Filtr „Pod dachem?" ukryty — isIndoor twardo false w danych (0 wyników). Logika w useActivityFilters zostaje.
             <FilterDropdown
               label="Pod dachem?"
@@ -224,9 +226,9 @@ const FilterBar = ({
               onSelect={(value) => onUpdateFilter("indoor", value)}
             />
             */}
-            
+
             {/* Price filter - hidden until better data */}
-            {/* 
+            {/*
             <FilterDropdown
               label="Cena"
               options={filterCounts.price}
@@ -235,9 +237,9 @@ const FilterBar = ({
               onSelect={(value) => onUpdateFilter("price", value)}
             />
             */}
-            
+
             {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
-            {/* 
+            {/*
             <FilterDropdown
               label="Typ atrakcji"
               options={filterCounts.activityKind}
@@ -249,11 +251,13 @@ const FilterBar = ({
 
             {/* Search input */}
             {hideSearch ? null : FEATURES.SEARCH_AUTOCOMPLETE ? (
-              <SearchAutocomplete
-                activities={getActivities()}
-                searchQuery={searchQuery}
-                onSearchChange={onSearchChange}
-              />
+              <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                <SearchAutocomplete
+                  activities={getActivities()}
+                  searchQuery={searchQuery}
+                  onSearchChange={onSearchChange}
+                />
+              </span>
             ) : (
               <div className="relative flex items-center">
                 {isSearchExpanded ? (
