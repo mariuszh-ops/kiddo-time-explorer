@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Heart, User, LogIn } from "lucide-react";
+import { Heart, User, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
@@ -12,11 +12,21 @@ import familyFunLogo190 from "@/assets/familyfun-logo-190.webp.asset.json";
 import { env } from "@/config/env";
 import HeaderSearch from "@/components/HeaderSearch";
 import { REGION_SLUGS } from "@/data/regions";
+import { getInitials } from "@/lib/initials";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 
 const Header = () => {
   const location = useLocation();
-  const { isLoggedIn, user, signInWithGoogle, isDemoMode, toggleDemoMode } = useAuth();
+  const { isLoggedIn, user, signInWithGoogle, logout, isDemoMode, toggleDemoMode } = useAuth();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -73,15 +83,9 @@ const Header = () => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  // Inicjały użytkownika na awatarze w headerze.
-  const initials = (() => {
-    if (!user) return "";
-    const source = user.name?.trim() || user.email || "";
-    if (!source) return "";
-    const parts = source.split(/\s+/).filter(Boolean);
-    if (user.name && parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-    return source.slice(0, 2).toUpperCase();
-  })();
+  // Inicjały użytkownika na awatarze w headerze (fallback, gdy brak zdjęcia z Google).
+  const initials = getInitials(user);
+  const accountLabel = user?.name?.trim() || user?.email || "";
 
   // Wyszukiwarka w headerze na stronach listingowych (home ma własne, duże pole).
   const firstSegment = location.pathname.split("/")[1] ?? "";
@@ -148,27 +152,55 @@ const Header = () => {
                   </Button>
                 </Link>
 
-                {/* Awatar/inicjały → /profile. Widoczne również na telefonie. */}
-                <Link to="/profile" aria-label="Twój profil" className="block">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-hidden="true"
-                    tabIndex={-1}
-                    className={cn(
-                      "min-h-11 min-w-11 text-muted-foreground hover:text-foreground",
-                      isActive("/profile") && "text-foreground bg-accent"
-                    )}
-                  >
-                    {initials ? (
-                      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                        {initials}
-                      </span>
-                    ) : (
-                      <User className="w-5 h-5" />
-                    )}
-                  </Button>
-                </Link>
+                {/* Awatar konta → menu (Profil / Moje miejsca / Wyloguj). Klik, nie hover — działa na dotyku. */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={accountLabel ? `Konto: ${accountLabel}` : "Konto"}
+                      title={accountLabel || undefined}
+                      className={cn(
+                        "min-h-11 min-w-11 rounded-full text-muted-foreground hover:text-foreground",
+                        isActive("/profile") && "text-foreground bg-accent"
+                      )}
+                    >
+                      <Avatar className="h-8 w-8">
+                        {user?.avatarUrl && (
+                          <AvatarImage src={user.avatarUrl} alt="" referrerPolicy="no-referrer" />
+                        )}
+                        <AvatarFallback className="bg-primary/10 text-xs font-semibold text-primary">
+                          {initials || <User className="w-5 h-5" />}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-60">
+                    <DropdownMenuLabel className="font-normal">
+                      {user?.name && <p className="truncate text-sm font-medium text-foreground">{user.name}</p>}
+                      {user?.email && <p className="truncate text-xs text-muted-foreground">{user.email}</p>}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="cursor-pointer gap-2">
+                        <User className="h-4 w-4" />
+                        Profil
+                      </Link>
+                    </DropdownMenuItem>
+                    {/* Na desktopie „Moje miejsca" jest już obok awatara — w menu tylko na mobile. */}
+                    <DropdownMenuItem asChild className="sm:hidden">
+                      <Link to="/my-places" className="cursor-pointer gap-2">
+                        <Heart className="h-4 w-4" />
+                        Moje miejsca
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={() => logout()} className="cursor-pointer gap-2">
+                      <LogOut className="h-4 w-4" />
+                      Wyloguj się
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </>
             ) : (
               /* Wejście do logowania — widoczne na każdej szerokości (S-115) */

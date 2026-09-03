@@ -22,6 +22,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
+import { getInitials } from "@/lib/initials";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -73,16 +75,6 @@ const Profile = () => {
     if (years === 1) return "1 rok";
     if (years < 5) return `${years} lata`;
     return `${years} lat`;
-  };
-
-  const getInitials = (u: { name?: string; email: string } | null): string => {
-    if (!u) return "?";
-    if (u.name) {
-      const parts = u.name.trim().split(/\s+/);
-      if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-      return parts[0].slice(0, 2).toUpperCase();
-    }
-    return u.email.slice(0, 2).toUpperCase();
   };
 
   const handleLogout = () => {
@@ -155,9 +147,12 @@ const Profile = () => {
           >
             {/* User identity */}
             <section className="bg-card rounded-xl p-6 border border-border text-center">
-              <div className="w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl font-semibold text-primary">{getInitials(user)}</span>
-              </div>
+              <Avatar className="w-20 h-20 mx-auto mb-4 border-2 border-primary/20">
+                {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt="" referrerPolicy="no-referrer" />}
+                <AvatarFallback className="bg-primary/10 text-2xl font-semibold text-primary">
+                  {getInitials(user) || "?"}
+                </AvatarFallback>
+              </Avatar>
               {user?.name && (
                 <p className="text-foreground font-medium">{user.name}</p>
               )}
