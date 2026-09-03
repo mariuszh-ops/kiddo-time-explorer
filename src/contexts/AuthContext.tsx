@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import { catalogClient as supabase } from "@/lib/catalogClient";
+import { catalogClient as supabase, clearCatalogAuthStorage } from "@/lib/catalogClient";
 import { env } from "@/config/env";
 import { trackEvent } from "@/lib/analytics";
 import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
@@ -9,9 +9,12 @@ import { resetGuestMigrationConsent } from "@/lib/guestMigration";
  * S-184: wspólny komputer. Po wylogowaniu / wygaśnięciu sesji z localStorage
  * musi zniknąć KAŻDY klucz aplikacji (ff_*, familyfun_*), żeby kolejna osoba
  * nie zobaczyła cudzych ulubionych ani ocen.
+ * I-01: razem z nimi klucz sesji GoTrue — `clearAllAppStorage()` go NIE obejmuje,
+ * bo `sb-catalog-auth` jest poza prefiksami aplikacji.
  */
 const wipeLocalUserData = () => {
   clearAllAppStorage();
+  clearCatalogAuthStorage();
   markLoggedOutNow();
   resetGuestMigrationConsent();
 };

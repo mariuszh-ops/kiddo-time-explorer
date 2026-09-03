@@ -14,6 +14,27 @@ const CATALOG_ANON_KEY =
 
 export const CATALOG_AUTH_STORAGE_KEY = "sb-catalog-auth";
 
+/**
+ * I-01: wspólny komputer. `signOut()` sam kasuje klucze sesji, ale gdy żądanie
+ * wylogowania padnie albo wyścignie się z odświeżaniem tokenu, klucz może
+ * przeżyć — a wtedy kolejna osoba przy tej przeglądarce widzi cudze konto.
+ * Kasujemy więc jawnie WSZYSTKIE klucze GoTrue tego klienta
+ * (`sb-catalog-auth`, `-user`, `-code-verifier`, `-flows-code-verifier`).
+ */
+export function clearCatalogAuthStorage(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const doKasacji: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key && key.startsWith(CATALOG_AUTH_STORAGE_KEY)) doKasacji.push(key);
+    }
+    doKasacji.forEach((k) => window.localStorage.removeItem(k));
+  } catch {
+    // brak storage — nic do sprzątania
+  }
+}
+
 const urlOf = (input: RequestInfo | URL): string => {
   if (typeof input === "string") return input;
   if (input instanceof URL) return input.toString();

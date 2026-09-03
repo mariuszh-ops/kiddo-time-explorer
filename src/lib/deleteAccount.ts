@@ -1,4 +1,4 @@
-import { catalogClient as supabase } from "@/lib/catalogClient";
+import { catalogClient as supabase, clearCatalogAuthStorage } from "@/lib/catalogClient";
 import { clearAllAppStorage } from "@/lib/storage";
 
 /**
@@ -27,9 +27,11 @@ export async function deleteAccountData(_userId: string): Promise<DeleteAccountR
       };
     }
 
-    // Dopiero teraz sprzątamy lokalnie.
+    // Dopiero teraz sprzątamy lokalnie. Klucz sesji kasujemy jawnie — konto
+    // już nie istnieje, więc `signOut()` dostaje 403 i nie ma się o co opierać.
     clearAllAppStorage();
     await supabase.auth.signOut();
+    clearCatalogAuthStorage();
 
     return { ok: true };
   } catch (e) {

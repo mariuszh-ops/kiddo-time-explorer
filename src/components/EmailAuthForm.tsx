@@ -9,7 +9,14 @@ import { trackEvent } from "@/lib/analytics";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
 import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
 import PasswordRequirements from "@/components/PasswordRequirements";
-import { TURNSTILE_SITE_KEY, TURNSTILE_ERROR_MESSAGE, TURNSTILE_UNAVAILABLE_MESSAGE, isCaptchaError } from "@/lib/turnstile";
+import {
+  TURNSTILE_SITE_KEY,
+  TURNSTILE_ERROR_MESSAGE,
+  TURNSTILE_BLOCKED_MESSAGE,
+  TURNSTILE_OUR_FAULT_MESSAGE,
+  turnstileUnavailableMessage,
+  isCaptchaError,
+} from "@/lib/turnstile";
 
 
 type Mode = "signin" | "signup" | "reset";
@@ -25,8 +32,12 @@ interface EmailAuthFormProps {
   initialMode?: Mode;
 }
 
-const RESEND_COOLDOWN = 30;
-const TURNSTILE_TIMEOUT_MS = 8000;
+// M-14: serwer (GoTrue smtp_max_frequency) nie wyśle drugiego maila przez 60 s —
+// krótszy cooldown w UI tylko zaprasza do kliknięcia, które skończy się 429.
+const RESEND_COOLDOWN = 60;
+// D-15: budżet liczony od otwarcia formularza do WYRENDEROWANIA widgetu.
+// Po wyrenderowaniu nie ma limitu — czekamy na kliknięcie użytkownika.
+const TURNSTILE_TIMEOUT_MS = 15000;
 
 
 const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
@@ -43,6 +54,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [captchaError, setCaptchaError] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** D-15: widget stoi na stronie i czeka na kliknięcie — to NIE jest awaria. */
+  const widgetReadyRef = useRef(false);
 
   /** Token Turnstile jest jednorazowy — po każdej nieudanej próbie resetujemy widget. */
   const resetCaptcha = () => {
@@ -51,14 +64,22 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     turnstileRef.current?.reset();
   };
 
-  /** Zablokuj logowanie hasłem, gdy widget nie wystartuje (adblock / DNS / timeout). */
-  const markCaptchaUnavailable = () => {
+  const clearCaptchaTimeout = () => {
     if (captchaTimeoutRef.current) {
       clearTimeout(captchaTimeoutRef.current);
       captchaTimeoutRef.current = null;
     }
+  };
+
+  /**
+   * Zablokuj logowanie hasłem, gdy widget nie wystartuje.
+   * I-09: treść zależy od tego, czy skrypt Cloudflare w ogóle się wczytał —
+   * nie obwiniamy rozszerzeń użytkownika, gdy wina jest po naszej stronie.
+   */
+  const markCaptchaUnavailable = () => {
+    clearCaptchaTimeout();
     setCaptchaError(true);
-    setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+    setError(turnstileUnavailableMessage());
   };
 
 
@@ -79,19 +100,17 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   }, [cooldown]);
 
   useEffect(() => {
-    // Jeśli widget Turnstile nie załaduje się w czasie (adblock/filtr DNS),
+    // Jeśli widget Turnstile nie zdąży się WYRENDEROWAĆ (adblock/filtr DNS/awaria),
     // traktujemy to jako awarię zabezpieczenia i blokujemy logowanie hasłem.
+    // D-15: gdy widget stoi na stronie i czeka na kliknięcie checkboxa, budżet
+    // nie ma prawa go ubić — użytkownik dostaje tyle czasu, ile potrzebuje.
     captchaTimeoutRef.current = setTimeout(() => {
-      if (!captchaToken) {
+      if (!captchaToken && !widgetReadyRef.current) {
         markCaptchaUnavailable();
       }
     }, TURNSTILE_TIMEOUT_MS);
 
-    return () => {
-      if (captchaTimeoutRef.current) {
-        clearTimeout(captchaTimeoutRef.current);
-      }
-    };
+    return clearCaptchaTimeout;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -117,8 +136,10 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setError("Podaj hasło.");
       return;
     }
-    if (!captchaToken && !captchaError) {
-      setError(TURNSTILE_ERROR_MESSAGE);
+    // Bez tokenu nie wysyłamy nic — także wtedy, gdy widget zgłosił awarię
+    // (wcześniej `captchaError` przepuszczał żądanie z pustym tokenem).
+    if (!captchaToken) {
+      setError(captchaError ? turnstileUnavailableMessage() : TURNSTILE_ERROR_MESSAGE);
       return;
     }
 
@@ -141,7 +162,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       turnstileRef.current?.reset();
     } catch (err) {
       if (captchaError) {
-        setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+        setError(turnstileUnavailableMessage());
       } else {
         setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
       }
@@ -163,12 +184,16 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       setCaptchaToken("");
       turnstileRef.current?.reset();
     } catch (err) {
-      if (captchaError) {
-        setError(TURNSTILE_UNAVAILABLE_MESSAGE);
+      // M-14: limit serwera to konkretna odpowiedź — tłumaczymy ją nawet wtedy,
+      // gdy widget captchy zdążył zgłosić awarię.
+      if (isEmailRateLimitError(err)) {
+        setError(translateAuthError(err));
+        setCooldown(RESEND_COOLDOWN);
+      } else if (captchaError) {
+        setError(turnstileUnavailableMessage());
       } else {
         setError(isCaptchaError(err) ? TURNSTILE_ERROR_MESSAGE : translateAuthError(err));
       }
-      if (isEmailRateLimitError(err)) setCooldown(RESEND_COOLDOWN);
       resetCaptcha();
     } finally {
       setBusy(false);
@@ -255,16 +280,17 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         <Turnstile
           ref={turnstileRef}
           siteKey={TURNSTILE_SITE_KEY}
+          onWidgetLoad={() => {
+            // D-15: widget jest na stronie — dalej to już tylko czekanie na użytkownika.
+            widgetReadyRef.current = true;
+            clearCaptchaTimeout();
+          }}
           onSuccess={(token) => {
-            if (captchaTimeoutRef.current) {
-              clearTimeout(captchaTimeoutRef.current);
-              captchaTimeoutRef.current = null;
-            }
+            widgetReadyRef.current = true;
+            clearCaptchaTimeout();
             setCaptchaToken(token);
             setCaptchaError(false);
-            setError((prev) =>
-              prev === TURNSTILE_UNAVAILABLE_MESSAGE ? null : prev
-            );
+            setError((prev) => (prev === TURNSTILE_BLOCKED_MESSAGE || prev === TURNSTILE_OUR_FAULT_MESSAGE ? null : prev));
           }}
           onExpire={() => setCaptchaToken("")}
           onError={() => {

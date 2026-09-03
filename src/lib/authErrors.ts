@@ -19,7 +19,8 @@ export const translateAuthError = (error: unknown): string => {
   const msg = raw.toLowerCase();
 
   if (isEmailRateLimitError(error)) {
-    return "Wysłaliśmy już wiadomość. Odczekaj chwilę (ok. 30 sekund) i spróbuj ponownie.";
+    // M-14: GoTrue `smtp_max_frequency` = 60 s — krótszy termin w komunikacie kłamie.
+    return "Poczekaj minutę przed kolejną próbą — wiadomość już wysłaliśmy.";
   }
   if (msg.includes("user already registered") || msg.includes("already been registered")) {
     return "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.";
