@@ -46,14 +46,10 @@ const getCapitalCityGenitive = (cityValue: string): string => {
   return REGION_BY_SLUG[cityValue]?.capitalCityGenitive ?? cityValue;
 };
 
-// Prefetch katalogu tylko dla kontrolek, które go faktycznie potrzebują.
-// Przełącznik lista/mapa jest z tego wyłączony (data-no-prefetch) — widok mapy
-// bez filtrów żyje z rpc('get_map_pins') i nie ma po co ściągać całego katalogu.
-const maybePrefetchCatalog = (e: SyntheticEvent) => {
-  const target = e.target as HTMLElement | null;
-  if (target?.closest?.("[data-no-prefetch]")) return;
-  ensureActivitiesLoaded();
-};
+// Prefetch katalogu dla konkretnych kontrolek filtrujących.
+// Nie podpinamy tego pod cały pasek — przewijanie palcem po sticky barze
+// lub przejście tabem przez niego nie powinno ściągać 2 MB katalogu.
+const prefetchCatalog = () => ensureActivitiesLoaded();
 
 const FilterBar = ({
   filters,
