@@ -334,3 +334,69 @@ textarea::placeholder {
     box-shadow: none !important;
   }
 }
+
+/* Panel admina — cele dotykowe 44 px na telefonie (audyt 400 / N-12).
+   Pudelko przycisku rosnie do 44 px, ale widoczny kwadrat checkboxa
+   i pigulka switcha zostaja male, zeby tabela dalej miescila sie na 390 px. */
+@media (max-width: 767px) {
+  .tap44 {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .tap44-cb {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+    width: 44px;
+    border-color: transparent;
+    border-radius: 0;
+    background-color: transparent !important;
+  }
+  .tap44-cb::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 18px;
+    width: 18px;
+    transform: translate(-50%, -50%);
+    border: 1px solid hsl(var(--primary));
+    border-radius: 4px;
+  }
+  .tap44-cb[data-state="checked"]::before {
+    background-color: hsl(var(--primary));
+  }
+  .tap44-cb > span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tap44-switch {
+    position: relative;
+    height: 44px;
+    min-height: 44px;
+    width: 44px;
+    background-color: transparent !important;
+  }
+  .tap44-switch::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 24px;
+    transform: translateY(-50%);
+    border-radius: 9999px;
+    background-color: hsl(var(--input));
+  }
+  .tap44-switch[data-state="checked"]::before {
+    background-color: hsl(var(--primary));
+  }
+  .tap44-switch > span {
+    position: relative;
+    z-index: 1;
+  }
+}

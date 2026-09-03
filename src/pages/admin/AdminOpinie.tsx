@@ -224,14 +224,14 @@ const AdminOpinie = () => {
               key={t.id}
               onClick={() => setStatus(t.id)}
               className={cn(
-                "px-3 py-1.5 rounded-md text-sm border transition-colors",
+                "tap44 px-3 py-1.5 rounded-md text-sm border transition-colors",
                 isActive
-                  ? "bg-primary/10 border-primary/40 text-primary font-medium"
+                  ? "bg-primary border-primary text-primary-foreground font-medium"
                   : "bg-background border-border hover:bg-muted",
               )}
             >
               {t.label}
-              <span className={cn("ml-2 text-xs tabular-nums", isActive ? "text-primary/80" : "text-muted-foreground")}>
+              <span className={cn("ml-2 text-xs tabular-nums", isActive ? "text-primary-foreground/80" : "text-muted-foreground")}>
                 {count == null ? "…" : count}
               </span>
             </button>
@@ -244,21 +244,21 @@ const AdminOpinie = () => {
         <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-2 flex flex-wrap items-center gap-2">
           <span className="text-sm mr-2">Zaznaczono: <strong>{selected.size}</strong></span>
           {status !== "approved" && (
-            <Button size="sm" variant="outline" onClick={() => setReviewStatus(bulkIds, "approved")}>
+            <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus(bulkIds, "approved")}>
               <Check className="w-4 h-4 mr-1" /> Zatwierdź
             </Button>
           )}
           {status !== "rejected" && (
-            <Button size="sm" variant="outline" onClick={() => setReviewStatus(bulkIds, "rejected")}>
+            <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus(bulkIds, "rejected")}>
               <X className="w-4 h-4 mr-1" /> Odrzuć
             </Button>
           )}
           {status !== "pending" && (
-            <Button size="sm" variant="outline" onClick={() => setReviewStatus(bulkIds, "pending")}>
+            <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus(bulkIds, "pending")}>
               <RotateCcw className="w-4 h-4 mr-1" /> Cofnij do oczekujących
             </Button>
           )}
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
+          <Button size="sm" variant="ghost" className="tap44" onClick={() => setSelected(new Set())}>
             Wyczyść
           </Button>
         </div>
@@ -269,6 +269,8 @@ const AdminOpinie = () => {
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
           <label className="flex items-center gap-2 cursor-pointer">
             <Checkbox
+              className="tap44-cb"
+              aria-label="Zaznacz wszystkie opinie na stronie"
               checked={rows.length > 0 && selected.size === rows.length}
               onCheckedChange={toggleSelectAll}
             />
@@ -289,6 +291,8 @@ const AdminOpinie = () => {
               <li key={r.id} className="p-4 flex gap-3">
                 <div className="pt-1">
                   <Checkbox
+                    className="tap44-cb"
+                    aria-label={`Zaznacz opinię: ${r.author_name}`}
                     checked={selected.has(r.id)}
                     onCheckedChange={() => toggleSelect(r.id)}
                   />
@@ -324,17 +328,17 @@ const AdminOpinie = () => {
                   )}
                   <div className="flex flex-wrap gap-2 pt-1">
                     {status !== "approved" && (
-                      <Button size="sm" variant="outline" onClick={() => setReviewStatus([r.id], "approved")}>
+                      <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus([r.id], "approved")}>
                         <Check className="w-4 h-4 mr-1" /> Zatwierdź
                       </Button>
                     )}
                     {status !== "rejected" && (
-                      <Button size="sm" variant="outline" onClick={() => setReviewStatus([r.id], "rejected")}>
+                      <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus([r.id], "rejected")}>
                         <X className="w-4 h-4 mr-1" /> Odrzuć
                       </Button>
                     )}
                     {status !== "pending" && (
-                      <Button size="sm" variant="outline" onClick={() => setReviewStatus([r.id], "pending")}>
+                      <Button size="sm" variant="outline" className="tap44" onClick={() => setReviewStatus([r.id], "pending")}>
                         <RotateCcw className="w-4 h-4 mr-1" /> Cofnij
                       </Button>
                     )}
@@ -342,7 +346,7 @@ const AdminOpinie = () => {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="text-destructive hover:text-destructive"
+                        className="tap44 text-destructive hover:text-destructive"
                         onClick={() => setConfirmDelete(r)}
                       >
                         <Trash2 className="w-4 h-4 mr-1" /> Usuń trwale
@@ -362,10 +366,10 @@ const AdminOpinie = () => {
               : ""}
           </span>
           <div className="flex gap-1">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            <Button variant="outline" size="sm" className="tap44" aria-label="Poprzednia strona" disabled={page <= 1} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+            <Button variant="outline" size="sm" className="tap44" aria-label="Następna strona" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>

@@ -103,12 +103,13 @@ const AdminKatalog = () => {
       <div className="bg-card border border-border rounded-lg p-4 space-y-3">
         <div className="flex flex-wrap gap-3 items-end">
           <div className="flex-1 min-w-[240px]">
-            <label className="text-xs text-muted-foreground block mb-1">
+            <label htmlFor="f-q" className="text-xs text-muted-foreground block mb-1">
               Szukaj (nazwa / miasto)
             </label>
             <div className="relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
+                id="f-q"
                 value={state.q}
                 onChange={(e) => update({ q: e.target.value })}
                 placeholder="np. Zoo Warszawa"
@@ -118,12 +119,12 @@ const AdminKatalog = () => {
           </div>
 
           <div className="min-w-[180px]">
-            <label className="text-xs text-muted-foreground block mb-1">Województwo</label>
+            <label htmlFor="f-region" className="text-xs text-muted-foreground block mb-1">Województwo</label>
             <Select
               value={state.region || "all"}
               onValueChange={(v) => update({ region: v === "all" ? "" : v })}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="f-region" aria-label="Województwo" className="tap44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Wszystkie</SelectItem>
                 {REGIONS.map((r) => (
@@ -134,12 +135,12 @@ const AdminKatalog = () => {
           </div>
 
           <div className="min-w-[180px]">
-            <label className="text-xs text-muted-foreground block mb-1">Typ</label>
+            <label htmlFor="f-type" className="text-xs text-muted-foreground block mb-1">Typ</label>
             <Select
               value={state.type || "all"}
               onValueChange={(v) => update({ type: v === "all" ? "" : v })}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="f-type" aria-label="Typ" className="tap44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Wszystkie</SelectItem>
                 {TYPES.map((t) => (
@@ -150,12 +151,12 @@ const AdminKatalog = () => {
           </div>
 
           <div className="min-w-[180px]">
-            <label className="text-xs text-muted-foreground block mb-1">Widoczność</label>
+            <label htmlFor="f-visibility" className="text-xs text-muted-foreground block mb-1">Widoczność</label>
             <Select
               value={state.visibility}
               onValueChange={(v) => update({ visibility: v as Visibility })}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="f-visibility" aria-label="Widoczność" className="tap44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="visible">Widoczne</SelectItem>
                 <SelectItem value="hidden">Ukryte przez admina</SelectItem>
@@ -166,12 +167,12 @@ const AdminKatalog = () => {
           </div>
 
           <div className="min-w-[160px]">
-            <label className="text-xs text-muted-foreground block mb-1">Zdjęcie</label>
+            <label htmlFor="f-image" className="text-xs text-muted-foreground block mb-1">Zdjęcie</label>
             <Select
               value={state.hasImage}
               onValueChange={(v) => update({ hasImage: v as HasImage })}
             >
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="f-image" aria-label="Zdjęcie" className="tap44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Wszystkie</SelectItem>
                 <SelectItem value="yes">Tak (rzeczywiste)</SelectItem>
@@ -181,9 +182,9 @@ const AdminKatalog = () => {
           </div>
 
           <div className="min-w-[180px]">
-            <label className="text-xs text-muted-foreground block mb-1">Sortuj</label>
+            <label htmlFor="f-sort" className="text-xs text-muted-foreground block mb-1">Sortuj</label>
             <Select value={state.sort} onValueChange={(v) => update({ sort: v as SortKey })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger id="f-sort" aria-label="Sortuj" className="tap44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {SORTS.map((s) => (
                   <SelectItem key={s.key} value={s.key}>{s.label}</SelectItem>
@@ -195,15 +196,30 @@ const AdminKatalog = () => {
 
         <div className="flex flex-wrap gap-4 pt-1">
           <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox checked={state.free} onCheckedChange={(c) => update({ free: c === true })} />
+            <Checkbox
+              className="tap44-cb"
+              aria-label="Tylko darmowe"
+              checked={state.free}
+              onCheckedChange={(c) => update({ free: c === true })}
+            />
             Tylko darmowe
           </label>
           <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox checked={state.uncertain} onCheckedChange={(c) => update({ uncertain: c === true })} />
+            <Checkbox
+              className="tap44-cb"
+              aria-label="Tylko niepewne"
+              checked={state.uncertain}
+              onCheckedChange={(c) => update({ uncertain: c === true })}
+            />
             Tylko niepewne
           </label>
           <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox checked={state.featured} onCheckedChange={(c) => update({ featured: c === true })} />
+            <Checkbox
+              className="tap44-cb"
+              aria-label="Tylko wyróżnione"
+              checked={state.featured}
+              onCheckedChange={(c) => update({ featured: c === true })}
+            />
             Tylko wyróżnione
           </label>
         </div>

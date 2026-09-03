@@ -140,6 +140,7 @@ const AdminLayout = () => {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="tap44"
                   onClick={async () => {
                     await signOut();
                     navigate("/", { replace: true });

@@ -288,17 +288,17 @@ const AdminZgloszenia = () => {
 
                 <div className="flex flex-wrap gap-2 pt-1">
                   {status !== "w-toku" && (
-                    <Button size="sm" variant="outline" onClick={() => setReportStatus(r, "w-toku")}>
+                    <Button size="sm" variant="outline" className="tap44" onClick={() => setReportStatus(r, "w-toku")}>
                       W toku
                     </Button>
                   )}
                   {status !== "zalatwione" && (
-                    <Button size="sm" variant="outline" onClick={() => setReportStatus(r, "zalatwione")}>
+                    <Button size="sm" variant="outline" className="tap44" onClick={() => setReportStatus(r, "zalatwione")}>
                       <Check className="w-4 h-4 mr-1" /> Załatwione
                     </Button>
                   )}
                   {status !== "odrzucone" && (
-                    <Button size="sm" variant="outline" onClick={() => setReportStatus(r, "odrzucone")}>
+                    <Button size="sm" variant="outline" className="tap44" onClick={() => setReportStatus(r, "odrzucone")}>
                       <X className="w-4 h-4 mr-1" /> Odrzuć
                     </Button>
                   )}
@@ -336,10 +336,10 @@ const AdminZgloszenia = () => {
               : ""}
           </span>
           <div className="flex gap-1">
-            <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            <Button variant="outline" size="sm" className="tap44" disabled={page <= 1} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+            <Button variant="outline" size="sm" className="tap44" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>

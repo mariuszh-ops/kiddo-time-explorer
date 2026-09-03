@@ -85,11 +85,12 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const requestIdRef = useRef(0);
+  // Wiersz, z ktorego otwarto drawer — po zamknieciu wraca na niego fokus (K-14).
+  const openerRef = useRef<HTMLTableRowElement | null>(null);
 
   const fetchData = useCallback(async () => {
     const requestId = ++requestIdRef.current;
     setLoading(true);
-    setSelected(new Set());
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
@@ -116,8 +117,11 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
     setLoading(false);
   }, [buildQuery, page]);
 
-  // Refetch when reloadKey changes OR on page change.
+  // Refetch when reloadKey changes OR on page change. Zaznaczenie dotyczy
+  // konkretnej strony wynikow, wiec przy zmianie strony/filtrow znika — ale po
+  // akcji masowej ZOSTAJE (I-04), bo pasek akcji jest droga cofniecia.
   useEffect(() => {
+    setSelected(new Set());
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reloadKey, page]);
@@ -153,23 +157,35 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
     }
   };
 
-  const bulkSetHidden = async (hidden: boolean) => {
-    const ids = Array.from(selected);
-    if (!ids.length) return;
-    const { error } = await catalogClient
-      .from("public_activities")
-      .update({ admin_hidden: hidden })
-      .in("place_id", ids);
-    if (error) {
-      console.error(error.message);
-      toast.error("Akcja masowa nie powiodła się", {
-        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+  const bulkSetHidden = useCallback(
+    async (hidden: boolean, idsArg?: string[]) => {
+      const ids = idsArg ?? Array.from(selected);
+      if (!ids.length) return;
+      const { error } = await catalogClient
+        .from("public_activities")
+        .update({ admin_hidden: hidden })
+        .in("place_id", ids);
+      if (error) {
+        console.error(error.message);
+        toast.error("Akcja masowa nie powiodła się", {
+          description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+        });
+        return;
+      }
+      // Zaznaczenie zostaje — pasek akcji jest droga powrotna (I-04).
+      setSelected(new Set(ids));
+      toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${ids.length} pozycji`, {
+        action: {
+          label: "Cofnij",
+          onClick: () => {
+            void bulkSetHidden(!hidden, ids);
+          },
+        },
       });
-    } else {
-      toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${ids.length} pozycji`);
       fetchData();
-    }
-  };
+    },
+    [selected, fetchData],
+  );
 
   const toggleSelect = (place_id: string) => {
     setSelected((prev) => {
@@ -179,9 +195,15 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       return next;
     });
   };
+  const allOnPageSelected = rows.length > 0 && rows.every((r) => selected.has(r.place_id));
   const toggleSelectAll = () => {
-    if (selected.size === rows.length) setSelected(new Set());
+    if (allOnPageSelected) setSelected(new Set());
     else setSelected(new Set(rows.map((r) => r.place_id)));
+  };
+
+  const openRow = (row: CatalogRow, el: HTMLTableRowElement | null) => {
+    openerRef.current = el;
+    setEditing(row);
   };
 
   const regionLabels = useMemo(
@@ -192,15 +214,15 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
   return (
     <div className="space-y-4">
       {selected.size > 0 && (
-        <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-2 flex items-center gap-3">
+        <div className="bg-primary/5 border border-primary/20 rounded-lg px-4 py-2 flex flex-wrap items-center gap-3">
           <span className="text-sm">Zaznaczono: <strong>{selected.size}</strong></span>
-          <Button size="sm" variant="outline" onClick={() => bulkSetHidden(true)}>
+          <Button size="sm" variant="outline" className="tap44" onClick={() => bulkSetHidden(true)}>
             <EyeOff className="w-4 h-4 mr-1" /> Ukryj zaznaczone
           </Button>
-          <Button size="sm" variant="outline" onClick={() => bulkSetHidden(false)}>
+          <Button size="sm" variant="outline" className="tap44" onClick={() => bulkSetHidden(false)}>
             <Eye className="w-4 h-4 mr-1" /> Pokaż zaznaczone
           </Button>
-          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>
+          <Button size="sm" variant="ghost" className="tap44" onClick={() => setSelected(new Set())}>
             Wyczyść zaznaczenie
           </Button>
         </div>
@@ -215,20 +237,23 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-10">
+                <TableHead scope="col" className="w-10">
+                  <span className="sr-only">Zaznaczenie</span>
                   <Checkbox
-                    checked={rows.length > 0 && selected.size === rows.length}
+                    className="tap44-cb"
+                    aria-label="Zaznacz wszystkie na stronie"
+                    checked={allOnPageSelected}
                     onCheckedChange={toggleSelectAll}
                   />
                 </TableHead>
-                <TableHead className="w-20">Miniatura</TableHead>
-                <TableHead>Nazwa</TableHead>
-                <TableHead>Typ</TableHead>
-                <TableHead>Województwo</TableHead>
-                <TableHead>Ocena</TableHead>
-                <TableHead>Wiek</TableHead>
-                <TableHead>Stan</TableHead>
-                <TableHead className="w-24">Widoczna</TableHead>
+                <TableHead scope="col" className="w-20">Miniatura</TableHead>
+                <TableHead scope="col">Nazwa</TableHead>
+                <TableHead scope="col">Typ</TableHead>
+                <TableHead scope="col">Województwo</TableHead>
+                <TableHead scope="col">Ocena</TableHead>
+                <TableHead scope="col">Wiek</TableHead>
+                <TableHead scope="col">Stan</TableHead>
+                <TableHead scope="col" className="w-24">Widoczna</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -241,11 +266,22 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
                 return (
                   <TableRow
                     key={row.place_id}
-                    className="cursor-pointer"
-                    onClick={() => setEditing(row)}
+                    className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+                    tabIndex={0}
+                    aria-label={`Edytuj: ${row.name}`}
+                    onClick={(e) => openRow(row, e.currentTarget)}
+                    onKeyDown={(e) => {
+                      if (e.target !== e.currentTarget) return;
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        openRow(row, e.currentTarget);
+                      }
+                    }}
                   >
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
+                        className="tap44-cb"
+                        aria-label={`Zaznacz: ${row.name}`}
                         checked={selected.has(row.place_id)}
                         onCheckedChange={() => toggleSelect(row.place_id)}
                       />
@@ -280,6 +316,7 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
                         {row.featured && (
                           <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
                             <Star className="w-3 h-3 mr-0.5" />
+                            <span className="sr-only">wyróżniona</span>
                           </Badge>
                         )}
                         {locked.length > 0 && (
@@ -290,15 +327,17 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
                         {row.uncertain && (
                           <Badge variant="secondary" className="bg-orange-100 text-orange-800">
                             <HelpCircle className="w-3 h-3" />
+                            <span className="sr-only">niepewna</span>
                           </Badge>
                         )}
                       </div>
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Switch
+                        className="tap44-switch"
                         checked={!row.admin_hidden}
                         onCheckedChange={() => toggleHidden(row)}
-                        aria-label="Widoczna"
+                        aria-label={`Widoczna: ${row.name}`}
                       />
                     </TableCell>
                   </TableRow>
@@ -325,6 +364,8 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
             <Button
               variant="outline"
               size="sm"
+              className="tap44"
+              aria-label="Poprzednia strona"
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
             >
@@ -333,6 +374,8 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
             <Button
               variant="outline"
               size="sm"
+              className="tap44"
+              aria-label="Następna strona"
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
             >
@@ -345,6 +388,7 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
       <AdminCatalogDrawer
         row={editing}
         onClose={() => setEditing(null)}
+        onReturnFocus={() => openerRef.current?.focus()}
         onSaved={(updated) => {
           setRows((prev) => prev.map((r) => (r.place_id === updated.place_id ? updated : r)));
           setEditing(null);
