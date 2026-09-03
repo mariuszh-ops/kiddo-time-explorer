@@ -1,4 +1,4 @@
-import { useState, type SyntheticEvent } from "react";
+import { useState } from "react";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import { activityCount, activityWord, verbPl } from "@/lib/plural";
