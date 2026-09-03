@@ -45,7 +45,29 @@ export function fallbackToOriginal(img: HTMLImageElement): boolean {
   return false;
 }
 
+/**
+ * Srcset kafla (siatka i karuzela) — jak dymek pinu: BEZ kandydata 1200w.
+ * Kafel ma na telefonie ~264 px przy oknie 360 px; z DPR 2–3 przegladarka
+ * liczyla 528–882 px i siegala po ORYGINAL `0.webp` (309–385 kB), przez co
+ * LCP listingow mobile wynosilo 8–9 s. Sufit `-640` wystarcza na kazdy z tych
+ * ekranow (K-19 / N-02).
+ */
+export function buildTileSrcSet(src: string): string | undefined {
+  const set = buildSrcSet(src);
+  if (!set) return undefined;
+  const bezOryginalu = set
+    .split(", ")
+    .filter((k) => !/\s1200w$/.test(k))
+    .join(", ");
+  return bezOryginalu || undefined;
+}
+
 /** Rozmiary dla kafla w karuzeli (~211 px na telefonie). */
 export const CAROUSEL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 220px";
-/** Rozmiary dla kafla w siatce listingu. */
-export const GRID_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
+/**
+ * Rozmiary dla kafla w siatce listingu — zmierzone szerokosci renderowania:
+ * 224/320, 264/360, 294/390, 316/412, 208/768, 278/1280, 308/1920 px.
+ * Poprzednie `100vw` na telefonie zawyzalo zadanie o ~36 % (K-19).
+ */
+export const GRID_SIZES =
+  "(max-width: 640px) calc(100vw - 96px), (max-width: 1024px) 30vw, (max-width: 1536px) 23vw, 320px";

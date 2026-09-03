@@ -240,10 +240,14 @@ const ActivityCard = ({
           {/* Content */}
           <div className="space-y-2">
             {displayRating != null && displayReviewCount != null && (
-              <div className="flex items-center gap-2">
+              <div
+                className="flex items-center gap-2"
+                role="img"
+                aria-label={`Ocena ${formatRatingPl(displayRating)} na 5${google_rating != null ? " w Google" : ""}, ${reviewCountLabel}`}
+              >
                 <div className="flex items-center gap-1.5">
                   <div className="flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-lg">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <Star aria-hidden="true" className="w-4 h-4 fill-primary text-primary" />
                     <span className="font-bold text-foreground">{formatRatingPl(displayRating)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
@@ -258,7 +262,7 @@ const ActivityCard = ({
             </h3>
 
             {CATEGORY_LABELS[type] && (
-              <p className={cn("text-sm text-muted-foreground", uncertain && "italic opacity-70")}>
+              <p className={cn("text-sm text-muted-foreground", uncertain && "italic")}>
                 {CATEGORY_LABELS[type]}
               </p>
             )}

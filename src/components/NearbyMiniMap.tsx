@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -19,23 +20,27 @@ interface NearbyMiniMapProps {
     longitude: number;
   };
   nearbyActivities: NearbyActivity[];
+  /** Pełna mapa regionu — jedyne interaktywne wyjście z mini-mapy. */
+  mapaHref?: string;
 }
 
-// Markery są klikalne (popup) — przezroczysty wrapper powiększa cel dotyku
-// do ≥44×44 px (mobile touch target), kropka zostaje wizualnie mała.
+// Mini-mapa jest PODGLĄDEM, nie nawigacją: markery są nieinteraktywne.
+// Wcześniej 44×44 px wrappery nachodziły na siebie (axe target-size: 6 z 12
+// „partially obscured"), a treść niosły wyłącznie w [title] — czyli tylko dla
+// myszy. Te same atrakcje są klikalnymi kaflami tuż nad mapą (K-15 / K-17).
 const currentPinIcon = L.divIcon({
   className: "",
-  html: `<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;"><div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div></div>`,
-  iconSize: [44, 44],
-  iconAnchor: [22, 22],
+  html: `<div style="width:18px;height:18px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><div style="width:14px;height:14px;border-radius:50%;background:#ef4444;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div></div>`,
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
 });
 
 
 const nearbyPinIcon = L.divIcon({
   className: "",
-  html: `<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;"><div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div></div>`,
-  iconSize: [44, 44],
-  iconAnchor: [22, 22],
+  html: `<div style="width:14px;height:14px;display:flex;align-items:center;justify-content:center;pointer-events:none;"><div style="width:10px;height:10px;border-radius:50%;background:#3b82f6;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.25);"></div></div>`,
+  iconSize: [14, 14],
+  iconAnchor: [7, 7],
 });
 
 
@@ -43,6 +48,8 @@ function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null
   const map = useMap();
   useEffect(() => {
     mapRef.current = map;
+    // Jak w MapView: prefiks atrybucji bez linku z samym [title] (K-17).
+    map.attributionControl?.setPrefix("Leaflet");
     return () => { mapRef.current = null; };
   }, [map, mapRef]);
   return null;
@@ -69,29 +76,16 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
 
     const currentMarker = L.marker(
       [currentActivity.latitude, currentActivity.longitude],
-      { icon: currentPinIcon, zIndexOffset: 1000, title: currentActivity.title, alt: currentActivity.title }
+      { icon: currentPinIcon, zIndexOffset: 1000, interactive: false, keyboard: false }
     ).addTo(map);
-    currentMarker.bindPopup(
-      `<div style="text-align:center;padding:2px 4px;"><strong style="font-size:13px;">${currentActivity.title}</strong></div>`,
-      { maxWidth: 200, closeButton: false }
-    );
 
-    const markers = nearbyActivities.map((item) => {
-      const marker = L.marker([item.latitude, item.longitude], {
+    const markers = nearbyActivities.map((item) =>
+      L.marker([item.latitude, item.longitude], {
         icon: nearbyPinIcon,
-        title: item.title,
-        alt: item.title,
-      }).addTo(map);
-      marker.bindPopup(
-        `<div style="padding:2px 4px;min-width:120px;">
-          <strong style="font-size:13px;">${item.title}</strong><br/>
-          <span style="font-size:11px;color:#666;">${item.distanceKm.toFixed(1)} km</span><br/>
-          <a href="/atrakcje/${item.slug}" style="font-size:11px;color:#2563eb;text-decoration:none;font-weight:600;">Zobacz →</a>
-        </div>`,
-        { maxWidth: 200, closeButton: false }
-      );
-      return marker;
-    });
+        interactive: false,
+        keyboard: false,
+      }).addTo(map)
+    );
 
     return () => {
       currentMarker.remove();
@@ -102,7 +96,7 @@ function FitAndMarkers({ currentActivity, nearbyActivities }: NearbyMiniMapProps
   return null;
 }
 
-const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps) => {
+const NearbyMiniMap = ({ currentActivity, nearbyActivities, mapaHref }: NearbyMiniMapProps) => {
   // Hooki przed wczesnym returnem (rules-of-hooks)
   const mapRef = useRef<L.Map | null>(null);
 
@@ -128,6 +122,14 @@ const NearbyMiniMap = ({ currentActivity, nearbyActivities }: NearbyMiniMapProps
         <MapRefCapture mapRef={mapRef} />
         <FitAndMarkers currentActivity={currentActivity} nearbyActivities={nearbyActivities} />
       </MapContainer>
+      {mapaHref && (
+        <Link
+          to={mapaHref}
+          className="absolute bottom-2 left-2 z-[400] inline-flex min-h-11 items-center rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground shadow-md hover:bg-muted"
+        >
+          Otwórz pełną mapę
+        </Link>
+      )}
       <div className="absolute top-2 right-2 z-[400] flex flex-col gap-1">
         <button
           type="button"

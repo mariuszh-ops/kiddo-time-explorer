@@ -129,7 +129,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
     : `Inne ${typeLabel} w województwie`;
 
   return (
-    <section className="container mt-8 md:mt-10 mb-2">
+    <section className="container mt-8 md:mt-10 mb-2 print-ukryj">
       <h2 className="text-lg md:text-xl font-serif font-semibold text-foreground mb-4">
         {heading}
       </h2>
@@ -165,6 +165,7 @@ const SimilarAttractions = ({ activity }: SimilarAttractionsProps) => {
             longitude: a.longitude,
             distanceKm: a.distanceKm,
           }))}
+          mapaHref={`/${activity.city}?view=map`}
         />
       </Suspense>
     </section>

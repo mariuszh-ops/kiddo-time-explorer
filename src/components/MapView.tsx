@@ -279,6 +279,13 @@ function ClusteredMarkers({
         closeButton: true,
       });
 
+      // [title] to tresc wylacznie dla myszy — czytnik ekranu i klawiatura
+      // potrzebuja nazwy dostepnej na tym samym elemencie (K-17). Element ikony
+      // powstaje dopiero przy dodaniu do mapy (klastrowanie tworzy go na nowo).
+      marker.on("add", () => {
+        marker.getElement()?.setAttribute("aria-label", activity.title);
+      });
+
       marker.on("click", () => onMarkerClick(activity.id));
       // Zamkniecie w trakcie przebudowy grupy nie liczy sie jako decyzja
       // uzytkownika — inaczej skasowaloby pamiec o otwartym dymku.
@@ -646,7 +653,11 @@ function MapControls({
 // MapRefCapture — stores map instance for external use
 function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
   const map = useMap();
-  useEffect(() => { mapRef.current = map; }, [map, mapRef]);
+  useEffect(() => {
+    mapRef.current = map;
+    // Domyslny prefiks atrybucji to link z [title] i bez nazwy dostepnej (K-17).
+    map.attributionControl?.setPrefix("Leaflet");
+  }, [map, mapRef]);
   return null;
 }
 

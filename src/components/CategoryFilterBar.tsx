@@ -281,9 +281,12 @@ const CategoryFilterBar = ({
             ? "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800"
             : "bg-background text-foreground border-border hover:bg-accent",
         )}
-        title="Pokaż tylko atrakcje bez biletu"
+        aria-describedby="filtr-darmowe-opis"
       >
         Tylko darmowe
+        <span id="filtr-darmowe-opis" className="sr-only">
+          Pokaż tylko atrakcje bez biletu
+        </span>
       </button>
 
       {/* Sort / clear / auto-classified */}
@@ -298,9 +301,12 @@ const CategoryFilterBar = ({
           <Label
             htmlFor="toggle-auto-classified"
             className="text-xs font-medium text-muted-foreground cursor-pointer whitespace-nowrap"
-            title="Wyłącz, aby ukryć atrakcje, których typ ustalił model AI."
+            aria-describedby="filtr-auto-opis"
           >
             Pokaż klasyfikowane automatycznie
+            <span id="filtr-auto-opis" className="sr-only">
+              Wyłącz, aby ukryć atrakcje, których typ ustalił model AI.
+            </span>
           </Label>
         </div>
         {hasActiveFilters && onClearAll && (

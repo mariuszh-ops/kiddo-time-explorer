@@ -138,6 +138,9 @@ const HomeSearch = () => {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Escape") {
+      // Bez preventDefault Chromium/Safari czyszcza natywnie input[type=search]
+      // i uzytkownik traci wpisana fraze (K-04).
+      e.preventDefault();
       setIsOpen(false);
       inputRef.current?.blur();
       return;
@@ -189,6 +192,9 @@ const HomeSearch = () => {
             aria-autocomplete="list"
             aria-expanded={showDropdown}
             aria-controls={listboxId}
+            aria-activedescendant={
+              showDropdown && selectedIndex >= 0 ? `${listboxId}-opt-${selectedIndex}` : undefined
+            }
             role="combobox"
             autoComplete="off"
             className="w-full h-12 md:h-14 pl-12 pr-12 rounded-full bg-secondary border border-border text-base focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
@@ -237,6 +243,7 @@ const HomeSearch = () => {
                     {matchingActivities.map((a, i) => (
                       <button
                         key={a.id}
+                        id={`${listboxId}-opt-${i}`}
                         type="button"
                         role="option"
                         aria-selected={selectedIndex === i}
@@ -276,6 +283,7 @@ const HomeSearch = () => {
                       return (
                         <button
                           key={cat.path}
+                          id={`${listboxId}-opt-${gi}`}
                           type="button"
                           role="option"
                           aria-selected={selectedIndex === gi}

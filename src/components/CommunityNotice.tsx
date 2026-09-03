@@ -15,7 +15,7 @@ const CommunityNotice = ({ activityTitle }: CommunityNoticeProps) => {
     <div className="bg-accent/50 rounded-xl p-4 md:p-5 border border-border">
       <div className="flex items-start gap-3">
         <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center shrink-0">
-          <Users className="w-5 h-5 text-accent-foreground" />
+          <Users aria-hidden="true" className="w-5 h-5 text-accent-foreground" />
         </div>
         <div className="flex-1">
           <h3 className="text-sm font-semibold text-foreground mb-1">Tworzymy to razem</h3>

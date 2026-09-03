@@ -112,12 +112,11 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                   <Link
                     key={city.value}
                     to={`/${city.value}`}
-                    aria-label={`${city.label} — ${count} ${pluralize(count)}`}
                     className={`group relative overflow-hidden rounded-xl border border-border p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
                     style={{ backgroundColor: city.bg }}
                   >
-                    <span className="text-3xl mb-2 block">{city.emoji}</span>
-                    <h3 className="font-semibold text-gray-800">{city.label}</h3>
+                    <span aria-hidden="true" className="text-3xl mb-2 block">{city.emoji}</span>
+                    <h3 className="font-semibold text-gray-800 break-words">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {city.subtitle} · {count} {pluralize(count)}
                     </p>
@@ -173,10 +172,9 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
               <Link
                 key={opt.value}
                 to={`/kategoria/${opt.value}`}
-                aria-label={`${opt.label} — ${count} ${pluralize(count)}`}
                 className={`group relative overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/5 to-primary/10 p-5 text-left transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] ${dim ? "opacity-60" : ""}`}
               >
-                <h3 className="font-semibold text-gray-800 text-sm">{opt.label}</h3>
+                <h3 className="font-semibold text-gray-800 text-sm break-words">{opt.label}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
                   {count} {pluralize(count)}
                 </p>

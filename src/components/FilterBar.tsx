@@ -141,7 +141,7 @@ const FilterBar = ({
                     className={cn(
                       "inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground transition-colors active:bg-muted"
                     )}
-                    aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+                    aria-label={viewMode === "map" ? "Lista — widok listy" : "Mapa — widok mapy"}
                   >
                     {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
                     <span>{viewMode === "map" ? "Lista" : "Mapa"}</span>
@@ -321,7 +321,7 @@ const FilterBar = ({
                   className={cn(
                     "inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-secondary border border-border text-sm font-medium transition-colors whitespace-nowrap text-foreground hover:bg-muted"
                   )}
-                  aria-label={viewMode === "map" ? "Widok listy" : "Widok mapy"}
+                  aria-label={viewMode === "map" ? "Lista — widok listy" : "Mapa — widok mapy"}
                 >
                   {viewMode === "map" ? <LayoutGrid className="w-4 h-4" /> : <Map className="w-4 h-4" />}
                   {viewMode === "map" ? "Lista" : "Mapa"}
@@ -330,8 +330,11 @@ const FilterBar = ({
             )}
             {hasActiveFilters && (
               <div className="flex items-center gap-1.5 whitespace-nowrap">
-                <span className="text-xs text-muted-foreground">Sortuj:</span>
+                <label htmlFor="sort-select" className="text-xs text-muted-foreground">
+                  Sortuj:
+                </label>
                 <select
+                  id="sort-select"
                   value={filters.sort || "rating"}
                   onChange={(e) => onUpdateFilter("sort", e.target.value)}
                   className="text-sm bg-transparent border-none text-foreground font-medium cursor-pointer focus:outline-none"

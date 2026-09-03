@@ -124,7 +124,7 @@ const BlogPostPage = () => {
       } else if (label && href) {
         parts.push(
           href.startsWith("/") ? (
-            <Link key={`${keyPrefix}-l-${n++}`} to={href} className="text-primary hover:underline">
+            <Link key={`${keyPrefix}-l-${n++}`} to={href} className="text-primary underline underline-offset-2">
               {label}
             </Link>
           ) : (
@@ -133,7 +133,7 @@ const BlogPostPage = () => {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="text-primary underline underline-offset-2"
             >
               {label}
             </a>

@@ -24,6 +24,7 @@ const BlogListPage = () => {
               Porady, rankingi i pomysły na czas z dzieckiem
             </p>
 
+            <h2 className="sr-only">Wszystkie wpisy</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
               {blogPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />

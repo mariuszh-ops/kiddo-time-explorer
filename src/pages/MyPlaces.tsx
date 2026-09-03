@@ -175,11 +175,11 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
       <div className="min-h-screen bg-background">
       <Header />
 
-      <div className="border-b border-border/50">
+      <section aria-labelledby="moje-miejsca-tytul" className="border-b border-border/50">
         <div className="container py-6 md:py-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
+              <h1 id="moje-miejsca-tytul" className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
                 Moje miejsca
               </h1>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -189,7 +189,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
             {FEATURES.SUBMIT_ACTIVITY && <SubmitActivityCTA className="self-start" />}
           </div>
         </div>
-      </div>
+      </section>
 
       <main id="main-content" className="container py-6 md:py-8 pb-20 md:pb-8">
         {FEATURES.COLLECTIONS ? (

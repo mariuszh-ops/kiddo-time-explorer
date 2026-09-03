@@ -1,6 +1,6 @@
 import { useState, useCallback, memo, useLayoutEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { buildSrcSet, GRID_SIZES } from "@/lib/imageSrcSet";
+import { buildTileSrcSet, GRID_SIZES } from "@/lib/imageSrcSet";
 import ImageErrorPlaceholder from "@/components/ImageErrorPlaceholder";
 
 
@@ -69,7 +69,7 @@ const LazyImage = memo(({
     setHasError(true);
   }, [onError]);
 
-  const srcSet = buildSrcSet(src);
+  const srcSet = buildTileSrcSet(src);
 
   if (hasError) {
     return <ImageErrorPlaceholder className={className} />;

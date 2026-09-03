@@ -42,6 +42,9 @@
     --border: 35 20% 88%;
     --input: 35 20% 88%;
     --ring: 145 25% 38%;
+    /* K-09: wskaznik fokusu. --ring (= --primary) na przycisku primary daje 1:1,
+       dlatego fokus ma wlasny, ciemny kolor — >=3:1 i na tle strony, i na zieleni. */
+    --focus-ring: 30 10% 10%;
 
     --radius: 1rem;
 
@@ -97,6 +100,7 @@
     --border: 30 15% 20%;
     --input: 30 15% 20%;
     --ring: 145 30% 50%;
+    --focus-ring: 40 33% 98%;
 
     --gradient-hero: linear-gradient(135deg, hsl(145 25% 20% / 0.2) 0%, hsl(30 15% 15% / 0.5) 50%, hsl(145 20% 25% / 0.3) 100%);
     --gradient-blob: linear-gradient(135deg, hsl(145 30% 35%) 0%, hsl(35 20% 30%) 50%, hsl(145 20% 40%) 100%);
@@ -268,3 +272,65 @@
   color: #fff;
 }
 
+
+/* ==========================================================================
+   K-09 — jednolity wskaznik fokusu o kontrascie >=3:1
+   Utility `focus:outline-none` Tailwinda ma specyficznosc 0-2-0 i w zbudowanym
+   arkuszu wychodzi PO tym pliku, wiec remis przegrywamy — stad `html` z przodu
+   (0-2-1) i podwojone `:focus-visible`. Wczesniej triggery filtrow mierzyly
+   1:1, a pola szukania 1,37-1,85:1.
+   ========================================================================== */
+html :focus-visible:focus-visible {
+  outline: 2px solid hsl(var(--focus-ring));
+  outline-offset: 2px;
+  /* `transition-all` animowaloby kolor obwodki od currentColor: na przycisku
+     primary pierwsze 100 ms wygladalo jak brak wskaznika (pomiar lapal 1,91:1). */
+  transition-property: color, background-color, border-color, text-decoration-color,
+    fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter, backdrop-filter;
+}
+
+/* K-08 — domyslny placeholder Chrome (#a9a9a9) ma 2,16:1. */
+input::placeholder,
+textarea::placeholder {
+  color: hsl(var(--muted-foreground));
+  opacity: 1;
+}
+
+/* ==========================================================================
+   K-22 — druk. Bez tego karta atrakcji to 3-4 strony A4 z mapa, naglowkiem
+   i 33 przyciskami, a listing drukuje pasek filtrow i „Pokaz wiecej".
+   ========================================================================== */
+@media print {
+  header,
+  footer,
+  nav,
+  button,
+  [role="dialog"],
+  [role="tooltip"],
+  .leaflet-container,
+  .print-ukryj {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  a[href]::after {
+    content: none !important;
+  }
+
+  img {
+    max-height: 60mm;
+    width: auto;
+  }
+
+  body {
+    background: #fff !important;
+  }
+
+  /* Cienie i tla zjadaja toner, a nic nie wnosza na papierze. */
+  * {
+    box-shadow: none !important;
+  }
+}

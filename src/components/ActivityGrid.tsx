@@ -265,7 +265,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
                   isRecommended={activity.isRecommended}
                   google_rating={activity.google_rating}
                   google_review_count={activity.google_review_count}
-                  priority={index < 3}
+                  priority={index < 2}
                   uncertain={activity.uncertain}
                   isFree={activity.isFree}
                 />

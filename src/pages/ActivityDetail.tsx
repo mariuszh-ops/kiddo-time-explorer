@@ -471,7 +471,7 @@ const ActivityDetail = () => {
               </p>
               {displayRating != null && (
                 <div className="flex items-center gap-1 shrink-0">
-                  <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                  <Star aria-hidden="true" className="w-3.5 h-3.5 fill-primary text-primary" />
                   <span className="text-xs text-muted-foreground">{formatRatingPl(displayRating)}</span>
                 </div>
               )}
@@ -550,12 +550,13 @@ const ActivityDetail = () => {
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
             {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
-            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0 [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="breadcrumb">
+            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0 overflow-hidden [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="breadcrumb">
               <Link to="/" className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
               <Link
                 to={regionHref}
                 title={regionLabel}
+                aria-label={regionLabel}
                 className="shrink-0 max-w-[10ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
               >
                 {regionLabel}
@@ -564,6 +565,7 @@ const ActivityDetail = () => {
               <Link
                 to={categoryHref}
                 title={typeLabel}
+                aria-label={typeLabel}
                 className="shrink-0 max-w-[12ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
               >
                 {typeLabel}
@@ -572,6 +574,7 @@ const ActivityDetail = () => {
               <span
                 aria-current="page"
                 title={activity.title}
+                aria-label={activity.title}
                 className="min-w-0 truncate text-foreground font-medium md:max-w-[300px]"
               >
                 {activity.title}
@@ -597,7 +600,7 @@ const ActivityDetail = () => {
 
             {FEATURES.RECOMMENDED_BADGE && activity.isRecommended && (
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-lg mb-3">
-                <Star className="w-3.5 h-3.5 fill-primary text-primary" />
+                <Star aria-hidden="true" className="w-3.5 h-3.5 fill-primary text-primary" />
                 <span className="text-xs font-medium text-primary">Polecane przez FamilyFun</span>
               </div>
             )}
@@ -610,7 +613,7 @@ const ActivityDetail = () => {
             
             {/* Location */}
             <p className="text-sm md:text-base text-muted-foreground mb-3 flex items-center gap-1">
-              <MapPin className="w-4 h-4 shrink-0" />
+              <MapPin aria-hidden="true" className="w-4 h-4 shrink-0" />
               <span className="line-clamp-1">{activity.location}</span>
             </p>
 
@@ -878,7 +881,7 @@ const ActivityDetail = () => {
             {/* Opening hours */}
             {activity.openingHours && (
               <div className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-muted-foreground shrink-0" />
+                <Clock aria-hidden="true" className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0">
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Godziny otwarcia</p>
                   <OpeningHoursDisplay hours={details.openingHours} />
@@ -889,7 +892,7 @@ const ActivityDetail = () => {
             {/* Address */}
             {activity.address && (
               <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-muted-foreground shrink-0" />
+                <MapPin aria-hidden="true" className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Adres</p>
                   <p className="text-sm text-foreground">{details.address}</p>
@@ -914,7 +917,7 @@ const ActivityDetail = () => {
             {/* Ticket / Website sources */}
             {details.website && (
               <div className="flex items-start gap-3">
-                <Ticket className="w-5 h-5 text-muted-foreground shrink-0" />
+                <Ticket aria-hidden="true" className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-1.5">Strona organizatora</p>
                   <div className="flex flex-wrap gap-2">
@@ -936,7 +939,7 @@ const ActivityDetail = () => {
             {/* Phone */}
             {activity.phone && (
               <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-muted-foreground shrink-0" />
+                <Phone aria-hidden="true" className="w-5 h-5 text-muted-foreground shrink-0" />
                 <div className="min-w-0 flex-1">
                   <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Telefon</p>
                   <a
@@ -951,7 +954,7 @@ const ActivityDetail = () => {
 
             {/* Price details */}
             <div className="flex items-start gap-3">
-              <Wallet className="w-5 h-5 text-muted-foreground shrink-0" />
+              <Wallet aria-hidden="true" className="w-5 h-5 text-muted-foreground shrink-0" />
               <div className="min-w-0">
                 <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Cennik orientacyjny</p>
                 {activity.isFree ? (

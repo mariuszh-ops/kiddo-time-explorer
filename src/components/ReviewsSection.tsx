@@ -362,7 +362,7 @@ const ReviewsSection = ({
   const showForm = !myReview || isEditing;
 
   return (
-    <section className="container mt-5 md:mt-6">
+    <section className="container mt-5 md:mt-6 print-ukryj">
       <div className="bg-card rounded-xl p-4 md:p-5 border border-border">
         {/* Header: średnia + liczba (z karty, bez przeliczania) */}
         <div className="flex items-center justify-between mb-4">
@@ -374,7 +374,7 @@ const ReviewsSection = ({
               <div className="flex items-center gap-2 mt-1.5">
                 {averageRating != null && (
                   <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-primary text-primary" />
+                    <Star aria-hidden="true" className="w-4 h-4 fill-primary text-primary" />
                     <span className="text-lg font-bold text-foreground">
                       {formatRatingPl(averageRating)}
                     </span>
@@ -515,7 +515,7 @@ const ReviewsSection = ({
               )}
             </div>
             {rating < 1 && (
-              <p className="text-xs text-destructive mb-3">
+              <p className="text-sm text-red-700 dark:text-red-400 mb-3">
                 Zaznacz ocenę w gwiazdkach, aby opublikować opinię
               </p>
             )}

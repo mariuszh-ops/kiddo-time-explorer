@@ -130,13 +130,13 @@ const Profile = () => {
       <div className="min-h-screen bg-background">
         <Header />
 
-        <div className="border-b border-border/50">
+        <section aria-labelledby="profil-tytul" className="border-b border-border/50">
           <div className="container py-6 md:py-8">
-            <h1 className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
+            <h1 id="profil-tytul" className="text-2xl md:text-3xl font-serif font-semibold text-foreground">
               Profil
             </h1>
           </div>
-        </div>
+        </section>
 
         <main id="main-content" className="container py-6 md:py-8 pb-20 md:pb-8">
           <motion.div

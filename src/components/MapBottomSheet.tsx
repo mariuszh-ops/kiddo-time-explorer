@@ -348,7 +348,7 @@ export default function MapBottomSheet({
           >
             <button
               onClick={() => setSortDropdownOpen((v) => !v)}
-              className="flex items-center gap-1 text-xs text-muted-foreground font-medium hover:text-foreground transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-accent"
+              className="flex items-center gap-1 min-h-11 px-3 text-xs text-muted-foreground font-medium hover:text-foreground transition-colors cursor-pointer rounded-md hover:bg-accent"
             >
               <ArrowUpDown className="w-3.5 h-3.5" />
               {sortMode === "rating" ? "Ocena ↓" : "Najbliższe"}
@@ -357,7 +357,7 @@ export default function MapBottomSheet({
               <div className="absolute right-0 top-full mt-1 bg-card border border-border rounded-lg shadow-lg z-50 min-w-[160px] py-1">
                 <button
                   onClick={() => { setSortMode("rating"); setSortDropdownOpen(false); }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between min-h-11 px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
                 >
                   <span className={cn("text-foreground", sortMode === "rating" && "font-semibold")}>
                     Najlepiej oceniane
@@ -366,7 +366,7 @@ export default function MapBottomSheet({
                 </button>
                 <button
                   onClick={() => { setSortMode("nearest"); setSortDropdownOpen(false); }}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
+                  className="w-full flex items-center justify-between min-h-11 px-3 py-2 text-xs hover:bg-accent transition-colors cursor-pointer"
                 >
                   <span className={cn("text-foreground", sortMode === "nearest" && "font-semibold")}>
                     Najbliższe centrum mapy
