@@ -20,6 +20,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { formatRatingPl } from "@/lib/formatRating";
+import { formatReviewCountGoogle, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 
 interface SavedActivityCardProps {
   id: number;
@@ -38,13 +39,6 @@ interface SavedActivityCardProps {
   google_rating?: number;
   google_review_count?: number;
 }
-
-const formatReviewBucket = (count: number): string => {
-  if (count < 50) return "do 50 ocen";
-  if (count < 100) return "50+ ocen";
-  if (count < 1000) return "100+ ocen";
-  return "1000+ ocen";
-};
 
 const SavedActivityCard = ({
   id,
@@ -251,7 +245,7 @@ const SavedActivityCard = ({
                   <span className="font-bold text-foreground">{formatRatingPl(google_rating)}</span>
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  · {formatReviewBucket(google_review_count)}
+                  · {formatReviewCountGoogle(google_review_count) ?? NO_REVIEWS_LABEL}
                 </span>
               </div>
             ) : (

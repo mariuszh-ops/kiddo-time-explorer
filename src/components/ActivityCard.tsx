@@ -17,6 +17,7 @@ import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
 import { formatRatingPl } from "@/lib/formatRating";
+import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
@@ -31,12 +32,6 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const HIDDEN_TAGS = new Set(["W pomieszczeniu", "Na zewnątrz"]);
-
-const formatReviewCount = (count: number): string => {
-  const formatted = new Intl.NumberFormat("pl-PL").format(count);
-  const suffix = count === 1 ? "opinia" : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20) ? "opinie" : "opinii";
-  return `${formatted} ${suffix}`;
-};
 
 interface ActivityCardProps {
   id: number;
@@ -104,6 +99,11 @@ const ActivityCard = ({
   // z fallbackiem na rating/reviewCount z katalogu.
   const displayRating = google_rating ?? (rating > 0 ? rating : null);
   const displayReviewCount = google_review_count ?? (reviewCount > 0 ? reviewCount : null);
+  // Kubełek „268 tys.+ opinii" (A-14) + źródło, gdy liczba pochodzi z Google (A-9/G-2/J-05).
+  const reviewBucket = formatReviewCount(displayReviewCount);
+  const reviewCountLabel = reviewBucket === null
+    ? NO_REVIEWS_LABEL
+    : `${reviewBucket}${google_review_count != null ? " Google" : ""}`;
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [justToggled, setJustToggled] = useState(false);
 
@@ -247,7 +247,7 @@ const ActivityCard = ({
                     <span className="font-bold text-foreground">{formatRatingPl(displayRating)}</span>
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    · {formatReviewCount(displayReviewCount)}{google_review_count != null ? " w Google" : ""}
+                    · {reviewCountLabel}
                   </span>
                 </div>
               </div>

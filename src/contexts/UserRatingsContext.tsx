@@ -82,8 +82,9 @@ interface UserRatingsContextType {
   rateActivity: (activityId: number, rating: number, review?: string) => Promise<void>;
   // Update just the review
   updateReview: (activityId: number, review: string) => Promise<void>;
-  // Remove a rating entirely
-  removeRating: (activityId: number) => Promise<void>;
+  // Remove a rating entirely. `true` = ocena faktycznie zniknęła (baza potwierdziła);
+  // `false` = nie było czego usuwać albo zapis się nie powiódł (rollback + toast błędu).
+  removeRating: (activityId: number) => Promise<boolean>;
   // Get all rated activities with full activity data
   visitedActivities: (Activity & { userRating: UserRating })[];
   // Count of visited/rated activities
@@ -287,9 +288,9 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     }
   }, [ratings, syncToServer]);
 
-  const removeRating = useCallback(async (activityId: number) => {
+  const removeRating = useCallback(async (activityId: number): Promise<boolean> => {
     const previous = ratings.get(activityId);
-    if (!previous) return;
+    if (!previous) return false;
     setRatings(prev => {
       const newMap = new Map(prev);
       newMap.delete(activityId);
@@ -300,9 +301,10 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     if (!ok) {
       setRatings(prev => new Map(prev).set(activityId, previous));
       toast.error("Nie udało się usunąć oceny. Spróbuj ponownie.");
-    } else {
-      setAggregateRefreshKey(k => k + 1);
+      return false;
     }
+    setAggregateRefreshKey(k => k + 1);
+    return true;
   }, [ratings, syncToServer]);
 
   // JEDNO źródło prawdy: mapa ocen. Dane atrakcji dociągamy przez lookup po id;

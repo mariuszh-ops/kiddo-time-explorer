@@ -61,6 +61,7 @@ import { useShare } from "@/hooks/useShare";
 import { FEATURES } from "@/lib/featureFlags";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatRatingPl } from "@/lib/formatRating";
+import { formatReviewCount, formatReviewCountGoogle, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
@@ -78,35 +79,6 @@ const TYPE_LABELS: Record<string, string> = {
   "zoo": "Zoo",
   "park": "Park i natura",
   "inne": "Atrakcja",
-};
-
-const formatReviewCount = (count: number): string => {
-  const formatted = new Intl.NumberFormat("pl-PL").format(count);
-  const suffix = count === 1
-    ? "opinia"
-    : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
-      ? "opinie"
-      : "opinii";
-  return `${formatted} ${suffix}`;
-};
-
-/** Skrócona forma liczby ocen Google: ">268 tys. ocen", "1,2 tys. ocen" itp. */
-const formatGoogleReviewCount = (count: number): string => {
-  if (count >= 1000) {
-    const tys = Math.floor(count / 1000);
-    const suffix = tys === 1
-      ? "ocena"
-      : tys % 10 >= 2 && tys % 10 <= 4 && !(tys % 100 >= 12 && tys % 100 <= 14)
-        ? "oceny"
-        : "ocen";
-    return `>${tys} tys. ${suffix}`;
-  }
-  const suffix = count === 1
-    ? "ocena"
-    : count % 10 >= 2 && count % 10 <= 4 && !(count % 100 >= 12 && count % 100 <= 14)
-      ? "oceny"
-      : "ocen";
-  return `${count} ${suffix}`;
 };
 
 
@@ -353,6 +325,10 @@ const ActivityDetail = () => {
   // Ujednolicony format oceny — spójny z ActivityCard.
   const displayRating = activity.google_rating ?? (activity.rating > 0 ? activity.rating : null);
   const displayReviewCount = activity.google_review_count ?? (activity.reviewCount > 0 ? activity.reviewCount : null);
+  // Kubełek liczby opinii Google („268 tys.+ opinii Google") — A-14. null = brak opinii.
+  const googleReviewLabel = formatReviewCountGoogle(displayReviewCount);
+  // Badge pod tytułem ma źródło już w linijce oceny („4,9 w Google"), więc sam kubełek.
+  const reviewCountLabel = formatReviewCount(displayReviewCount);
 
   const typeLabel = TYPE_LABELS[activity.type] || "Atrakcja";
   // Okruszek kategorii: krótka, kanoniczna trasa regionu + kategorii, jeśli
@@ -381,7 +357,7 @@ const ActivityDetail = () => {
   const seoDescription = activity.description?.trim()
     ? truncateAtWord(activity.description.trim(), 155)
     : displayRating != null && displayReviewCount != null
-      ? `${typeLabel} ${cityLocative}. Ocena ${formatRatingPl(displayRating)}/5 (${formatReviewCount(displayReviewCount)}).`
+      ? `${typeLabel} ${cityLocative}. Ocena ${formatRatingPl(displayRating)}/5 (${googleReviewLabel ?? NO_REVIEWS_LABEL}).`
       : `${typeLabel} ${cityLocative}. Sprawdź godziny otwarcia, adres i opinie rodziców.`;
   
   // Number of reviews to show initially (1-2 on mobile)
@@ -606,7 +582,7 @@ const ActivityDetail = () => {
                     {formatRatingPl(displayRating)} w Google
                   </span>
                   <span className="text-xs sm:text-sm text-muted-foreground">
-                    ({displayReviewCount != null ? formatGoogleReviewCount(displayReviewCount) : "brak ocen"})
+                    ({reviewCountLabel ?? NO_REVIEWS_LABEL})
                   </span>
                 </div>
               )}

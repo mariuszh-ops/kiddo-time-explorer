@@ -21,6 +21,7 @@ import { trackEvent } from "@/lib/analytics";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
 import { formatRatingPl } from "@/lib/formatRating";
+import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 
 interface GoogleReview {
   author: string;
@@ -62,17 +63,6 @@ interface ReviewsSectionProps {
 }
 
 const REVIEW_MAX = 500;
-
-const formatReviewCount = (count: number): string => {
-  const formatted = new Intl.NumberFormat("pl-PL").format(count);
-  const suffix =
-    count === 1
-      ? "opinia"
-      : count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)
-        ? "opinie"
-        : "opinii";
-  return `${formatted} ${suffix}`;
-};
 
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
@@ -369,9 +359,9 @@ const ReviewsSection = ({
                     </span>
                   </div>
                 )}
-                {totalReviewCount != null && totalReviewCount > 0 && (
+                {totalReviewCount != null && (
                   <span className="text-sm text-muted-foreground">
-                    · {formatReviewCount(totalReviewCount)}
+                    · {formatReviewCount(totalReviewCount) ?? NO_REVIEWS_LABEL}
                   </span>
                 )}
               </div>

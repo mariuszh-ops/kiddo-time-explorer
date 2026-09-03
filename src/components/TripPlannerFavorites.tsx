@@ -141,6 +141,8 @@ const TripPlannerFavorites: React.FC<TripPlannerFavoritesProps> = ({
                       onRemove={onRemove}
                       type={activity.type}
                       slug={activity.slug}
+                      google_rating={activity.google_rating}
+                      google_review_count={activity.google_review_count}
                     />
                   </motion.div>
                 ))}

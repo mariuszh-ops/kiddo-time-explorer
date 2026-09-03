@@ -6,6 +6,7 @@ import { useActivityRating } from "@/hooks/useActivityRating";
 import { trackEvent } from "@/lib/analytics";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatRatingPl } from "@/lib/formatRating";
+import { toast } from "sonner";
 
 interface InlineRatingActionProps {
   activityId: number;
@@ -34,19 +35,27 @@ const InlineRatingAction = ({
   contextLabel = "sekcja Oceny rodziców",
 }: InlineRatingActionProps) => {
   const { isLoggedIn } = useAuth();
-  const { getUserRating, rateActivity, aggregateRefreshKey } = useUserRatings();
+  const { getUserRating, rateActivity, removeRating, aggregateRefreshKey } = useUserRatings();
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
   const aggregate = useActivityRating(activityId, aggregateRefreshKey);
   const hasRated = userRating !== null;
 
-  const handleStarClick = (rating: number) => {
+  const handleStarClick = async (rating: number) => {
     if (!isLoggedIn) {
       onAuthRequired(rating);
       return;
     }
+    // Klik w już wybraną gwiazdkę = wycofanie oceny (N-16). Bez tego ocena
+    // postawiona przez pomyłkę zostawała w średniej na zawsze.
+    if (userRating === rating) {
+      trackEvent("rating_removed", { rating });
+      const removed = await removeRating(activityId);
+      if (removed) toast.success("Ocena usunięta");
+      return;
+    }
     trackEvent("rating_set", { rating });
-    void rateActivity(activityId, rating);
+    await rateActivity(activityId, rating);
   };
 
   const displayValue = hoveredStar || userRating || 0;
@@ -79,11 +88,15 @@ const InlineRatingAction = ({
               <button
                 key={i}
                 type="button"
-                onClick={() => handleStarClick(starValue)}
+                onClick={() => void handleStarClick(starValue)}
                 onMouseEnter={() => isLoggedIn && setHoveredStar(starValue)}
                 onMouseLeave={() => setHoveredStar(0)}
                 className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-                aria-label={`Oceń ${starValue} z 5 gwiazdek — ${contextLabel}`}
+                aria-label={
+                  isLoggedIn && userRating === starValue
+                    ? `Usuń swoją ocenę ${starValue}/5`
+                    : `Oceń ${starValue} z 5 gwiazdek — ${contextLabel}`
+                }
               >
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -107,6 +120,9 @@ const InlineRatingAction = ({
         </div>
         <div className="text-xs text-muted-foreground space-y-0.5">
           <p>{helperText}</p>
+          {isLoggedIn && hasRated && (
+            <p>Kliknij tę samą gwiazdkę, aby usunąć ocenę.</p>
+          )}
           {canShowAggregate && (
             <p>
               Ocena rodziców: ⭐ {formattedAvg} ({formatRatingCount(aggregate.count)})

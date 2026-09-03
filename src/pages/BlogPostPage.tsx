@@ -324,6 +324,8 @@ const BlogPostPage = () => {
                     type={activity.type}
                     slug={activity.slug}
                     amenities={activity.amenities}
+                    google_rating={activity.google_rating}
+                    google_review_count={activity.google_review_count}
                   />
                 ))}
               </div>

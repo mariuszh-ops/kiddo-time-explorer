@@ -81,6 +81,8 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
+                google_rating={activity.google_rating}
+                google_review_count={activity.google_review_count}
               />
             ))}
           </div>
@@ -151,6 +153,8 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                 amenities={activity.amenities}
                 priceLevel={activity.priceLevel}
                 isRecommended={activity.isRecommended}
+                google_rating={activity.google_rating}
+                google_review_count={activity.google_review_count}
                 imageSizes={TWO_COL_SIZES}
               />
             ))}
