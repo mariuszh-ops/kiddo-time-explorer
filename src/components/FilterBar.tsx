@@ -1,4 +1,4 @@
-import { useState, type SyntheticEvent } from "react";
+import { useState } from "react";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import { activityCount, activityWord, verbPl } from "@/lib/plural";
@@ -46,14 +46,10 @@ const getCapitalCityGenitive = (cityValue: string): string => {
   return REGION_BY_SLUG[cityValue]?.capitalCityGenitive ?? cityValue;
 };
 
-// Prefetch katalogu tylko dla kontrolek, które go faktycznie potrzebują.
-// Przełącznik lista/mapa jest z tego wyłączony (data-no-prefetch) — widok mapy
-// bez filtrów żyje z rpc('get_map_pins') i nie ma po co ściągać całego katalogu.
-const maybePrefetchCatalog = (e: SyntheticEvent) => {
-  const target = e.target as HTMLElement | null;
-  if (target?.closest?.("[data-no-prefetch]")) return;
-  ensureActivitiesLoaded();
-};
+// Prefetch katalogu dla konkretnych kontrolek filtrujących.
+// Nie podpinamy tego pod cały pasek — przewijanie palcem po sticky barze
+// lub przejście tabem przez niego nie powinno ściągać 2 MB katalogu.
+const prefetchCatalog = () => ensureActivitiesLoaded();
 
 const FilterBar = ({
   filters,
@@ -103,33 +99,37 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border" onPointerDownCapture={maybePrefetchCatalog} onFocusCapture={maybePrefetchCatalog}>
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && !hideSearch && (
-              <div className="mb-3 [&_>*]:w-full">
-                <SearchAutocomplete
-                  activities={getActivities()}
-                  searchQuery={searchQuery}
-                  onSearchChange={onSearchChange}
-                />
+              <div className="mb-3 w-full [&_input]:!w-full">
+                <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                  <SearchAutocomplete
+                    activities={getActivities()}
+                    searchQuery={searchQuery}
+                    onSearchChange={onSearchChange}
+                  />
+                </span>
               </div>
             )}
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  className="inline-flex min-h-11 min-w-11 items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  <span>Filtry</span>
-                  {activeFilterCount > 0 && (
-                    <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                </button>
+                <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                  <button
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    className="inline-flex min-h-11 min-w-11 items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span>Filtry</span>
+                    {activeFilterCount > 0 && (
+                      <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                        {activeFilterCount}
+                      </Badge>
+                    )}
+                  </button>
+                </span>
 
                 {/* Map/Grid toggle */}
                 {FEATURES.MAP_VIEW && onViewModeChange && (
@@ -174,27 +174,29 @@ const FilterBar = ({
     );
   }
 
-  // Desktop layout (unchanged)
+  // Desktop layout
   return (
     <>
-      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border" onPointerDownCapture={maybePrefetchCatalog} onFocusCapture={maybePrefetchCatalog}>
+      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border">
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
             {/* Combined City + Distance filter — shown only when multiple cities enabled */}
             {FEATURES.ENABLED_CITIES.length > 1 && (
-              <CityFilterDropdown
-                cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
-                selectedCity={filters.city}
-                selectedDistance={filters.distance}
-                hasAnyFilter={filterCounts.hasAnyFilter}
-                filteredCount={filterCounts.filtered}
-                onCitySelect={(value) => onUpdateFilter("city", value)}
-                onDistanceChange={(value) => onUpdateFilter("distance", value)}
-              />
+              <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                <CityFilterDropdown
+                  cityOptions={filterCounts.city.filter(c => FEATURES.ENABLED_CITIES.includes(c.value))}
+                  selectedCity={filters.city}
+                  selectedDistance={filters.distance}
+                  hasAnyFilter={filterCounts.hasAnyFilter}
+                  filteredCount={filterCounts.filtered}
+                  onCitySelect={(value) => onUpdateFilter("city", value)}
+                  onDistanceChange={(value) => onUpdateFilter("distance", value)}
+                />
+              </span>
             )}
-            
-            <div>
+
+            <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
               <FilterDropdown
                 label="Wiek dziecka"
                 options={filterCounts.age}
@@ -202,9 +204,9 @@ const FilterBar = ({
                 hasAnyFilter={filterCounts.hasAnyFilter}
                 onSelect={(value) => onUpdateFilter("age", value)}
               />
-            </div>
-            
-            <div>
+            </span>
+
+            <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
               <MultiFilterDropdown
                 label="Kategoria"
                 options={filterCounts.type}
@@ -213,8 +215,8 @@ const FilterBar = ({
                 onToggle={onToggleTypeFilter}
                 onClear={() => onUpdateFilter("type", undefined)}
               />
-            </div>
-            
+            </span>
+
             {/* Filtr „Pod dachem?" ukryty — isIndoor twardo false w danych (0 wyników). Logika w useActivityFilters zostaje.
             <FilterDropdown
               label="Pod dachem?"
@@ -224,9 +226,9 @@ const FilterBar = ({
               onSelect={(value) => onUpdateFilter("indoor", value)}
             />
             */}
-            
+
             {/* Price filter - hidden until better data */}
-            {/* 
+            {/*
             <FilterDropdown
               label="Cena"
               options={filterCounts.price}
@@ -235,9 +237,9 @@ const FilterBar = ({
               onSelect={(value) => onUpdateFilter("price", value)}
             />
             */}
-            
+
             {/* Typ atrakcji filter - hidden in MVP, structure preserved */}
-            {/* 
+            {/*
             <FilterDropdown
               label="Typ atrakcji"
               options={filterCounts.activityKind}
@@ -249,11 +251,13 @@ const FilterBar = ({
 
             {/* Search input */}
             {hideSearch ? null : FEATURES.SEARCH_AUTOCOMPLETE ? (
-              <SearchAutocomplete
-                activities={getActivities()}
-                searchQuery={searchQuery}
-                onSearchChange={onSearchChange}
-              />
+              <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                <SearchAutocomplete
+                  activities={getActivities()}
+                  searchQuery={searchQuery}
+                  onSearchChange={onSearchChange}
+                />
+              </span>
             ) : (
               <div className="relative flex items-center">
                 {isSearchExpanded ? (
