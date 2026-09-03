@@ -99,33 +99,37 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border" onPointerDownCapture={maybePrefetchCatalog} onFocusCapture={maybePrefetchCatalog}>
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && !hideSearch && (
               <div className="mb-3 [&_>*]:w-full">
-                <SearchAutocomplete
-                  activities={getActivities()}
-                  searchQuery={searchQuery}
-                  onSearchChange={onSearchChange}
-                />
+                <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                  <SearchAutocomplete
+                    activities={getActivities()}
+                    searchQuery={searchQuery}
+                    onSearchChange={onSearchChange}
+                  />
+                </span>
               </div>
             )}
             {/* Mobile: Filter button and results feedback */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setIsMobileFilterOpen(true)}
-                  className="inline-flex min-h-11 min-w-11 items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
-                >
-                  <SlidersHorizontal className="w-4 h-4" />
-                  <span>Filtry</span>
-                  {activeFilterCount > 0 && (
-                    <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
-                      {activeFilterCount}
-                    </Badge>
-                  )}
-                </button>
+                <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
+                  <button
+                    onClick={() => setIsMobileFilterOpen(true)}
+                    className="inline-flex min-h-11 min-w-11 items-center gap-2 px-4 py-2.5 rounded-full bg-secondary border border-border text-sm font-medium text-foreground active:bg-muted transition-colors"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span>Filtry</span>
+                    {activeFilterCount > 0 && (
+                      <Badge variant="default" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                        {activeFilterCount}
+                      </Badge>
+                    )}
+                  </button>
+                </span>
 
                 {/* Map/Grid toggle */}
                 {FEATURES.MAP_VIEW && onViewModeChange && (
