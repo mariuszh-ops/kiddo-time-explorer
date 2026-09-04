@@ -12,7 +12,7 @@ import {
   Lock,
   Star,
 } from "lucide-react";
-import { catalogClient, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, ADMIN_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
 import { REGIONS } from "@/data/regions";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -101,7 +101,7 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
 
     const base = catalogClient
       .from("public_activities")
-      .select("*", { count: "exact" })
+      .select(ADMIN_COLUMNS, { count: "exact" })
       .range(from, to);
     const q = buildQuery(base).order("place_id", { ascending: true });
 

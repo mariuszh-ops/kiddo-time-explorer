@@ -27,7 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { catalogClient, FEATURED_UI_ENABLED, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, ADMIN_COLUMNS, FEATURED_UI_ENABLED, type CatalogRow } from "@/lib/catalogClient";
 
 const TYPES = [
   "sala-zabaw",
@@ -368,7 +368,7 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
         .from("public_activities")
         .update(patch)
         .eq("place_id", row.place_id)
-        .select("*")
+        .select(ADMIN_COLUMNS)
         .maybeSingle();
 
       if (error) {
@@ -376,7 +376,7 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
         setSaving(false);
         return;
       }
-      saved = (data as CatalogRow) ?? null;
+      saved = (data as unknown as CatalogRow) ?? null;
     }
 
     // 3. Notatka — upsert tylko gdy naprawdę się zmieniła (N-07).
