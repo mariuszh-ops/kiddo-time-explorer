@@ -28,6 +28,7 @@ import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 import HomeSearch from "@/components/HomeSearch";
 import { useTopActivities } from "@/hooks/useTopActivities";
 import { ensureActivitiesLoaded } from "@/data/activities";
+import { useRealNavigationType } from "@/lib/navigationType";
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
@@ -99,6 +100,20 @@ const Index = () => {
   useEffect(() => {
     if (showAll) ensureActivitiesLoaded();
   }, [showAll]);
+
+  // F-1: "Zobacz wszystkie atrakcje" prowadzi na /?all=1, czyli TEN SAM pathname.
+  // useScrollPosition przewija tylko przy zmianie location.pathname, wiec po
+  // kliknieciu uzytkownik zostawal na wysokosci przycisku (zmierzone: 1537 px na
+  // desktopie, 4045 px na mobile) i ladowal w polowie siatki, ktora dodatkowo
+  // skakala w trakcie doladowywania katalogu. Nowa lista = gora strony.
+  const realNavigationType = useRealNavigationType();
+  const poprzednioShowAll = useRef(showAll);
+  useEffect(() => {
+    const wlasnieWlaczony = showAll && !poprzednioShowAll.current;
+    poprzednioShowAll.current = showAll;
+    // Tylko PUSH: powrot "wstecz" z karty atrakcji ma zachowac pozycje.
+    if (wlasnieWlaczony && realNavigationType === "PUSH") window.scrollTo(0, 0);
+  }, [showAll, realNavigationType]);
 
   // Scroll listing into view when filters change (not on mount, not on back-navigation)
   const filtersKey = JSON.stringify({ ...filters, search: searchQuery });
