@@ -23,8 +23,10 @@ dist-ssr
 *.sln
 *.sw?
 
-# Lokalne zmienne srodowiskowe — NIGDY nie commitowac (sekrety).
-# Uwaga: .env (bez sufiksu) jest celowo w repo — trzyma tylko publiczne VITE_*,
-# generuje go Lovable i build bez niego nie wstaje. Patrz naglowek w .env.
+# Lokalne zmienne srodowiskowe — NIGDY nie commitowac.
+# .env jest wylacznie lokalny (L-07, 04.09.2026): po klonie skopiuj .env.example
+# do .env i uzupelnij VITE_SUPABASE_*. Klucze sa publikowalne, ale nawyk ma byc
+# jeden: zaden plik .env nie trafia do historii gita.
+.env
 .env.local
 .env*.local
