@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FEATURED_UI_ENABLED } from "@/lib/catalogClient";
 import CatalogTable, { type CatalogQuery } from "./CatalogTable";
 
 const TYPES = [
@@ -45,7 +46,8 @@ const AdminKatalog = () => {
     visibility: (sp.get("v") as Visibility) || "visible",
     free: sp.get("free") === "1",
     uncertain: sp.get("unc") === "1",
-    featured: sp.get("feat") === "1",
+    // N-14 (04.09.2026): ?feat=1 martwe, dopoki FEATURED_UI_ENABLED === false.
+    featured: FEATURED_UI_ENABLED && sp.get("feat") === "1",
     hasImage: (sp.get("img") as HasImage) || "all",
     sort: (sp.get("sort") as SortKey) || "updated_at",
   };
@@ -213,15 +215,19 @@ const AdminKatalog = () => {
             />
             Tylko niepewne
           </label>
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
-            <Checkbox
-              className="tap44-cb"
-              aria-label="Tylko wyróżnione"
-              checked={state.featured}
-              onCheckedChange={(c) => update({ featured: c === true })}
-            />
-            Tylko wyróżnione
-          </label>
+          {/* N-14 (04.09.2026): filtr ukryty decyzja wlasciciela — patrz
+              FEATURED_UI_ENABLED w src/lib/catalogClient.ts. */}
+          {FEATURED_UI_ENABLED && (
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <Checkbox
+                className="tap44-cb"
+                aria-label="Tylko wyróżnione"
+                checked={state.featured}
+                onCheckedChange={(c) => update({ featured: c === true })}
+              />
+              Tylko wyróżnione
+            </label>
+          )}
         </div>
       </div>
 

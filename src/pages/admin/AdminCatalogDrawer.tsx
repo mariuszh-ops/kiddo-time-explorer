@@ -27,7 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { catalogClient, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, FEATURED_UI_ENABLED, type CatalogRow } from "@/lib/catalogClient";
 
 const TYPES = [
   "sala-zabaw",
@@ -619,15 +619,20 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
                 onCheckedChange={(v) => setField("admin_hidden", v)}
               />
             </label>
-            <label className="flex items-center justify-between text-sm">
-              <span>Wyróżniona (featured)</span>
-              <Switch
-                className="tap44-switch"
-                aria-label="Wyróżniona"
-                checked={form.featured}
-                onCheckedChange={(v) => setField("featured", v)}
-              />
-            </label>
+            {/* N-14 (04.09.2026): przelacznik ukryty decyzja wlasciciela.
+                Pole zostaje w formularzu i w patchu — powrot = FEATURED_UI_ENABLED
+                na true w src/lib/catalogClient.ts. */}
+            {FEATURED_UI_ENABLED && (
+              <label className="flex items-center justify-between text-sm">
+                <span>Wyróżniona (featured)</span>
+                <Switch
+                  className="tap44-switch"
+                  aria-label="Wyróżniona"
+                  checked={form.featured}
+                  onCheckedChange={(v) => setField("featured", v)}
+                />
+              </label>
+            )}
           </div>
 
           {/* Locked fields */}

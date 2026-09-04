@@ -120,6 +120,16 @@ export const ADMIN_COLUMNS =
   "admin_hidden,featured,uncertain,locked_fields";
 
 /**
+ * N-14 (decyzja wlasciciela 04.09.2026): przelacznik "Wyrozniona (featured)"
+ * jest UKRYTY w /admin — na start i przez jakis czas po starcie nic nie ma byc
+ * wyroznione. Kolumna `featured` ZOSTAJE w bazie, w typach i w ADMIN_COLUMNS:
+ * powrot ma byc zdjeciem ukrycia (ta flaga na true), nie migracja.
+ * Wyzwalacz rewizji: pierwszy partner handlowy do promocji — wtedy takze
+ * "Polecane miejsca" (DiscoverSections.tsx) i odznaka na kaflu (ActivityCard.tsx).
+ */
+export const FEATURED_UI_ENABLED: boolean = false;
+
+/**
  * Warunek `or=` dla filtra wieku [ageMin, ageMax] w zapytaniach PostgREST.
  *
  * Przedzialy przepuszczamy, gdy sie przecinaja (age_min <= ageMax && age_max >= ageMin).
