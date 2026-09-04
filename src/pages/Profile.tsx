@@ -211,6 +211,9 @@ const Profile = () => {
               </div>
             </section>
 
+            {/* Account section */}
+            {user && <AccountSection user={user} />}
+
             {/* Family section */}
             {FEATURES.MATCH_PERCENTAGE && (
               <section className="bg-card rounded-xl p-6 border border-border">
