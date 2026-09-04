@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
+  Check,
+  CheckCircle2,
   ChevronLeft,
   ChevronRight,
   Eye,
@@ -39,6 +41,9 @@ export interface CatalogTableProps {
   buildQuery: (q: CatalogQuery) => CatalogQuery;
   /** Bumping this key triggers a refetch (put URL search string here). */
   reloadKey: string;
+  /** Wolane po udanej zmianie `reviewed_at` — rodzic odswieza swoj licznik
+   *  „Sprawdzone". Bez tego licznik rozjezdza sie z tabela az do F5. */
+  onReviewedChange?: () => void;
 }
 
 const Thumb = ({ url, alt }: { url: string | null | undefined; alt: string }) => {
@@ -62,7 +67,7 @@ const Thumb = ({ url, alt }: { url: string | null | undefined; alt: string }) =>
   );
 };
 
-const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
+const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableProps) => {
   const [sp, setSp] = useSearchParams();
   const page = Math.max(1, parseInt(sp.get("p") ?? "1", 10) || 1);
 
@@ -155,6 +160,40 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
     } else {
       toast.success(next ? "Ukryto" : "Pokazano");
     }
+  };
+
+  // Redakcyjny znacznik „karta sprawdzona". Ten sam wzorzec co toggleHidden:
+  // optymistyczny zapis + rollback, bo admin klika seriami i czekanie na
+  // odpowiedz przy kazdym wierszu rozbijaloby rytm przegladania.
+  //
+  // Znacznik stawiamy zegarem KLIENTA (jak `admin_notes.updated_at`
+  // w AdminCatalogDrawer) — PostgREST nie umie wstawic serwerowego now()
+  // w ciele UPDATE-a, a osobne RPC byloby tu wieksza powierzchnia niz zysk.
+  // Skutek: przy rozjechanym zegarze admina data potrafi sie minac o minuty.
+  const toggleReviewed = async (row: CatalogRow) => {
+    const previous = row.reviewed_at ?? null;
+    const next = previous ? null : new Date().toISOString();
+    const set = (value: string | null) =>
+      setRows((prev) =>
+        prev.map((r) => (r.place_id === row.place_id ? { ...r, reviewed_at: value } : r)),
+      );
+
+    set(next);
+    const { error } = await catalogClient
+      .from("public_activities")
+      .update({ reviewed_at: next })
+      .eq("place_id", row.place_id);
+
+    if (error) {
+      console.error(error.message);
+      toast.error("Nie udało się zapisać", {
+        description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
+      set(previous);
+      return;
+    }
+    toast.success(next ? "Oznaczono jako odwiedzone" : "Zdjęto oznaczenie");
+    onReviewedChange?.();
   };
 
   const bulkSetHidden = useCallback(
@@ -253,6 +292,7 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
                 <TableHead scope="col">Ocena</TableHead>
                 <TableHead scope="col">Wiek</TableHead>
                 <TableHead scope="col">Stan</TableHead>
+                <TableHead scope="col" className="w-52">Odwiedzone</TableHead>
                 <TableHead scope="col" className="w-24">Widoczna</TableHead>
               </TableRow>
             </TableHeader>
@@ -333,6 +373,36 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
                       </div>
                     </TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
+                      {row.reviewed_at ? (
+                        <div className="flex items-center gap-1.5 whitespace-nowrap">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" aria-hidden="true" />
+                          <span className="text-xs text-muted-foreground tabular-nums">
+                            {new Date(row.reviewed_at).toLocaleDateString("pl-PL")}
+                          </span>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="tap44 h-8 px-2 text-xs"
+                            aria-label={`Zdejmij oznaczenie „odwiedzone": ${row.name}`}
+                            onClick={() => toggleReviewed(row)}
+                          >
+                            Cofnij
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="tap44 h-8 whitespace-nowrap text-xs"
+                          aria-label={`Oznacz jako odwiedzone: ${row.name}`}
+                          onClick={() => toggleReviewed(row)}
+                        >
+                          <Check className="w-3.5 h-3.5 mr-1" aria-hidden="true" />
+                          Oznacz jako odwiedzone
+                        </Button>
+                      )}
+                    </TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
                       <Switch
                         className="tap44-switch"
                         checked={!row.admin_hidden}
@@ -345,7 +415,7 @@ const CatalogTable = ({ buildQuery, reloadKey }: CatalogTableProps) => {
               })}
               {!loading && rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center text-muted-foreground py-10">
+                  <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
                     Brak rekordów
                   </TableCell>
                 </TableRow>

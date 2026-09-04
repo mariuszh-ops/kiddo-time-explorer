@@ -71,6 +71,11 @@ const AdminDoPrzejrzenia = () => {
   const [sp, setSp] = useSearchParams();
   const active = (sp.get("q") as QueueId) || QUEUES[0].id;
   const [counts, setCounts] = useState<Record<string, number | null>>({});
+  // Licznik „Sprawdzone": [ile ma reviewed_at, ile jest widocznych].
+  // Obie liczby na TEJ SAMEJ populacji co kolejki wyzej (published
+  // AND NOT admin_hidden) — mieszanie populacji w jednym boksie to dokladnie
+  // blad, ktory ZA-I-08 znalazl w rpc/admin_stats (6086 vs widoczne).
+  const [reviewed, setReviewed] = useState<[number, number] | null>(null);
 
   const setActive = (id: QueueId) => {
     const next = new URLSearchParams(sp);
@@ -94,9 +99,24 @@ const AdminDoPrzejrzenia = () => {
     setCounts(Object.fromEntries(results));
   }, []);
 
+  const loadReviewed = useCallback(async () => {
+    const licz = async (only: boolean) => {
+      let q = catalogClient
+        .from("public_activities")
+        .select("place_id", { count: "exact", head: true });
+      q = baseVisible(q);
+      if (only) q = q.not("reviewed_at", "is", null);
+      const { count, error } = await q;
+      return error ? null : count ?? 0;
+    };
+    const [sprawdzone, widoczne] = await Promise.all([licz(true), licz(false)]);
+    setReviewed(sprawdzone == null || widoczne == null ? null : [sprawdzone, widoczne]);
+  }, []);
+
   useEffect(() => {
     loadCounts();
-  }, [loadCounts]);
+    loadReviewed();
+  }, [loadCounts, loadReviewed]);
 
   const queue = QUEUES.find((q) => q.id === active) ?? QUEUES[0];
 
@@ -113,9 +133,17 @@ const AdminDoPrzejrzenia = () => {
   return (
     <div className="space-y-4">
       <div className="bg-card border border-border rounded-lg p-3">
-        <div className="text-xs text-muted-foreground mb-2">
-          Kolejki liczone tylko po atrakcjach widocznych na froncie
-          (opublikowane, nieukryte przez admina).
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+          <div className="text-xs text-muted-foreground">
+            Kolejki liczone tylko po atrakcjach widocznych na froncie
+            (opublikowane, nieukryte przez admina).
+          </div>
+          <div className="text-xs whitespace-nowrap">
+            <span className="text-muted-foreground">Odwiedzone przez redakcję: </span>
+            <strong className="tabular-nums">
+              {reviewed == null ? "…" : `${reviewed[0]} z ${reviewed[1]}`}
+            </strong>
+          </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {QUEUES.map((q) => {
@@ -147,7 +175,11 @@ const AdminDoPrzejrzenia = () => {
         </div>
       </div>
 
-      <CatalogTable buildQuery={buildQuery} reloadKey={active} />
+      <CatalogTable
+        buildQuery={buildQuery}
+        reloadKey={active}
+        onReviewedChange={loadReviewed}
+      />
     </div>
   );
 };

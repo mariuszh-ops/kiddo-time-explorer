@@ -117,7 +117,7 @@ export const ADMIN_COLUMNS =
   "place_id,slug,name,type,region,city,address,description,price_note," +
   "phone,website,opening_hours,image_url,lat,lng,amenities,rating," +
   "reviews_count,age_min,age_max,is_free,good_for_children,published," +
-  "admin_hidden,featured,uncertain,locked_fields";
+  "admin_hidden,featured,uncertain,locked_fields,reviewed_at";
 
 /**
  * N-14 (decyzja wlasciciela 04.09.2026): przelacznik "Wyrozniona (featured)"
@@ -178,6 +178,9 @@ export interface CatalogRow {
   admin_hidden?: boolean | null;
   featured?: boolean | null;
   locked_fields?: string[] | null;
+  /** Redakcyjny znacznik "karta sprawdzona" (ISO timestamptz). null = niesprawdzona.
+   *  To NIE jest uzytkownikowe "bylem tam" — tamto liczy UserRatingsContext. */
+  reviewed_at?: string | null;
   updated_at?: string | null;
   experience_points?: string[] | null;
 }
