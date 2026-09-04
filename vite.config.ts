@@ -4,6 +4,39 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
+// Arkusz stylow blokuje render, a Vite wstawia go w <head> PO <script type="module">
+// i po piatce modulepreloadow. Na wolnym laczu CSS czeka wtedy w kolejce za ~1 MB
+// JS-a i pierwsze malowanie leci o sekundy w tyl (zmierzone: CSS gotowy dopiero
+// w 1429 ms, FCP 1608 ms). Przesuwamy <link rel="stylesheet"> przed skrypty (N-03).
+const cssPrzedModulami = () => ({
+  name: "css-przed-modulami",
+  apply: "build" as const,
+  enforce: "post" as const,
+  transformIndexHtml: {
+    order: "post" as const,
+    handler(html: string) {
+      const re = /[^\S\n]*<link rel="stylesheet"[^>]*href="\/assets\/[^"]+\.css"[^>]*>\n?/g;
+      const links = html.match(re);
+      if (!links) return html;
+      let bez = html.replace(re, "");
+      // Paczki JS schodza na fetchpriority="low": na wolnym laczu ~330 kB skryptow
+      // dzielilo pasmo po rowno z 45-kilobajtowym hero i obrazek LCP schodzil
+      // dopiero w 2,6 s. Skrypty i tak nie blokuja renderu (type=module = defer).
+      bez = bez
+        .replace(/<script type="module" crossorigin/g, '<script type="module" fetchpriority="low" crossorigin')
+        .replace(/<link rel="modulepreload" crossorigin/g, '<link rel="modulepreload" fetchpriority="low" crossorigin');
+      const punkt = bez.indexOf('<script type="module"');
+      if (punkt === -1) return html;
+      return (
+        bez.slice(0, punkt) +
+        links.map((l) => l.trim()).join("\n    ") +
+        "\n    " +
+        bez.slice(punkt)
+      );
+    },
+  },
+});
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -13,7 +46,7 @@ export default defineConfig(({ mode }) => ({
       overlay: false,
     },
   },
-  plugins: [react(), mode === "development" && componentTagger(), mcpPlugin()].filter(Boolean),
+  plugins: [react(), mode === "development" && componentTagger(), mcpPlugin(), cssPrzedModulami()].filter(Boolean),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

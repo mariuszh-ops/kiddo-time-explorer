@@ -47,25 +47,27 @@
     <!-- Obrazy atrakcji: własna domena CDN (Cloudflare R2) -->
     <link rel="preconnect" href="https://img.familyfun.pl" crossorigin />
     <link rel="dns-prefetch" href="https://img.familyfun.pl" />
-    <!-- Preload hero: statycznie w <head>, zeby obraz LCP ruszyl juz przy parsowaniu
-         HTML, a nie dopiero po starcie Reacta (dawniej wstrzykiwal go Helmet
-         w src/pages/Index.tsx — 60 % czasu LCP to bylo czekanie na JS).
-         Warunek na sciezce zostawia podstrony bez ostrzezenia "preloaded but not used".
-         Musi stac PRZED arkuszem fontow: arkusz blokuje wykonanie kolejnych skryptow. -->
+    <!-- Preload hero MUSI zostac tutaj, nad arkuszami stylow: skrypt polozony
+         nizej (ten przy #app-shell w <body>) czeka na pobranie CSS-a, bo arkusz
+         blokuje wykonanie kolejnych skryptow. Bez tego zadanie o obrazek rusza
+         dopiero w ~1250 ms zamiast w ~230 ms (zmierzone, N-03).
+         Warunek na sciezce zostawia podstrony bez pobierania hero i bez
+         ostrzezenia "preloaded but not used". -->
     <script>
       if (location.pathname === "/") {
         var heroPreload = document.createElement("link");
         heroPreload.rel = "preload";
         heroPreload.as = "image";
-        heroPreload.setAttribute(
-          "imagesrcset",
-          "/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
-        );
-        heroPreload.setAttribute("imagesizes", "100vw");
+        // Swiadomie wariant 640w (19,5 kB), nie 1280w (45,7 kB): to jest obrazek,
+        // ktory zdazy sie namalowac przed startem Reacta i to on jest elementem LCP.
+        // Ostra wersje z pelnego srcSet dociaga HeroSection juz po zamontowaniu,
+        // w to samo miejsce i w ten sam box — wiec nie tworzy nowego kandydata LCP.
+        heroPreload.href = "/images/hero-parent-child-640.webp";
         heroPreload.setAttribute("fetchpriority", "high");
         document.head.appendChild(heroPreload);
       }
     </script>
+
 
     <!-- Fonty bez blokowania renderu: media="print" nie blokuje pierwszego malowania,
          onload przelacza na "all". `display=swap` i tak podmienia kroj po pobraniu,
@@ -99,22 +101,64 @@
       gtag('config', 'G-XXXXXXXXXX');
     </script>
     -->
-    <!-- Inline krytyczny CSS: tło i ekran ładowania widoczne od pierwszej klatki
-         (bez zewnętrznych plików, więc render startuje po pobraniu samego shella). -->
+    <!-- Inline krytyczny CSS: tło i hero z shellu widoczne od pierwszej klatki
+         (bez zewnętrznych plików, więc render startuje po pobraniu samego shella).
+         Świadomie BEZ klas Tailwinda: index.html nie jest w `content` w
+         tailwind.config.ts, więc takie klasy zostałyby wycięte przy buildzie. -->
     <style>
       html, body { margin: 0; background: #FCFAF8; color: #2f3a33; }
-      #app-loading {
-        min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; gap: 14px; padding: 24px;
-        font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center;
-      }
-      #app-loading .al-logo { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: #497a5c; }
-      #app-loading .al-sub { font-size: 14px; color: #6b7a70; }
-      #app-loading .al-bar { width: 180px; height: 4px; border-radius: 999px; background: #e7e1da; overflow: hidden; }
-      #app-loading .al-bar > i { display: block; width: 40%; height: 100%; border-radius: 999px; background: #497a5c; animation: al-slide 1.1s ease-in-out infinite; }
       @keyframes al-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
+      /* --- Shell LCP (#app-shell): statyczna kopia hero, malowana ZANIM ruszy React.
+             Wymiary 1:1 z HeroSection.tsx (zmierzone: naglowek 73/89 px, hero 290 px
+             na telefonie, 50vh od 768px). Ten box MUSI byc >= hero Reacta — inaczej
+             React domalowuje wiekszy obrazek i LCP wraca do czasu startu JS.
+             Zmieniasz HeroSection? Popraw tu i w tescie hero-shell.test.ts. --- */
+      #app-shell { font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
+      #app-shell .as-header {
+        height: 73px; box-sizing: border-box; border-bottom: 1px solid #ece7e1;
+        display: flex; align-items: center; padding: 0 24px;
+      }
+      #app-shell .as-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #497a5c; }
+      #app-shell .as-hero {
+        position: relative; display: flex; align-items: center; overflow: hidden;
+        height: 290px; max-height: calc(60svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px);
+        background: #8B7355;
+      }
+      #app-shell .as-hero > img {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; object-position: center 30%;
+      }
+      #app-shell .as-veil {
+        position: absolute; inset: 0;
+        background: linear-gradient(to bottom, rgba(252,250,248,0.6), rgba(252,250,248,0.3) 50%, rgba(252,250,248,0.8));
+      }
+      #app-shell .as-copy { position: relative; z-index: 1; box-sizing: border-box; width: 100%; max-width: 576px; padding: 0 20px; }
+      #app-shell .as-h1 {
+        margin: 0; font-family: "DM Serif Display", Georgia, serif; font-weight: 400;
+        font-size: 26px; line-height: 36px; color: #2a2622;
+      }
+      #app-shell .as-sub { margin: 12px 0 0; font-size: 16px; line-height: 24px; color: #595959; }
+      /* Linia licznika ma tylko rezerwowac wysokosc — tresc zna dopiero React. */
+      #app-shell .as-count { margin: 6px 0 0; font-size: 14px; line-height: 20px; visibility: hidden; }
+      #app-shell .as-cta {
+        display: flex; align-items: center; justify-content: center; margin-top: 20px;
+        height: 56px; border-radius: 24px; background: #49795d; color: #fcfaf8;
+        font-size: 18px; line-height: 28px; font-weight: 500;
+      }
+      #app-shell .as-bar { width: 180px; height: 4px; margin: 24px auto 0; border-radius: 999px; background: #e7e1da; overflow: hidden; }
+      #app-shell .as-bar > i { display: block; width: 40%; height: 100%; border-radius: 999px; background: #497a5c; animation: al-slide 1.1s ease-in-out infinite; }
+      @media (min-width: 768px) {
+        #app-shell .as-header { height: 89px; }
+        #app-shell .as-hero-outer { max-width: 1280px; margin: 0 auto; padding: 16px 16px 0; }
+        #app-shell .as-hero { height: 50vh; max-height: 55vh; border-radius: 24px; }
+        #app-shell .as-veil {
+          background: linear-gradient(to right, rgba(252,250,248,0.6), rgba(252,250,248,0.15) 50%, rgba(252,250,248,0));
+        }
+        #app-shell .as-copy { max-width: 45%; padding: 0 32px; }
+        #app-shell .as-cta { display: inline-flex; padding: 0 40px; }
+      }
       @media (prefers-reduced-motion: reduce) {
-        #app-loading .al-bar > i { animation: none; width: 100%; }
+        #app-shell .as-bar > i { animation: none; width: 100%; }
       }
       #app-noscript { max-width: 32rem; margin: 0 auto; padding: 24px; font-family: system-ui, sans-serif; text-align: center; }
       #app-noscript a { color: #497a5c; }
@@ -123,12 +167,46 @@
 
   <body>
     <div id="root">
-      <div id="app-loading">
-        <div class="al-logo">FamilyFun</div>
-        <p class="al-sub">Ładujemy sprawdzone atrakcje…</p>
-        <div class="al-bar" role="progressbar" aria-label="Ładowanie serwisu"><i></i></div>
+      <!-- Shell LCP: hero malowany z samego HTML-a. React zastepuje ten blok przy
+           montowaniu (createRoot czysci #root), wiec to wylacznie stan ladowania.
+           Bez tego LCP = moment startu Reacta (~4,8 s na wolnym 4G): 88 % czasu
+           to bylo czekanie na JS, a nie na obrazek (N-03). -->
+      <div id="app-shell">
+        <div class="as-header" aria-hidden="true"><span class="as-logo">FamilyFun</span></div>
+        <div class="as-hero-outer" aria-hidden="true">
+          <div class="as-hero">
+            <img
+              id="as-hero-img"
+              alt=""
+              width="640"
+              height="427"
+              fetchpriority="high"
+              decoding="async"
+              data-src="/images/hero-parent-child-640.webp"
+            />
+            <div class="as-veil"></div>
+            <div class="as-copy">
+              <h1 class="as-h1">Sprawdzone pomysły na wspólny czas z dzieckiem</h1>
+              <p class="as-sub">Opinie rodziców takich jak Ty</p>
+              <p class="as-count">&nbsp;</p>
+              <span class="as-cta">Przeglądaj atrakcje</span>
+            </div>
+          </div>
+        </div>
+        <div class="as-bar" role="progressbar" aria-label="Ładowanie serwisu"><i></i></div>
       </div>
     </div>
+    <script>
+      // Hero pobieramy tylko na stronie glownej: na podstronach shell znika, zanim
+      // przegladarka zdazy zazadac obrazka (adres siedzi w data-src).
+      (function () {
+        var shell = document.getElementById("app-shell");
+        if (!shell) return;
+        if (location.pathname !== "/") { shell.parentNode.removeChild(shell); return; }
+        var img = document.getElementById("as-hero-img");
+        img.setAttribute("src", img.getAttribute("data-src"));
+      })();
+    </script>
     <noscript>
       <div id="app-noscript">
         <h1>FamilyFun wymaga JavaScriptu</h1>

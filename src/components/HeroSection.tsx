@@ -2,6 +2,7 @@ import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
 import { useCatalogTotal } from "@/hooks/useTopActivities";
+import { cn } from "@/lib/utils";
 
 interface HeroSectionProps {
   onExplore: () => void;
@@ -15,8 +16,12 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
 
   return (
     <section className="md:container md:px-4 md:pt-4">
+      {/* Wysokosc hero jest STALA (290 px / 50vh), nie wynika z tresci: shell
+          w index.html maluje ten sam box zanim ruszy React, a rowna wysokosc
+          gwarantuje, ze React nie domaluje wiekszego obrazka i nie przesunie
+          LCP na moment startu JS (N-03). */}
       <div
-        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:min-h-[50vh] md:max-h-[55vh] min-h-[280px] max-h-[calc(60svh-var(--header-h,72px)-var(--bottom-nav-h,64px)-16px)] [@media(max-height:500px)]:!h-auto [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-h-none [@media(max-height:500px)]:!overflow-visible"
+        className="relative flex items-center md:rounded-2xl overflow-hidden py-5 [@media(min-height:700px)]:py-7 [@media(min-height:800px)]:py-10 md:py-0 md:h-[50vh] md:max-h-[55vh] h-[290px] max-h-[calc(60svh-var(--header-h,72px)-var(--bottom-nav-h,64px)-16px)] [@media(max-height:500px)]:!h-auto [@media(max-height:500px)]:!min-h-0 [@media(max-height:500px)]:!max-h-none [@media(max-height:500px)]:!overflow-visible"
       >
         {/* Background image */}
         <div className="absolute inset-0 overflow-hidden bg-[#8B7355]">
@@ -56,14 +61,19 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
               Opinie rodziców takich jak Ty
             </p>
 
-            {totalCount > 0 && (
-              <p
-                className="mt-1 [@media(min-height:700px)]:mt-1.5 sm:mt-2 text-xs [@media(min-height:700px)]:text-sm md:text-base text-muted-foreground animate-fade-in"
-                style={{ animationDelay: "0.15s" }}
-              >
-                {displayCount} atrakcji z ocenami Google
-              </p>
-            )}
+            {/* Licznik renderuje sie ZAWSZE — przed danymi jako niewidoczna linia.
+                Doklejany warunkowo podnosil hero o 10 px i przesuwal naglowek
+                (CLS 0,01 w pomiarze). */}
+            <p
+              className={cn(
+                "mt-1 [@media(min-height:700px)]:mt-1.5 sm:mt-2 text-xs [@media(min-height:700px)]:text-sm md:text-base text-muted-foreground animate-fade-in",
+                totalCount > 0 ? "" : "invisible"
+              )}
+              aria-hidden={totalCount > 0 ? undefined : true}
+              style={{ animationDelay: "0.15s" }}
+            >
+              {totalCount > 0 ? `${displayCount} atrakcji z ocenami Google` : " "}
+            </p>
 
             {/* CTA Button */}
             <div 
