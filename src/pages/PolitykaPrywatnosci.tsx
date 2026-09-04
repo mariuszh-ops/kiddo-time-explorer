@@ -25,7 +25,7 @@ const PolitykaPrywatnosci = () => {
               Polityka prywatności
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 26 sierpnia 2026 r.
+              Ostatnia aktualizacja: 4 września 2026 r.
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -197,6 +197,10 @@ const PolitykaPrywatnosci = () => {
                   <li>prawo do wycofania zgody w dowolnym momencie (bez wpływu na wcześniejsze przetwarzanie);</li>
                   <li>prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
                 </ul>
+                <p className="mb-4">
+                  Na żądanie wysyłamy kopię danych powiązanych z kontem na adres e-mail przypisany
+                  do konta, nie później niż w ciągu 30 dni od otrzymania wniosku.
+                </p>
               </section>
 
               <section>
