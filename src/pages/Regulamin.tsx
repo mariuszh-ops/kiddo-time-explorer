@@ -5,6 +5,11 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 
+// N-17: data wejscia w zycie = dzien publikacji (klikniecie Publish), nie data z gory.
+// Zmieniasz regulamin merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
+const OBOWIAZUJE_OD = "4 września 2026 r.";
+const WERSJA = 1;
+
 const Regulamin = () => {
   return (
     <PageTransition>
@@ -25,7 +30,7 @@ const Regulamin = () => {
               Regulamin serwisu FamilyFun
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 13 lipca 2026 r.
+              Wersja {WERSJA} — obowiązuje od {OBOWIAZUJE_OD}
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
@@ -76,6 +81,11 @@ const Regulamin = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">§4 Konto użytkownika</h2>
                 <p className="mb-4">
+                  Konto w Serwisie może założyć wyłącznie osoba pełnoletnia, posiadająca pełną
+                  zdolność do czynności prawnych. Serwis jest przeznaczony dla rodzin — z Serwisu
+                  w imieniu dziecka korzysta rodzic lub opiekun prawny, na własną odpowiedzialność.
+                </p>
+                <p className="mb-4">
                   Konto można założyć na dwa sposoby: (a) logując się przez Google — konto tworzone jest
                   automatycznie po pierwszym zalogowaniu, albo (b) rejestrując się adresem e-mail i hasłem
                   (min. 8 znaków, mała i wielka litera, cyfra, znak specjalny). W przypadku rejestracji e-mailem na podany adres wysyłamy wiadomość
@@ -84,8 +94,19 @@ const Regulamin = () => {
                   która wysyła link do ustawienia nowego hasła.
                 </p>
                 <p className="mb-4">
-                  Użytkownik może w każdej chwili usunąć konto kontaktując się
-                  pod adresem <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
+                  Użytkownik może w każdej chwili usunąć konto samodzielnie — w zakładce{" "}
+                  <Link to="/profile" className="text-primary underline">Profil</Link>, w sekcji
+                  „Ustawienia", przyciskiem „Usuń konto". Konto usuwamy niezwłocznie po potwierdzeniu
+                  operacji, bez dodatkowego okresu oczekiwania. Wraz z kontem trwale usuwane są:
+                  adres e-mail i dane logowania, lista zapisanych atrakcji, lista „Chcę odwiedzić",
+                  wystawione oceny gwiazdkowe oraz dane profilu rodziny zapisane w przeglądarce.
+                </p>
+                <p className="mb-4">
+                  Opinie opublikowane w Serwisie pozostają widoczne bez powiązania z kontem,
+                  podpisane jako „Rodzic (konto usunięte)" — stanowią treść Serwisu i po anonimizacji
+                  nie identyfikują Użytkownika. Usunięcie konta jest nieodwracalne. Użytkownik, który
+                  nie może zalogować się do Serwisu, może zgłosić żądanie usunięcia konta na adres{" "}
+                  <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
                 </p>
                 <p className="mb-4">
                   Operator może zablokować lub usunąć konto Użytkownika naruszającego regulamin,
@@ -148,10 +169,15 @@ const Regulamin = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">§8 Postanowienia końcowe</h2>
                 <p className="mb-4">
-                  Operator zastrzega prawo do zmiany regulaminu. O zmianach Użytkownicy posiadający
-                  konto zostaną poinformowani na adres e-mail przypisany do konta z co najmniej
-                  14-dniowym wyprzedzeniem. Dalsze korzystanie z Serwisu po wejściu w życie zmian
-                  oznacza ich akceptację.
+                  Niniejszy Regulamin obowiązuje od dnia {OBOWIAZUJE_OD} (wersja {WERSJA}).
+                </p>
+                <p className="mb-4">
+                  Operator zastrzega prawo do zmiany regulaminu. O istotnych zmianach Użytkownicy
+                  posiadający konto zostaną poinformowani na adres e-mail przypisany do konta
+                  z co najmniej 14-dniowym wyprzedzeniem. Dalsze korzystanie z Serwisu po wejściu
+                  w życie zmian oznacza ich akceptację. Poprzednie wersje Regulaminu udostępniamy
+                  na żądanie pod adresem{" "}
+                  <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
                 </p>
                 <p className="mb-4">
                   W sprawach nieuregulowanych regulaminem zastosowanie mają przepisy prawa polskiego,
