@@ -482,7 +482,7 @@ const CategoryPage = () => {
   return (
     <PageTransition>
       {/* Bez `image`: zdjęcie pierwszej atrakcji bywa niższe niż 630 px i
-          Facebook przycinał podgląd (BC-E-05). Baner sitewide ma 1200x640. */}
+          Facebook przycinał podgląd (BC-E-05). Baner sitewide ma 1200x630. */}
       <SEOHead
         title={pageParam > 1 ? `${pagedTitle} — strona ${pageParam}` : resolvedTitle.replace(" | FamilyFun", "")}
         description={dynamicMetaDescription}

@@ -1,0 +1,6 @@
+# Zasady zglaszania podatnosci serwisu familyfun.pl
+# https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:kontakt@familyfun.pl
+Expires: 2027-09-04T23:59:59.000Z
+Preferred-Languages: pl, en

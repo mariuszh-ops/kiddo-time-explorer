@@ -64,7 +64,7 @@ const SEOHead = ({
       {/* Wymiary podajemy tylko wtedy, gdy je naprawdę znamy (baner sitewide
           albo jawnie przekazane) — fałszywe 1200x630 psuło podglądy. */}
       {isFallbackImage && <meta property="og:image:width" content="1200" />}
-      {isFallbackImage && <meta property="og:image:height" content="640" />}
+      {isFallbackImage && <meta property="og:image:height" content="630" />}
       {!isFallbackImage && imageWidth && <meta property="og:image:width" content={String(imageWidth)} />}
       {!isFallbackImage && imageHeight && <meta property="og:image:height" content={String(imageHeight)} />}
       {!isFallbackImage && !imageWidth && /\.webp(\?|$)/i.test(ogImage) && (
