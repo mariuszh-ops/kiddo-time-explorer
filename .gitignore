@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Lokalne zmienne srodowiskowe — NIGDY nie commitowac (sekrety).
+# Uwaga: .env (bez sufiksu) jest celowo w repo — trzyma tylko publiczne VITE_*,
+# generuje go Lovable i build bez niego nie wstaje. Patrz naglowek w .env.
+.env.local
+.env*.local
