@@ -208,6 +208,12 @@ const AdminDashboard = () => {
       sub: "osobna tabela",
       to: "/admin/zgloszenia",
     },
+    {
+      label: "Nowe propozycje atrakcji",
+      value: stats.propozycje_nowe,
+      sub: "osobna tabela",
+      to: "/admin/propozycje",
+    },
   ] as const;
 
   return (
