@@ -139,7 +139,7 @@ export function AccountSection({ user }: AccountSectionProps) {
         {/* Display name */}
         <div className="space-y-2">
           <label htmlFor="display-name" className="text-sm font-medium text-foreground flex items-center gap-2">
-            <User className="w-4 h-4 text-muted-foreground" />
+            <UserIcon className="w-4 h-4 text-muted-foreground" />
             Nazwa wyświetlana
           </label>
           <div className="flex gap-2">
