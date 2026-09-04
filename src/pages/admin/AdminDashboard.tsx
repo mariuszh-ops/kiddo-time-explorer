@@ -10,7 +10,13 @@ export interface AdminStats {
   widoczne: number;
   ukryte_admin: number;
   zdjete_selekcja: number;
+  /** Wyroznione WIDOCZNE na froncie (published and not admin_hidden). */
   featured: number;
+  /**
+   * Wyroznione, ktorych na froncie nie widac. Opcjonalne: klucz doszedl
+   * migracja 20260904120000 i moze go nie byc, gdy front wyprzedzi baze.
+   */
+  featured_niewidoczne?: number;
   niepewne: number;
   opinie_pending: number;
   zgloszenia_nowe: number;
@@ -168,6 +174,9 @@ const AdminDashboard = () => {
   // SIEBIE (karta moze byc naraz poza selekcja i ukryta przez admina), wiec
   // ich suma bylaby zawyzona.
   const niewidoczne = stats.total - stats.widoczne;
+  // `?? 0`, bo klucz doszedl migracja 20260904120000 - bez tego front wdrozony
+  // przed jej puszczeniem wywracalby sie na `undefined.toLocaleString`.
+  const featuredPozaFrontem = stats.featured_niewidoczne ?? 0;
 
   // I-03: kazdy kafel mowi, z ktorej populacji liczy. Wczesniej "Wyroznione"
   // (cala baza) stalo obok "Niepewne" (tylko widoczne) bez zadnego podpisu.
@@ -187,7 +196,13 @@ const AdminDashboard = () => {
     {
       label: "Wyróżnione",
       value: stats.featured,
-      sub: "z bazy, razem z niewidocznymi",
+      // Po migracji 20260904120000 `featured` liczy sie z widocznych - tak jak
+      // `niepewne` obok. Wyroznienia poza frontem nie znikaja bez slowa:
+      // dopisujemy je w podpisie, zeby nie powtorzyc bledu I-03 w druga strone.
+      sub:
+        featuredPozaFrontem > 0
+          ? `z widocznych · +${featuredPozaFrontem.toLocaleString("pl-PL")} poza frontem`
+          : "z widocznych na froncie",
       to: undefined,
     },
     {
