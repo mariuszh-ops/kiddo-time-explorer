@@ -18,12 +18,45 @@ import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
-import { fetchPinDetails, mergePinDetails, getCachedPinDetails } from "@/lib/mapPins";
+import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 /** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
 const PORCJA_LISTY = 30;
+
+/** F-17: o ile rozszerzamy kadr przed zapytaniem — zapas na drobny pan/zoom. */
+const ZAPAS_KADRU = 0.3;
+/** F-17: opóźnienie zapytania po ruchu mapy (kolejne moveend zerują licznik). */
+const DEBOUNCE_KADRU_MS = 300;
+/** Granice Polski — „Pokaż wszystkie atrakcje" w trybie kadrowym. */
+const GRANICE_POLSKI = L.latLngBounds([48.9, 13.9], [55.0, 24.3]);
+
+/** Para kadrów: widoczny (do testu pokrycia) i powiększony o zapas (do pobrania). */
+export interface KadryMapy {
+  bbox: MapBbox;
+  visible: MapBbox;
+}
+
+/** Kadr widoczny + ten sam kadr powiększony o zapas, przycięty do granic geograficznych. */
+function kadryMapy(bounds: L.LatLngBounds): KadryMapy {
+  const rozpietoscLat = bounds.getNorth() - bounds.getSouth();
+  const rozpietoscLng = bounds.getEast() - bounds.getWest();
+  return {
+    visible: {
+      minLat: bounds.getSouth(),
+      maxLat: bounds.getNorth(),
+      minLng: bounds.getWest(),
+      maxLng: bounds.getEast(),
+    },
+    bbox: {
+      minLat: Math.max(-90, bounds.getSouth() - rozpietoscLat * ZAPAS_KADRU),
+      maxLat: Math.min(90, bounds.getNorth() + rozpietoscLat * ZAPAS_KADRU),
+      minLng: Math.max(-180, bounds.getWest() - rozpietoscLng * ZAPAS_KADRU),
+      maxLng: Math.min(180, bounds.getEast() + rozpietoscLng * ZAPAS_KADRU),
+    },
+  };
+}
 
 // Category emoji map
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -415,14 +448,19 @@ function ViewportFilter({
   onVisibleChange,
   onCenterChange,
   onViewportSave,
+  onBoundsChange,
 }: {
   activities: Activity[];
   onVisibleChange: (visible: Activity[]) => void;
   onCenterChange?: (center: [number, number]) => void;
   onViewportSave?: () => void;
+  /** F-17: kadry do pobrania pinów z bazy. Pierwsze zgłoszenie natychmiast,
+      kolejne z debounce — przeciąganie myszą ma dać JEDNO zapytanie. */
+  onBoundsChange?: (kadry: KadryMapy) => void;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const kadrTimerRef = useRef<ReturnType<typeof setTimeout>>();
 
   const filterByBounds = useCallback(() => {
     const bounds = map.getBounds();
@@ -441,18 +479,28 @@ function ViewportFilter({
     onViewportSave?.();
   }, [onViewportSave]);
 
+  const reportBounds = useCallback(() => {
+    if (!onBoundsChange) return;
+    onBoundsChange(kadryMapy(map.getBounds()));
+  }, [map, onBoundsChange]);
+
   // Pierwsze przeliczenie: natychmiast po gotowości mapy ORAZ po każdej zmianie
   // zbioru atrakcji (piny z RPC dochodzą asynchronicznie). Bez tego licznik
   // pokazywał cały katalog do pierwszego moveend/zoomend.
   useEffect(() => {
-    map.whenReady(() => filterByBounds());
+    map.whenReady(() => {
+      filterByBounds();
+      // Kadr startowy bez debounce — inaczej mapa stoi pusta o 300 ms dłużej.
+      reportBounds();
+    });
     // fitBounds/invalidateSize mogą jeszcze zmienić kadr — przelicz ponownie
     const t = setTimeout(() => {
       filterByBounds();
       reportViewport();
+      reportBounds();
     }, 100);
     return () => clearTimeout(t);
-  }, [map, filterByBounds, reportViewport]);
+  }, [map, filterByBounds, reportViewport, reportBounds]);
 
 
   useMapEvents({
@@ -460,16 +508,23 @@ function ViewportFilter({
       reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 200);
+      clearTimeout(kadrTimerRef.current);
+      kadrTimerRef.current = setTimeout(reportBounds, DEBOUNCE_KADRU_MS);
     },
     zoomend: () => {
       reportViewport();
       clearTimeout(timerRef.current);
       timerRef.current = setTimeout(filterByBounds, 200);
+      clearTimeout(kadrTimerRef.current);
+      kadrTimerRef.current = setTimeout(reportBounds, DEBOUNCE_KADRU_MS);
     },
   });
 
   useEffect(() => {
-    return () => clearTimeout(timerRef.current);
+    return () => {
+      clearTimeout(timerRef.current);
+      clearTimeout(kadrTimerRef.current);
+    };
   }, []);
 
   return null;
@@ -699,7 +754,29 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }),
     [filters],
   );
-  const { pins, error: ownPinsError, refetch: refetchOwnPins } = useMapPins(!hasCatalogFilters);
+  // F-17: gdy mapa sama pobiera piny, pobiera je TYLKO dla swojego kadru.
+  // Kadr zna dopiero zamontowana mapa (ViewportFilter), więc do pierwszego
+  // zgłoszenia nie odpalamy zapytania — inaczej poleciałby cały katalog.
+  const [kadry, setKadry] = useState<KadryMapy | null>(null);
+  const trybKadru = !hasCatalogFilters;
+  const kadrKluczRef = useRef<string>("");
+  const handleBoundsChange = useCallback((nowe: KadryMapy) => {
+    // Ten sam kadr (do ~11 m) nie ma prawa wywołać ponownego renderu.
+    const v = nowe.visible;
+    const klucz = `${v.minLat.toFixed(4)},${v.maxLat.toFixed(4)},${v.minLng.toFixed(4)},${v.maxLng.toFixed(4)}`;
+    if (klucz === kadrKluczRef.current) return;
+    kadrKluczRef.current = klucz;
+    setKadry(nowe);
+  }, []);
+  const zapytanieOPiny = useMemo(
+    () => ({ bbox: kadry?.bbox ?? null, visible: kadry?.visible ?? null }),
+    [kadry],
+  );
+  const {
+    pins,
+    error: ownPinsError,
+    refetch: refetchOwnPins,
+  } = useMapPins(trybKadru && kadry != null, zapytanieOPiny);
   // Awaria pinów przychodzi z dwóch stron: z własnego hooka (mapa bez filtrów
   // katalogu) albo od rodzica, który sam woła useMapPins (CategoryPage z filtrem
   // regionu/kategorii). Bez tej drugiej ścieżki mapa regionu przy 500/429 udawała
@@ -893,12 +970,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   const handleShowAll = useCallback(() => {
     const map = mapInstanceRef.current;
-    if (!map || filteredActivities.length === 0) return;
+    if (!map) return;
+    // W trybie kadrowym `filteredActivities` to tylko to, co zdążyliśmy pobrać —
+    // „wszystkie" musi więc znaczyć całą Polskę, a nie zbiór z ostatnich kadrów.
+    if (trybKadru) {
+      map.fitBounds(GRANICE_POLSKI, { padding: [20, 20] });
+      return;
+    }
+    if (filteredActivities.length === 0) return;
     const bounds = L.latLngBounds(
       filteredActivities.map((a) => [a.latitude, a.longitude] as [number, number])
     );
     map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
-  }, [filteredActivities]);
+  }, [filteredActivities, trybKadru]);
 
   if (isMobile) {
     // Adjust locate button offset based on sheet state
@@ -922,10 +1006,15 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
+          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
+              dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
+              rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej
+              Polski). Kadr nalezy tu do uzytkownika; ucieczka z pustego obszaru jest
+              pod przyciskiem „Pokaz wszystkie atrakcje". */}
+          {!trybKadru && <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />}
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
 
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
         </MapContainer>
 
@@ -1063,9 +1152,14 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
-          <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />
+          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
+              dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
+              rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej
+              Polski). Kadr nalezy tu do uzytkownika; ucieczka z pustego obszaru jest
+              pod przyciskiem „Pokaz wszystkie atrakcje". */}
+          {!trybKadru && <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />}
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
         </MapContainer>
         

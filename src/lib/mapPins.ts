@@ -1,7 +1,12 @@
-// Piny mapy w JEDNYM zapytaniu: RPC public.get_map_pins() zwraca komplet
-// atrakcji (~4900) jako tablicę tablic — bez stronicowania (zero odpowiedzi 206)
-// i bez ciężkich pól. Pełne dane (zdjęcie, miejscowość, udogodnienia, opis)
-// dociągamy dopiero na żądanie: po kliknięciu w pin / dla widocznych kafli.
+// Piny mapy w JEDNYM zapytaniu: RPC public.get_map_pins() zwraca atrakcje
+// jako tablicę tablic — bez stronicowania (zero odpowiedzi 206) i bez ciężkich
+// pól. Pełne dane (zdjęcie, miejscowość, udogodnienia, opis) dociągamy dopiero
+// na żądanie: po kliknięciu w pin / dla widocznych kafli.
+//
+// F-17: RPC przyjmuje kadr (min_lat/max_lat/min_lng/max_lng) i województwo
+// (region_slug). Każdy parametr ma w bazie default NULL = brak warunku, więc
+// wywołanie bez argumentów nadal zwraca komplet katalogu. Bez zawężenia było to
+// 4892 piny / 924 KiB na KAŻDE otwarcie mapy, niezależnie od kadru i regionu.
 import { catalogClient, mapCatalogRow, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
 import { displayLocation } from "@/lib/address";
 import type { Activity } from "@/data/activities";
@@ -10,9 +15,13 @@ import type { Activity } from "@/data/activities";
  * Kolejność pól w json_build_array w definicji public.get_map_pins():
  * 0 place_id, 1 slug, 2 name, 3 type, 4 lat, 5 lng, 6 rating,
  * 7 reviews_count, 8 age_min, 9 age_max, 10 is_free, 11 region, 12 city
+ *
+ * Slot 0 (place_id) od F-17 przychodzi jako NULL — piny go nie używają
+ * (`mapCatalogRow` liczy `id` z sluga), a kosztował ~30 B na pin. Slot został
+ * na miejscu, żeby zmiana w bazie nie przesunęła indeksów wdrożonemu frontowi.
  */
 export type MapPinTuple = [
-  string,
+  string | null,
   string,
   string,
   string,
@@ -29,7 +38,8 @@ export type MapPinTuple = [
 
 export function pinTupleToActivity(t: MapPinTuple): Activity {
   const row: CatalogRow = {
-    place_id: t[0],
+    // Slot 0 to od F-17 zawsze NULL — patrz komentarz przy MapPinTuple.
+    place_id: t[0] ?? "",
     slug: t[1],
     name: t[2],
     type: t[3],
@@ -57,26 +67,89 @@ export function pinTupleToActivity(t: MapPinTuple): Activity {
 }
 
 
-let pinsCache: Activity[] | null = null;
-let pinsInflight: Promise<Activity[]> | null = null;
+/** Kadr mapy w stopniach — granice przekazywane do RPC. */
+export interface MapBbox {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+}
 
-/** Jedno wywołanie rpc('get_map_pins') na sesję (wynik trzymany w pamięci). */
-export function fetchMapPins(): Promise<Activity[]> {
-  if (pinsCache) return Promise.resolve(pinsCache);
-  if (pinsInflight) return pinsInflight;
-  pinsInflight = (async () => {
-    const { data, error } = await catalogClient.rpc("get_map_pins");
+/** Zawężenie zapytania o piny. Puste = cały katalog (jak przed F-17). */
+export interface MapPinsQuery {
+  /** Slug województwa (`region` w public_activities). */
+  region?: string | null;
+  /** Kadr POBIERANIA (z zapasem); piny spoza niego nie opuszczają bazy. */
+  bbox?: MapBbox | null;
+  /**
+   * Kadr faktycznie WIDOCZNY, bez zapasu. Służy wyłącznie do sprawdzenia
+   * „czy mam już wszystko, co widać" — gdyby porównywać kadry pobierania,
+   * każde przesunięcie mapy o piksel wypadałoby poza poprzedni kadr i słało
+   * zapytanie, mimo że zapas dawno pokrył ten obszar.
+   */
+  visible?: MapBbox | null;
+}
+
+/** Klucz cache — kadr zaokrąglony do 4 miejsc (~11 m), żeby drobny pan trafiał w cache. */
+export function mapPinsKey(query?: MapPinsQuery): string {
+  const b = query?.bbox;
+  const kadr = b
+    ? `${b.minLat.toFixed(4)},${b.maxLat.toFixed(4)},${b.minLng.toFixed(4)},${b.maxLng.toFixed(4)}`
+    : "*";
+  return `${query?.region ?? "*"}|${kadr}`;
+}
+
+/** `true`, gdy `outer` w całości zawiera `inner` (kadr już pobrany → bez zapytania). */
+export function bboxContains(outer: MapBbox, inner: MapBbox): boolean {
+  return (
+    outer.minLat <= inner.minLat &&
+    outer.maxLat >= inner.maxLat &&
+    outer.minLng <= inner.minLng &&
+    outer.maxLng >= inner.maxLng
+  );
+}
+
+// Cache per zapytanie. Kadrów w jednej sesji może być dużo (każde oddalenie to
+// nowy klucz), więc trzymamy ograniczoną liczbę wpisów w kolejności wstawiania.
+const CACHE_LIMIT = 32;
+const pinsCache = new Map<string, Activity[]>();
+const pinsInflight = new Map<string, Promise<Activity[]>>();
+
+/** Jedno wywołanie rpc('get_map_pins') na zapytanie (wynik trzymany w pamięci). */
+export function fetchMapPins(query?: MapPinsQuery): Promise<Activity[]> {
+  const key = mapPinsKey(query);
+  const zCache = pinsCache.get(key);
+  if (zCache) return Promise.resolve(zCache);
+  const wLocie = pinsInflight.get(key);
+  if (wLocie) return wLocie;
+
+  const params: Record<string, string | number> = {};
+  if (query?.region) params.region_slug = query.region;
+  if (query?.bbox) {
+    params.min_lat = query.bbox.minLat;
+    params.max_lat = query.bbox.maxLat;
+    params.min_lng = query.bbox.minLng;
+    params.max_lng = query.bbox.maxLng;
+  }
+
+  const promise = (async () => {
+    const { data, error } = await catalogClient.rpc("get_map_pins", params);
     if (error) throw error;
     const tuples = (data as unknown as MapPinTuple[] | null) ?? [];
     const pins = tuples
       .filter((t) => Array.isArray(t) && t[4] != null && t[5] != null)
       .map(pinTupleToActivity);
-    pinsCache = pins;
+    if (pinsCache.size >= CACHE_LIMIT) {
+      const najstarszy = pinsCache.keys().next();
+      if (!najstarszy.done) pinsCache.delete(najstarszy.value);
+    }
+    pinsCache.set(key, pins);
     return pins;
   })().finally(() => {
-    pinsInflight = null;
+    pinsInflight.delete(key);
   });
-  return pinsInflight;
+  pinsInflight.set(key, promise);
+  return promise;
 }
 
 /** Alias czytelniejszy w widokach listingowych (ten sam cache). */
