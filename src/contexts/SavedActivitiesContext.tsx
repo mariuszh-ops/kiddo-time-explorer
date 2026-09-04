@@ -108,6 +108,39 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     }
   }, [wantToVisitIds, user]);
 
+  // L-06: każda karta przeglądarki trzyma własną kopię stanu, a lustro
+  // w localStorage jest jedno. Zdarzenie `storage` przychodzi WYŁĄCZNIE
+  // z innych kart (nigdy z tej, która pisała), więc wystarczy przepisać
+  // wartość spod naszego klucza do stanu — serca na kartach, pinach i w dymku
+  // mapy czytają ten kontekst, więc odświeżą się same. Zapis zwrotny lustra
+  // jest bezpieczny: ten sam JSON pod tym samym kluczem nie wyzwala zdarzenia.
+  const userId = user?.id;
+  useEffect(() => {
+    const favKey = userId ? scopedKey(STORAGE_KEYS.FAVORITES, userId) : STORAGE_KEYS.FAVORITES;
+    const wtvKey = userId ? scopedKey(STORAGE_KEYS.WANT_TO_VISIT, userId) : STORAGE_KEYS.WANT_TO_VISIT;
+    const parseIds = (raw: string | null): Set<number> => {
+      if (!raw) return new Set();
+      try {
+        const value: unknown = JSON.parse(raw);
+        return new Set(Array.isArray(value) ? value.filter((v): v is number => typeof v === "number") : []);
+      } catch {
+        return new Set();
+      }
+    };
+    const sameIds = (a: Set<number>, b: Set<number>) => a.size === b.size && [...a].every((id) => b.has(id));
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === favKey) {
+        const next = parseIds(e.newValue);
+        setFavoriteIds((prev) => (sameIds(prev, next) ? prev : next));
+      } else if (e.key === wtvKey) {
+        const next = parseIds(e.newValue);
+        setWantToVisitIds((prev) => (sameIds(prev, next) ? prev : next));
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [userId]);
+
   // On login: merge local (guest) saved items into Supabase, then hydrate
   // state from Supabase (source of truth). On logout: reset to localStorage.
   useEffect(() => {
