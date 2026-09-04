@@ -41,50 +41,89 @@ const AuthRequiredModal = ({
   const [emailMode, setEmailMode] = useState<'signin' | 'signup' | 'reset'>('signin');
   const { markAuthAttempt } = usePendingIntent();
 
-  // A) „Wstecz" zamyka wyłącznie modal, strona zostaje.
-  // Przy otwarciu dokładamy pusty wpis historii (ten sam URL, inny stan),
-  // przy zamknięciu go zdejmujemy. Dzięki temu przycisk „wstecz" w przeglądarce
-  // cofa tylko do poprzedniego wpisu, nie zmieniając adresu strony.
+  // A) „Wstecz" zamyka wyłącznie modal, strona zostaje (F-16).
+  // Przy otwarciu dokładamy wpis-atrapę (ten sam URL, znacznik w `history.state`),
+  // przy zamknięciu go zdejmujemy. Dzięki temu „wstecz" w przeglądarce cofa
+  // tylko do poprzedniego wpisu, nie zmieniając adresu strony.
   const pushedRef = useRef(false);
-  const programmaticCloseRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+
+  // Najświeższe `onClose` trzymamy w refie, żeby listener `popstate` mógł być
+  // podpięty RAZ (patrz GRABIE niżej).
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  });
+
+  /**
+   * Zdejmuje wpis-atrapę, jeśli wciąż na nim stoimy. Wywoływane przy każdym
+   * zamknięciu INNYM niż „wstecz" (Esc, klik w tło, X, udane logowanie e-mailem)
+   * oraz przy odmontowaniu z otwartym modalem — jedna ścieżka dla wszystkich,
+   * więc w historii nie zostaje sierocy wpis.
+   *
+   * `pushedRef` czyścimy PRZED `history.back()`. Popstate wywołany naszym własnym
+   * cofnięciem trafia wtedy na `pushedRef === false` i nic nie robi. Nie ma tu
+   * żadnej flagi „połknij następne popstate" — taka flaga potrafiła zjeść
+   * PRAWDZIWE cofnięcie użytkownika.
+   */
+  const zdejmijWpisAtrape = () => {
+    if (!pushedRef.current) return;
+    pushedRef.current = false;
+    // Ktoś już przenawigował (np. AdminLayout robi navigate(..., replace))
+    // — wpisu-atrapy nie ma, cofnięcie zabrałoby użytkownika o stronę za daleko.
+    if (!window.history.state?.[MODAL_HISTORY_KEY]) return;
+    try {
+      window.history.back();
+    } catch {
+      /* brak History API */
+    }
+  };
 
   useEffect(() => {
-    if (isOpen && !pushedRef.current) {
-      window.history.pushState({ [MODAL_HISTORY_KEY]: true }, "", window.location.href);
+    if (!isOpen || pushedRef.current) return;
+    try {
+      // Stan react-routera (`idx`, `key`) przepisujemy — bez `idx` kolejne
+      // `navigate()` przy otwartym modalu liczyłoby indeks jako NaN.
+      window.history.pushState(
+        { ...(window.history.state as Record<string, unknown> | null), [MODAL_HISTORY_KEY]: true },
+        "",
+        window.location.href,
+      );
       pushedRef.current = true;
+    } catch {
+      /* brak History API — modal działa dalej, tylko bez wpisu w historii */
     }
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen) return;
+    zdejmijWpisAtrape();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      if (programmaticCloseRef.current) {
-        programmaticCloseRef.current = false;
-        return;
-      }
-      if (pushedRef.current && !event.state?.[MODAL_HISTORY_KEY]) {
-        pushedRef.current = false;
-        onClose();
-      }
+      if (!pushedRef.current) return;
+      if ((event.state as Record<string, unknown> | null)?.[MODAL_HISTORY_KEY]) return;
+      pushedRef.current = false;
+      onCloseRef.current();
     };
     window.addEventListener("popstate", handlePopState);
     return () => window.removeEventListener("popstate", handlePopState);
-  }, [onClose]);
-
-  useEffect(() => {
-    if (!isOpen && pushedRef.current) {
-      programmaticCloseRef.current = true;
-      window.history.back();
-      pushedRef.current = false;
-    }
-  }, [isOpen]);
+    // GRABIE (F-16): lista zależności MUSI być pusta. Wcześniej stało tu
+    // `[onClose]`, a konsumenci przekazują `onClose` jako inline-arrow — nowa
+    // tożsamość przy każdym renderze, więc listener odpinał się i podpinał
+    // bez przerwy. Po nawigacji SPA react-router renderuje dokładnie w trakcie
+    // dispatchu `popstate`; listener dodany W TRAKCIE dispatchu nie dostaje tego
+    // zdarzenia (DOM zamraża listę słuchaczy na starcie dispatchu). Skutek:
+    // pierwsze „wstecz" było połykane, modal zostawał otwarty, a strona i tak
+    // się cofała. Dlatego `onClose` czytamy z refa, nie z domknięcia.
+  }, []);
 
   useEffect(() => {
     return () => {
-      if (pushedRef.current && window.history.state?.[MODAL_HISTORY_KEY]) {
-        window.history.replaceState({}, "", window.location.href);
-        pushedRef.current = false;
-      }
+      zdejmijWpisAtrape();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-dismiss error after 5 seconds
