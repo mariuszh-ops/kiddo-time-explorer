@@ -56,10 +56,16 @@ describe("shell hero w index.html vs HeroSection", () => {
     expect(hero).toContain(`src="${domyslny}"`);
     expect(hero).toContain(`srcSet="${srcset}"`);
     expect(hero).toContain('sizes="100vw"');
-    // shell w index.html (adresy w data-*, zeby nie pobierac hero na podstronach)
-    expect(html).toContain(`data-src="${domyslny}"`);
-    expect(html).toContain(`data-srcset="${srcset}"`);
-    expect(html).toContain('sizes="100vw"');
+    // shell w index.html: obrazek jest WBUDOWANY jako data URI. Zejscie z
+    // <img src> do pliku cofa naprawe z N-03: hero shellu ladowalby sie z sieci,
+    // nie zdazylby przed startem Reacta i elementem LCP znow zostalby <img>
+    // Reacta (PSI 5,2 s zamiast czasu FCP).
+    expect(html).toMatch(/id="as-hero-img"[\s\S]{0,200}src="data:image\/webp;base64,[A-Za-z0-9+/=]{5000,}"/);
+    // Wymiar naturalny musi pokryc box hero na telefonie w pelnej gestosci
+    // pikseli (412 x 290 CSS przy DPR 1,75 = 721 x 508). Mniejszy obrazek to
+    // mniejszy kandydat LCP i przegladarka nadpisze go obrazkiem Reacta.
+    const szer = Number(/id="as-hero-img"[\s\S]{0,120}width="(\d+)"/.exec(html)?.[1]);
+    expect(szer).toBeGreaterThanOrEqual(720);
     // preload w <head> — bez imagesrcset przegladarka pobralaby href, a <img>
     // wybralby z srcset inny plik.
     expect(html).toContain(`heroPreload.href = "${domyslny}"`);
@@ -77,10 +83,18 @@ describe("shell hero w index.html vs HeroSection", () => {
     expect(vite).toContain("this.media='all'");
   });
 
-  it("zdejmuje shell poza strona glowna i nie pobiera tam hero", () => {
-    // Adres obrazka czeka w data-src, wiec skaner preloadu nie rusza go na
-    // podstronach; skrypt ustawia go dopiero dla "/".
+  it("zdejmuje shell poza strona glowna", () => {
     expect(html).toMatch(/if \(location\.pathname !== "\/"\) \{ shell\.parentNode\.removeChild\(shell\); return; \}/);
     expect(html).toContain('if (location.pathname === "/")');
+  });
+
+  it("montuje Reacta dopiero po namalowaniu hero shellu", () => {
+    // Bez tej bramki createRoot czysci #root, zanim przegladarka namaluje
+    // obrazek shellu — shell znika NIENAMALOWANY i elementem LCP zostaje
+    // <img> Reacta, czyli caly lancuch JS (N-03).
+    const main = readFileSync(resolve(__dirname, "../../main.tsx"), "utf8");
+    expect(main).toContain("img.decode()");
+    expect(main).toContain("requestAnimationFrame");
+    expect(main).toMatch(/shellNamalowany\(\)\.then\(\(\) => \{\s*createRoot/);
   });
 });
