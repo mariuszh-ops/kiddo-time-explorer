@@ -32,12 +32,14 @@ const Footer = () => {
               <Link to="/polityka-prywatnosci" className="hover:text-foreground transition-colors">
                 Polityka prywatności
               </Link>
-              <button
-                onClick={() => { trackEvent("submit_open", { source: "footer" }); setSubmitOpen(true); }}
-                className="hover:text-foreground transition-colors"
-              >
-                Dodaj atrakcję
-              </button>
+              {FEATURES.SUBMIT_ACTIVITY && (
+                <button
+                  onClick={() => { trackEvent("submit_open", { source: "footer" }); setSubmitOpen(true); }}
+                  className="hover:text-foreground transition-colors"
+                >
+                  Dodaj atrakcję
+                </button>
+              )}
               {FEATURES.BLOG && (
                 <Link to="/inspiracje" className="hover:text-foreground transition-colors">
                   Inspiracje
@@ -59,7 +61,9 @@ const Footer = () => {
           </div>
         </div>
       </footer>
-      <SubmitActivityModal isOpen={submitOpen} onClose={() => setSubmitOpen(false)} />
+      {FEATURES.SUBMIT_ACTIVITY && (
+        <SubmitActivityModal isOpen={submitOpen} onClose={() => setSubmitOpen(false)} />
+      )}
     </>
   );
 };

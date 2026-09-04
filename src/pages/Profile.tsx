@@ -298,16 +298,18 @@ const Profile = () => {
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
                 Ustawienia
               </h2>
-              <button
-                onClick={() => setIsSubmitOpen(true)}
-                className="w-full flex items-center justify-between px-6 py-3.5 hover:bg-accent/50 transition-colors text-left"
-              >
-                <div className="flex items-center gap-3">
-                  <PlusCircle className="w-5 h-5 text-muted-foreground" />
-                  <span className="text-sm text-foreground">Zgłoś atrakcję</span>
-                </div>
-                <ChevronRight className="w-4 h-4 text-muted-foreground" />
-              </button>
+              {FEATURES.SUBMIT_ACTIVITY && (
+                <button
+                  onClick={() => setIsSubmitOpen(true)}
+                  className="w-full flex items-center justify-between px-6 py-3.5 hover:bg-accent/50 transition-colors text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <PlusCircle className="w-5 h-5 text-muted-foreground" />
+                    <span className="text-sm text-foreground">Zgłoś atrakcję</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              )}
               {import.meta.env.DEV && (
                 <Link
                   to="/admin"
@@ -361,7 +363,9 @@ const Profile = () => {
         <Footer />
       </div>
 
-      <SubmitActivityModal isOpen={isSubmitOpen} onClose={() => setIsSubmitOpen(false)} />
+      {FEATURES.SUBMIT_ACTIVITY && (
+        <SubmitActivityModal isOpen={isSubmitOpen} onClose={() => setIsSubmitOpen(false)} />
+      )}
     </PageTransition>
   );
 };

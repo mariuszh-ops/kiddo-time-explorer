@@ -139,7 +139,7 @@ const App = () => {
                       <AuthReturnHandler />
                       <AnimatedRoutes />
                       <BottomNav />
-                      {FEATURES.SUBMIT_ACTIVITY && <SubmitActivityFAB />}
+                      {FEATURES.SUBMIT_ACTIVITY && FEATURES.SUBMIT_ACTIVITY_FAB && <SubmitActivityFAB />}
                       {FEATURES.COOKIE_CONSENT && <CookieConsent />}
                       <LayoutDiagnostics />
                     </BrowserRouter>

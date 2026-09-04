@@ -20,5 +20,6 @@ export const FEATURES = {
   TOP_RATED_SECTION: false,   // Sekcja "Najlepiej oceniane" na stronie głównej — ukryta
   TOP_RATED_HOMEPAGE: false,  // Sekcja rekomendacji "Najlepiej oceniane" gdy brak filtrów — wyłączona
   TRIP_PLANNER: false,        // Grupowanie ulubionych po mieście + nawigacja Google Maps — ukryte w MVP
-  SUBMIT_ACTIVITY: false,     // Formularz "Zgłoś atrakcję" / FAB — ukryty do czasu podłączenia insertu do Supabase (activity_submissions).
+  SUBMIT_ACTIVITY: true,      // Formularz "Zgłoś atrakcję" — wejścia w stopce, profilu i "Moje miejsca". Insert do activity_submissions działa, zgłoszenia trafiają do /admin/propozycje.
+  SUBMIT_ACTIVITY_FAB: false, // Pływający przycisk "+" na każdej podstronie — osobno wyłączony. Działa tylko gdy SUBMIT_ACTIVITY też jest włączone.
 } as const;
