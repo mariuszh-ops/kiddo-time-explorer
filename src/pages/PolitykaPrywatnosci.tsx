@@ -166,9 +166,13 @@ const PolitykaPrywatnosci = () => {
 
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Cookies</h2>
+                {/* TODO po D-13: powtórzyć BD-I-02 i wpisać tabelę cookies (nazwa / cel / czas / dostawca).
+                    Prognoza po migracji na Cloudflare Workers: zostaje __cf_bm, znikają __dpl i session-id. */}
                 <p className="mb-4">
                   Serwis wykorzystuje wyłącznie pliki cookies niezbędne do jego działania (m.in. utrzymanie
                   sesji po zalogowaniu). Nie stosujemy plików cookies marketingowych ani profilujących.
+                  Dostawca hostingu może zapisywać techniczne pliki cookies (ochrona przed botami,
+                  utrzymanie sesji) — nie służą one profilowaniu ani reklamie.
                 </p>
                 <p className="mb-4">
                   Statystyki odwiedzin zbieramy w narzędziu Plausible Analytics, które nie zapisuje plików
