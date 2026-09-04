@@ -143,8 +143,12 @@ const ActivityCard = ({
   };
 
   const handleAuthAction = async () => {
+    // NIE zamykamy modalu po starcie logowania Google. `signInWithOAuth` robi
+    // `location.assign(...)` na Supabase i wraca od razu; zamkniecie modalu
+    // odpalilo by efekt `window.history.back()` (wstecz zamyka modal), a to
+    // przerywa trwajaca nawigacje (net::ERR_ABORTED) i uzytkownik zostaje na
+    // stronie — klikniecie "Kontynuuj z Google" nie robi nic.
     await signInWithGoogle();
-    setIsAuthModalOpen(false);
   };
 
   return (
