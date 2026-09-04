@@ -14,6 +14,7 @@ export interface AdminStats {
   niepewne: number;
   opinie_pending: number;
   zgloszenia_nowe: number;
+  propozycje_nowe: number;
   per_typ: Record<string, number>;
   per_region: Record<
     string,

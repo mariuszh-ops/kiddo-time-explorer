@@ -26,6 +26,7 @@ const AdminKatalog = lazy(() => import("./pages/admin/AdminKatalog"));
 const AdminDoPrzejrzenia = lazy(() => import("./pages/admin/AdminDoPrzejrzenia"));
 const AdminOpinie = lazy(() => import("./pages/admin/AdminOpinie"));
 const AdminZgloszenia = lazy(() => import("./pages/admin/AdminZgloszenia"));
+const AdminPropozycje = lazy(() => import("./pages/admin/AdminPropozycje"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
@@ -84,6 +85,7 @@ const AnimatedRoutes = () => {
               <Route path="do-przejrzenia" element={<AdminDoPrzejrzenia />} />
               <Route path="opinie" element={<AdminOpinie />} />
               <Route path="zgloszenia" element={<AdminZgloszenia />} />
+              <Route path="propozycje" element={<AdminPropozycje />} />
               <Route path="dashboard" element={<AdminDashboard />} />
             </Route>
             <Route path="/regulamin" element={<Regulamin />} />
