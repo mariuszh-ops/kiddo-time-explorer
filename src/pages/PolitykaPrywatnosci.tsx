@@ -5,6 +5,11 @@ import Footer from "@/components/Footer";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 
+// N-17 uwaga (d): format daty zrownany z Regulamin.tsx. Data = dzien publikacji (klikniecie Publish),
+// nie data z gory. Zmieniasz polityke merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
+const OBOWIAZUJE_OD = "4 września 2026 r.";
+const WERSJA = 1;
+
 const PolitykaPrywatnosci = () => {
   return (
     <PageTransition>
@@ -25,7 +30,7 @@ const PolitykaPrywatnosci = () => {
               Polityka prywatności
             </h1>
             <p className="text-sm text-muted-foreground italic mb-8">
-              Ostatnia aktualizacja: 4 września 2026 r.
+              Wersja {WERSJA} — obowiązuje od {OBOWIAZUJE_OD}
             </p>
 
             <div className="space-y-6 text-muted-foreground leading-relaxed">
