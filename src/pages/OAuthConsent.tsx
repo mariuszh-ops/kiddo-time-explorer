@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { bezpieczneWyjscie } from "@/lib/safeRedirect";
 
 type OAuthNamespace = {
   getAuthorizationDetails: (id: string) => Promise<{ data: any; error: { message: string } | null }>;
@@ -43,7 +44,12 @@ export default function OAuthConsent() {
       }
       const immediate = data?.redirect_url ?? data?.redirect_to;
       if (immediate && !data?.client) {
-        window.location.href = immediate;
+        const cel = bezpieczneWyjscie(immediate);
+        if (!cel) {
+          setError("Serwer autoryzacji zwrócił niedozwolony adres przekierowania.");
+          return;
+        }
+        window.location.href = cel;
         return;
       }
       setDetails(data);
@@ -63,10 +69,10 @@ export default function OAuthConsent() {
       setError(decideError.message);
       return;
     }
-    const target = data?.redirect_url ?? data?.redirect_to;
+    const target = bezpieczneWyjscie(data?.redirect_url ?? data?.redirect_to);
     if (!target) {
       setBusy(false);
-      setError("Serwer autoryzacji nie zwrócił adresu przekierowania.");
+      setError("Serwer autoryzacji nie zwrócił poprawnego adresu przekierowania.");
       return;
     }
     window.location.href = target;
