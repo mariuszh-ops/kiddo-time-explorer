@@ -123,6 +123,20 @@ const AdminDashboard = () => {
 
   const maxType = typeRows[0]?.[1] ?? 0;
 
+  // I-03: liczba podpisana nad wykresem musi byc suma slupkow, wiec liczymy ja
+  // z tych samych wierszy, z ktorych rysujemy slupki - nie z osobnego pola.
+  const sumaTypow = useMemo(
+    () => typeRows.reduce((acc, [, n]) => acc + n, 0),
+    [typeRows],
+  );
+  // To samo dla tabeli wojewodztw: suma kolumny "Kart" z WYSWIETLANYCH wierszy.
+  // Gdyby w bazie pojawil sie region spoza REGIONS, tabela cicho by go pominela
+  // - roznica wzgledem `widoczne` to wtedy jedyny slad, wiec ja pokazujemy.
+  const sumaRegionow = useMemo(
+    () => regionRows.reduce((acc, r) => acc + r.n, 0),
+    [regionRows],
+  );
+
   const toggleSort = (k: SortKey) => {
     if (sortKey === k) setSortAsc((v) => !v);
     else {
@@ -148,26 +162,95 @@ const AdminDashboard = () => {
     );
   }
 
+  // Karty niewidoczne na froncie = dopelnienie "widocznych" do calej bazy.
+  // Liczymy odejmowaniem, bo `ukryte_admin` i `zdjete_selekcja` ZACHODZA NA
+  // SIEBIE (karta moze byc naraz poza selekcja i ukryta przez admina), wiec
+  // ich suma bylaby zawyzona.
+  const niewidoczne = stats.total - stats.widoczne;
+
+  // I-03: kazdy kafel mowi, z ktorej populacji liczy. Wczesniej "Wyroznione"
+  // (cala baza) stalo obok "Niepewne" (tylko widoczne) bez zadnego podpisu.
   const tiles = [
-    { label: "Widoczne na froncie", value: stats.widoczne, to: undefined },
-    { label: "Ukryte przez admina", value: stats.ukryte_admin, to: undefined },
-    { label: "Poza selekcją", value: stats.zdjete_selekcja, to: undefined },
-    { label: "Wyróżnione", value: stats.featured, to: undefined },
-    { label: "Niepewne", value: stats.niepewne, to: undefined },
+    {
+      label: "Poza selekcją",
+      value: stats.zdjete_selekcja,
+      sub: "z bazy · published = false",
+      to: undefined,
+    },
+    {
+      label: "Ukryte przez admina",
+      value: stats.ukryte_admin,
+      sub: "z bazy · admin_hidden = true",
+      to: undefined,
+    },
+    {
+      label: "Wyróżnione",
+      value: stats.featured,
+      sub: "z bazy, razem z niewidocznymi",
+      to: undefined,
+    },
+    {
+      label: "Niepewne",
+      value: stats.niepewne,
+      sub: "z widocznych na froncie",
+      to: undefined,
+    },
     {
       label: "Opinie do moderacji",
       value: stats.opinie_pending,
+      sub: "osobna tabela",
       to: "/admin/opinie",
     },
     {
       label: "Nowe zgłoszenia",
       value: stats.zgloszenia_nowe,
+      sub: "osobna tabela",
       to: "/admin/zgloszenia",
     },
   ] as const;
 
   return (
     <div className="space-y-6">
+      {/*
+        I-03/E-4: dwie populacje jawnie rozdzielone. Wczesniej dashboard mial
+        `total` (wszystkie wiersze public_activities) w jednym rzedzie z rozkladem
+        per typ liczonym tylko z kart widocznych - liczby nie schodzily sie o ~1200
+        i nic nie mowilo, dlaczego.
+      */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[
+          {
+            label: "W bazie",
+            value: stats.total,
+            hint: "wszystkie wiersze katalogu",
+          },
+          {
+            label: "Widoczne na froncie",
+            value: stats.widoczne,
+            hint: "opublikowane i nieukryte przez admina",
+          },
+          {
+            label: "Niewidoczne",
+            value: niewidoczne,
+            hint: "poza selekcją lub ukryte przez admina",
+          },
+        ].map((t) => (
+          <div key={t.label} className="bg-card border border-border rounded-lg p-4">
+            <div className="text-xs text-muted-foreground">{t.label}</div>
+            <div className="text-3xl font-semibold mt-1 tabular-nums">
+              {t.value.toLocaleString("pl-PL")}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">{t.hint}</div>
+          </div>
+        ))}
+      </section>
+      <p className="text-xs text-muted-foreground -mt-3">
+        {stats.widoczne.toLocaleString("pl-PL")} widocznych +{" "}
+        {niewidoczne.toLocaleString("pl-PL")} niewidocznych ={" "}
+        {stats.total.toLocaleString("pl-PL")} w bazie. Kafle niżej liczą z różnych
+        populacji — każdy ma to napisane pod liczbą.
+      </p>
+
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {tiles.map((t) => {
           const inner = (
@@ -179,6 +262,9 @@ const AdminDashboard = () => {
               <div className="text-xs text-muted-foreground">{t.label}</div>
               <div className="text-2xl font-semibold mt-1 tabular-nums">
                 {t.value.toLocaleString("pl-PL")}
+              </div>
+              <div className="text-[11px] text-muted-foreground/80 mt-1">
+                {t.sub}
               </div>
             </div>
           );
@@ -194,10 +280,24 @@ const AdminDashboard = () => {
 
       <section className="bg-card border border-border rounded-lg overflow-hidden">
         <header className="px-4 py-3 border-b border-border">
-          <h2 className="text-sm font-semibold">Braki per województwo</h2>
+          <h2 className="text-sm font-semibold">
+            Braki per województwo — {sumaRegionow.toLocaleString("pl-PL")} kart
+            widocznych na froncie
+          </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Kliknij liczbę, aby otworzyć odpowiednią listę.
+            Kolumna „Kart” sumuje się do{" "}
+            {sumaRegionow.toLocaleString("pl-PL")}. Karty poza selekcją i ukryte
+            przez admina nie są tu liczone. Kliknij liczbę, aby otworzyć
+            odpowiednią listę.
           </p>
+          {sumaRegionow !== stats.widoczne && (
+            <p className="text-xs text-amber-600 mt-1">
+              Rozjazd: tabela sumuje się do{" "}
+              {sumaRegionow.toLocaleString("pl-PL")}, a widocznych kart jest{" "}
+              {stats.widoczne.toLocaleString("pl-PL")} — w bazie jest region
+              spoza listy województw.
+            </p>
+          )}
         </header>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -247,7 +347,22 @@ const AdminDashboard = () => {
       </section>
 
       <section className="bg-card border border-border rounded-lg p-4">
-        <h2 className="text-sm font-semibold mb-3">Rozkład per typ</h2>
+        <h2 className="text-sm font-semibold">
+          Rozkład per typ — {sumaTypow.toLocaleString("pl-PL")} kart widocznych
+          na froncie
+        </h2>
+        <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+          Słupki sumują się do {sumaTypow.toLocaleString("pl-PL")}. To NIE jest
+          cała baza ({stats.total.toLocaleString("pl-PL")}) — karty poza selekcją
+          i ukryte przez admina nie mają tu słupka.
+        </p>
+        {sumaTypow !== stats.widoczne && (
+          <p className="text-xs text-amber-600 mb-3">
+            Rozjazd: słupki sumują się do {sumaTypow.toLocaleString("pl-PL")}, a
+            kafel „Widoczne na froncie” pokazuje{" "}
+            {stats.widoczne.toLocaleString("pl-PL")}.
+          </p>
+        )}
         {typeRows.length === 0 ? (
           <p className="text-sm text-muted-foreground">Brak danych.</p>
         ) : (
