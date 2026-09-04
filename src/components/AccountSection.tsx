@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Loader2, Mail, Lock, User, Pencil, Check, X } from "lucide-react";
+import { Loader2, Mail, Lock, User as UserIcon, Pencil, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
