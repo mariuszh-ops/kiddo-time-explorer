@@ -58,11 +58,14 @@
         var heroPreload = document.createElement("link");
         heroPreload.rel = "preload";
         heroPreload.as = "image";
-        // Swiadomie wariant 640w (19,5 kB), nie 1280w (45,7 kB): to jest obrazek,
-        // ktory zdazy sie namalowac przed startem Reacta i to on jest elementem LCP.
-        // Ostra wersje z pelnego srcSet dociaga HeroSection juz po zamontowaniu,
-        // w to samo miejsce i w ten sam box — wiec nie tworzy nowego kandydata LCP.
-        heroPreload.href = "/images/hero-parent-child-640.webp";
+        // Zestaw kandydatow MUSI byc identyczny z #as-hero-img i z HeroSection.tsx.
+        // Gdy shell zadal samego 640w, React montowal <img> z INNYM plikiem
+        // (przy DPR >= 1,5 sizes=100vw wybiera 1280w) — to bylo drugie pobranie
+        // hero i nowy kandydat LCP, ktory czekal na start JS (load delay 5,2 s
+        // w Lighthouse simulate). Pilnuje tego hero-shell.test.ts.
+        heroPreload.href = "/images/hero-parent-child-1280.webp";
+        heroPreload.setAttribute("imagesrcset", "/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w");
+        heroPreload.setAttribute("imagesizes", "100vw");
         heroPreload.setAttribute("fetchpriority", "high");
         document.head.appendChild(heroPreload);
       }
@@ -178,11 +181,13 @@
             <img
               id="as-hero-img"
               alt=""
-              width="640"
-              height="427"
+              width="1280"
+              height="853"
+              sizes="100vw"
               fetchpriority="high"
               decoding="async"
-              data-src="/images/hero-parent-child-640.webp"
+              data-src="/images/hero-parent-child-1280.webp"
+              data-srcset="/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w"
             />
             <div class="as-veil"></div>
             <div class="as-copy">
@@ -204,6 +209,10 @@
         if (!shell) return;
         if (location.pathname !== "/") { shell.parentNode.removeChild(shell); return; }
         var img = document.getElementById("as-hero-img");
+        // srcset przed src: wybor kandydata ma padac dokladnie tak jak w preloadzie z <head>
+        // i z <img> montowanym pozniej przez HeroSection — jedno pobranie, jeden
+        // element LCP.
+        img.setAttribute("srcset", img.getAttribute("data-srcset"));
         img.setAttribute("src", img.getAttribute("data-src"));
       })();
     </script>

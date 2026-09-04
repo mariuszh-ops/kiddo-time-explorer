@@ -25,11 +25,26 @@ const cssPrzedModulami = () => ({
       bez = bez
         .replace(/<script type="module" crossorigin/g, '<script type="module" fetchpriority="low" crossorigin')
         .replace(/<link rel="modulepreload" crossorigin/g, '<link rel="modulepreload" fetchpriority="low" crossorigin');
+      // Shell (#app-shell) maluje sie z CSS-a inline w index.html, wiec arkusz
+      // aplikacji NIE jest potrzebny do PIERWSZEGO malowania — a jako zasob
+      // blokujacy render kosztowal 320-400 ms FCP (audyt render-blocking-resources).
+      // Wzorzec jak przy fontach: media="print" nie blokuje renderu, onload
+      // przelacza na "all". fetchpriority="high" jest tu istotne — samo
+      // media="print" spycha pobranie na najnizszy priorytet, a arkusz ma zdazyc
+      // przed zamontowaniem Reacta, zeby nie bylo blysku strony bez stylow.
+      const asynchroniczne: string[] = [];
+      for (const l of links) {
+        const tag = l.trim();
+        asynchroniczne.push(
+          tag.replace(">", ` media="print" fetchpriority="high" onload="this.media='all'; this.onload=null;">`),
+        );
+        asynchroniczne.push(`<noscript>${tag}</noscript>`);
+      }
       const punkt = bez.indexOf('<script type="module"');
       if (punkt === -1) return html;
       return (
         bez.slice(0, punkt) +
-        links.map((l) => l.trim()).join("\n    ") +
+        asynchroniczne.join("\n    ") +
         "\n    " +
         bez.slice(punkt)
       );

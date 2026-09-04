@@ -44,19 +44,37 @@ describe("shell hero w index.html vs HeroSection", () => {
     expect(hero).not.toMatch(/md:min-h-\[50vh\]/);
   });
 
-  it("maluje w shellu lekki wariant 640w, a ostry zostawia HeroSection", () => {
-    // Shell ma jeden, maly plik (19,5 kB) — to on jest elementem LCP.
-    expect(html).toContain('data-src="/images/hero-parent-child-640.webp"');
-    expect(html).toContain('heroPreload.href = "/images/hero-parent-child-640.webp"');
-    expect(html).not.toContain("hero-parent-child-1280.webp");
-    // React dociaga pelny zestaw dopiero po zamontowaniu.
-    for (const plik of [
-      "/images/hero-parent-child-640.webp 640w",
-      "/images/hero-parent-child-1280.webp 1280w",
-      "/images/hero-parent-child-1920.webp 1920w",
-    ]) {
-      expect(hero).toContain(plik);
-    }
+  it("shell, preload i HeroSection zadaja DOKLADNIE tego samego pliku", () => {
+    // Rozjazd zestawow = drugie pobranie hero i nowy kandydat LCP, ktory czeka
+    // na start JS. Dokladnie tak bylo, gdy shell mial samo 640w, a React pelny
+    // srcset: przy DPR >= 1,5 przegladarka wybierala w Reakcie 1280w i LCP
+    // dostawal load delay 5,2 s (Lighthouse simulate, N-03).
+    const srcset =
+      "/images/hero-parent-child-640.webp 640w, /images/hero-parent-child-1280.webp 1280w, /images/hero-parent-child-1920.webp 1920w";
+    const domyslny = "/images/hero-parent-child-1280.webp";
+    // HeroSection (React)
+    expect(hero).toContain(`src="${domyslny}"`);
+    expect(hero).toContain(`srcSet="${srcset}"`);
+    expect(hero).toContain('sizes="100vw"');
+    // shell w index.html (adresy w data-*, zeby nie pobierac hero na podstronach)
+    expect(html).toContain(`data-src="${domyslny}"`);
+    expect(html).toContain(`data-srcset="${srcset}"`);
+    expect(html).toContain('sizes="100vw"');
+    // preload w <head> — bez imagesrcset przegladarka pobralaby href, a <img>
+    // wybralby z srcset inny plik.
+    expect(html).toContain(`heroPreload.href = "${domyslny}"`);
+    expect(html).toContain(`heroPreload.setAttribute("imagesrcset", "${srcset}")`);
+    expect(html).toContain('heroPreload.setAttribute("imagesizes", "100vw")');
+  });
+
+  it("nie przywraca blokady renderu na arkuszu aplikacji", () => {
+    // Arkusz /assets/index-*.css nie jest potrzebny do namalowania shellu, wiec
+    // wtyczka `cssPrzedModulami` wpuszcza go przez media="print" + onload.
+    // Powrot do zwyklego <link rel=stylesheet> to +320-400 ms FCP, a LCP idzie
+    // krok w krok za FCP.
+    const vite = readFileSync(resolve(__dirname, "../../../vite.config.ts"), "utf8");
+    expect(vite).toContain('media="print"');
+    expect(vite).toContain("this.media='all'");
   });
 
   it("zdejmuje shell poza strona glowna i nie pobiera tam hero", () => {
