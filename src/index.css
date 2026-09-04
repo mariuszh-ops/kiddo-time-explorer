@@ -259,13 +259,17 @@
   text-align: center;
 }
 
-/* Leaflet attribution links must meet mobile touch-target minimums. */
+/* K-15: linki atrybucji dobijamy do 24 px (prog WCAG 2.5.8 AA), NIE do 44 px.
+   Przy 44 px pasek atrybucji urosl do 44 px wysokosci i wchodzil pod przycisk
+   "Moja lokalizacja" (bottom-4, 44x44) — nieprzeslonieta zostawala tylko gorna
+   szpara 44x16 px i axe zglaszal target-size. Przy 24 px pasek konczy sie
+   ponizej przycisku, a oba cele nadal spelniaja 24x24. */
 .leaflet-control-attribution a {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
-  min-width: 44px;
+  min-height: 24px;
+  min-width: 24px;
 }
 
 .custom-map-popup .leaflet-popup-close-button:hover {

@@ -146,10 +146,13 @@ const safeImageUrl = (raw?: string | null): string => {
 };
 
 // Popup content for pin click
+// K-15: serce siedzi po LEWEJ. Po prawej Leaflet rysuje wlasny przycisk zamkniecia
+// (44x44, z-index 10, top:4 right:6) — przy top:8 right:8 lezal on na sercu i
+// zostawal 1 px do klikniecia, wiec ulubionych nie dalo sie przelaczyc z dymka.
 const favButtonMarkup = (isFav: boolean) => `
   <button type="button" data-fav-toggle="1" aria-pressed="${isFav}"
     aria-label="${isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}"
-    style="position:absolute;top:8px;right:8px;z-index:5;width:36px;height:36px;border:0;border-radius:9999px;
+    style="position:absolute;top:8px;left:8px;z-index:5;width:36px;height:36px;border:0;border-radius:9999px;
     background:rgba(0,0,0,0.35);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;cursor:pointer;">
     <svg viewBox="0 0 24 24" width="18" height="18" fill="${isFav ? "#ef4444" : "none"}" stroke="${isFav ? "#ef4444" : "#ffffff"}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
   </button>`;
