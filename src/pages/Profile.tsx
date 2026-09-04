@@ -24,6 +24,7 @@ import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 import AccountSettingsSection from "@/components/AccountSettingsSection";
 import { getInitials } from "@/lib/initials";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AccountSection } from "@/components/AccountSection";
 
 const Profile = () => {
   const navigate = useNavigate();
