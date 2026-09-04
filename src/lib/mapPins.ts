@@ -2,7 +2,7 @@
 // atrakcji (~4900) jako tablicę tablic — bez stronicowania (zero odpowiedzi 206)
 // i bez ciężkich pól. Pełne dane (zdjęcie, miejscowość, udogodnienia, opis)
 // dociągamy dopiero na żądanie: po kliknięciu w pin / dla widocznych kafli.
-import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
 import { displayLocation } from "@/lib/address";
 import type { Activity } from "@/data/activities";
 
@@ -192,8 +192,9 @@ export async function fetchFilteredSlugs(f: MapSlugFilters): Promise<Set<string>
     if (f.onlyFree) q = q.eq("is_free", true);
     const term = (f.search ?? "").trim();
     if (term.length >= 2) q = q.or(`name.ilike.%${term}%,city.ilike.%${term}%`);
+    // Rekordy z age_min/age_max=null są WYŁĄCZONE z filtra wieku (M-07).
     if (typeof f.ageMin === "number" && typeof f.ageMax === "number")
-      q = q.lte("age_min", f.ageMax).gte("age_max", f.ageMin);
+      q = q.or(ageRangeOrFilter(f.ageMin, f.ageMax));
     q = q.order("slug", { ascending: true }).range(page * CHUNK, page * CHUNK + CHUNK - 1);
 
     const { data, error } = await q;

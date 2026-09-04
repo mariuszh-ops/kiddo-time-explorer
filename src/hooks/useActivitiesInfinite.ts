@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { catalogClient, mapCatalogRow, CARD_COLUMNS, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
 import { sanitizeSearchTerm } from "@/lib/searchConfig";
 import type { Activity } from "@/data/activities";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
@@ -108,9 +108,10 @@ export function useActivitiesInfinite(
       if (searchTerm.length >= 2) {
         q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
       }
-      // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy null → ukryte.
+      // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów.
+      // Rekordy z age_min/age_max=null są WYŁĄCZONE z filtra (przechodzą zawsze) — M-07.
       if (typeof ageMin === "number" && typeof ageMax === "number") {
-        q = q.lte("age_min", ageMax).gte("age_max", ageMin);
+        q = q.or(ageRangeOrFilter(ageMin, ageMax));
       }
       if (sort === "name") q = q.order("name", { ascending: true });
       else if (sort === "reviews")

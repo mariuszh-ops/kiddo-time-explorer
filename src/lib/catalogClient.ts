@@ -107,6 +107,36 @@ export const CARD_COLUMNS =
   "place_id,slug,name,type,region,city,lat,lng,rating,reviews_count," +
   "age_min,age_max,is_free,amenities,image_url,uncertain";
 
+// Lista kolumn dla tabeli katalogu w /admin — suma tego, co renderuje
+// CatalogTable, i tego, co edytuje AdminCatalogDrawer (drawer dostaje wiersz
+// z tabeli, nie dociąga go osobno). Świadomie pomija dwa ciężkie jsonb-y:
+// `reviews` (7,2 MB w tabeli, 73 kB na stronę 50 wierszy) i
+// `experience_points` — admin ich nie pokazuje ani nie edytuje.
+// M-16: `select("*")` na tej stronie kosztował 157 kB i ~290 ms; ta lista 69 kB.
+export const ADMIN_COLUMNS =
+  "place_id,slug,name,type,region,city,address,description,price_note," +
+  "phone,website,opening_hours,image_url,lat,lng,amenities,rating," +
+  "reviews_count,age_min,age_max,is_free,good_for_children,published," +
+  "admin_hidden,featured,uncertain,locked_fields";
+
+/**
+ * Warunek `or=` dla filtra wieku [ageMin, ageMax] w zapytaniach PostgREST.
+ *
+ * Przedzialy przepuszczamy, gdy sie przecinaja (age_min <= ageMax && age_max >= ageMin).
+ * Rekordy BEZ wieku (oba pola null) sa z filtra WYLACZONE — przechodza zawsze.
+ * Bez tego 8 kart z nieznanym wiekiem (m.in. Energylandia) znikalo przy KAZDYM
+ * ustawieniu filtra, bo null nie spelnia ani `.lte`, ani `.gte` (M-07, 04.09.2026).
+ * Swiadomie nie wpisujemy im 0–99 do bazy: null znaczy „nie wiemy”, a 0–99 to
+ * twierdzenie, ktorego nie mamy z czego wyprowadzic.
+ *
+ * Uzycie: `q.or(ageRangeOrFilter(ageMin, ageMax))` — supabase-js sam doklada nawiasy.
+ * Kilka wywolan `.or()` na jednym zapytaniu PostgREST ANDuje (sprawdzone na zywo
+ * 04.09: szukajka „park” 635 -> 633 ze starym filtrem, 635 z nowym).
+ */
+export function ageRangeOrFilter(ageMin: number, ageMax: number): string {
+  return `and(age_min.lte.${ageMax},age_max.gte.${ageMin}),and(age_min.is.null,age_max.is.null)`;
+}
+
 // Wiersz z tabeli public_activities (patrz PROMPT).
 export interface CatalogRow {
   place_id: string;

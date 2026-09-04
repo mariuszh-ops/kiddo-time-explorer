@@ -217,8 +217,10 @@ const CategoryPage = () => {
       if (effectiveType && p.type !== effectiveType) return false;
       if (onlyFree && !p.isFree) return false;
       if (ageOption) {
-        if (!p.hasAgeInfo) return false;
-        if (p.ageMin > ageOption.max || p.ageMax < ageOption.min) return false;
+        // Piny bez wieku sa WYLACZONE z filtra (przechodza zawsze) — M-07, 04.09.2026.
+        // Ten sam kontrakt co `ageRangeOrFilter` w zapytaniach do bazy; wczesniej
+        // `!p.hasAgeInfo -> false` gasilo je na mapie przy kazdym ustawieniu filtra.
+        if (p.hasAgeInfo && (p.ageMin > ageOption.max || p.ageMax < ageOption.min)) return false;
       }
       if (term) {
         const haystack = `${p.title} ${p.location}`.toLowerCase();
