@@ -37,6 +37,17 @@ export const translateAuthError = (error: unknown): string => {
   if (msg.includes("unable to validate email") || msg.includes("invalid email")) {
     return "Podaj poprawny adres e-mail.";
   }
+  // I-11 (zmiana hasla w /profile)
+  if (msg.includes("different from the old password") || msg.includes("same_password")) {
+    return "Nowe hasło musi różnić się od obecnego.";
+  }
+  if (msg.includes("reauthentication")) {
+    // M-13: gdy w Supabase wlaczone "Secure password change" - potrzebny kod z e-maila.
+    return "Potwierdź zmianę kodem, który wysłaliśmy na Twój e-mail.";
+  }
+  if (msg.includes("nonce")) {
+    return "Kod jest nieprawidłowy lub wygasł. Poproś o nowy.";
+  }
   if (msg.includes("rate limit") || msg.includes("too many requests")) {
     return "Za dużo prób. Odczekaj chwilę i spróbuj ponownie.";
   }

@@ -21,7 +21,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
-import DeleteAccountSection from "@/components/DeleteAccountSection";
+import AccountSettingsSection from "@/components/AccountSettingsSection";
 import { getInitials } from "@/lib/initials";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -157,6 +157,15 @@ const Profile = () => {
                 <p className="text-foreground font-medium">{user.name}</p>
               )}
               <p className="text-sm text-muted-foreground">{user?.email ?? ""}</p>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="mt-2 h-auto p-0 text-primary"
+                onClick={() => document.getElementById("account-name")?.focus()}
+              >
+                Edytuj dane konta
+              </Button>
             </section>
 
             {/* Account summary */}
@@ -293,7 +302,11 @@ const Profile = () => {
               </section>
             )}
 
+            {/* I-11: edycja konta (nazwa, e-mail, haslo, kopia danych, usuniecie) */}
+            <AccountSettingsSection />
+
             {/* Settings */}
+            {(FEATURES.SUBMIT_ACTIVITY || import.meta.env.DEV) && (
             <section className="bg-card rounded-xl border border-border overflow-hidden">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
                 Ustawienia
@@ -322,8 +335,8 @@ const Profile = () => {
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </Link>
               )}
-              <DeleteAccountSection />
             </section>
+            )}
 
             {/* Info links */}
             <section className="bg-card rounded-xl border border-border overflow-hidden">

@@ -30,6 +30,10 @@ export interface User {
   name?: string;
   avatarUrl?: string;
   createdAt?: string; // ISO date string
+  /** I-11: nowy adres czekajacy na potwierdzenie obu linkow (GoTrue new_email). */
+  pendingEmail?: string;
+  /** I-11: dostawcy logowania (email, google) - decyduje o etykiecie "Ustaw / Zmien haslo". */
+  providers?: string[];
 }
 
 interface AuthContextType {
@@ -46,6 +50,11 @@ interface AuthContextType {
   resendConfirmation: (email: string, captchaToken?: string) => Promise<void>;
   resetPassword: (email: string, captchaToken?: string) => Promise<void>;
 
+  // I-11: edycja konta w /profile (Supabase Auth updateUser)
+  updateDisplayName: (name: string) => Promise<void>;
+  updateEmail: (email: string) => Promise<void>;
+  updatePassword: (password: string, nonce?: string) => Promise<void>;
+  requestReauthentication: () => Promise<void>;
 
   // Backward compat aliases for existing consumers (login/logout).
   // New code should prefer signIn/signOut.
@@ -59,14 +68,26 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const mapSupabaseUser = (sessionUser: any): User | null => {
+const nonEmptyString = (v: unknown): string | undefined =>
+  typeof v === "string" && v.trim() ? v : undefined;
+
+/**
+ * I-11: display_name ma pierwszenstwo przed full_name/name, bo te dwa Google
+ * nadpisuje przy KAZDYM logowaniu OAuth (GoTrue scala dane tozsamosci
+ * z user_metadata). Wlasny klucz przezywa wylogowanie i ponowne logowanie.
+ */
+export const mapSupabaseUser = (sessionUser: any): User | null => {
   if (!sessionUser) return null;
+  const meta = sessionUser.user_metadata ?? {};
+  const providers = sessionUser.app_metadata?.providers;
   return {
     id: sessionUser.id,
     email: sessionUser.email ?? "",
-    name: sessionUser.user_metadata?.full_name || sessionUser.user_metadata?.name || undefined,
-    avatarUrl: sessionUser.user_metadata?.avatar_url || undefined,
+    name: nonEmptyString(meta.display_name) ?? nonEmptyString(meta.full_name) ?? nonEmptyString(meta.name),
+    avatarUrl: nonEmptyString(meta.avatar_url),
     createdAt: sessionUser.created_at,
+    pendingEmail: nonEmptyString(sessionUser.new_email),
+    providers: Array.isArray(providers) ? providers.filter((x: unknown) => typeof x === "string") : undefined,
   };
 };
 
@@ -172,6 +193,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error) throw error;
   }, []);
 
+  // I-11: edycja konta. updateUser odswieza sesje i wysyla USER_UPDATED,
+  // wiec user w kontekscie aktualizuje sie sam przez onAuthStateChange.
+  const updateDisplayName = useCallback(async (name: string) => {
+    const { error } = await supabase.auth.updateUser({ data: { display_name: name } });
+    if (error) throw error;
+  }, []);
+
+  const updateEmail = useCallback(async (email: string) => {
+    // "Secure email change" w Supabase: linki ida na stary i nowy adres,
+    // zmiana wchodzi po klikniecu obu. Do tego czasu user.pendingEmail.
+    const { error } = await supabase.auth.updateUser(
+      { email: email.trim() },
+      { emailRedirectTo: window.location.origin + "/profile" }
+    );
+    if (error) throw error;
+  }, []);
+
+  const updatePassword = useCallback(async (password: string, nonce?: string) => {
+    // nonce tylko gdy serwer wymaga reauth (M-13) - pusty klucz GoTrue odrzuca.
+    const { error } = await supabase.auth.updateUser(nonce ? { password, nonce } : { password });
+    if (error) throw error;
+  }, []);
+
+  const requestReauthentication = useCallback(async () => {
+    const { error } = await supabase.auth.reauthenticate();
+    if (error) throw error;
+  }, []);
 
   const signOut = useCallback(async (): Promise<void> => {
     // Przed signOut: zaraz potem leci window.location.assign i żądanie
@@ -225,6 +273,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signUpWithEmail,
         resendConfirmation,
         resetPassword,
+        updateDisplayName,
+        updateEmail,
+        updatePassword,
+        requestReauthentication,
         login,
         logout,
         isDemoMode: env.isDev && isDemoMode,
