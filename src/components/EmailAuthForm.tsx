@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, MailCheck } from "lucide-react";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
@@ -59,6 +60,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaError, setCaptchaError] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** D-15: widget stoi na stronie i czeka na kliknięcie — to NIE jest awaria. */
@@ -346,13 +348,35 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         </p>
       )}
 
+      {mode === "signup" && (
+        <div className="flex items-start gap-2">
+          <Checkbox
+            id="terms-accept"
+            checked={termsAccepted}
+            onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            className="mt-0.5 h-6 w-6 shrink-0"
+          />
+          <Label htmlFor="terms-accept" className="text-sm text-muted-foreground cursor-pointer">
+            Akceptuję{" "}
+            <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Regulamin
+            </a>{" "}
+            i{" "}
+            <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Politykę prywatności
+            </a>
+          </Label>
+        </div>
+      )}
+
       <div className="sticky bottom-0 -mx-1 px-1 pb-1 pt-2 bg-background">
       <Button
         type="submit"
         disabled={
           busy ||
           !captchaToken ||
-          (mode === "signup" && !checkPassword(password).ok)
+          (mode === "signup" && !checkPassword(password).ok) ||
+          (mode === "signup" && !termsAccepted)
         }
         className="w-full"
       >
