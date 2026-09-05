@@ -14,6 +14,7 @@ const TABS = [
   { to: "/admin/opinie", label: "Opinie", badge: "opinie_pending" as const },
   { to: "/admin/zgloszenia", label: "Zgłoszenia", badge: "zgloszenia_nowe" as const },
   { to: "/admin/propozycje", label: "Propozycje atrakcji", badge: "propozycje_nowe" as const },
+  { to: "/admin/bledy", label: "Błędy", badge: null },
   { to: "/admin/dashboard", label: "Dashboard", badge: null },
 ];
 

@@ -28,6 +28,7 @@ const AdminOpinie = lazy(() => import("./pages/admin/AdminOpinie"));
 const AdminZgloszenia = lazy(() => import("./pages/admin/AdminZgloszenia"));
 const AdminPropozycje = lazy(() => import("./pages/admin/AdminPropozycje"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminBledy = lazy(() => import("./pages/admin/AdminBledy"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
 const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
@@ -86,6 +87,7 @@ const AnimatedRoutes = () => {
               <Route path="opinie" element={<AdminOpinie />} />
               <Route path="zgloszenia" element={<AdminZgloszenia />} />
               <Route path="propozycje" element={<AdminPropozycje />} />
+              <Route path="bledy" element={<AdminBledy />} />
               <Route path="dashboard" element={<AdminDashboard />} />
             </Route>
             <Route path="/regulamin" element={<Regulamin />} />
