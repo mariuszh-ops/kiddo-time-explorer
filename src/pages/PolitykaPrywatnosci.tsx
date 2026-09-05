@@ -51,7 +51,8 @@ const PolitykaPrywatnosci = () => {
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>dane konta użytkownika (adres e-mail, identyfikator dostarczony przez dostawcę logowania Google, imię i zdjęcie profilowe, jeśli zostały udostępnione);</li>
                   <li>treści dodawane przez użytkownika (zapisane atrakcje, opinie, oceny, zgłoszenia błędów, zgłoszenia nowych miejsc);</li>
-                  <li>dane techniczne przeglądarki (adres IP, rodzaj urządzenia, ustawienia językowe) zbierane w logach serwera;</li>
+                  <li>dane techniczne przeglądarki (adres IP, rodzaj urządzenia, ustawienia językowe) zbierane w logach serwera przez dostawców naszej infrastruktury;</li>
+                  <li>zapisy o błędach aplikacji w przeglądarce (treść komunikatu, adres podstrony, wersja przeglądarki), służące wyłącznie naprawie awarii Serwisu;</li>
                   <li>dane analityczne w formie zanonimizowanej (Plausible / Google Analytics 4, jeśli włączony).</li>
                 </ul>
               </section>
@@ -155,18 +156,43 @@ const PolitykaPrywatnosci = () => {
 
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Okres przechowywania</h2>
+                {/* H-06 (05.09.2026): kazdy termin ponizej musi dac sie wskazac w kodzie.
+                    Zrodlo: public.retencja_sprzataj() — galezie (a)-(e) — uruchamiana przez
+                    zadanie cron.job "familyfun_retencja" @ "15 3 * * *" (cron.timezone = GMT).
+                    Logi dostawcow celowo BEZ naszego terminu: retencji Supabase i Cloudflare
+                    nie kontrolujemy, wiec nie wolno jej obiecywac. */}
                 <p className="mb-4">
                   Dane konta przechowujemy do momentu jego usunięcia przez użytkownika. Treści publiczne
-                  (opinie, zgłoszenia) mogą być przechowywane po usunięciu konta w formie zanonimizowanej.
-                  Szczegółowe okresy przechowywania poszczególnych kategorii danych wymieniono poniżej.
+                  (opinie) mogą być przechowywane po usunięciu konta w formie zanonimizowanej.
+                  Poniżej rozdzielamy dane, które kasujemy sami i w podanych terminach, od logów
+                  technicznych prowadzonych przez dostawców naszej infrastruktury.
+                </p>
+
+                <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Dane, które kasujemy my</h3>
+                <p className="mb-4">
+                  Poniższe terminy egzekwuje zadanie uruchamiane w naszej bazie danych raz na dobę,
+                  o godzinie 3:15 czasu UTC. Usunięcie jest nieodwracalne.
                 </p>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
-                  <li><strong>Zgłoszenia nowych atrakcji</strong> — przez czas niezbędny do weryfikacji zgłoszenia i ewentualnego dodania obiektu do katalogu.</li>
-                  <li><strong>Skrót (hash) adresu IP z formularzy</strong> — przechowywany razem ze zgłoszeniem, do którego się odnosi.</li>
-                  <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia, po czym są nieodwracalnie usuwane.</li>
-                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia.</li>
-                  <li><strong>Logi techniczne</strong> — nie dłużej niż 12 miesięcy.</li>
+                  <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia.</li>
+                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia. Zgłoszenie, którego jeszcze nie rozpatrzyliśmy, czeka do czasu rozpatrzenia.</li>
+                  <li><strong>Skrót (hash) adresu IP z formularza „Zgłoś atrakcję"</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie. Formularz „Zgłoś błąd w danych" nie zapisuje adresu IP.</li>
+                  <li><strong>Zapisy o błędach aplikacji w przeglądarce</strong> (treść komunikatu, adres podstrony, wersja przeglądarki) — 30 dni od ostatniego wystąpienia danego błędu. Jeśli błąd wystąpił u zalogowanego użytkownika, identyfikator konta usuwamy z takiego zapisu w ciągu doby od usunięcia konta.</li>
                 </ul>
+
+                <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Logi techniczne dostawców</h3>
+                <p className="mb-4">
+                  Serwery, na których działa Serwis, prowadzą własne logi techniczne — zapisują w nich
+                  m.in. adres IP, rodzaj urządzenia i czas żądania. Tych logów nie prowadzimy my:
+                  zapisują je i kasują nasi dostawcy, czyli Supabase (baza danych i uwierzytelnianie)
+                  oraz Cloudflare (ochrona przed botami, hosting zdjęć, obsługa poczty), według
+                  własnych zasad. Nie mamy dostępu do ustawień tej retencji, dlatego nie podajemy dla
+                  niej własnego terminu i nie deklarujemy, że logi znikną po określonym czasie.
+                  Okresy przechowywania opisują polityki prywatności tych dostawców:{" "}
+                  <a className="text-primary underline" href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">supabase.com/privacy</a>{" "}
+                  oraz{" "}
+                  <a className="text-primary underline" href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">cloudflare.com/privacypolicy</a>.
+                </p>
               </section>
 
               <section>
@@ -223,7 +249,7 @@ const PolitykaPrywatnosci = () => {
                   sekcja „Ustawienia" → pozycja „Usuń konto" (potwierdzenie słowem USUWAM).
                   Usuwamy wtedy ulubione miejsca, listę „chcę odwiedzić", wystawione oceny
                   gwiazdkowe oraz dane profilu rodziny zapisane w przeglądarce, a wpis logowania
-                  kasujemy w ciągu 30 dni; opublikowane opinie pozostają dostępne dla innych
+                  kasujemy w ramach tej samej operacji; opublikowane opinie pozostają dostępne dla innych
                   rodziców w formie zanonimizowanej (bez powiązania z Twoim kontem).
                 </p>
                 <p className="mb-4">
