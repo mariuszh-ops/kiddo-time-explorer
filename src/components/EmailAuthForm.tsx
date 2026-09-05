@@ -164,6 +164,12 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
       failPassword("Podaj hasło.");
       return;
     }
+    // I-07: zgoda na regulamin jest WARUNKIEM rejestracji, nie tylko wyszarzonym
+    // przyciskiem — sam `disabled` znika po jednym kliknięciu w devtoolsach.
+    if (mode === "signup" && !termsAccepted) {
+      setError("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+      return;
+    }
     // Bez tokenu nie wysyłamy nic — także wtedy, gdy widget zgłosił awarię
     // (wcześniej `captchaError` przepuszczał żądanie z pustym tokenem).
     if (!captchaToken) {
