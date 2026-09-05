@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, Download, KeyRound, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +8,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { translateAuthError } from "@/lib/authErrors";
 import { checkPassword, passwordErrorMessage, PASSWORD_HINT } from "@/lib/passwordPolicy";
 import PasswordRequirements from "@/components/PasswordRequirements";
-import DeleteAccountSection from "@/components/DeleteAccountSection";
-import { buildMyDataExport, downloadJson, exportFileName } from "@/lib/exportMyData";
 
 /** Tyle, ile sprawdza przeglądarka dla type="email" — jak w EmailAuthForm. */
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -51,29 +49,84 @@ const readAuthHashMessage = (): { kind: "info" | "error"; text: string } | null 
 const errorMessage = (err: unknown): string =>
   String((err as { message?: string } | null)?.message ?? "").toLowerCase();
 
+interface SettingRowProps {
+  label: string;
+  value: React.ReactNode;
+  /** Dopisek zamiast przycisku, gdy wartości nie zmienia się z aplikacji. */
+  note?: string;
+  action?: {
+    id?: string;
+    label: string;
+    open: boolean;
+    controls: string;
+    onClick: () => void;
+  };
+  /** Formularz rozwijany pod wierszem. */
+  children?: React.ReactNode;
+}
+
 /**
- * I-11 — sekcja „Twoje konto" w /profile: nazwa wyświetlana, e-mail, hasło,
- * kopia danych (N-20) i usunięcie konta (S-131). Wszystko przez Supabase Auth
- * `updateUser`; kontekst `user` odświeża się sam po zdarzeniu USER_UPDATED.
+ * Wiersz „etykieta – wartość – Zmień". Pola są tylko do odczytu, dopóki
+ * użytkownik nie kliknie przycisku — trzy otwarte formularze naraz robiły
+ * z sekcji ścianę pól (wzorzec z Google Account / Airbnb).
+ */
+const SettingRow = ({ label, value, note, action, children }: SettingRowProps) => (
+  <div>
+    <div className="flex items-center justify-between gap-3 px-6 py-3.5 min-h-[56px]">
+      <div className="min-w-0">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        <p className="text-sm text-foreground break-all">{value}</p>
+      </div>
+      {action ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          id={action.id}
+          aria-expanded={action.open}
+          aria-controls={action.controls}
+          onClick={action.onClick}
+          className="shrink-0"
+        >
+          {action.open ? "Anuluj" : action.label}
+        </Button>
+      ) : note ? (
+        <span className="shrink-0 text-xs text-muted-foreground">{note}</span>
+      ) : null}
+    </div>
+    {children}
+  </div>
+);
+
+/**
+ * I-11 — karta „Ustawienia konta" w /profile: nazwa wyświetlana, e-mail i hasło
+ * przez Supabase Auth `updateUser`; kontekst `user` odświeża się sam po zdarzeniu
+ * USER_UPDATED. Kopia danych i usunięcie konta są w PrivacyDataSection.
  */
 const AccountSettingsSection = () => {
   const { user, updateDisplayName, updateEmail, updatePassword, requestReauthentication } = useAuth();
   const currentName = user?.name ?? "";
   const currentEmail = user?.email ?? "";
-  // Konto z Google bez hasła: „Ustaw hasło" zamiast „Zmień hasło". Brak listy
-  // dostawców (stare sesje, demo) traktujemy jak konto z hasłem.
+  // Konto z Google bez hasła: „Ustaw hasło" zamiast „Zmień hasło" i e-mail bez
+  // zmiany (adres przychodzi z Google). Brak listy dostawców (stare sesje, demo)
+  // traktujemy jak konto z hasłem.
   const hasPasswordLogin = !user?.providers || user.providers.includes("email");
+  const hasGoogleLogin = user?.providers?.includes("google") ?? false;
+  const loginLabel = [hasGoogleLogin && "Google", hasPasswordLogin && "e-mail i hasło"]
+    .filter(Boolean)
+    .join(" lub ");
 
   // Nazwa wyświetlana
+  const [nameOpen, setNameOpen] = useState(false);
   const [name, setName] = useState(currentName);
   const [nameBusy, setNameBusy] = useState(false);
   const [nameError, setNameError] = useState<string | null>(null);
-  const [nameOk, setNameOk] = useState<string | null>(null);
   useEffect(() => {
     setName(currentName);
   }, [currentName]);
 
   // E-mail
+  const [emailOpen, setEmailOpen] = useState(false);
   const [email, setEmail] = useState(currentEmail);
   const [emailBusy, setEmailBusy] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -91,9 +144,6 @@ const AccountSettingsSection = () => {
   const [pwdError, setPwdError] = useState<string | null>(null);
   const [pwdInfo, setPwdInfo] = useState<string | null>(null);
 
-  // Kopia danych
-  const [exportBusy, setExportBusy] = useState(false);
-
   useEffect(() => {
     const m = readAuthHashMessage();
     if (!m) return;
@@ -102,11 +152,28 @@ const AccountSettingsSection = () => {
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
   }, []);
 
+  const toggleName = () => {
+    setNameOpen((v) => !v);
+    setName(currentName);
+    setNameError(null);
+  };
+
+  const toggleEmail = () => {
+    setEmailOpen((v) => !v);
+    setEmail(currentEmail);
+    setEmailError(null);
+    setEmailOk(null);
+  };
+
+  const togglePassword = () => {
+    setPwdOpen((v) => !v);
+    setPwdError(null);
+  };
+
   const saveName = async (e: React.FormEvent) => {
     e.preventDefault();
     if (nameBusy) return;
     setNameError(null);
-    setNameOk(null);
     const clean = normalizeDisplayName(name);
     if (clean.length < NAME_MIN) {
       setNameError(`Nazwa musi mieć co najmniej ${NAME_MIN} znaki.`);
@@ -117,13 +184,13 @@ const AccountSettingsSection = () => {
       return;
     }
     if (clean === currentName) {
-      setNameOk("Nazwa bez zmian.");
+      setNameOpen(false);
       return;
     }
     setNameBusy(true);
     try {
       await updateDisplayName(clean);
-      setNameOk("Zapisano nową nazwę.");
+      setNameOpen(false);
       toast.success("Nazwa wyświetlana zapisana");
     } catch (err) {
       setNameError(translateAuthError(err));
@@ -200,23 +267,7 @@ const AccountSettingsSection = () => {
     }
   };
 
-  const exportData = async () => {
-    if (!user || exportBusy) return;
-    setExportBusy(true);
-    try {
-      const data = await buildMyDataExport(user);
-      downloadJson(data, exportFileName());
-      toast.success("Plik z Twoimi danymi został pobrany");
-    } catch {
-      toast.error("Nie udało się przygotować pliku. Spróbuj ponownie.");
-    } finally {
-      setExportBusy(false);
-    }
-  };
-
-  const nameDescribedBy = ["account-name-hint", nameError && "account-name-error", nameOk && "account-name-status"]
-    .filter(Boolean)
-    .join(" ");
+  const nameDescribedBy = ["account-name-hint", nameError && "account-name-error"].filter(Boolean).join(" ");
   const emailDescribedBy = ["account-email-hint", emailError && "account-email-error", emailOk && "account-email-status"]
     .filter(Boolean)
     .join(" ");
@@ -226,203 +277,186 @@ const AccountSettingsSection = () => {
 
   return (
     <section aria-labelledby="konto-tytul" className="bg-card rounded-xl border border-border overflow-hidden">
-      <h2 id="konto-tytul" className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
-        Twoje konto
+      <h2 id="konto-tytul" className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-1">
+        Ustawienia konta
       </h2>
 
-      {/* Nazwa wyświetlana */}
-      <form onSubmit={saveName} noValidate className="px-6 pb-5 space-y-2">
-        <Label htmlFor="account-name">Nazwa wyświetlana</Label>
-        <div className="flex gap-2">
-          <Input
-            id="account-name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            maxLength={NAME_MAX}
-            autoComplete="nickname"
-            placeholder="np. Mama Zosi"
-            aria-invalid={nameError ? true : undefined}
-            aria-describedby={nameDescribedBy}
-            className="flex-1 text-base md:text-sm"
-          />
-          <Button type="submit" disabled={nameBusy} className="shrink-0">
-            {nameBusy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : "Zapisz"}
-            {nameBusy && <span className="sr-only">Zapisuję…</span>}
-          </Button>
-        </div>
-        <p id="account-name-hint" className="text-xs text-muted-foreground">
-          Widoczna przy Twoich opiniach i w menu.
-        </p>
-        {nameError && (
-          <p id="account-name-error" role="alert" className="text-sm text-destructive">
-            {nameError}
-          </p>
-        )}
-        {nameOk && (
-          <p id="account-name-status" role="status" className="text-sm text-muted-foreground">
-            {nameOk}
-          </p>
-        )}
-      </form>
-
-      {/* E-mail */}
-      <form onSubmit={saveEmail} noValidate className="px-6 py-5 space-y-2 border-t border-border/50">
-        <Label htmlFor="account-email">Adres e-mail</Label>
-        <div className="flex gap-2">
-          <Input
-            id="account-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            autoComplete="email"
-            placeholder="rodzina@example.com"
-            aria-invalid={emailError ? true : undefined}
-            aria-describedby={emailDescribedBy}
-            className="flex-1 text-base md:text-sm"
-          />
-          <Button type="submit" variant="outline" disabled={emailBusy} className="shrink-0">
-            {emailBusy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : "Zmień"}
-            {emailBusy && <span className="sr-only">Wysyłam…</span>}
-          </Button>
-        </div>
-        <p id="account-email-hint" className="text-xs text-muted-foreground">
-          {user?.pendingEmail ? (
-            <>
-              Czeka na potwierdzenie: <span className="font-medium text-foreground break-all">{user.pendingEmail}</span>.
-              Kliknij linki w obu wiadomościach — na stary i nowy adres.
-            </>
-          ) : (
-            "Nowy adres potwierdzisz linkami wysłanymi na stary i nowy e-mail."
-          )}
-        </p>
-        {emailError && (
-          <p id="account-email-error" role="alert" className="text-sm text-destructive">
-            {emailError}
-          </p>
-        )}
-        {emailOk && (
-          <p id="account-email-status" role="status" className="text-sm text-muted-foreground">
-            {emailOk}
-          </p>
-        )}
-      </form>
-
-      {/* Hasło */}
-      <div className="border-t border-border/50">
-        <button
-          type="button"
-          onClick={() => {
-            setPwdOpen((v) => !v);
-            setPwdError(null);
+      <div className="divide-y divide-border/50">
+        {/* Nazwa wyświetlana */}
+        <SettingRow
+          label="Nazwa wyświetlana"
+          value={currentName || <span className="text-muted-foreground">Nie ustawiono</span>}
+          action={{
+            id: "account-name-edit",
+            label: "Zmień",
+            open: nameOpen,
+            controls: "account-name-form",
+            onClick: toggleName,
           }}
-          aria-expanded={pwdOpen}
-          aria-controls="account-password-form"
-          className="w-full flex items-center justify-between px-6 py-3.5 min-h-[44px] hover:bg-accent/50 transition-colors text-left"
         >
-          <div className="flex items-center gap-3">
-            <KeyRound className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
-            <span className="text-sm text-foreground">{hasPasswordLogin ? "Zmień hasło" : "Ustaw hasło"}</span>
-          </div>
-          <ChevronDown
-            className={`w-4 h-4 text-muted-foreground transition-transform ${pwdOpen ? "rotate-180" : ""}`}
-            aria-hidden="true"
-          />
-        </button>
-        <form
-          id="account-password-form"
-          onSubmit={savePassword}
-          noValidate
-          hidden={!pwdOpen}
-          className="px-6 pb-5 space-y-2"
-        >
-          {!hasPasswordLogin && (
-            <p className="text-xs text-muted-foreground">
-              Logujesz się przez Google. Po ustawieniu hasła zalogujesz się też e-mailem.
-            </p>
-          )}
-          <Label htmlFor="account-new-password">Nowe hasło</Label>
-          <Input
-            id="account-new-password"
-            type="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={PASSWORD_HINT}
-            aria-invalid={pwdError ? true : undefined}
-            aria-describedby={pwdDescribedBy || undefined}
-            className="text-base md:text-sm"
-          />
-          <PasswordRequirements password={password} />
-          {needsNonce && (
-            <div className="space-y-1.5 pt-1">
-              <Label htmlFor="account-reauth-code">Kod z wiadomości e-mail</Label>
+          <form id="account-name-form" onSubmit={saveName} noValidate hidden={!nameOpen} className="px-6 pb-5 space-y-2">
+            <Label htmlFor="account-name">Nowa nazwa</Label>
+            <div className="flex gap-2">
               <Input
-                id="account-reauth-code"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                value={nonce}
-                onChange={(e) => setNonce(e.target.value)}
-                maxLength={10}
-                className="text-base md:text-sm"
+                id="account-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                maxLength={NAME_MAX}
+                autoComplete="nickname"
+                placeholder="np. Mama Zosi"
+                aria-invalid={nameError ? true : undefined}
+                aria-describedby={nameDescribedBy}
+                className="flex-1 text-base md:text-sm"
               />
+              <Button type="submit" disabled={nameBusy} className="shrink-0">
+                {nameBusy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : "Zapisz"}
+                {nameBusy && <span className="sr-only">Zapisuję…</span>}
+              </Button>
             </div>
-          )}
-          {pwdInfo && (
-            <p id="account-password-info" role="status" className="text-sm text-muted-foreground">
-              {pwdInfo}
+            <p id="account-name-hint" className="text-xs text-muted-foreground">
+              Widoczna przy Twoich opiniach i w menu.
             </p>
-          )}
-          {pwdError && (
-            <p id="account-password-error" role="alert" className="text-sm text-destructive">
-              {pwdError}
-            </p>
-          )}
-          <Button type="submit" disabled={pwdBusy || !checkPassword(password).ok} className="w-full">
-            {pwdBusy ? (
+            {nameError && (
+              <p id="account-name-error" role="alert" className="text-sm text-destructive">
+                {nameError}
+              </p>
+            )}
+          </form>
+        </SettingRow>
+
+        {/* E-mail: konto z Google ma adres z Google, więc nie zmienia go u nas */}
+        <SettingRow
+          label="Adres e-mail"
+          value={
+            user?.pendingEmail ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
-                Zapisuję…
+                {currentEmail}
+                <span className="block text-xs text-muted-foreground">
+                  Czeka na potwierdzenie: <span className="font-medium text-foreground">{user.pendingEmail}</span>.
+                  Kliknij linki w obu wiadomościach — na stary i nowy adres.
+                </span>
               </>
             ) : (
-              "Zapisz nowe hasło"
-            )}
-          </Button>
-        </form>
-      </div>
-
-      {/* Kopia danych (N-20, art. 15 i 20 RODO) */}
-      <div className="border-t border-border/50">
-        <button
-          type="button"
-          onClick={exportData}
-          disabled={exportBusy}
-          aria-describedby="eksport-danych-opis"
-          className="w-full flex items-center justify-between px-6 pt-3.5 pb-2 min-h-[44px] hover:bg-accent/50 transition-colors text-left disabled:opacity-60"
+              currentEmail
+            )
+          }
+          note={hasPasswordLogin ? undefined : "z konta Google"}
+          action={
+            hasPasswordLogin
+              ? { label: "Zmień", open: emailOpen, controls: "account-email-form", onClick: toggleEmail }
+              : undefined
+          }
         >
-          <div className="flex items-center gap-3">
-            {exportBusy ? (
-              <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" aria-hidden="true" />
-            ) : (
-              <Download className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
-            )}
-            <span className="text-sm text-foreground">{exportBusy ? "Przygotowuję plik…" : "Pobierz moje dane (JSON)"}</span>
-          </div>
-        </button>
-        {/* Plik z przegladarki nie jest kompletna kopia z art. 15 (nie ma w nim
-            client_errors ani auth.identities) — bez tego zdania czytelnik moglby
-            uznac, ze dostal wszystko. Pelna kopie robi 7_public/eksport_uzytkownika.py. */}
-        <p id="eksport-danych-opis" className="px-6 pb-3.5 pl-[3.25rem] text-xs text-muted-foreground">
-          Plik zawiera zapisane atrakcje, Twoje oceny i opinie, dane konta oraz profil rodziny
-          z tej przeglądarki. Po pełną kopię danych — razem z zapisami technicznymi, których nie
-          widać w aplikacji — napisz na{" "}
-          <a className="underline hover:text-foreground" href="mailto:kontakt@familyfun.pl">
-            kontakt@familyfun.pl
-          </a>
-          . Wysyłamy ją w ciągu 30 dni.
-        </p>
-      </div>
+          {hasPasswordLogin && (
+            <form id="account-email-form" onSubmit={saveEmail} noValidate hidden={!emailOpen} className="px-6 pb-5 space-y-2">
+              <Label htmlFor="account-email">Nowy adres e-mail</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="account-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  placeholder="rodzina@example.com"
+                  aria-invalid={emailError ? true : undefined}
+                  aria-describedby={emailDescribedBy}
+                  className="flex-1 text-base md:text-sm"
+                />
+                <Button type="submit" disabled={emailBusy} className="shrink-0">
+                  {emailBusy ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : "Zapisz"}
+                  {emailBusy && <span className="sr-only">Wysyłam…</span>}
+                </Button>
+              </div>
+              <p id="account-email-hint" className="text-xs text-muted-foreground">
+                Nowy adres potwierdzisz linkami wysłanymi na stary i nowy e-mail.
+              </p>
+              {emailError && (
+                <p id="account-email-error" role="alert" className="text-sm text-destructive">
+                  {emailError}
+                </p>
+              )}
+              {emailOk && (
+                <p id="account-email-status" role="status" className="text-sm text-muted-foreground">
+                  {emailOk}
+                </p>
+              )}
+            </form>
+          )}
+        </SettingRow>
 
-      <DeleteAccountSection />
+        {/* Hasło */}
+        <SettingRow
+          label="Logowanie"
+          value={loginLabel}
+          action={{
+            label: hasPasswordLogin ? "Zmień hasło" : "Ustaw hasło",
+            open: pwdOpen,
+            controls: "account-password-form",
+            onClick: togglePassword,
+          }}
+        >
+          <form
+            id="account-password-form"
+            onSubmit={savePassword}
+            noValidate
+            hidden={!pwdOpen}
+            className="px-6 pb-5 space-y-2"
+          >
+            {!hasPasswordLogin && (
+              <p className="text-xs text-muted-foreground">
+                Po ustawieniu hasła zalogujesz się też e-mailem, nie tylko przez Google.
+              </p>
+            )}
+            <Label htmlFor="account-new-password">Nowe hasło</Label>
+            <Input
+              id="account-new-password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={PASSWORD_HINT}
+              aria-invalid={pwdError ? true : undefined}
+              aria-describedby={pwdDescribedBy || undefined}
+              className="text-base md:text-sm"
+            />
+            <PasswordRequirements password={password} />
+            {needsNonce && (
+              <div className="space-y-1.5 pt-1">
+                <Label htmlFor="account-reauth-code">Kod z wiadomości e-mail</Label>
+                <Input
+                  id="account-reauth-code"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={nonce}
+                  onChange={(e) => setNonce(e.target.value)}
+                  maxLength={10}
+                  className="text-base md:text-sm"
+                />
+              </div>
+            )}
+            {pwdInfo && (
+              <p id="account-password-info" role="status" className="text-sm text-muted-foreground">
+                {pwdInfo}
+              </p>
+            )}
+            {pwdError && (
+              <p id="account-password-error" role="alert" className="text-sm text-destructive">
+                {pwdError}
+              </p>
+            )}
+            <Button type="submit" disabled={pwdBusy || !checkPassword(password).ok} className="w-full">
+              {pwdBusy ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" aria-hidden="true" />
+                  Zapisuję…
+                </>
+              ) : (
+                "Zapisz nowe hasło"
+              )}
+            </Button>
+          </form>
+        </SettingRow>
+      </div>
     </section>
   );
 };

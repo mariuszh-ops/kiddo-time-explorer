@@ -22,9 +22,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
 import AccountSettingsSection from "@/components/AccountSettingsSection";
+import PrivacyDataSection from "@/components/PrivacyDataSection";
 import { getInitials } from "@/lib/initials";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AccountSection } from "@/components/AccountSection";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -193,7 +193,7 @@ const Profile = () => {
                 variant="link"
                 size="sm"
                 className="mt-2 h-auto p-0 text-primary"
-                onClick={() => document.getElementById("account-name")?.focus()}
+                onClick={() => document.getElementById("account-name-edit")?.focus()}
               >
                 Edytuj dane konta
               </Button>
@@ -240,9 +240,6 @@ const Profile = () => {
                 </Link>
               </div>
             </section>
-
-            {/* Account section */}
-            {user && <AccountSection user={user} />}
 
             {/* Family section */}
             {FEATURES.MATCH_PERCENTAGE && (
@@ -336,14 +333,37 @@ const Profile = () => {
               </section>
             )}
 
-            {/* I-11: edycja konta (nazwa, e-mail, haslo, kopia danych, usuniecie) */}
+            {/* I-11: dane dostepowe (nazwa, e-mail, haslo) */}
             <AccountSettingsSection />
 
-            {/* Settings */}
+            {/* N-20 + S-131: kopia danych i usuniecie konta */}
+            <PrivacyDataSection />
+
+            {/* Info links */}
+            <section className="bg-card rounded-xl border border-border overflow-hidden">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
+                Informacje
+              </h2>
+              {infoLinks.map((link, i) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className={`w-full flex items-center justify-between px-6 py-3.5 hover:bg-accent/50 transition-colors ${i > 0 ? "border-t border-border/50" : ""}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <link.icon className="w-5 h-5 text-muted-foreground" />
+                    <span className="text-sm text-foreground">{link.label}</span>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </Link>
+              ))}
+            </section>
+
+            {/* Zglaszanie atrakcji to nie ustawienie - osobna karta pod Informacjami */}
             {(FEATURES.SUBMIT_ACTIVITY || import.meta.env.DEV) && (
             <section className="bg-card rounded-xl border border-border overflow-hidden">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
-                Ustawienia
+                Współtwórz
               </h2>
               {FEATURES.SUBMIT_ACTIVITY && (
                 <button
@@ -371,27 +391,6 @@ const Profile = () => {
               )}
             </section>
             )}
-
-            {/* Info links */}
-            <section className="bg-card rounded-xl border border-border overflow-hidden">
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
-                Informacje
-              </h2>
-              {infoLinks.map((link, i) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`w-full flex items-center justify-between px-6 py-3.5 hover:bg-accent/50 transition-colors ${i > 0 ? "border-t border-border/50" : ""}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <link.icon className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-sm text-foreground">{link.label}</span>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
-                </Link>
-              ))}
-            </section>
-
 
 
             {/* Logout */}
