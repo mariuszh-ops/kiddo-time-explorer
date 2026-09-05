@@ -4,6 +4,7 @@ import { env } from "@/config/env";
 import { trackEvent } from "@/lib/analytics";
 import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
 import { resetGuestMigrationConsent } from "@/lib/guestMigration";
+import { EXISTING_ACCOUNT_ERROR } from "@/lib/authErrors";
 
 /**
  * S-184: wspólny komputer. Po wylogowaniu / wygaśnięciu sesji z localStorage
@@ -181,12 +182,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUpWithEmail = useCallback(async (email: string, password: string, captchaToken?: string) => {
     rememberReturnTo();
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: { emailRedirectTo: window.location.origin, captchaToken },
     });
     if (error) throw error;
+    // Rejestracja na adres, który ma już potwierdzone konto (najczęściej z Google),
+    // dostaje 200 z podrobionym użytkownikiem BEZ tożsamości i bez wysłanego maila.
+    // Bez tego sprawdzenia formularz pokazywał ekran „sprawdź skrzynkę”, a wiadomość
+    // nigdy nie miała wyjść. Prawdziwa rejestracja zwraca dokładnie jedną tożsamość.
+    if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      throw new Error(EXISTING_ACCOUNT_ERROR);
+    }
   }, []);
 
   const resendConfirmation = useCallback(async (email: string, captchaToken?: string) => {
