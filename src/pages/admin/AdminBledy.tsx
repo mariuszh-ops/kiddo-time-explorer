@@ -78,10 +78,15 @@ function formatData(ts: string | null): string {
 function nazwaPrzegladarki(ua: string | null): string {
   if (!ua) return "—";
   const s = ua.toLowerCase();
+  // Headless idzie PRZED reszta botow i ma wlasna etykiete, bo to prawie zawsze
+  // nasz wlasny audyt Playwrightem, a nie zdarzenie od uzytkownika. 05.09 trzy
+  // z czterech wierszy w tabeli mialy `HeadlessChrome` w user-agencie — bez tego
+  // rozroznienia wygladaja jak ruch z zewnatrz i mozna scigac nieistniejacy blad.
+  if (/headless|playwright|puppeteer/.test(s)) return "Headless (nasz test)";
   if (s.includes("adsbot")) return "AdsBot Google";
   if (s.includes("googlebot")) return "Googlebot";
   if (s.includes("bingbot")) return "Bingbot";
-  if (/bot|crawler|spider|headless/.test(s)) return "Bot";
+  if (/bot|crawler|spider/.test(s)) return "Bot";
 
   const wersja = (re: RegExp): string => {
     const m = ua.match(re);
