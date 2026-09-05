@@ -60,6 +60,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaError, setCaptchaError] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** D-15: widget stoi na stronie i czeka na kliknięcie — to NIE jest awaria. */
