@@ -21,13 +21,14 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { getItem, setItem, STORAGE_KEYS } from "@/lib/storage";
-import DeleteAccountSection from "@/components/DeleteAccountSection";
+import AccountSettingsSection from "@/components/AccountSettingsSection";
 import { getInitials } from "@/lib/initials";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AccountSection } from "@/components/AccountSection";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout, isLoggedIn, user, signInWithGoogle } = useAuth();
+  const { logout, isLoggedIn, isReady, user, signInWithGoogle } = useAuth();
   const { favoritesCount, wantToVisitCount, isLoading: isSavedLoading } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -87,6 +88,36 @@ const Profile = () => {
     { label: "Regulamin", icon: FileText, path: "/regulamin" },
     { label: "Polityka prywatności", icon: Lock, path: "/polityka-prywatnosci" },
   ];
+
+  // Dopoki nie wroci pierwsze getSession(), isLoggedIn jest false takze dla
+  // zalogowanych - bez tej bramki widac migawke ekranu "Zaloguj sie".
+  if (!isReady) {
+    return (
+      <PageTransition>
+        <SEOHead title="Profil" description="Profil FamilyFun." path="/profile" noindex />
+        <div className="min-h-screen bg-background">
+          <Header />
+          <main
+            id="main-content"
+            className="container py-6 md:py-8 pb-20 md:pb-8"
+            aria-busy="true"
+            aria-label="Wczytywanie profilu"
+          >
+            <div className="max-w-md mx-auto space-y-6">
+              <div className="bg-card rounded-xl p-6 border border-border flex flex-col items-center">
+                <Skeleton className="w-20 h-20 rounded-full mb-4" />
+                <Skeleton className="h-4 w-32 mb-2" />
+                <Skeleton className="h-3 w-44" />
+              </div>
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </PageTransition>
+    );
+  }
 
   if (!isLoggedIn) {
     return (
@@ -157,6 +188,15 @@ const Profile = () => {
                 <p className="text-foreground font-medium">{user.name}</p>
               )}
               <p className="text-sm text-muted-foreground">{user?.email ?? ""}</p>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                className="mt-2 h-auto p-0 text-primary"
+                onClick={() => document.getElementById("account-name")?.focus()}
+              >
+                Edytuj dane konta
+              </Button>
             </section>
 
             {/* Account summary */}
@@ -200,6 +240,9 @@ const Profile = () => {
                 </Link>
               </div>
             </section>
+
+            {/* Account section */}
+            {user && <AccountSection user={user} />}
 
             {/* Family section */}
             {FEATURES.MATCH_PERCENTAGE && (
@@ -293,7 +336,11 @@ const Profile = () => {
               </section>
             )}
 
+            {/* I-11: edycja konta (nazwa, e-mail, haslo, kopia danych, usuniecie) */}
+            <AccountSettingsSection />
+
             {/* Settings */}
+            {(FEATURES.SUBMIT_ACTIVITY || import.meta.env.DEV) && (
             <section className="bg-card rounded-xl border border-border overflow-hidden">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide px-6 pt-5 pb-3">
                 Ustawienia
@@ -322,8 +369,8 @@ const Profile = () => {
                   <ChevronRight className="w-4 h-4 text-muted-foreground" />
                 </Link>
               )}
-              <DeleteAccountSection />
             </section>
+            )}
 
             {/* Info links */}
             <section className="bg-card rounded-xl border border-border overflow-hidden">

@@ -111,7 +111,7 @@ export type Database = {
           status: string
           text: string
           updated_at: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           author_name: string
@@ -133,7 +133,7 @@ export type Database = {
           status?: string
           text?: string
           updated_at?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
