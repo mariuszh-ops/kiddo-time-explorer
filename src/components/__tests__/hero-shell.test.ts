@@ -28,13 +28,23 @@ describe("shell hero w index.html vs HeroSection", () => {
     expect(html).toContain(podtytul);
   });
 
-  it("rezerwuje w shellu ta sama wysokosc hero co Tailwind w HeroSection", () => {
-    // Telefon: h-[290px] w Reakcie === height: 290px w shellu.
-    expect(hero).toContain("h-[290px]");
-    expect(html).toContain("height: 290px;");
-    // Desktop: md:h-[50vh] === height: 50vh w media query >= 768px.
+  it("rezerwuje w shellu hero SCISLE WYZSZE niz w HeroSection", () => {
+    // Chrome zglasza nowego kandydata LCP tylko dla elementu SCISLE WIEKSZEGO od
+    // dotychczasowego. Gdy shell i hero Reacta mialy identyczne 290 px (do 05.09),
+    // atrybucja LCP stala na remisie — wystarczylo zaokraglenie subpikselowe, zeby
+    // <img> Reacta przejal LCP razem z czasem startu JS (PSI: 5,2 s zamiast FCP).
+    // Zapas nie moze tez rosnac bez konca: shell jest widoczny przez ~0,5 s i za
+    // duza roznica bylaby widoczna jako skok przy montowaniu.
+    const wReakcie = Number(/h-\[(\d+)px\]/.exec(hero)?.[1]);
+    const wShellu = Number(/#app-shell \.as-hero \{[\s\S]{0,400}?height: (\d+)px;/.exec(html)?.[1]);
+    expect(wReakcie).toBe(290);
+    expect(wShellu).toBeGreaterThan(wReakcie);
+    expect(wShellu - wReakcie).toBeLessThanOrEqual(12);
+    // Desktop: ten sam zapas nad md:h-[50vh].
     expect(hero).toContain("md:h-[50vh]");
-    expect(html).toContain("height: 50vh;");
+    expect(html).toMatch(/height: calc\(50vh \+ (\d+)px\);/);
+    const zapasDesktop = Number(/height: calc\(50vh \+ (\d+)px\);/.exec(html)?.[1]);
+    expect(zapasDesktop).toBe(wShellu - wReakcie);
   });
 
   it("nie pozwala wrocic do wysokosci sterowanej trescia", () => {
@@ -94,7 +104,15 @@ describe("shell hero w index.html vs HeroSection", () => {
     // <img> Reacta, czyli caly lancuch JS (N-03).
     const main = readFileSync(resolve(__dirname, "../../main.tsx"), "utf8");
     expect(main).toContain("img.decode()");
-    expect(main).toContain("requestAnimationFrame");
     expect(main).toMatch(/shellNamalowany\(\)\.then\(\(\) => \{\s*createRoot/);
+    // JEDNO rAF nie wystarcza: callback leci PRZED oddaniem klatki, wiec przy
+    // CPU x4 (profil PSI mobile) React startowal przed namalowaniem shellu.
+    // Musza byc DWA zagniezdzone rAF-y...
+    expect(main).toMatch(
+      /requestAnimationFrame\(\s*\(\) =>\s*requestAnimationFrame\(/
+    );
+    // ...oraz twardy dowod z przegladarki, ze shell zostal kandydatem LCP.
+    expect(main).toContain('obs.observe({ type: "largest-contentful-paint", buffered: true })');
+    expect(main).toContain('kandydatLCP("as-hero-img")');
   });
 });

@@ -167,8 +167,13 @@
       @keyframes al-slide { 0% { transform: translateX(-100%); } 100% { transform: translateX(250%); } }
       /* --- Shell LCP (#app-shell): statyczna kopia hero, malowana ZANIM ruszy React.
              Wymiary 1:1 z HeroSection.tsx (zmierzone: naglowek 73/89 px, hero 290 px
-             na telefonie, 50vh od 768px). Ten box MUSI byc >= hero Reacta — inaczej
-             React domalowuje wiekszy obrazek i LCP wraca do czasu startu JS.
+             na telefonie, 50vh od 768px) — Z JEDNYM WYJATKIEM: hero shellu jest o
+             ZAPAS_LCP wyzszy. Chrome zglasza nowego kandydata LCP tylko wtedy, gdy
+             element jest SCISLE WIEKSZY od dotychczasowego; przy rownych wymiarach
+             (tak bylo do 05.09) atrybucja stala na remisie i wystarczylo zaokraglenie
+             subpikselowe, zeby <img> Reacta przejal LCP razem z calym czasem startu JS.
+             6 px jest niewidoczne (shell znika przy montowaniu Reacta, nic nie
+             przezywa podmiany, wiec CLS = 0), a daje +2 % pola.
              Zmieniasz HeroSection? Popraw tu i w tescie hero-shell.test.ts. --- */
       #app-shell { font-family: "DM Sans", system-ui, -apple-system, "Segoe UI", sans-serif; }
       #app-shell .as-header {
@@ -178,7 +183,8 @@
       #app-shell .as-logo { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #497a5c; }
       #app-shell .as-hero {
         position: relative; display: flex; align-items: center; overflow: hidden;
-        height: 290px; max-height: calc(60svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px);
+        /* ZAPAS_LCP: 290px hero Reacta + 6px zapasu. */
+        height: 296px; max-height: calc(60svh - var(--header-h, 72px) - var(--bottom-nav-h, 64px) - 16px);
         background: #8B7355;
       }
       #app-shell .as-hero > img {
@@ -207,7 +213,8 @@
       @media (min-width: 768px) {
         #app-shell .as-header { height: 89px; }
         #app-shell .as-hero-outer { max-width: 1280px; margin: 0 auto; padding: 16px 16px 0; }
-        #app-shell .as-hero { height: 50vh; max-height: 55vh; border-radius: 24px; }
+        /* ZAPAS_LCP: md:h-[50vh] hero Reacta + 6px zapasu (max-height 55vh nie tnie). */
+        #app-shell .as-hero { height: calc(50vh + 6px); max-height: 55vh; border-radius: 24px; }
         #app-shell .as-veil {
           background: linear-gradient(to right, rgba(252,250,248,0.6), rgba(252,250,248,0.15) 50%, rgba(252,250,248,0));
         }
