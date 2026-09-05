@@ -41,9 +41,6 @@
     <meta data-rh="true" name="twitter:card" content="summary_large_image" />
     <meta data-rh="true" name="twitter:image" content="https://familyfun.pl/og-image-1200x630.jpg" />
 
-    <!-- Fonts: preconnect + stylesheet w <head> zamiast @import w CSS (szybszy FCP) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Obrazy atrakcji: własna domena CDN (Cloudflare R2) -->
     <link rel="preconnect" href="https://img.familyfun.pl" crossorigin />
     <link rel="dns-prefetch" href="https://img.familyfun.pl" />
@@ -72,18 +69,75 @@
     </script>
 
 
-    <!-- Fonty bez blokowania renderu: media="print" nie blokuje pierwszego malowania,
-         onload przelacza na "all". `display=swap` i tak podmienia kroj po pobraniu,
-         wiec kolejnosc FOUT sie nie zmienia — znika tylko blokada renderu (791 ms). -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap"
-      media="print"
-      onload="this.media='all'; this.onload=null;"
-    />
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" />
-    </noscript>
+    <!-- Fonty hostowane u NAS (N-03). Powod: PSI liczylo arkusz
+         fonts.googleapis.com jako 750 ms blokady renderu mimo media="print"
+         + onload — na wolnym laczu arkusz zdazal przelaczyc sie na "all"
+         PRZED pierwszym malowaniem, wiec sztuczka nie dzialala. Tutaj nie ma
+         juz ani arkusza, ani obcego origin: @font-face siedzi w HTML-u,
+         a pliki .woff2 leza w public/fonts.
+
+         Pliki to kopia 1:1 tych z fonts.gstatic.com (DM Sans v17, DM Serif
+         Display v17, subsety latin + latin-ext). Polskie znaki sa rozrzucone
+         po OBU subsetach (ó siedzi w latin, ą/ę/ł/ś/ż w latin-ext), wiec
+         zaden nie jest opcjonalny.
+
+         DM Sans jest fontem ZMIENNYM (os wght 100–1000) — jeden plik obsluguje
+         wagi 400/500/600/700. Zakres "400 700" celowo obcina go tak, jak robil
+         to arkusz Google, ktory deklarowal wylacznie te cztery wagi.
+         DM Serif Display jest statyczny (400).
+
+         Swiadomie BEZ <link rel="preload">: font-display:swap i tak nie blokuje
+         renderu, a preload konkurowalby o pasmo z hero, ktore jest elementem LCP.
+
+         Aktualizacja kroju: pobrac css2 z UA Chrome
+         (https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap),
+         podmienic 4 pliki i unicode-range ponizej. -->
+    <style>
+      /* DM Sans — latin-ext */
+      @font-face {
+        font-family: "DM Sans";
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: swap;
+        src: url(/fonts/dm-sans-latin-ext.woff2) format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+          U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+          U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* DM Sans — latin */
+      @font-face {
+        font-family: "DM Sans";
+        font-style: normal;
+        font-weight: 400 700;
+        font-display: swap;
+        src: url(/fonts/dm-sans-latin.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+          U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+          U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      /* DM Serif Display — latin-ext */
+      @font-face {
+        font-family: "DM Serif Display";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url(/fonts/dm-serif-display-latin-ext.woff2) format("woff2");
+        unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+          U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+          U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+      }
+      /* DM Serif Display — latin */
+      @font-face {
+        font-family: "DM Serif Display";
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url(/fonts/dm-serif-display-latin.woff2) format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+          U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191,
+          U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+    </style>
 
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#497a5c" />
