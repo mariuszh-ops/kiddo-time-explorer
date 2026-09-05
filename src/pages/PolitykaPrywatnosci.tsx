@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 
 // N-17 uwaga (d): format daty zrownany z Regulamin.tsx. Data = dzien publikacji (klikniecie Publish),
 // nie data z gory. Zmieniasz polityke merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
-const OBOWIAZUJE_OD = "4 września 2026 r.";
+const OBOWIAZUJE_OD = "5 września 2026 r.";
 const WERSJA = 1;
 
 const PolitykaPrywatnosci = () => {
@@ -203,8 +203,15 @@ const PolitykaPrywatnosci = () => {
                   <li>prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
                 </ul>
                 <p className="mb-4">
-                  Na żądanie wysyłamy kopię danych powiązanych z kontem na adres e-mail przypisany
-                  do konta, nie później niż w ciągu 30 dni od otrzymania wniosku.
+                  Część danych możesz pobrać samodzielnie, bez kontaktu z nami: po zalogowaniu
+                  w zakładce Profil, w sekcji „Twoje konto", przycisk „Pobierz moje dane (JSON)".
+                  Plik zawiera zapisane atrakcje, wystawione oceny i opinie, dane konta oraz profil
+                  rodziny zapisany w przeglądarce, z której go pobierasz. Nie jest to jeszcze pełna
+                  kopia — nie ma w nim zapisów technicznych, które nie są dostępne z poziomu aplikacji.
+                </p>
+                <p className="mb-4">
+                  Na żądanie wysyłamy pełną kopię danych powiązanych z kontem na adres e-mail
+                  przypisany do konta, nie później niż w ciągu 30 dni od otrzymania wniosku.
                 </p>
               </section>
 

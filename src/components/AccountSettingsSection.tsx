@@ -391,21 +391,36 @@ const AccountSettingsSection = () => {
       </div>
 
       {/* Kopia danych (N-20, art. 15 i 20 RODO) */}
-      <button
-        type="button"
-        onClick={exportData}
-        disabled={exportBusy}
-        className="w-full flex items-center justify-between px-6 py-3.5 min-h-[44px] hover:bg-accent/50 transition-colors text-left border-t border-border/50 disabled:opacity-60"
-      >
-        <div className="flex items-center gap-3">
-          {exportBusy ? (
-            <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" aria-hidden="true" />
-          ) : (
-            <Download className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
-          )}
-          <span className="text-sm text-foreground">{exportBusy ? "Przygotowuję plik…" : "Pobierz moje dane (JSON)"}</span>
-        </div>
-      </button>
+      <div className="border-t border-border/50">
+        <button
+          type="button"
+          onClick={exportData}
+          disabled={exportBusy}
+          aria-describedby="eksport-danych-opis"
+          className="w-full flex items-center justify-between px-6 pt-3.5 pb-2 min-h-[44px] hover:bg-accent/50 transition-colors text-left disabled:opacity-60"
+        >
+          <div className="flex items-center gap-3">
+            {exportBusy ? (
+              <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" aria-hidden="true" />
+            ) : (
+              <Download className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+            )}
+            <span className="text-sm text-foreground">{exportBusy ? "Przygotowuję plik…" : "Pobierz moje dane (JSON)"}</span>
+          </div>
+        </button>
+        {/* Plik z przegladarki nie jest kompletna kopia z art. 15 (nie ma w nim
+            client_errors ani auth.identities) — bez tego zdania czytelnik moglby
+            uznac, ze dostal wszystko. Pelna kopie robi 7_public/eksport_uzytkownika.py. */}
+        <p id="eksport-danych-opis" className="px-6 pb-3.5 pl-[3.25rem] text-xs text-muted-foreground">
+          Plik zawiera zapisane atrakcje, Twoje oceny i opinie, dane konta oraz profil rodziny
+          z tej przeglądarki. Po pełną kopię danych — razem z zapisami technicznymi, których nie
+          widać w aplikacji — napisz na{" "}
+          <a className="underline hover:text-foreground" href="mailto:kontakt@familyfun.pl">
+            kontakt@familyfun.pl
+          </a>
+          . Wysyłamy ją w ciągu 30 dni.
+        </p>
+      </div>
 
       <DeleteAccountSection />
     </section>
