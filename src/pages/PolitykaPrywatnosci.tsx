@@ -228,16 +228,13 @@ const PolitykaPrywatnosci = () => {
                   <li>prawo do wycofania zgody w dowolnym momencie (bez wpływu na wcześniejsze przetwarzanie);</li>
                   <li>prawo do wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
                 </ul>
+                {/* M-10b (05.09.2026): przycisk „Pobierz kopię swoich danych (JSON)"
+                    zostal usuniety decyzja wlasciciela. Kopie danych wydajemy WYLACZNIE
+                    mailem (7_public/eksport_uzytkownika.py). Nie obiecuj tu samoobslugi. */}
                 <p className="mb-4">
-                  Część danych możesz pobrać samodzielnie, bez kontaktu z nami: po zalogowaniu
-                  w zakładce Profil, w sekcji „Twoje konto", przycisk „Pobierz moje dane (JSON)".
-                  Plik zawiera zapisane atrakcje, wystawione oceny i opinie, dane konta oraz profil
-                  rodziny zapisany w przeglądarce, z której go pobierasz. Nie jest to jeszcze pełna
-                  kopia — nie ma w nim zapisów technicznych, które nie są dostępne z poziomu aplikacji.
-                </p>
-                <p className="mb-4">
-                  Na żądanie wysyłamy pełną kopię danych powiązanych z kontem na adres e-mail
-                  przypisany do konta, nie później niż w ciągu 30 dni od otrzymania wniosku.
+                  Aby otrzymać kopię swoich danych, napisz na kontakt@familyfun.pl z adresu e-mail
+                  przypisanego do konta. Pełną kopię danych powiązanych z kontem wysyłamy na ten
+                  adres, nie później niż w ciągu 30 dni od otrzymania wniosku.
                 </p>
               </section>
 
