@@ -28,7 +28,7 @@ import { AccountSection } from "@/components/AccountSection";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { logout, isLoggedIn, user, signInWithGoogle } = useAuth();
+  const { logout, isLoggedIn, isReady, user, signInWithGoogle } = useAuth();
   const { favoritesCount, wantToVisitCount, isLoading: isSavedLoading } = useSavedActivities();
   const { visitedCount } = useUserRatings();
   const [isSubmitOpen, setIsSubmitOpen] = useState(false);
@@ -88,6 +88,36 @@ const Profile = () => {
     { label: "Regulamin", icon: FileText, path: "/regulamin" },
     { label: "Polityka prywatności", icon: Lock, path: "/polityka-prywatnosci" },
   ];
+
+  // Dopoki nie wroci pierwsze getSession(), isLoggedIn jest false takze dla
+  // zalogowanych - bez tej bramki widac migawke ekranu "Zaloguj sie".
+  if (!isReady) {
+    return (
+      <PageTransition>
+        <SEOHead title="Profil" description="Profil FamilyFun." path="/profile" noindex />
+        <div className="min-h-screen bg-background">
+          <Header />
+          <main
+            id="main-content"
+            className="container py-6 md:py-8 pb-20 md:pb-8"
+            aria-busy="true"
+            aria-label="Wczytywanie profilu"
+          >
+            <div className="max-w-md mx-auto space-y-6">
+              <div className="bg-card rounded-xl p-6 border border-border flex flex-col items-center">
+                <Skeleton className="w-20 h-20 rounded-full mb-4" />
+                <Skeleton className="h-4 w-32 mb-2" />
+                <Skeleton className="h-3 w-44" />
+              </div>
+              <Skeleton className="h-28 w-full rounded-xl" />
+              <Skeleton className="h-28 w-full rounded-xl" />
+            </div>
+          </main>
+          <Footer />
+        </div>
+      </PageTransition>
+    );
+  }
 
   if (!isLoggedIn) {
     return (

@@ -40,6 +40,12 @@ interface AuthContextType {
   // Core state
   isLoggedIn: boolean;
   user: User | null;
+  /**
+   * false dopoki nie wroci pierwsze getSession(). Widoki bramkowane
+   * logowaniem musza na to poczekac, inaczej zalogowany uzytkownik
+   * widzi migawke ekranu "Zaloguj sie".
+   */
+  isReady: boolean;
 
   // Primary API (async — matches Supabase/Firebase/Auth0 patterns)
   signIn: () => Promise<void>;
@@ -99,9 +105,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Listen to real Supabase auth state
   useEffect(() => {
     const getSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      setUser(mapSupabaseUser(data.session?.user ?? null));
-      setIsReady(true);
+      try {
+        const { data } = await supabase.auth.getSession();
+        setUser(mapSupabaseUser(data.session?.user ?? null));
+      } catch (error) {
+        console.error("getSession error:", error);
+      } finally {
+        // finally, bo inaczej blad odczytu sesji zostawia bramke isReady
+        // zamknieta na zawsze i /profile stoi w nieskonczonym ladowaniu.
+        setIsReady(true);
+      }
     };
     getSession();
 
@@ -266,6 +279,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         isLoggedIn: effectiveIsLoggedIn,
         user,
+        isReady,
         signIn,
         signOut,
         signInWithGoogle,
