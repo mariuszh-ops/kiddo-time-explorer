@@ -124,7 +124,10 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     checkbox.focus();
     expect(checkbox).toHaveFocus();
 
+    // jsdom nie odwzorowuje domyślnej akcji spacji na przycisku, więc obok
+    // zdarzeń klawiatury wywołujemy click, który przeglądarka wysyła sama.
     fireEvent.keyDown(checkbox, { key: " ", code: "Space" });
+    fireEvent.click(checkbox);
     fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
     expect(checkbox).toHaveAttribute("data-state", "checked");
   });
