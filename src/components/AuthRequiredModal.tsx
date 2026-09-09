@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { hasAcceptedTerms, recordTermsAccepted } from "@/lib/termsConsent";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import {
@@ -39,6 +42,10 @@ const AuthRequiredModal = ({
   const [isLoading, setIsLoading] = useState<'google' | 'email' | 'login' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [emailMode, setEmailMode] = useState<'signin' | 'signup' | 'reset'>('signin');
+  // I-07b: o zgode pytamy tylko wtedy, gdy jej jeszcze nie ma. Konto, ktore
+  // zgode juz udzielilo, loguje sie bez dodatkowego pytania.
+  const [needsTerms, setNeedsTerms] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { markAuthAttempt } = usePendingIntent();
 
   // A) „Wstecz" zamyka wyłącznie modal, strona zostaje (F-16).
@@ -140,7 +147,12 @@ const AuthRequiredModal = ({
       setIsLoading(null);
       setError(null);
       setEmailMode('signin');
+      setTermsAccepted(false);
+      return;
     }
+    // Czytamy przy KAZDYM otwarciu, nie raz przy montowaniu — modal zyje w
+    // drzewie na stale (Header), a zgoda moze zostac udzielona w miedzyczasie.
+    setNeedsTerms(!hasAcceptedTerms());
   }, [isOpen]);
 
   const handleAction = async (
@@ -161,6 +173,21 @@ const AuthRequiredModal = ({
     } finally {
       setIsLoading(null);
     }
+  };
+
+  /**
+   * I-07b: zgoda jest WARUNKIEM startu logowania Google, nie tylko wyszarzonym
+   * przyciskiem — sam `disabled` znika po jednym kliknieciu w devtoolsach
+   * (ten sam wniosek co w I-07). Zapis lokalny leci PRZED `onGoogleClick`, bo
+   * `signInWithOAuth` opuszcza strone i nic po nim juz sie nie wykona.
+   */
+  const handleGoogleClick = () => {
+    if (needsTerms && !termsAccepted) {
+      setError("Zaznacz zgode na Regulamin i Polityke prywatnosci, aby kontynuowac.");
+      return;
+    }
+    if (needsTerms) recordTermsAccepted();
+    void handleAction(onGoogleClick, 'google');
   };
 
   const dismissError = () => setError(null);
@@ -208,12 +235,49 @@ const AuthRequiredModal = ({
         </AnimatePresence>
 
         <div className="flex flex-col gap-3 pt-2">
+          {/* I-07b: zgoda STOI PRZED przyciskiem — warunek widac, zanim sie klika,
+              a Tab prowadzi checkbox → „Kontynuuj z Google". */}
+          {needsTerms && (
+            <div className="flex items-start gap-2">
+              <Checkbox
+                id="google-terms-accept"
+                checked={termsAccepted}
+                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                tabIndex={0}
+                aria-required="true"
+                className="mt-0.5 h-6 w-6 shrink-0"
+              />
+              <Label htmlFor="google-terms-accept" className="text-sm text-muted-foreground cursor-pointer">
+                Akceptuję{" "}
+                <a
+                  href="/regulamin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-primary hover:underline"
+                >
+                  Regulamin
+                </a>{" "}
+                i{" "}
+                <a
+                  href="/polityka-prywatnosci"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-primary hover:underline"
+                >
+                  Politykę prywatności
+                </a>
+              </Label>
+            </div>
+          )}
+
           {/* Google button — obok logowania e-mailem poniżej (poza panelem admina). */}
           <Button 
-            onClick={() => handleAction(onGoogleClick, 'google')}
+            onClick={handleGoogleClick}
             className="w-full"
             variant="default"
-            disabled={isLoading !== null}
+            disabled={isLoading !== null || (needsTerms && !termsAccepted)}
           >
             {isLoading === 'google' ? (
               <>
@@ -245,17 +309,22 @@ const AuthRequiredModal = ({
             )}
           </Button>
 
-          <p className="text-xs text-muted-foreground text-center leading-relaxed">
-            Kontynuując, akceptujesz{" "}
-            <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary underline">
-              Regulamin
-            </a>
-            . Zasady przetwarzania danych opisuje{" "}
-            <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-primary underline">
-              Polityka prywatności
-            </a>
-            .
-          </p>
+          {/* I-07b: „Kontynuując, akceptujesz…" bylo domniemaniem zgody — dokladnie
+              tym, co zglaszal I-07. Gdy zgody brak, pyta o nia checkbox wyzej;
+              gdy jest, zostaje sam dostep do obu dokumentow. */}
+          {!needsTerms && (
+            <p className="text-xs text-muted-foreground text-center leading-relaxed">
+              Obowiązują{" "}
+              <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                Regulamin
+              </a>{" "}
+              i{" "}
+              <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+                Polityka prywatności
+              </a>
+              .
+            </p>
+          )}
 
           {!googleOnly && (
             <>

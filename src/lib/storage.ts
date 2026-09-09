@@ -102,6 +102,8 @@ export const STORAGE_KEYS = {
   ONBOARDING_SEEN: "ff_onboarding_seen",
   USER_CITY: "ff_user_city",
   COOKIE_CONSENT: "ff_cookie_consent",
+  /** I-07b: data zgody na Regulamin i Politykę prywatności (ISO). */
+  TERMS_ACCEPTED: "ff_terms_accepted",
   INLINE_RATINGS: "ff_inline_ratings",
   ADMIN_EDITS: "ff_admin_edits",
 } as const;
@@ -117,6 +119,11 @@ const APP_PREFIXES = ["ff_", "familyfun_"] as const;
 const LOGOUT_PRESERVED_KEYS = new Set<string>([
   STORAGE_KEYS.COOKIE_CONSENT,
   STORAGE_KEYS.ONBOARDING_SEEN,
+  // I-07b: zgoda na regulamin musi PRZEZYC wylogowanie. Bramka logowania
+  // Google stoi PRZED redirectem, wiec nie ma jeszcze sesji i nie da sie
+  // odpytac bazy „czy to konto ma zgode" — jedyna pamiec na tym etapie to
+  // localStorage. Skasowana przy wylogowaniu pytalaby o zgode za kazdym razem.
+  STORAGE_KEYS.TERMS_ACCEPTED,
 ]);
 
 /** Znacznik ostatniego wylogowania (poza prefiksami aplikacji — nie jest czyszczony). */

@@ -1,10 +1,17 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from "react";
 import { catalogClient as supabase, clearCatalogAuthStorage } from "@/lib/catalogClient";
 import { env } from "@/config/env";
 import { trackEvent } from "@/lib/analytics";
 import { clearAllAppStorage, markLoggedOutNow } from "@/lib/storage";
 import { resetGuestMigrationConsent } from "@/lib/guestMigration";
 import { EXISTING_ACCOUNT_ERROR } from "@/lib/authErrors";
+import {
+  TERMS_METADATA_KEY,
+  TERMS_REQUIRED_ERROR,
+  getTermsAcceptedAt,
+  hasAcceptedTerms,
+  recordTermsAccepted,
+} from "@/lib/termsConsent";
 
 /**
  * S-184: wspólny komputer. Po wylogowaniu / wygaśnięciu sesji z localStorage
@@ -102,13 +109,50 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  // I-07b: `updateUser` sam wysyla USER_UPDATED, wiec bez tej blokady zapis
+  // dowodu zgody moglby sie powtorzyc na wlasnym zdarzeniu.
+  const termsSyncStarted = useRef(false);
 
   // Listen to real Supabase auth state
   useEffect(() => {
+    /**
+     * I-07b: uzgodnienie dwoch sladow zgody po zalogowaniu.
+     * localStorage jest BRAMKA (dziala przed redirectem, gdy nie ma sesji),
+     * `user_metadata.terms_accepted_at` DOWODEM (RODO art. 7 ust. 1) — patrz
+     * `lib/termsConsent`.
+     *
+     * Kontom BEZ lokalnego sladu metadanych celowo nie dopisujemy: konta
+     * zalozone przed ta zmiana nigdy zgody wprost nie udzielily i data „teraz"
+     * bylaby falszywym wpisem w dowodzie. Taki uzytkownik dostanie wpis przy
+     * pierwszym przejsciu przez bramke.
+     */
+    const syncTermsConsent = async (sessionUser: { user_metadata?: Record<string, unknown> } | null) => {
+      if (!sessionUser) return;
+      const stored = nonEmptyString(sessionUser.user_metadata?.[TERMS_METADATA_KEY]);
+      if (stored) {
+        // Konto ma dowod w bazie — to urzadzenie nie musi pytac ponownie.
+        recordTermsAccepted(stored);
+        return;
+      }
+      const localAt = getTermsAcceptedAt();
+      if (!localAt || termsSyncStarted.current) return;
+      termsSyncStarted.current = true;
+      const { error } = await supabase.auth.updateUser({
+        data: { [TERMS_METADATA_KEY]: localAt },
+      });
+      if (error) {
+        // Zgoda zostala udzielona i dziala lokalnie; nieudany zapis dowodu nie
+        // moze wywalic logowania. Ponowi sie przy nastepnym starcie sesji.
+        termsSyncStarted.current = false;
+        console.error("terms consent sync error:", error);
+      }
+    };
+
     const getSession = async () => {
       try {
         const { data } = await supabase.auth.getSession();
         setUser(mapSupabaseUser(data.session?.user ?? null));
+        void syncTermsConsent(data.session?.user ?? null);
       } catch (error) {
         console.error("getSession error:", error);
       } finally {
@@ -120,8 +164,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     getSession();
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (_event === "SIGNED_OUT") wipeLocalUserData();
+      if (_event === "SIGNED_OUT") {
+        wipeLocalUserData();
+        // Nowe logowanie na tym urzadzeniu = nowa proba zapisu dowodu.
+        termsSyncStarted.current = false;
+      }
       setUser(mapSupabaseUser(session?.user ?? null));
+      void syncTermsConsent(session?.user ?? null);
     });
 
     return () => {
@@ -135,6 +184,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const signInWithGoogleImpl = async (): Promise<void> => {
+    // I-07b: JEDYNA bramka zgody dla logowania Google. Stoi tutaj, a nie w
+    // szesciu wywolaniach (Header, ActivityCard, MyPlaces, Profile, AdminLayout,
+    // SessionExpiredHandler) — kazde z nich moglo by ja pominac, to jedno nie.
+    // Rzucamy PRZED `signInWithOAuth`, wiec bez zgody nie wychodzi ZADNE
+    // zadanie do /auth/v1/authorize.
+    if (!hasAcceptedTerms()) {
+      throw new Error(TERMS_REQUIRED_ERROR);
+    }
     try {
       const returnTo = window.location.pathname + window.location.search;
       window.localStorage.setItem("auth_return_to", returnTo);
@@ -195,6 +252,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
       throw new Error(EXISTING_ACCOUNT_ERROR);
     }
+    // I-07b: do tego miejsca dochodzi tylko rejestracja, ktora przeszla przez
+    // checkbox zgody z I-07. Odnotowujemy ja tym samym sladem co zgode Google,
+    // zeby to samo konto nie bylo pytane po raz drugi na sciezce Google.
+    recordTermsAccepted();
   }, []);
 
   const resendConfirmation = useCallback(async (email: string, captchaToken?: string) => {
