@@ -106,3 +106,74 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
   });
 });
+
+describe("EmailAuthForm — dostępność checkboxa zgody", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const getCheckbox = () => screen.getByRole("checkbox", { name: /Akceptuję/i });
+
+  it("jest osiągalny klawiaturą (tabindex 0) i przełączany spacją", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = getCheckbox();
+
+    expect(checkbox).toHaveAttribute("tabindex", "0");
+    expect(checkbox).not.toBeDisabled();
+
+    checkbox.focus();
+    expect(checkbox).toHaveFocus();
+
+    // jsdom nie odwzorowuje domyślnej akcji spacji na przycisku, więc obok
+    // zdarzeń klawiatury wywołujemy click, który przeglądarka wysyła sama.
+    fireEvent.keyDown(checkbox, { key: " ", code: "Space" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+  });
+
+  it("ma poprawne atrybuty ARIA i etykietę powiązaną przez htmlFor", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = getCheckbox();
+
+    expect(checkbox).toHaveAttribute("role", "checkbox");
+    expect(checkbox).toHaveAttribute("aria-required", "true");
+    expect(checkbox).toHaveAttribute("aria-checked", "false");
+    expect(checkbox).toHaveAttribute("id", "terms-accept");
+
+    const label = document.querySelector('label[for="terms-accept"]');
+    expect(label).not.toBeNull();
+    expect(label!.textContent).toContain("Akceptuję");
+
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("aria-checked", "true");
+  });
+
+  it("ma obszar kliknięcia min. 24x24 px (WCAG 2.5.8)", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = getCheckbox();
+
+    // h-6 w-6 = 1.5rem = 24 px w skali domyślnej.
+    expect(checkbox.className).toMatch(/\bh-6\b/);
+    expect(checkbox.className).toMatch(/\bw-6\b/);
+  });
+
+  it("kliknięcie linków w etykiecie nie przełącza zgody", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = getCheckbox();
+
+    fireEvent.click(screen.getByRole("link", { name: "Regulamin" }));
+    fireEvent.click(screen.getByRole("link", { name: "Politykę prywatności" }));
+
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+  });
+
+  it("linki zgody otwierają się w nowej karcie z rel=noopener", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    for (const name of ["Regulamin", "Politykę prywatności"]) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link.getAttribute("rel")).toContain("noopener");
+    }
+  });
+});

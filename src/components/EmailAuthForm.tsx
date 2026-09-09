@@ -360,15 +360,29 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
             id="terms-accept"
             checked={termsAccepted}
             onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            tabIndex={0}
+            aria-required="true"
             className="mt-0.5 h-6 w-6 shrink-0"
           />
           <Label htmlFor="terms-accept" className="text-sm text-muted-foreground cursor-pointer">
             Akceptuję{" "}
-            <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            <a
+              href="/regulamin"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-primary hover:underline"
+            >
               Regulamin
             </a>{" "}
             i{" "}
-            <a href="/polityka-prywatnosci" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+            <a
+              href="/polityka-prywatnosci"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="text-primary hover:underline"
+            >
               Politykę prywatności
             </a>
           </Label>
