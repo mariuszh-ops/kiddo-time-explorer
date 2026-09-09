@@ -752,7 +752,7 @@ const ActivityDetail = () => {
                     </p>
                     <button
                       onClick={() => setSaveError(null)}
-                      className="inline-flex items-center min-h-[40px] md:min-h-0 text-xs text-destructive/70 hover:text-destructive underline underline-offset-2"
+                      className="inline-flex items-center min-h-[40px] md:min-h-0 text-xs text-destructive underline underline-offset-2"
                     >
                       Zamknij
                     </button>
