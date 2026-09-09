@@ -126,8 +126,16 @@
     width: 100%;
   }
 
+  /* Tlo na <html>, NIE na <body>: trwaly obrazek LCP (#as-hero-keep w
+     index.html) maluje sie z z-index:-1, a nieprzezroczyste tlo <body>
+     zakryloby go — bloki w przeplywie maluja sie PO warstwach ujemnych.
+     Wizualnie bez zmian: tlo <html> jest tlem plotna. */
+  html {
+    @apply bg-background;
+  }
+
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply text-foreground antialiased;
     font-family: 'DM Sans', sans-serif;
     @apply pb-20 md:pb-0;
   }
@@ -329,8 +337,13 @@ textarea::placeholder {
     width: auto;
   }
 
-  body {
+  html, body {
     background: #fff !important;
+  }
+
+  /* Dekoracyjny obrazek hero (poza #root) nie ma czego szukac na wydruku. */
+  #as-hero-keep {
+    display: none !important;
   }
 
   /* Cienie i tla zjadaja toner, a nic nie wnosza na papierze. */

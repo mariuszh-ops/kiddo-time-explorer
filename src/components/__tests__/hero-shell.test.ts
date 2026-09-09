@@ -93,9 +93,57 @@ describe("shell hero w index.html vs HeroSection", () => {
     expect(vite).toContain("this.media='all'");
   });
 
-  it("zdejmuje shell poza strona glowna", () => {
-    expect(html).toMatch(/if \(location\.pathname !== "\/"\) \{ shell\.parentNode\.removeChild\(shell\); return; \}/);
+  it("zdejmuje shell ORAZ trwaly obrazek poza strona glowna", () => {
+    // Na podstronach hero nie jest elementem LCP, a zostawiony <img> wisialby
+    // pod trescia jako niepotrzebny obrazek na kazdym ekranie.
+    expect(html).toMatch(/if \(location\.pathname !== "\/"\) \{/);
+    expect(html).toContain("if (trwaly) trwaly.parentNode.removeChild(trwaly);");
+    expect(html).toContain("if (shell) shell.parentNode.removeChild(shell);");
     expect(html).toContain('if (location.pathname === "/")');
+  });
+
+  it("trzyma obrazek LCP POZA #root, zeby React go nie usunal", () => {
+    // Sedno naprawy N-03: createRoot(#root) czysci kontener. Dopoki <img>
+    // siedzial w #root, wygrany kandydat LCP znikal z DOM w chwili montowania
+    // i Lighthouse przypisywal LCP dopiero <img> Reacta (PSI mobile 5,0 s).
+    const pozKeep = html.indexOf('id="as-hero-keep"');
+    const pozImg = html.indexOf('id="as-hero-img"');
+    const pozRoot = html.indexOf('<div id="root">');
+    expect(pozKeep).toBeGreaterThan(-1);
+    expect(pozImg).toBeGreaterThan(pozKeep);
+    expect(pozImg).toBeLessThan(pozRoot);
+    // ...i nie wrocil do srodka .as-hero.
+    expect(html).not.toMatch(/#app-shell \.as-hero > img/);
+  });
+
+  it("chowa trwaly obrazek pod trescia zamiast go kasowac", () => {
+    // z-index:-1 + przezroczyste <body> = obrazek widac w fazie shellu, a po
+    // zamontowaniu Reacta zakrywa go nieprzezroczyste `bg-background` aplikacji.
+    // Gdyby tlo zostalo na <body>, obrazek bylby niewidoczny OD RAZU (bloki w
+    // przeplywie maluja sie PO warstwach z ujemnym z-index) i LCP by go pominal.
+    expect(html).toMatch(/#as-hero-keep \{[\s\S]{0,200}?z-index: -1;/);
+    expect(html).toContain("html { background: #FCFAF8; }");
+    expect(html).not.toMatch(/html, body \{ margin: 0; background:/);
+    const css = readFileSync(resolve(__dirname, "../../index.css"), "utf8");
+    const bezOdstepow = css.replace(/\s+/g, " ");
+    expect(bezOdstepow).toContain("html { @apply bg-background; }");
+    expect(bezOdstepow).not.toContain("body { @apply bg-background");
+  });
+
+  it("trwaly obrazek ma DOKLADNIE geometrie hero z shellu", () => {
+    // Rozjazd = obrazek wystaje spod hero Reacta albo jest mniejszym kandydatem
+    // LCP niz <img> Reacta (wtedy React zglasza wiekszego kandydata i LCP znow
+    // czeka na start JS).
+    const wysHero = /#app-shell \.as-hero \{[\s\S]{0,400}?height: (\d+)px;/.exec(html)?.[1];
+    const wysKeep = /#as-hero-keep \{[\s\S]{0,300}?height: (\d+)px;/.exec(html)?.[1];
+    expect(wysKeep).toBe(wysHero);
+    // Gora = wysokosc naglowka shellu (73 px telefon / 89 px + 16 px padding).
+    expect(html).toMatch(/#as-hero-keep \{[\s\S]{0,200}?top: 73px;/);
+    expect(html).toMatch(/#as-hero-keep \{[\s\S]{0,200}?top: 105px;/);
+    // Desktop: ten sam zapas 50vh + 6px co .as-hero.
+    const zapasy = html.match(/height: calc\(50vh \+ (\d+)px\);/g) ?? [];
+    expect(zapasy).toHaveLength(2);
+    expect(zapasy[0]).toBe(zapasy[1]);
   });
 
   it("montuje Reacta dopiero po namalowaniu hero shellu", () => {
