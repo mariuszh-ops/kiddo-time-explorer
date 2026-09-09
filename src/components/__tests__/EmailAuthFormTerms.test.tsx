@@ -3,6 +3,13 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import EmailAuthForm from "@/components/EmailAuthForm";
 
+// jsdom nie ma ResizeObservera, a Checkbox (Radix) go używa.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver;
+
 // Captcha zawsze od razu zwraca token — testujemy zgode, nie Turnstile.
 vi.mock("@marsidev/react-turnstile", () => ({
   Turnstile: React.forwardRef(
