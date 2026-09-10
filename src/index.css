@@ -23,7 +23,9 @@
     --popover-foreground: 30 10% 15%;
 
     /* Sage green - calming, natural, trustworthy */
-    --primary: 145 25% 38%;
+    /* I-07d: L 38% -> 32%. Przy 38% zielen na wlasnym tle 10% dawala 4,26:1 (tlo strony),
+       4,17:1 (karta) i 3,67:1 (inicjaly awatara nad bg-accent) — ponizej WCAG 1.4.3 AA. */
+    --primary: 145 25% 32%;
     --primary-foreground: 40 33% 98%;
 
     /* Warm cream secondary */
