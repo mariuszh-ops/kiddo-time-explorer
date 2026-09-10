@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { catalogClient as supabase } from "@/lib/catalogClient";
+import { slugFromId, loadActivities } from "@/data/activities";
 
 export interface ActivityRatingAggregate {
   avg: number | null;
@@ -17,7 +18,19 @@ function fetchAggregate(key: string, activityId: number): Promise<ActivityRating
   const existing = inflight.get(key);
   if (existing) return existing;
   const promise = (async () => {
-    const { data, error } = await supabase.rpc("get_activity_rating", { activity_id: activityId });
+    // I-06: kanonicznym kluczem atrakcji jest slug. `activityId` żyje już tylko
+    // w pamięci UI (hash ze sluga), więc tłumaczymy go tuż przed wyjściem do bazy.
+    let slug = slugFromId(activityId);
+    if (!slug) {
+      try {
+        await loadActivities();
+      } catch {
+        return null;
+      }
+      slug = slugFromId(activityId);
+    }
+    if (!slug) return null;
+    const { data, error } = await supabase.rpc("get_activity_rating_by_slug", { p_slug: slug });
     if (error || !data) return null;
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) return null;

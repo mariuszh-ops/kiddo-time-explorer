@@ -1,5 +1,12 @@
 import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from "react";
-import { Activity, getActivityById, ensureActivitiesLoaded } from "@/data/activities";
+import {
+  Activity,
+  getActivityById,
+  ensureActivitiesLoaded,
+  loadActivities,
+  slugFromId,
+  idFromSlug,
+} from "@/data/activities";
 import {
   getRawItem,
   setRawItem,
@@ -19,6 +26,58 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "familyfun_user_ratings";
+
+/**
+ * I-06: kanonicznym kluczem atrakcji w bazie jest `activity_slug` (tak jak
+ * w `saved_activities`). `activityId` — hash FNV-1a ze sluga — zostaje wyłącznie
+ * kluczem w pamięci UI i w localStorage. Tłumaczymy je na granicy z bazą, tym
+ * samym wzorcem, co `resolveSlug` w SavedActivitiesContext: gdy katalog nie jest
+ * jeszcze wczytany, dociągamy go i próbujemy raz jeszcze, a brak sluga jest
+ * BŁĘDEM (rollback + toast), nie cichym sukcesem.
+ */
+async function resolveSlug(activityId: number): Promise<string | undefined> {
+  const direct = slugFromId(activityId);
+  if (direct) return direct;
+  try {
+    await loadActivities();
+  } catch {
+    return undefined;
+  }
+  return slugFromId(activityId);
+}
+
+type RatingRow = {
+  activity_slug: string;
+  rating: number;
+  review: string | null;
+  updated_at: string;
+  created_at: string;
+};
+
+/** Wiersze z bazy → mapa UI (klucz = id z katalogu). Ocena bez odpowiednika
+ *  w katalogu jest pomijana — tak samo jak na liście „Odwiedzone". */
+async function rowsToRatings(rows: RatingRow[]): Promise<Map<number, UserRating>> {
+  const map = new Map<number, UserRating>();
+  if (rows.length === 0) return map;
+  if (rows.some(r => idFromSlug(r.activity_slug) == null)) {
+    try {
+      await loadActivities();
+    } catch {
+      // mapujemy to, co się da
+    }
+  }
+  for (const row of rows) {
+    const activityId = idFromSlug(row.activity_slug);
+    if (activityId == null) continue;
+    map.set(activityId, {
+      activityId,
+      rating: row.rating,
+      review: row.review ?? undefined,
+      ratedAt: new Date(row.updated_at ?? row.created_at),
+    });
+  }
+  return map;
+}
 
 type StoredRating = { activityId: number; rating: number; review?: string; ratedAt: string };
 
@@ -156,15 +215,27 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
             removeItem(STORAGE_KEY);
             syncGuestDataMarker();
           } else {
-            const rows = Array.from(local.values()).map(r => ({
-              user_id: user.id,
-              activity_id: r.activityId,
-              rating: r.rating,
-              review: r.review ?? null,
-            }));
-            const { error } = await supabase
-              .from("user_ratings")
-              .upsert(rows, { onConflict: "user_id,activity_id", ignoreDuplicates: true });
+            // Oceny gościa siedzą w localStorage pod `activityId`; do bazy idą
+            // po slugu. Ocena, której nie da się odwzorować na slug, nie jest
+            // migrowana (nie ma jej czym zaadresować w katalogu).
+            const rows = [];
+            for (const r of local.values()) {
+              const slug = await resolveSlug(r.activityId);
+              if (!slug) continue;
+              rows.push({
+                user_id: user.id,
+                activity_id: r.activityId,
+                activity_slug: slug,
+                rating: r.rating,
+                review: r.review ?? null,
+              });
+            }
+            if (cancelled) return;
+            const { error } = rows.length
+              ? await supabase
+                  .from("user_ratings")
+                  .upsert(rows, { onConflict: "user_id,activity_slug", ignoreDuplicates: true })
+              : { error: null };
             if (cancelled) return;
             if (!error) {
               removeItem(STORAGE_KEY);
@@ -176,19 +247,12 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
 
       const { data, error } = await supabase
         .from("user_ratings")
-        .select("activity_id, rating, review, updated_at, created_at")
+        .select("activity_slug, rating, review, updated_at, created_at")
         .eq("user_id", user.id);
       if (cancelled || error || !data) return;
 
-      const map = new Map<number, UserRating>();
-      for (const row of data as { activity_id: number; rating: number; review: string | null; updated_at: string; created_at: string }[]) {
-        map.set(row.activity_id, {
-          activityId: row.activity_id,
-          rating: row.rating,
-          review: row.review ?? undefined,
-          ratedAt: new Date(row.updated_at ?? row.created_at),
-        });
-      }
+      const map = await rowsToRatings(data as RatingRow[]);
+      if (cancelled) return;
       setRatings(map);
     };
 
@@ -208,6 +272,9 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
   const syncToServer = useCallback(
     async (entry: UserRating | null, activityId: number): Promise<boolean> => {
       if (!user) return true;
+      // Brak sluga = nie mamy czym zaadresować wiersza → porażka, nie cichy sukces.
+      const slug = await resolveSlug(activityId);
+      if (!slug) return false;
       try {
         if (entry) {
           const { data, error } = await supabase
@@ -215,13 +282,16 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
             .upsert(
               {
                 user_id: user.id,
+                // `activity_id` piszemy jeszcze przez okno migracji I-06 (kolumna
+                // jest NOT NULL do kroku 8, a stary front na produkcji z niej czyta).
                 activity_id: activityId,
+                activity_slug: slug,
                 rating: entry.rating,
                 review: entry.review ?? null,
               },
-              { onConflict: "user_id,activity_id" }
+              { onConflict: "user_id,activity_slug" }
             )
-            .select("activity_id");
+            .select("activity_slug");
           if (error || !data || data.length === 0) return false;
           return true;
         }
@@ -229,8 +299,8 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
           .from("user_ratings")
           .delete()
           .eq("user_id", user.id)
-          .eq("activity_id", activityId)
-          .select("activity_id");
+          .eq("activity_slug", slug)
+          .select("activity_slug");
         if (error) return false;
         // Brak wiersza do usunięcia = nic nie zostało w bazie → traktujemy jako sukces.
         return Array.isArray(data);
@@ -322,19 +392,10 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const { data, error } = await supabase
       .from("user_ratings")
-      .select("activity_id, rating, review, updated_at, created_at")
+      .select("activity_slug, rating, review, updated_at, created_at")
       .eq("user_id", user.id);
     if (error || !data) return;
-    const map = new Map<number, UserRating>();
-    for (const row of data as { activity_id: number; rating: number; review: string | null; updated_at: string; created_at: string }[]) {
-      map.set(row.activity_id, {
-        activityId: row.activity_id,
-        rating: row.rating,
-        review: row.review ?? undefined,
-        ratedAt: new Date(row.updated_at ?? row.created_at),
-      });
-    }
-    setRatings(map);
+    setRatings(await rowsToRatings(data as RatingRow[]));
   }, [user]);
 
   return (
