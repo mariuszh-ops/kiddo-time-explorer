@@ -2,14 +2,12 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import { axe } from "vitest-axe";
-// vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go ręcznie.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore brak typu wartości w deklaracjach pakietu
-import { toHaveNoViolations } from "vitest-axe/matchers";
+// vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go przez namespace.
+import * as vitestAxeMatchers from "vitest-axe/matchers";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import type { AxeResults } from "axe-core";
 
-expect.extend({ toHaveNoViolations });
+expect.extend(vitestAxeMatchers as Parameters<typeof expect.extend>[0]);
 
 const expectNoA11yViolations = (results: AxeResults) => {
   (expect(results) as unknown as { toHaveNoViolations(): void }).toHaveNoViolations();
