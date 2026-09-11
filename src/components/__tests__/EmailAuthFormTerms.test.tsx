@@ -1,7 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
+import { axe, toHaveNoViolations } from "vitest-axe";
 import EmailAuthForm from "@/components/EmailAuthForm";
+
+expect.extend(toHaveNoViolations);
 
 // jsdom nie ma ResizeObservera, a Checkbox (Radix) go używa.
 globalThis.ResizeObserver ??= class {
@@ -208,5 +211,36 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
       expect(link).toHaveAttribute("target", "_blank");
       expect(link.getAttribute("rel")).toContain("noopener");
     }
+  });
+});
+
+describe("EmailAuthForm — automatyczny audyt axe", () => {
+  // jsdom nie liczy layoutu, więc reguły zależne od renderowania kolorów
+  // i rozmiarów (color-contrast, target-size) wyłączamy — kontrast i 24x24 px
+  // są sprawdzane osobnymi testami powyżej.
+  const AXE_OPTIONS = {
+    rules: {
+      "color-contrast": { enabled: false },
+    },
+  };
+
+  it("formularz rejestracji z checkboxem zgody nie ma naruszeń dostępności", async () => {
+    const { container } = render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    const results = await axe(container, AXE_OPTIONS);
+    expect(results).toHaveNoViolations();
+  });
+
+  it("stan błędu (komunikat przy checkboxu) też nie ma naruszeń", async () => {
+    const { container } = render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+    fireEvent.submit(screen.getByRole("button", { name: "Załóż konto" }).closest("form")!);
+    await screen.findByText("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+
+    const results = await axe(container, AXE_OPTIONS);
+    expect(results).toHaveNoViolations();
   });
 });
