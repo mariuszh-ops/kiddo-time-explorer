@@ -2,7 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import { axe } from "vitest-axe";
+import { toHaveNoViolations } from "vitest-axe/matchers";
 import "vitest-axe/extend-expect";
+
+expect.extend({ toHaveNoViolations });
 import EmailAuthForm from "@/components/EmailAuthForm";
 
 // jsdom nie ma ResizeObservera, a Checkbox (Radix) go używa.
