@@ -120,6 +120,16 @@ const CategoryPage = () => {
   const pageParam = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
   const initialPage = pageParam - 1;
 
+  // O-F-06: kazda kombinacja filtrow tworzy osobny adres z ta sama trescia.
+  // Takie strony dostaja "noindex, follow" (canonical do wersji bez parametrow
+  // zostaje). `page` NIE jest filtrem — paginacja ma byc indeksowalna, a jej
+  // canonical niesie ?page=N. Parametry widoku mapy (view/lat/lng/zoom/cats)
+  // zostawiamy poza ta regula — to stan UI, nie zawezenie zbioru wynikow.
+  const FILTER_PARAMS = ["type", "amenities", "age", "free", "min", "sort", "search", "auto"];
+  // Sprawdzamy OBECNOSC klucza, nie jego wartosc: `?sort=reviews` czy `?type=bzdura`
+  // tez sa duplikatem strony bazowej, mimo ze nie zmieniaja zbioru wynikow.
+  const isFiltered = FILTER_PARAMS.some((key) => searchParams.has(key));
+
   // If a category is set in the route, it wins over any URL ?type=
   const effectiveType = categorySlug ?? urlType;
 
@@ -487,6 +497,7 @@ const CategoryPage = () => {
         title={pageParam > 1 ? `${pagedTitle} — strona ${pageParam}` : resolvedTitle.replace(" | FamilyFun", "")}
         description={dynamicMetaDescription}
         path={pageParam > 1 ? `${path}?page=${pageParam}` : path}
+        robots={isFiltered ? "noindex-follow" : "index"}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <Header />

@@ -24,6 +24,16 @@ interface SEOHeadProps {
   type?: "website" | "article";
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  /**
+   * Sterowanie <meta name="robots"> gdy sam `noindex` nie wystarcza (O-F-06).
+   *  - "index"            → brak meta robots + canonical (domyslne).
+   *  - "noindex-follow"   → "noindex, follow" ORAZ canonical ZOSTAJE. Dla stron
+   *    filtrowanych: nie chcemy ich w indeksie, ale canonical do wersji bez
+   *    parametrow to wlasnie sygnal, ktory chcemy wzmocnic, a nie skasowac.
+   *  - "noindex-nofollow" → "noindex, nofollow" bez canonicala (tozsame z `noindex`).
+   * Gdy prop nie jest podany, wynik wyznacza `noindex` — zachowanie bez zmian.
+   */
+  robots?: "index" | "noindex-follow" | "noindex-nofollow";
   publishedTime?: string;
   modifiedTime?: string;
 }
@@ -38,12 +48,23 @@ const SEOHead = ({
   type = "website",
   jsonLd,
   noindex = false,
+  robots,
   publishedTime,
   modifiedTime,
 }: SEOHeadProps) => {
   // Brand doklejany tylko raz (seoTitle z categoryPages już go ma), a całość
   // przycinana do 65 znaków — dłuższe tytuły Google i tak ucina (BC-E-02).
   const fullTitle = buildSeoTitle(title);
+  const robotsMode = robots ?? (noindex ? "noindex-nofollow" : "index");
+  // Canonical znika tylko przy "noindex, nofollow" (prywatne trasy, 404).
+  // Strona filtrowana canonical ZACHOWUJE — wskazuje wersje bez parametrow.
+  const showCanonical = robotsMode !== "noindex-nofollow";
+  const robotsContent =
+    robotsMode === "noindex-nofollow"
+      ? "noindex, nofollow"
+      : robotsMode === "noindex-follow"
+        ? "noindex, follow"
+        : null;
   const canonicalUrl = `${BASE_URL}${path}`;
   const ogImage = toAbsoluteImage(image);
   const isFallbackImage = ogImage === FALLBACK_IMAGE;
@@ -52,7 +73,7 @@ const SEOHead = ({
     <Helmet>
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
-      {!noindex && <link rel="canonical" href={canonicalUrl} />}
+      {showCanonical && <link rel="canonical" href={canonicalUrl} />}
 
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
@@ -77,7 +98,7 @@ const SEOHead = ({
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
 
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
+      {robotsContent && <meta name="robots" content={robotsContent} />}
 
       {type === "article" && publishedTime && (
         <meta property="article:published_time" content={publishedTime} />
