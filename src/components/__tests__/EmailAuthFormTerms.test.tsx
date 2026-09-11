@@ -152,11 +152,14 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
   it("etykieta jest powiązana z checkboxem przez htmlFor i kliknięcie tekstu go przełącza", () => {
     render(<EmailAuthForm initialMode="signup" />);
 
-    const checkbox = screen.getByLabelText(/Akceptuję Regulamin i Politykę prywatności/i);
+    const checkbox = screen.getByLabelText((content) =>
+      content.includes("Akceptuję") && content.includes("Regulamin") && content.includes("Politykę prywatności"),
+    );
     expect(checkbox).toHaveAttribute("role", "checkbox");
     expect(checkbox).toHaveAttribute("data-state", "unchecked");
 
-    const label = screen.getByText(/Akceptuję Regulamin i Politykę prywatności/i);
+    const label = document.querySelector('label[for="terms-accept"]')!;
+    expect(label).not.toBeNull();
     fireEvent.click(label);
 
     expect(checkbox).toHaveAttribute("data-state", "checked");
