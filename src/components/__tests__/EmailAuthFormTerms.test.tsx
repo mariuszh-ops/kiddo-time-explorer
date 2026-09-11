@@ -2,10 +2,17 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import { axe } from "vitest-axe";
+// vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go ręcznie.
+// @ts-expect-error brak typu wartości w deklaracjach pakietu
 import { toHaveNoViolations } from "vitest-axe/matchers";
-import "vitest-axe/extend-expect";
+import EmailAuthForm from "@/components/EmailAuthForm";
+import type { AxeResults } from "axe-core";
 
 expect.extend({ toHaveNoViolations });
+
+const expectNoA11yViolations = (results: AxeResults) => {
+  (expect(results) as unknown as { toHaveNoViolations(): void }).toHaveNoViolations();
+};
 import EmailAuthForm from "@/components/EmailAuthForm";
 
 // jsdom nie ma ResizeObservera, a Checkbox (Radix) go używa.
