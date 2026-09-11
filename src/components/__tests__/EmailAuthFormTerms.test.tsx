@@ -236,7 +236,7 @@ describe("EmailAuthForm — automatyczny audyt axe", () => {
     await screen.findByTestId("turnstile-mock");
 
     const results = await axe(container, AXE_OPTIONS);
-    expect(results).toHaveNoViolations();
+    expectNoA11yViolations(results);
   });
 
   it("stan błędu (komunikat przy checkboxu) też nie ma naruszeń", async () => {
@@ -248,6 +248,6 @@ describe("EmailAuthForm — automatyczny audyt axe", () => {
     await screen.findByText("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
 
     const results = await axe(container, AXE_OPTIONS);
-    expect(results).toHaveNoViolations();
+    expectNoA11yViolations(results);
   });
 });
