@@ -360,6 +360,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         <div className="flex items-start gap-2">
           <Checkbox
             id="terms-accept"
+            ref={termsRef}
             checked={termsAccepted}
             onCheckedChange={(checked) => setTermsAccepted(checked === true)}
             tabIndex={0}
