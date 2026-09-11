@@ -74,7 +74,6 @@ export type Database = {
       user_ratings: {
         Row: {
           activity_id: number
-          activity_slug: string | null
           created_at: string
           id: string
           rating: number
@@ -84,7 +83,6 @@ export type Database = {
         }
         Insert: {
           activity_id: number
-          activity_slug?: string | null
           created_at?: string
           id?: string
           rating: number
@@ -94,7 +92,6 @@ export type Database = {
         }
         Update: {
           activity_id?: number
-          activity_slug?: string | null
           created_at?: string
           id?: string
           rating?: number
@@ -168,13 +165,6 @@ export type Database = {
     Functions: {
       get_activity_rating: {
         Args: { activity_id: number }
-        Returns: {
-          avg_rating: number
-          ratings_count: number
-        }[]
-      }
-      get_activity_rating_by_slug: {
-        Args: { p_slug: string }
         Returns: {
           avg_rating: number
           ratings_count: number

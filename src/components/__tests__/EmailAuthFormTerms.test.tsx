@@ -149,6 +149,23 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("aria-checked", "true");
   });
 
+  it("etykieta jest powiązana z checkboxem przez htmlFor i kliknięcie tekstu go przełącza", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+
+    const checkbox = screen.getByLabelText((content) =>
+      content.includes("Akceptuję") && content.includes("Regulamin") && content.includes("Politykę prywatności"),
+    );
+    expect(checkbox).toHaveAttribute("role", "checkbox");
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+
+    const label = document.querySelector('label[for="terms-accept"]')!;
+    expect(label).not.toBeNull();
+    fireEvent.click(label);
+
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+    expect(checkbox).toHaveAttribute("aria-checked", "true");
+  });
+
   it("ma obszar kliknięcia min. 24x24 px (WCAG 2.5.8)", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = getCheckbox();
