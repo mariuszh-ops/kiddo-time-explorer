@@ -13,7 +13,6 @@ expect.extend({ toHaveNoViolations });
 const expectNoA11yViolations = (results: AxeResults) => {
   (expect(results) as unknown as { toHaveNoViolations(): void }).toHaveNoViolations();
 };
-import EmailAuthForm from "@/components/EmailAuthForm";
 
 // jsdom nie ma ResizeObservera, a Checkbox (Radix) go używa.
 globalThis.ResizeObserver ??= class {
