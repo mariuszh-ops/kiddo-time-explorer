@@ -3,7 +3,8 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import { axe } from "vitest-axe";
 // vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go ręcznie.
-// @ts-expect-error brak typu wartości w deklaracjach pakietu
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore brak typu wartości w deklaracjach pakietu
 import { toHaveNoViolations } from "vitest-axe/matchers";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import type { AxeResults } from "axe-core";
