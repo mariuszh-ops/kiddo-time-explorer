@@ -56,6 +56,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [info, setInfo] = useState<string | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const termsRef = useRef<HTMLButtonElement>(null);
   const [screen, setScreen] = useState<"form" | "confirm" | "reset-sent">("form");
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
@@ -168,6 +169,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     // przyciskiem — sam `disabled` znika po jednym kliknięciu w devtoolsach.
     if (mode === "signup" && !termsAccepted) {
       setError("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+      termsRef.current?.focus();
       return;
     }
     // Bez tokenu nie wysyłamy nic — także wtedy, gdy widget zgłosił awarię
@@ -358,6 +360,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         <div className="flex items-start gap-2">
           <Checkbox
             id="terms-accept"
+            ref={termsRef}
             checked={termsAccepted}
             onCheckedChange={(checked) => setTermsAccepted(checked === true)}
             tabIndex={0}
