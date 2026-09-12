@@ -11,6 +11,7 @@ import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
 import ActivityGrid from "@/components/ActivityGrid";
 import ActivityCard from "@/components/ActivityCard";
+import AllActivitiesListing from "@/components/AllActivitiesListing";
 import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
@@ -91,15 +92,16 @@ const Index = () => {
 
   // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
   const showAll = searchParams.get("all") === "1";
+  // Q-E-10: ?all=1 BEZ filtrów idzie serwerową paginacją (AllActivitiesListing,
+  // porcje po 24), a nie pełnym zrzutem katalogu do pamięci. Katalog w całości
+  // dociągamy dopiero wtedy, gdy użytkownik użyje filtra — wtedy liczy go
+  // useActivityFilters po stronie klienta i to on woła ensureActivitiesLoaded().
+  const listingSerwerowy = showAll && !hasActiveFilters;
   const dataStatus = useDataStatus();
   // Katalog ładuje się leniwie — flaga musi być true także w momencie tuż po
-  // kliknięciu "Zobacz wszystkie", zanim ensureActivitiesLoaded() przestawi status.
+  // włączeniu filtra, zanim ensureActivitiesLoaded() przestawi status.
   const katalogSieLaduje =
-    dataStatus === "loading" ||
-    ((showAll || hasActiveFilters) && dataStatus === "idle");
-  useEffect(() => {
-    if (showAll) ensureActivitiesLoaded();
-  }, [showAll]);
+    dataStatus === "loading" || (hasActiveFilters && dataStatus === "idle");
 
   // F-1: "Zobacz wszystkie atrakcje" prowadzi na /?all=1, czyli TEN SAM pathname.
   // useScrollPosition przewija tylko przy zmianie location.pathname, wiec po
@@ -310,8 +312,10 @@ const Index = () => {
           mapReturnAction={() => handleViewModeChange("map")}
           isLoading={katalogSieLaduje}
         />
-      ) : hasActiveFilters || showAll ? (
-        <ActivityGrid 
+      ) : listingSerwerowy ? (
+        <AllActivitiesListing />
+      ) : hasActiveFilters ? (
+        <ActivityGrid
           activities={filteredActivities} 
           hasActiveFilters={hasActiveFilters}
           onClearFilters={clearAllFilters}
