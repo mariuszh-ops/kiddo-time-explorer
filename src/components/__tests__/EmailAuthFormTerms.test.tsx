@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { axe } from "vitest-axe";
 // vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go przez namespace.
