@@ -52,7 +52,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   /** K-13: ktore pole obwiniamy — steruje aria-invalid i fokusem po submicie. */
-  const [errorField, setErrorField] = useState<"email" | "password" | null>(null);
+  const [errorField, setErrorField] = useState<"email" | "password" | "terms" | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -169,6 +169,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     // przyciskiem — sam `disabled` znika po jednym kliknięciu w devtoolsach.
     if (mode === "signup" && !termsAccepted) {
       setError("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+      setErrorField("terms");
       termsRef.current?.focus();
       return;
     }
@@ -365,6 +366,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
             onCheckedChange={(checked) => setTermsAccepted(checked === true)}
             tabIndex={0}
             aria-required="true"
+            aria-invalid={errorField === "terms" || undefined}
+            aria-describedby={errorField === "terms" ? "auth-error" : undefined}
             className="mt-0.5 h-6 w-6 shrink-0"
           />
           <Label htmlFor="terms-accept" className="text-sm text-muted-foreground cursor-pointer">
