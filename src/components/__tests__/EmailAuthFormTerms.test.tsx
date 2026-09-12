@@ -180,6 +180,31 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("data-state", "checked");
   });
 
+  it("otrzymuje fokus po nawigacji Tab i przełącza się klawiszami Space oraz Enter", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    const checkbox = getCheckbox();
+    // Kolejność focusable: e-mail → hasło → checkbox (mock Turnstile nie jest focusable).
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+
+    // Space powinien zaznaczyć checkbox.
+    fireEvent.keyDown(checkbox, { key: " ", code: "Space" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Enter powinien go odznaczyć.
+    fireEvent.keyDown(checkbox, { key: "Enter", code: "Enter" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: "Enter", code: "Enter" });
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+  });
+
   it("ma poprawne atrybuty ARIA i etykietę powiązaną przez htmlFor", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = getCheckbox();
