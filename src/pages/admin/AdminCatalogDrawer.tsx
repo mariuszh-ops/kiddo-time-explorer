@@ -391,15 +391,19 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
 
     // 3. Notatka — upsert tylko gdy naprawdę się zmieniła (N-07).
     if (noteChanged) {
-      const { error: noteError } = await catalogClient
+      // Jak przy PATCH-u rekordu: upsert odfiltrowany przez RLS to 204 bez
+      // wierszy, nie 403, więc pusty wynik też jest porażką (A1000-S).
+      const { data: noteData, error: noteError } = await catalogClient
         .from("admin_notes")
         .upsert(
           { place_id: row.place_id, note, updated_at: new Date().toISOString() },
           { onConflict: "place_id" },
-        );
-      if (noteError) {
+        )
+        .select("place_id");
+      if (noteError || !noteData || noteData.length === 0) {
         toast.error("Zapisano rekord, ale notatka się nie udała", {
-          description: noteError.message,
+          description:
+            noteError?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
         });
       }
     }

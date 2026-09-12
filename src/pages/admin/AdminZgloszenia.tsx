@@ -161,12 +161,17 @@ const AdminZgloszenia = () => {
 
   const setReportStatus = async (r: Report, newStatus: Status) => {
     removeFromView(r.id);
-    const { error } = await supabase
+    // Pusty wynik to też odmowa RLS — PostgREST oddaje wtedy 204, a nie 403,
+    // więc `error` jest null i zgłoszenie zniknęłoby z widoku mimo braku zapisu (A1000-S).
+    const { data, error } = await supabase
       .from("issue_reports")
       .update({ status: newStatus })
-      .eq("id", r.id);
-    if (error) {
-      toast.error("Nie udało się zapisać", { description: error.message });
+      .eq("id", r.id)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      toast.error("Nie udało się zapisać", {
+        description: error?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows((prev) => [r, ...prev]);
       setTotal((t) => t + 1);
       return;
@@ -191,12 +196,17 @@ const AdminZgloszenia = () => {
   };
 
   const hideActivity = async (r: Report) => {
-    const { error } = await catalogClient
+    // Jak wyżej. Bez tego testu zgłoszenie szłoby na „załatwione" mimo
+    // że atrakcja NIE została ukryta (A1000-S).
+    const { data, error } = await catalogClient
       .from("public_activities")
       .update({ admin_hidden: true })
-      .eq("place_id", r.place_id);
-    if (error) {
-      toast.error("Nie udało się ukryć", { description: error.message });
+      .eq("place_id", r.place_id)
+      .select("place_id");
+    if (error || !data || data.length === 0) {
+      toast.error("Nie udało się ukryć", {
+        description: error?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       return;
     }
     toast.success("Atrakcja ukryta");

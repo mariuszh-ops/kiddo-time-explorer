@@ -157,12 +157,17 @@ const AdminPropozycje = () => {
   const setSubmissionStatus = async (r: Submission, newStatus: Status) => {
     setRows((prev) => prev.filter((x) => x.id !== r.id));
     setTotal((t) => Math.max(0, t - 1));
-    const { error } = await supabase
+    // Pusty wynik to też odmowa RLS — PostgREST oddaje wtedy 204, a nie 403,
+    // więc `error` jest null i propozycja zniknęłaby z widoku mimo braku zapisu (A1000-S).
+    const { data, error } = await supabase
       .from("activity_submissions")
       .update({ status: newStatus })
-      .eq("id", r.id);
-    if (error) {
-      toast.error("Nie udało się zapisać", { description: error.message });
+      .eq("id", r.id)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      toast.error("Nie udało się zapisać", {
+        description: error?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows((prev) => [r, ...prev]);
       setTotal((t) => t + 1);
       return;

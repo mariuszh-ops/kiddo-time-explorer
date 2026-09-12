@@ -163,18 +163,23 @@ const AdminOpinie = () => {
     if (!ids.length) return;
     const snapshot = rows.filter((r) => ids.includes(r.id));
     removeFromView(ids);
-    const { error } = await supabase
+    // Pusty wynik to też odmowa RLS — PostgREST oddaje wtedy 204, a nie 403,
+    // więc `error` jest null i opinie zniknęłyby z widoku mimo braku zapisu (A1000-S).
+    const { data, error } = await supabase
       .from("user_reviews")
       .update({ status: newStatus })
-      .in("id", ids);
-    if (error) {
-      toast.error("Nie udało się zapisać", { description: error.message });
+      .in("id", ids)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      toast.error("Nie udało się zapisać", {
+        description: error?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       setRows((prev) => [...snapshot, ...prev]);
       setTotal((t) => t + snapshot.length);
       return;
     }
     toast.success(
-      `${ids.length} ${ids.length === 1 ? "opinia" : "opinii"} → ${
+      `${data.length} ${data.length === 1 ? "opinia" : "opinii"} → ${
         newStatus === "approved" ? "zatwierdzone" : newStatus === "rejected" ? "odrzucone" : "oczekujące"
       }`,
     );
@@ -184,9 +189,16 @@ const AdminOpinie = () => {
   const deleteReview = async (id: string) => {
     const snapshot = rows.find((r) => r.id === id);
     removeFromView([id]);
-    const { error } = await supabase.from("user_reviews").delete().eq("id", id);
-    if (error) {
-      toast.error("Nie udało się usunąć", { description: error.message });
+    // Jak wyżej: DELETE odfiltrowany przez RLS to 204 bez wierszy, nie 403.
+    const { data, error } = await supabase
+      .from("user_reviews")
+      .delete()
+      .eq("id", id)
+      .select("id");
+    if (error || !data || data.length === 0) {
+      toast.error("Nie udało się usunąć", {
+        description: error?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+      });
       if (snapshot) {
         setRows((prev) => [snapshot, ...prev]);
         setTotal((t) => t + 1);
