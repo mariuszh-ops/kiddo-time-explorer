@@ -377,6 +377,16 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
         return;
       }
       saved = (data as unknown as CatalogRow) ?? null;
+      // Odmowa RLS na PATCH to 204 / 200 z pustą tablicą, więc `maybeSingle()`
+      // oddaje data = null przy error = null. Bez tego testu panel meldowałby
+      // sukces i pokazywał w tabeli wartości, których w bazie nie ma (A1000-S).
+      if (saved === null) {
+        toast.error("Nie udało się zapisać", {
+          description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
+        });
+        setSaving(false);
+        return;
+      }
     }
 
     // 3. Notatka — upsert tylko gdy naprawdę się zmieniła (N-07).

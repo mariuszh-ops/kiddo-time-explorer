@@ -145,12 +145,16 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
     setRows((prev) =>
       prev.map((r) => (r.place_id === row.place_id ? { ...r, admin_hidden: next } : r)),
     );
-    const { error } = await catalogClient
+    // PostgREST oddaje 204 także wtedy, gdy RLS odfiltrowało PATCH do zera
+    // wierszy — `error` jest wtedy null i kod szedłby gałęzią sukcesu (A1000-S).
+    // Jedynym dowodem zapisu jest liczba zwróconych wierszy, stąd `.select()`.
+    const { data, error } = await catalogClient
       .from("public_activities")
       .update({ admin_hidden: next })
-      .eq("place_id", row.place_id);
-    if (error) {
-      console.error(error.message);
+      .eq("place_id", row.place_id)
+      .select("place_id");
+    if (error || !data || data.length === 0) {
+      console.error(error?.message ?? "UPDATE admin_hidden: 0 zmienionych wierszy");
       toast.error("Nie udało się zapisać", {
         description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
       });
@@ -179,13 +183,15 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       );
 
     set(next);
-    const { error } = await catalogClient
+    // `.select()` jak w toggleHidden — 204 bez wierszy to też odmowa RLS.
+    const { data, error } = await catalogClient
       .from("public_activities")
       .update({ reviewed_at: next })
-      .eq("place_id", row.place_id);
+      .eq("place_id", row.place_id)
+      .select("place_id");
 
-    if (error) {
-      console.error(error.message);
+    if (error || !data || data.length === 0) {
+      console.error(error?.message ?? "UPDATE reviewed_at: 0 zmienionych wierszy");
       toast.error("Nie udało się zapisać", {
         description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
       });
@@ -200,12 +206,16 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
     async (hidden: boolean, idsArg?: string[]) => {
       const ids = idsArg ?? Array.from(selected);
       if (!ids.length) return;
-      const { error } = await catalogClient
+      // `.select()` jak w toggleHidden — 204 bez wierszy to też odmowa RLS.
+      // Przy zerze zapisanych wierszy nie ma czego cofać ani zaznaczać,
+      // więc gałąź błędu wychodzi przed `setSelected` i toastem z „Cofnij”.
+      const { data, error } = await catalogClient
         .from("public_activities")
         .update({ admin_hidden: hidden })
-        .in("place_id", ids);
-      if (error) {
-        console.error(error.message);
+        .in("place_id", ids)
+        .select("place_id");
+      if (error || !data || data.length === 0) {
+        console.error(error?.message ?? "UPDATE masowy admin_hidden: 0 zmienionych wierszy");
         toast.error("Akcja masowa nie powiodła się", {
           description: "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
         });
@@ -213,7 +223,7 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       }
       // Zaznaczenie zostaje — pasek akcji jest droga powrotna (I-04).
       setSelected(new Set(ids));
-      toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${ids.length} pozycji`, {
+      toast.success(`${hidden ? "Ukryto" : "Pokazano"} ${data.length} pozycji`, {
         action: {
           label: "Cofnij",
           onClick: () => {
