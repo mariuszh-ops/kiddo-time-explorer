@@ -113,6 +113,27 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     ).toBeInTheDocument();
   });
 
+  it("komunikat błędu zgody jest powiązany z checkboxem przez aria-describedby", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    await waitFor(() => {
+      expect(checkbox).toHaveAttribute("aria-describedby", "auth-error");
+    });
+
+    const errorEl = document.getElementById("auth-error");
+    expect(errorEl).not.toBeNull();
+    expect(errorEl!.textContent).toContain(
+      "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.",
+    );
+  });
+
   it("checkbox nie występuje w trybach logowania i resetu hasła", () => {
     const { unmount } = render(<EmailAuthForm initialMode="signin" />);
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
