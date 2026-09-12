@@ -271,4 +271,12 @@ describe("EmailAuthForm — automatyczny audyt axe", () => {
     const results = await axe(container, AXE_OPTIONS);
     expectNoA11yViolations(results);
   });
+
+  it("neutralny stan formularza bez błędów i bez interakcji użytkownika nie ma naruszeń", async () => {
+    const { container } = render(<EmailAuthForm />);
+    await screen.findByTestId("turnstile-mock");
+
+    const results = await axe(container, AXE_OPTIONS);
+    expectNoA11yViolations(results);
+  });
 });
