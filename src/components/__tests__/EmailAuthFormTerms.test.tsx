@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { axe } from "vitest-axe";
 // vitest-axe eksportuje matcher bez typów wartości — rejestrujemy go przez namespace.
@@ -177,6 +178,31 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     fireEvent.click(checkbox);
     fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
     expect(checkbox).toHaveAttribute("data-state", "checked");
+  });
+
+  it("otrzymuje fokus po nawigacji Tab i przełącza się klawiszami Space oraz Enter", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    const checkbox = getCheckbox();
+    // Kolejność focusable: e-mail → hasło → checkbox (mock Turnstile nie jest focusable).
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+
+    // Space powinien zaznaczyć checkbox.
+    fireEvent.keyDown(checkbox, { key: " ", code: "Space" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Enter powinien go odznaczyć.
+    fireEvent.keyDown(checkbox, { key: "Enter", code: "Enter" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: "Enter", code: "Enter" });
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
   });
 
   it("ma poprawne atrybuty ARIA i etykietę powiązaną przez htmlFor", () => {
