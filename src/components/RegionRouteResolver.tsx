@@ -37,11 +37,19 @@ const RegionRouteResolver = () => {
     );
   }
 
+  // Stare slugi miast. `search` i `hash` idą dalej tak samo jak przy normalizacji
+  // wielkości liter — inaczej /warszawa?utm_source=fb gubiłoby atrybucję kampanii
+  // na samym przekierowaniu. Puste `search`/`hash` nie doklejają "?" ani "#".
   if (regionSlug && LEGACY_CITY_TO_REGION[regionSlug]) {
     const target = categorySlug
       ? `/${LEGACY_CITY_TO_REGION[regionSlug]}/${categorySlug}`
       : `/${LEGACY_CITY_TO_REGION[regionSlug]}`;
-    return <Navigate to={target} replace />;
+    return (
+      <Navigate
+        to={{ pathname: target, search: location.search, hash: location.hash }}
+        replace
+      />
+    );
   }
 
   if (!regionSlug || !REGION_SLUGS.includes(regionSlug)) {
