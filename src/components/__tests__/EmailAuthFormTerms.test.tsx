@@ -124,6 +124,28 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     ).toBeInTheDocument();
   });
 
+  it("po zaznaczeniu checkboxa komunikat błędu zgody znika", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+    await waitFor(() => {
+      expect(screen.getByText(errorText)).toBeInTheDocument();
+    });
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    fireEvent.click(checkbox);
+
+    await waitFor(() => {
+      expect(screen.queryByText(errorText)).not.toBeInTheDocument();
+    });
+  });
+
   it("komunikat błędu zgody jest powiązany z checkboxem przez aria-describedby", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
