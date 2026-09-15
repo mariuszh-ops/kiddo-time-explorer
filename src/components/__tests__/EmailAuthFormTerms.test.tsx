@@ -108,6 +108,35 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     expect(await screen.findByText("Sprawdź skrzynkę")).toBeInTheDocument();
   });
 
+  it("nie wywołuje logiki submit bez zgody, a po zaznaczeniu wywołuje ją z poprawnymi danymi", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+
+    // Próba submitu bez zaznaczonej zgody — mock nie powinien być wywołany.
+    fireEvent.click(submit);
+    await waitFor(() => {
+      expect(signUpWithEmail).not.toHaveBeenCalled();
+    });
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    fireEvent.click(submit);
+    await waitFor(() => {
+      expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+      expect(signUpWithEmail).toHaveBeenCalledWith(
+        "rodzina@example.com",
+        VALID_PASSWORD,
+        "test-captcha-token",
+      );
+    });
+  });
+
   it("przycisk submit jest zablokowany bez zgody i dostępny po zaznaczeniu checkboxa", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
