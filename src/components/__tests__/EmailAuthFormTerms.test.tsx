@@ -334,6 +334,43 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("aria-checked", "false");
   });
 
+  it("po zaznaczeniu i odznaczeniu zgody Tab przechodzi kolejno checkbox → submit", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+
+    // e-mail → hasło → checkbox
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+
+    // Zaznaczenie spacją.
+    await user.keyboard(" ");
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Tab z checkboxa przechodzi na submit.
+    await user.tab();
+    expect(submit).toHaveFocus();
+
+    // Powrót Shift+Tab na checkbox.
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(checkbox).toHaveFocus();
+
+    // Odznaczenie spacją.
+    await user.keyboard(" ");
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+
+    // Tab nadal prowadzi do submitu, niezależnie od stanu checkboxa.
+    await user.tab();
+    expect(submit).toHaveFocus();
+  });
+
   it("checkbox ma czytelną nazwę dostępną w drzewie dostępności", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
