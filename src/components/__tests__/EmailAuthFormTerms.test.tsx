@@ -354,15 +354,15 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     await user.keyboard(" ");
     expect(checkbox).toHaveAttribute("data-state", "checked");
 
-    // Tab z checkboxa przechodzi przez linki regulaminu i przełącznik trybu, a potem na submit.
+    // Tab z checkboxa przechodzi przez linki regulaminu, a potem na submit i przełącznik trybu.
     await user.tab();
     expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
     await user.tab();
-    expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
-    await user.tab();
     expect(submit).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
 
     // Powrót Shift+Tab na checkbox.
     await user.keyboard("{Shift>}{Tab}{/Shift}");
@@ -376,7 +376,6 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("data-state", "unchecked");
 
     // Tab nadal prowadzi do submitu przez te same elementy, niezależnie od stanu checkboxa.
-    await user.tab();
     await user.tab();
     await user.tab();
     await user.tab();
