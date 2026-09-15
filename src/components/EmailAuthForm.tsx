@@ -363,7 +363,15 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
             id="terms-accept"
             ref={termsRef}
             checked={termsAccepted}
-            onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+            onCheckedChange={(checked) => {
+              const isChecked = checked === true;
+              setTermsAccepted(isChecked);
+              // K-13: zniknięcie błędu po zaznaczeniu daje użytkownikowi natychmiastowy feedback.
+              if (isChecked && errorField === "terms") {
+                setError(null);
+                setErrorField(null);
+              }
+            }}
             tabIndex={0}
             aria-required="true"
             aria-invalid={errorField === "terms" || undefined}
