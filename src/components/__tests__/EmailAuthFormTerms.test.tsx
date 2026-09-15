@@ -280,6 +280,31 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("aria-checked", "true");
   });
 
+  it("po kliknięciu i powrocie klawiaturą Tab zachowuje fokus i daje się przełączać", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    const checkbox = getCheckbox();
+
+    // Kliknięcie myszką zaznacza checkbox, ale nie pozostawia tam fokusu klawiatury.
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Powrót do checkboxa klawiaturą: e-mail → hasło → checkbox.
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+
+    // Przełączenie spacją bez utraty kontekstu.
+    fireEvent.keyDown(checkbox, { key: " ", code: "Space" });
+    fireEvent.click(checkbox);
+    fireEvent.keyUp(checkbox, { key: " ", code: "Space" });
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+    expect(checkbox).toHaveAttribute("aria-checked", "false");
+  });
+
   it("ma obszar kliknięcia min. 24x24 px (WCAG 2.5.8)", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = getCheckbox();
