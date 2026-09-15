@@ -305,6 +305,18 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("aria-checked", "false");
   });
 
+  it("checkbox ma czytelną nazwę dostępną w drzewie dostępności", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+
+    // getByRole z name korzysta z drzewa dostępności — to samo zobaczy czytnik ekranu.
+    expect(checkbox).toHaveAccessibleName(/Akceptuję Regulamin i Politykę prywatności/i);
+
+    // Etykieta jest powiązana przez htmlFor/id, a nie przez aria-label.
+    expect(checkbox).not.toHaveAttribute("aria-label");
+    expect(checkbox).toHaveAttribute("id", "terms-accept");
+  });
+
   it("ma obszar kliknięcia min. 24x24 px (WCAG 2.5.8)", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = getCheckbox();
