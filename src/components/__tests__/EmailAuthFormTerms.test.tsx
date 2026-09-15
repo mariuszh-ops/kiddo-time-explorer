@@ -354,13 +354,14 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     await user.keyboard(" ");
     expect(checkbox).toHaveAttribute("data-state", "checked");
 
-    // Tab z checkboxa przechodzi przez linki regulaminu, a potem na submit i przełącznik trybu.
+    // Tab z checkboxa przechodzi przez linki regulaminu, a potem na aktywny submit.
     await user.tab();
     expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
     await user.tab();
     expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
     await user.tab();
     expect(submit).toHaveFocus();
+    expect(submit).toBeEnabled();
     await user.tab();
     expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
 
@@ -371,15 +372,17 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     await user.keyboard("{Shift>}{Tab}{/Shift}");
     expect(checkbox).toHaveFocus();
 
-    // Odznaczenie spacją.
+    // Odznaczenie spacją — submit staje się disabled i wypada z kolejności Tab.
     await user.keyboard(" ");
     expect(checkbox).toHaveAttribute("data-state", "unchecked");
+    expect(submit).toBeDisabled();
 
-    // Tab nadal prowadzi do submitu przez te same elementy, niezależnie od stanu checkboxa.
     await user.tab();
+    expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
     await user.tab();
+    expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
     await user.tab();
-    expect(submit).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
   });
 
   it("checkbox ma czytelną nazwę dostępną w drzewie dostępności", () => {
