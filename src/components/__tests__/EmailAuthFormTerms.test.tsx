@@ -108,6 +108,25 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     expect(await screen.findByText("Sprawdź skrzynkę")).toBeInTheDocument();
   });
 
+  it("przycisk submit jest zablokowany bez zgody i dostępny po zaznaczeniu checkboxa", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    expect(submit).toBeDisabled();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+    expect(submit).toBeEnabled();
+
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+    expect(submit).toBeDisabled();
+  });
+
   it("po nieudanej próbie rejestracji fokus przenosi się na checkbox zgody", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
