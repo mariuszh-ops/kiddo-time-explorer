@@ -194,6 +194,31 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     });
   });
 
+  it("komunikat błędu zgody ma rolę alert i znika po zaznaczeniu checkboxa", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(
+      "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.",
+    );
+    expect(alert).toHaveAttribute("id", "auth-error");
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    fireEvent.click(checkbox);
+
+    await waitFor(() => {
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    });
+  });
+
   it("komunikat błędu zgody jest powiązany z checkboxem przez aria-describedby", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
