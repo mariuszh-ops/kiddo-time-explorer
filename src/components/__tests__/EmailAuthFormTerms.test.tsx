@@ -334,6 +334,57 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("aria-checked", "false");
   });
 
+  it("po zaznaczeniu i odznaczeniu zgody Tab przechodzi kolejno checkbox → linki → submit", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+
+    // e-mail → hasło → checkbox
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+
+    // Zaznaczenie spacją.
+    await user.keyboard(" ");
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Tab z checkboxa przechodzi przez linki regulaminu, a potem na aktywny submit.
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
+    await user.tab();
+    expect(submit).toHaveFocus();
+    expect(submit).toBeEnabled();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
+
+    // Powrót Shift+Tab na checkbox.
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(checkbox).toHaveFocus();
+
+    // Odznaczenie spacją — submit staje się disabled i wypada z kolejności Tab.
+    await user.keyboard(" ");
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+    expect(submit).toBeDisabled();
+
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
+    await user.tab();
+    expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
+  });
+
   it("checkbox ma czytelną nazwę dostępną w drzewie dostępności", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
