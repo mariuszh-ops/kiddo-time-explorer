@@ -165,6 +165,26 @@
       transform: none !important;
     }
   }
+
+  /* W-C-01: w trybie wysokiego kontrastu system nadpisuje tła i kolory obramowań,
+     więc włączony przełącznik filtra byłby nie do odróżnienia od wyłączonego
+     (zostaje samo aria-pressed, niewidoczne dla osoby patrzącej na ekran).
+     Dokładamy znacznik niekolorowy: wewnętrzny obrys — nie zmienia układu paska. */
+  @media (forced-colors: active) {
+    .ff-filter-toggle[aria-pressed="true"] {
+      position: relative;
+    }
+    /* Pseudo-element, a nie `outline` — obrys fokusu nadpisalby `outline`
+       i przy nawigacji klawiatura znacznik stanu by znikal. */
+    .ff-filter-toggle[aria-pressed="true"]::after {
+      content: "";
+      position: absolute;
+      inset: 3px;
+      border: 1px solid;
+      border-radius: 9999px;
+      pointer-events: none;
+    }
+  }
 }
 
 @layer utilities {

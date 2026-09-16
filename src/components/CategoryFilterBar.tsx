@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { Check, ChevronDown, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -276,13 +276,16 @@ const CategoryFilterBar = ({
         onClick={() => onOnlyFreeChange(!onlyFree)}
         aria-pressed={onlyFree}
         className={cn(
-          "inline-flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
+          "ff-filter-toggle inline-flex items-center gap-1.5 h-11 sm:h-9 px-3 rounded-full border text-sm font-medium transition-colors whitespace-nowrap",
           onlyFree
             ? "bg-emerald-50 text-emerald-800 border-emerald-300 dark:bg-emerald-950/40 dark:text-emerald-200 dark:border-emerald-800"
             : "bg-background text-foreground border-border hover:bg-accent",
         )}
         aria-describedby="filtr-darmowe-opis"
       >
+        {/* W-C-01: znacznik niekolorowy — w trybie wysokiego kontrastu tło i obramowanie
+            nadpisuje system, więc sam kolor nie odróżnia stanu włączonego. */}
+        {onlyFree && <Check className="w-4 h-4 shrink-0" aria-hidden="true" />}
         Tylko darmowe
         <span id="filtr-darmowe-opis" className="sr-only">
           Pokaż tylko atrakcje bez biletu
