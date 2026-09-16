@@ -21,6 +21,7 @@ import {
   cityLabels,
 } from "@/data/categoryPages";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
+import { DEFAULT_LISTING_SORT, LISTING_FILTER_PARAMS } from "@/lib/listingQuery";
 import CategoryFilterBar, { type SortOption, AGE_RANGES, CATEGORY_TYPES, AMENITY_FILTER_VALUES } from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
@@ -47,7 +48,7 @@ const BASE_URL = "https://familyfun.pl";
 const capitalize = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 
 const pluralizeActivities = activityWord;
-const DEFAULT_SORT: SortOption = "reviews";
+const DEFAULT_SORT: SortOption = DEFAULT_LISTING_SORT;
 
 const CategoryPage = () => {
   const params = useParams<{ citySlug?: string; categorySlug?: string; slug?: string; regionSlug?: string }>();
@@ -125,7 +126,9 @@ const CategoryPage = () => {
   // zostaje). `page` NIE jest filtrem — paginacja ma byc indeksowalna, a jej
   // canonical niesie ?page=N. Parametry widoku mapy (view/lat/lng/zoom/cats)
   // zostawiamy poza ta regula — to stan UI, nie zawezenie zbioru wynikow.
-  const FILTER_PARAMS = ["type", "amenities", "age", "free", "min", "sort", "search", "auto"];
+  // Lista mieszka w `listingQuery.ts` razem z zapytaniem, ktore te parametry
+  // zawezaja — wczesny start listingu odpuszcza dokladnie te same adresy.
+  const FILTER_PARAMS = LISTING_FILTER_PARAMS;
   // Sprawdzamy OBECNOSC klucza, nie jego wartosc: `?sort=reviews` czy `?type=bzdura`
   // tez sa duplikatem strony bazowej, mimo ze nie zmieniaja zbioru wynikow.
   const isFiltered = FILTER_PARAMS.some((key) => searchParams.has(key));

@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { catalogClient, mapCatalogRow, CARD_COLUMNS, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
+import { mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
 import { sanitizeSearchTerm } from "@/lib/searchConfig";
+import {
+  buildListingQuery,
+  listingFilterKey,
+  takeEarlyListing,
+  LISTING_PAGE_SIZE,
+} from "@/lib/listingQuery";
 import type { Activity } from "@/data/activities";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
 
@@ -35,14 +41,16 @@ export interface UseActivitiesInfiniteResult {
  */
 export function useActivitiesInfinite(
   filters: Omit<UseActivitiesFilters, "page" | "pageSize"> = {},
-  pageSize = 24,
+  pageSize = LISTING_PAGE_SIZE,
   /** Strona startowa (przywracana z URL po powrocie z karty atrakcji). */
   initialPage = 0,
 ): UseActivitiesInfiniteResult {
   const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
   const searchTerm = sanitizeSearchTerm(search ?? "");
-  const filterKey = JSON.stringify({ region, type, amenitiesKey, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, searchTerm });
+  // Klucz liczy `listingQuery.ts` — tym samym wzorem, z ktorego korzysta wczesny
+  // start zapytania. Rozjazd tych dwoch klucza = ciche podwojne zapytanie.
+  const filterKey = listingFilterKey(filters);
 
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
@@ -94,34 +102,11 @@ export function useActivitiesInfinite(
       setLoadingMore(false);
     };
 
-    const buildQuery = (headOnly: boolean) => {
-      let q = catalogClient
-        .from("public_activities")
-        .select(headOnly ? "place_id" : CARD_COLUMNS, headOnly ? { count: "exact", head: true } : isInitialFetch ? { count: "exact" } : {})
-        .eq("published", true);
-      if (region) q = q.eq("region", region);
-      if (type) q = q.eq("type", type);
-      if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
-      if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
-      if (!includeUncertain) q = q.eq("uncertain", false);
-      if (onlyFree) q = q.eq("is_free", true);
-      if (searchTerm.length >= 2) {
-        q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
-      }
-      // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów.
-      // Rekordy z age_min/age_max=null są WYŁĄCZONE z filtra (przechodzą zawsze) — M-07.
-      if (typeof ageMin === "number" && typeof ageMax === "number") {
-        q = q.or(ageRangeOrFilter(ageMin, ageMax));
-      }
-      if (sort === "name") q = q.order("name", { ascending: true });
-      else if (sort === "reviews")
-        q = q.order("reviews_count", { ascending: false, nullsFirst: false })
-             .order("rating", { ascending: false, nullsFirst: false });
-      else
-        q = q.order("rating", { ascending: false, nullsFirst: false })
-             .order("reviews_count", { ascending: false, nullsFirst: false });
-      return q;
-    };
+    const buildQuery = (headOnly: boolean) =>
+      buildListingQuery(
+        { region, type, amenities, minRating, sort, includeUncertain, ageMin, ageMax, onlyFree, search },
+        { headOnly, withCount: !headOnly && isInitialFetch },
+      );
 
     (async () => {
       try {
@@ -153,7 +138,14 @@ export function useActivitiesInfinite(
           effectiveTo = effectiveFrom + pageSize - 1;
         }
 
-        const { data: rows, count, error: err } = await buildQuery(false).range(effectiveFrom, effectiveTo);
+        // A1000-P bloker 2: pierwsza strona czystego listingu zostala wystartowana
+        // z modulu wejsciowego (`earlyListingStart.ts`), zanim zamontowal sie React —
+        // tutaj tylko odbieramy jej wynik. `null` = nic nie czeka (inne filtry,
+        // inna strona, wynik sie zestarzal) i lecimy normalnym zapytaniem.
+        const wczesny =
+          isInitialFetch && effectiveFrom === 0 ? takeEarlyListing(filterKey, 0) : null;
+        const { data: rows, count, error: err } = await (wczesny ??
+          buildQuery(false).range(effectiveFrom, effectiveTo));
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;

@@ -1,3 +1,7 @@
+// MUSI byc pierwszym importem w tym pliku: modul wysyla zapytanie o pierwsza
+// strone listingu przy wlasnej ewaluacji, czyli PRZED grafem Reacta i przed
+// leniwymi chunkami trasy (A1000-P bloker 2 — 1202 ms bezczynnosci sieci).
+import "@/lib/earlyListingStart";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";

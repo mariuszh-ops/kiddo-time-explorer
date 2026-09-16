@@ -15,6 +15,11 @@ import HomeSkeleton from "@/components/HomeSkeleton";
 import DataGate from "@/components/DataGate";
 import { FEATURES } from "@/lib/featureFlags";
 import SkipLink from "./components/SkipLink";
+// NIE leniwy, choc to trasa: /{wojewodztwo} to najczestsze wejscie z Google, a
+// resolver renderuje dopiero leniwy CategoryPage. Jako osobny chunk ustawial
+// dwa zapytania szeregowo (chunk resolvera -> chunk CategoryPage, zmierzone
+// 1737 ms -> 2087 ms na CPU4x+4G); w glownej paczce wazy ~1 kB. A1000-P bloker 2.
+import RegionRouteResolver from "./components/RegionRouteResolver";
 
 import Index from "./pages/Index";
 const ActivityDetailRedirect = lazy(() => import("./pages/ActivityDetailRedirect"));
@@ -31,7 +36,6 @@ const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminBledy = lazy(() => import("./pages/admin/AdminBledy"));
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
 const ActivityOrCategoryResolver = lazy(() => import("./components/ActivityOrCategoryResolver"));
-const RegionRouteResolver = lazy(() => import("./components/RegionRouteResolver"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Regulamin = lazy(() => import("./pages/Regulamin"));
 const PolitykaPrywatnosci = lazy(() => import("./pages/PolitykaPrywatnosci"));

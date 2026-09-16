@@ -44,6 +44,13 @@
     <!-- Obrazy atrakcji: własna domena CDN (Cloudflare R2) -->
     <link rel="preconnect" href="https://img.familyfun.pl" crossorigin />
     <link rel="dns-prefetch" href="https://img.familyfun.pl" />
+    <!-- Dane katalogu: Supabase. Bez tego handshake (DNS 10 + TCP 122, w tym TLS
+         111 ms) placi pierwsze zapytanie REST na sciezce krytycznej — a niesie
+         je preflight CORS, wiec zimny odwiedzajacy platil go raz na godzine
+         (A1000-P, P-B-02/P-B-03). Host MUSI zgadzac sie z CATALOG_URL
+         w src/lib/catalogClient.ts. -->
+    <link rel="preconnect" href="https://zpqpgatnnbojgiejmtpt.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://zpqpgatnnbojgiejmtpt.supabase.co" />
     <!-- Preload hero MUSI zostac tutaj, nad arkuszami stylow: skrypt polozony
          nizej (ten przy #app-shell w <body>) czeka na pobranie CSS-a, bo arkusz
          blokuje wykonanie kolejnych skryptow. Bez tego zadanie o obrazek rusza
