@@ -9,6 +9,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import HeroSection from "@/components/HeroSection";
 import FilterBar from "@/components/FilterBar";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import ActivityGrid from "@/components/ActivityGrid";
 import ActivityCard from "@/components/ActivityCard";
 import AllActivitiesListing from "@/components/AllActivitiesListing";
@@ -274,6 +275,7 @@ const Index = () => {
 
       {/* Map view — rendered outside the hidden wrapper so it's visible on mobile */}
       {FEATURES.MAP_VIEW && viewMode === 'map' && (
+        <ErrorBoundary fallbackLevel="section">
         <Suspense fallback={<MapViewSkeleton />}>
           <MapView
             activities={filteredActivities}
@@ -283,10 +285,14 @@ const Index = () => {
             onSaveMapState={handleSaveMapState}
           />
         </Suspense>
+        </ErrorBoundary>
       )}
 
       {/* Sticky filter bar + content wrapper — hidden on mobile map view */}
       <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
+        {/* W-E-01: pasek filtrow ma wlasna granice bledu — crash w jednym
+            dropdownie nie moze zdejmowac calej strony glownej. */}
+        <ErrorBoundary fallbackLevel="section">
         <FilterBar
           filters={filters}
           searchQuery={searchQuery}
@@ -309,8 +315,10 @@ const Index = () => {
           onViewModeChange={handleViewModeChange}
           hideSearch={!mapVisibleActivities && !hasActiveFilters && !showAll}
         />
+        </ErrorBoundary>
 
-      {/* Activity cards grid or curated sections */}
+      {/* Activity cards grid or curated sections — osobna granica bledu (W-E-01). */}
+      <ErrorBoundary fallbackLevel="section">
       {mapVisibleActivities ? (
         <ActivityGrid 
           activities={mapVisibleActivities} 
@@ -431,6 +439,7 @@ const Index = () => {
           />
         </>
       )}
+      </ErrorBoundary>
       </div>
 
     </main>

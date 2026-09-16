@@ -103,7 +103,8 @@ const FilterBar = ({
   if (isMobile) {
     return (
       <>
-        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border">
+        {/* W-E-01: pasek filtrow wylaczony z tlumaczenia — patrz CategoryFilterBar. */}
+        <section className="bg-card sticky top-14 z-40 shadow-sm border-b border-border notranslate" translate="no">
           <div className="container py-3">
             {/* Mobile: always-visible search field (above Filters button) */}
             {FEATURES.SEARCH_AUTOCOMPLETE && !hideSearch && (
@@ -188,7 +189,8 @@ const FilterBar = ({
   // Desktop layout
   return (
     <>
-      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border">
+      {/* W-E-01: pasek filtrow wylaczony z tlumaczenia — patrz CategoryFilterBar. */}
+      <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border notranslate" translate="no">
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
           <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">

@@ -6,6 +6,11 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import { reportClientError } from "@/lib/errorReporter";
+import { installTranslateDomGuard } from "@/lib/domTranslateGuard";
+
+// W-E-01: musi stanac PRZED createRoot — tlumacz stron owija wezly tekstowe
+// w <font>, a wtedy removeChild Reacta rzuca NotFoundError i wywraca widok.
+installTranslateDomGuard();
 
 window.addEventListener("error", (e) => reportClientError("onerror", e.error ?? e.message));
 window.addEventListener("unhandledrejection", (e) =>

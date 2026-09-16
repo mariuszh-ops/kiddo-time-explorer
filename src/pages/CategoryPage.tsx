@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActivityGrid from "@/components/ActivityGrid";
 import ActivityLoadError from "@/components/ActivityLoadError";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 import { Button } from "@/components/ui/button";
 const MapView = lazy(() => import("@/components/MapView"));
@@ -555,7 +556,9 @@ const CategoryPage = () => {
             </p>
           </div>
 
-          {/* Filter bar */}
+          {/* Filter bar — wlasna granica bledu (W-E-01): awaria jednego
+              dropdownu nie ma zdejmowac calego widoku listingu. */}
+          <ErrorBoundary fallbackLevel="section">
           <CategoryFilterBar
             type={effectiveType}
             typeLocked={Boolean(categorySlug)}
@@ -583,6 +586,7 @@ const CategoryPage = () => {
             onlyFree={onlyFree}
             onOnlyFreeChange={(v) => updateParams({ free: v ? "1" : undefined })}
           />
+          </ErrorBoundary>
 
           {/* Count */}
           {urlSearch && (
@@ -621,7 +625,8 @@ const CategoryPage = () => {
               pustą mapę i kłamała (audyt: J-01). */}
           {!isError && !(mapEnabled && pinsError) && (
             <p
-              className="text-sm text-muted-foreground mb-4 min-h-5"
+              className="text-sm text-muted-foreground mb-4 min-h-5 notranslate"
+              translate="no"
               aria-live="polite"
               role="status"
             >
@@ -691,7 +696,8 @@ const CategoryPage = () => {
                 </div>
               )}
 
-              {/* Activity Grid or Map */}
+              {/* Activity Grid or Map — osobna granica bledu (W-E-01). */}
+              <ErrorBoundary fallbackLevel="section">
               {FEATURES.MAP_VIEW && viewMode === "map" ? (
                 <Suspense fallback={<div className="h-[60vh] bg-muted animate-pulse rounded-lg" />}>
                   <MapView
@@ -723,6 +729,7 @@ const CategoryPage = () => {
                   />
                 </>
               )}
+              </ErrorBoundary>
             </>
           )}
 

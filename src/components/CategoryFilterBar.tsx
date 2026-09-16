@@ -131,7 +131,11 @@ const CategoryFilterBar = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 mb-4">
+    // W-E-01: `translate="no"` + `notranslate` na calym pasku. Google Translate
+    // owija tu kazdy tekst w <font><font>, a React przy najblizszej zmianie
+    // filtru wywracal sie na removeChild (dropdown nie otwieral sie wcale).
+    // Etykiety filtrow sa i tak po polsku — tresc atrakcji tlumaczy sie dalej.
+    <div className="flex flex-wrap items-center gap-2 mb-4 notranslate" translate="no">
       {/* Type */}
       {!typeLocked && (
         <Select
