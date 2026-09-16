@@ -36,7 +36,33 @@ export type MapPinTuple = [
   string | null,
 ];
 
+/**
+ * V-H-07: krotka z RPC bywa „prawie liczbą" — lat/lng jako string z ETL, NaN,
+ * pusty tekst albo wartość spoza globusa. Leaflet na takiej wartości wpada
+ * w rekurencję („RangeError: Maximum call stack size exceeded"), wyjątek łapie
+ * `ErrorBoundary` i mapa zostaje PUSTA — jeden zepsuty rekord kasował komplet
+ * pinów. Zwracamy liczbę tylko dla wartości skończonej i mieszczącej się
+ * w zakresie; inaczej `null` = pin do pominięcia (jak przy lat/lng NULL).
+ */
+function wspolrzedna(v: unknown, granica: number): number | null {
+  if (typeof v !== "number" && typeof v !== "string") return null;
+  // Number("") === 0, więc pusty tekst odcinamy osobno (patrz V-H-06).
+  const tekst = typeof v === "string" ? v.trim() : "";
+  if (typeof v === "string" && tekst === "") return null;
+  const n = typeof v === "number" ? v : Number(tekst);
+  if (!Number.isFinite(n) || Math.abs(n) > granica) return null;
+  return n;
+}
+
+/** Współrzędne pina albo `null`, gdy którakolwiek jest nieużywalna. */
+export function pinLatLng(t: MapPinTuple): { lat: number; lng: number } | null {
+  const lat = wspolrzedna(t[4], 90);
+  const lng = wspolrzedna(t[5], 180);
+  return lat === null || lng === null ? null : { lat, lng };
+}
+
 export function pinTupleToActivity(t: MapPinTuple): Activity {
+  const wsp = pinLatLng(t);
   const row: CatalogRow = {
     // Slot 0 to od F-17 zawsze NULL — patrz komentarz przy MapPinTuple.
     place_id: t[0] ?? "",
@@ -46,8 +72,8 @@ export function pinTupleToActivity(t: MapPinTuple): Activity {
     region: t[11] ?? null,
     city: t[12] ?? null,
     address: null,
-    lat: t[4],
-    lng: t[5],
+    lat: wsp?.lat ?? null,
+    lng: wsp?.lng ?? null,
     rating: t[6],
     reviews_count: t[7],
     description: null,
@@ -137,7 +163,9 @@ export function fetchMapPins(query?: MapPinsQuery): Promise<Activity[]> {
     if (error) throw error;
     const tuples = (data as unknown as MapPinTuple[] | null) ?? [];
     const pins = tuples
-      .filter((t) => Array.isArray(t) && t[4] != null && t[5] != null)
+      // Pin bez używalnych współrzędnych jest POMIJANY (V-H-07/V-H-08) —
+      // wcześniej string przechodził przez `!= null` i zabijał całą mapę.
+      .filter((t) => Array.isArray(t) && pinLatLng(t) !== null)
       .map(pinTupleToActivity);
     if (pinsCache.size >= CACHE_LIMIT) {
       const najstarszy = pinsCache.keys().next();
