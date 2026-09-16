@@ -240,6 +240,32 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     );
   });
 
+  it("po submicie bez zgody fokus przenosi się na checkbox, a po jego zaznaczeniu błąd znika", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    // Po nieudanym submicie fokus sterujemy na element z błędem — checkbox zgody.
+    expect(checkbox).toHaveFocus();
+
+    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+    expect(screen.getByText(errorText)).toBeInTheDocument();
+
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+    // Fokus zostaje na checkboxie, na którym użytkownik właśnie działał.
+    expect(checkbox).toHaveFocus();
+
+    await waitFor(() => {
+      expect(screen.queryByText(errorText)).not.toBeInTheDocument();
+    });
+  });
+
   it("checkbox nie występuje w trybach logowania i resetu hasła", () => {
     const { unmount } = render(<EmailAuthForm initialMode="signin" />);
     expect(screen.queryByRole("checkbox")).not.toBeInTheDocument();
