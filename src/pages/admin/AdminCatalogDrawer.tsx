@@ -390,6 +390,7 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
     }
 
     // 3. Notatka — upsert tylko gdy naprawdę się zmieniła (N-07).
+    let noteFailed = false;
     if (noteChanged) {
       // Jak przy PATCH-u rekordu: upsert odfiltrowany przez RLS to 204 bez
       // wierszy, nie 403, więc pusty wynik też jest porażką (A1000-S).
@@ -401,11 +402,24 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
         )
         .select("place_id");
       if (noteError || !noteData || noteData.length === 0) {
-        toast.error("Zapisano rekord, ale notatka się nie udała", {
+        noteFailed = true;
+        // Nagłówek musi pasować do tego, co naprawdę poszło do bazy: przy zapisie
+        // SAMEJ notatki żaden rekord nie był aktualizowany (A1000-S2).
+        toast.error(saved ? "Zapisano rekord, ale notatka się nie udała" : "Nie udało się zapisać notatki", {
           description:
             noteError?.message ?? "Brak uprawnień do tej operacji albo sesja wygasła — odśwież stronę i zaloguj się ponownie.",
         });
       }
+    }
+
+    // Po nieudanej notatce nie meldujemy sukcesu — „Zapisano zmiany” po odmowie RLS
+    // to dokładnie ten fałszywy sukces, który usuwa A1000-S (A1000-S2).
+    if (noteFailed) {
+      setSaving(false);
+      // Rekord poszedł do bazy naprawdę, więc tabela musi to zobaczyć. Gdy zapisywana
+      // była sama notatka, szuflada zostaje otwarta — treść notatki nie przepada.
+      if (saved) onSaved(saved);
+      return;
     }
 
     toast.success("Zapisano zmiany");
