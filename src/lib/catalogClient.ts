@@ -55,6 +55,112 @@ const withAnonAuth = (headers: Headers): Headers => {
   return headers;
 };
 
+/* ------------------------------------------------------------------ *
+ * X-H-01: rozjechany zegar urzadzenia = petla odswiezania tokenu.
+ *
+ * `exp` tokenu porownuje sie z zegarem KLIENTA. Gdy urzadzenie wyprzedza
+ * serwer o wiecej niz TTL tokenu (zmierzone: expires_in = 3600 s),
+ * supabase-js uznaje swiezo wydany token za wygasly i odswieza go — a nowy
+ * token, liczony od PRAWDZIWEGO teraz, rodzi sie tak samo "przeterminowany".
+ * Zmierzone 10.09.2026: zegar +2 h => 32 x POST /auth/v1/token w ~10 s,
+ * ostatnie 429, potem 401 na /rest/v1/saved_activities, ZERO zapisow i ZERO
+ * komunikatu. Kontrola +30 min (ponizej TTL) dziala bez zarzutu, wiec prog
+ * lezy dokladnie na TTL tokenu.
+ *
+ * Dwie warstwy: (1) mierzymy odchylenie zegara, (2) przerywamy petle, zanim
+ * zjemy limit GoTrue (100 zadan/h dzielone z rejestracjami i resetami hasla).
+ * ------------------------------------------------------------------ */
+
+/** Ostatnio zmierzone odchylenie: czas serwera - czas urzadzenia (ms).
+ *  `null` = jeszcze nie zmierzono. Zyje tyle co karta — swiadomie NIE
+ *  trzymamy tego w localStorage. */
+let odchylenieZegaraMs: number | null = null;
+
+/**
+ * Odchylenie zegara urzadzenia wzgledem serwera w ms (dodatnie = urzadzenie
+ * spoznione, ujemne = urzadzenie do przodu). `null`, dopoki zadna odpowiedz
+ * nie dala sie odczytac.
+ */
+export function getClockSkewMs(): number | null {
+  return odchylenieZegaraMs;
+}
+
+/**
+ * Zapisz odchylenie na podstawie naglowka `Date`.
+ *
+ * UWAGA (sprawdzone curl-em 16.09.2026 na zywym projekcie): naglowek `Date`
+ * jest czytelny z JS TYLKO na `/rest/v1/` — PostgREST wymienia go w
+ * `Access-Control-Expose-Headers`. GoTrue (`/auth/v1/`) wystawia tam jedynie
+ * `X-Total-Count, Link, X-Supabase-Api-Version`, wiec tam `get("Date")` odda
+ * `null` mimo ze naglowek leci po sieci. Dlatego odchylenie bierzemy z ruchu
+ * REST (a w ostatecznosci z sondy ponizej), nie z odpowiedzi odswiezania.
+ *
+ * Dokladnosc: naglowek ma rozdzielczosc 1 s, a czytamy go po dotarciu
+ * odpowiedzi, wiec wynik jest obciazony o ~RTT. Przy progu 60 s bez znaczenia.
+ */
+function zapiszOdchylenieZegara(response: Response): void {
+  try {
+    const serwer = response.headers.get("Date");
+    if (!serwer) return;
+    const czasSerwera = new Date(serwer).getTime();
+    if (!Number.isFinite(czasSerwera)) return;
+    odchylenieZegaraMs = czasSerwera - Date.now();
+  } catch {
+    // naglowek nieczytelny (CORS / dziwna proxy) — zostajemy przy `null`
+  }
+}
+
+/** Awaryjny pomiar, gdy petla wybuchla, zanim poszlo cokolwiek po REST.
+ *  Jedno HEAD bez tresci — tylko po to, zeby odczytac `Date`. */
+async function zmierzOdchylenieSonda(): Promise<void> {
+  try {
+    const odp = await fetch(`${CATALOG_URL}/rest/v1/public_activities?select=slug&limit=1`, {
+      method: "HEAD",
+      headers: { apikey: CATALOG_ANON_KEY, Authorization: `Bearer ${CATALOG_ANON_KEY}` },
+    });
+    zapiszOdchylenieZegara(odp);
+  } catch {
+    // brak sieci — trudno, pokazemy zwykly komunikat o wygasnieciu
+  }
+}
+
+/** Powyzej tego odchylenia winimy zegar, a nie wygasniecie sesji. */
+const PROG_ODCHYLENIA_MS = 60_000;
+/** Ile odswiezen w oknie uznajemy jeszcze za normalne. */
+const LIMIT_REFRESHY = 3;
+const OKNO_REFRESHY_MS = 60_000;
+
+/** Zegar odporny na skok systemowego czasu (uzytkownik poprawia date w trakcie). */
+const monotonicznie = (): number =>
+  typeof performance !== "undefined" && typeof performance.now === "function"
+    ? performance.now()
+    : Date.now();
+
+let znacznikiRefreshu: number[] = [];
+let odpowiedziNaRefresh = 0;
+let petlaPrzerwana = false;
+
+const jestOdswiezeniemTokenu = (url: string): boolean =>
+  url.includes("/auth/v1/token") && url.includes("grant_type=refresh_token");
+
+/**
+ * Zatrzymaj petle i powiedz uzytkownikowi, co sie stalo. Odpalane raz.
+ * `stopAutoRefresh()` ubija tykacz auth-js; samo blokowanie zadan w
+ * `catalogFetch` pilnuje sciezki wyzwalanej zapytaniami.
+ */
+async function przerwijPetleOdswiezania(): Promise<void> {
+  try {
+    await catalogClient.auth.stopAutoRefresh();
+  } catch {
+    // klient jeszcze sie nie zainicjalizowal — blokada zadan i tak dziala
+  }
+  if (odchylenieZegaraMs === null) await zmierzOdchylenieSonda();
+  const odchylenie = odchylenieZegaraMs;
+  reportInvalidSession(
+    odchylenie !== null && Math.abs(odchylenie) > PROG_ODCHYLENIA_MS ? "zegar" : "token"
+  );
+}
+
 /**
  * Fetch klienta katalogu:
  * - wszystkie zapytania przechodzą z bieżącym tokenem użytkownika;
@@ -65,7 +171,34 @@ const catalogFetch: typeof fetch = async (input, init) => {
   const url = urlOf(input);
   const isAuthEndpoint = url.includes("/auth/v1/");
 
+  // X-H-01: zanim cokolwiek poleci na siec — policz odswiezenia w oknie 60 s.
+  // Czwarte w oknie NIE wychodzi: przerywamy tu, zanim GoTrue odda 429.
+  // Rzucamy TypeError, bo tak wyglada padnieta siec — auth-js klasyfikuje to
+  // jako blad ponawialny i NIE wylogowuje po cichu przy okazji.
+  //
+  // WARUNEK `odpowiedziNaRefresh >= 1` nie jest ozdoba. `_callRefreshToken`
+  // w auth-js ponawia probe przy bledzie SIECI, z narastajacym odstepem, przez
+  // ok. 30 s — czyli kilka sekund bez zasiegu samo w sobie potrafi wygenerowac
+  // 4+ prob w oknie. Petla zegarowa rozni sie od zerwanej sieci tym, ze serwer
+  // ODPOWIADA (w pomiarze: 33 x 200, ostatnia 429). Blokujemy wiec dopiero
+  // wtedy, gdy wiemy, ze druga strona zyje — inaczej karalibysmy chwilowy brak
+  // zasiegu cichym wylogowaniem, czyli dokladnie ta wada, ktora naprawiamy.
+  if (jestOdswiezeniemTokenu(url)) {
+    const teraz = monotonicznie();
+    znacznikiRefreshu = znacznikiRefreshu.filter((t) => teraz - t < OKNO_REFRESHY_MS);
+    znacznikiRefreshu.push(teraz);
+    if (znacznikiRefreshu.length > LIMIT_REFRESHY && odpowiedziNaRefresh >= 1) {
+      if (!petlaPrzerwana) {
+        petlaPrzerwana = true;
+        void przerwijPetleOdswiezania();
+      }
+      throw new TypeError("Failed to fetch");
+    }
+  }
+
   const response = await fetch(input, init);
+  zapiszOdchylenieZegara(response);
+  if (jestOdswiezeniemTokenu(url)) odpowiedziNaRefresh += 1;
   if (response.status !== 401 || isAuthEndpoint) return response;
 
   let code = "";
