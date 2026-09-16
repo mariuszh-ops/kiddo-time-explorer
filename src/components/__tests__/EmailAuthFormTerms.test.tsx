@@ -244,6 +244,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     expect(alert).toHaveTextContent(errorText);
   });
 
+  it("komunikat błędu zgody jest powiązany z checkboxem przez aria-describedby", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
 
