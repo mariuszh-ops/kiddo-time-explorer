@@ -228,11 +228,19 @@ const createPopupContent = (activity: Activity, isFav: boolean) => {
   `;
 };
 
+// W-I-02: odmiana po polsku — 2-4 (poza 12-14) to „atrakcje", reszta „atrakcji".
+const odmianaAtrakcji = (ile: number): string => {
+  const reszta10 = ile % 10;
+  const reszta100 = ile % 100;
+  const mnoga = reszta10 >= 2 && reszta10 <= 4 && (reszta100 < 12 || reszta100 > 14);
+  return mnoga ? "atrakcje" : "atrakcji";
+};
+
 // Cluster icon creator
 const createClusterIcon = (cluster: L.MarkerCluster) => {
   const count = cluster.getChildCount();
   const size = count < 10 ? 40 : count < 50 ? 44 : 48;
-  return L.divIcon({
+  const ikona = L.divIcon({
     html: `<div style="
       width:${size}px;height:${size}px;border-radius:50%;
       background:#2F6B4F;color:#fff;
@@ -245,6 +253,21 @@ const createClusterIcon = (cluster: L.MarkerCluster) => {
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });
+
+  // W-I-02: Leaflet daje klastrowi role="button" i tabindex="0", a nazwa dostepna
+  // brala sie z samej tresci — czytnik czytal „12, przycisk". Atrybut musi siedziec
+  // na ZEWNETRZNYM elemencie markera, wiec nie da sie go wpisac w `html`.
+  // Nie uzywamy tez `cluster.once("add")`: markercluster przy zmianie licznika wola
+  // `setIcon(this)` i buduje element od nowa BEZ zdarzenia „add" — etykieta by wtedy
+  // znikala. Opakowanie `createIcon` trafia w kazdy element, ktory Leaflet utworzy.
+  const etykieta = `Grupa ${count} ${odmianaAtrakcji(count)} — kliknij, aby przybliżyć`;
+  const zrobIkone = ikona.createIcon.bind(ikona);
+  ikona.createIcon = (stara?: HTMLElement) => {
+    const el = zrobIkone(stara);
+    el.setAttribute("aria-label", etykieta);
+    return el;
+  };
+  return ikona;
 };
 
 // W-I-07: dymek dostaje fokus tylko przy otwarciu Z INICJATYWY UZYTKOWNIKA
@@ -804,6 +827,22 @@ function MapRefCapture({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null
   return null;
 }
 
+// W-I-01: kontener mapy nie mial ani roli, ani nazwy — 1032x784 px bez zadnego
+// punktu zaczepienia dla czytnika ekranu. Atrybuty ustawiamy imperatywnie, bo
+// <MapContainer> z react-leaflet 4.2.1 przepuszcza do <div> WYLACZNIE className,
+// id i style (MapContainer.js) — `role`/`aria-label` w JSX poszlyby do opcji
+// Leafletu i przepadly. Rola „region" (nie „application"): „application" odbiera
+// czytnikowi tryb przegladania, a mapa ma dzialac jak zwykly obszar strony.
+function OpisMapy({ nazwa }: { nazwa: string }) {
+  const map = useMap();
+  useEffect(() => {
+    const kontener = map.getContainer();
+    kontener.setAttribute("role", "region");
+    kontener.setAttribute("aria-label", nazwa);
+  }, [map, nazwa]);
+  return null;
+}
+
 export interface SavedMapState {
   center: [number, number];
   zoom: number;
@@ -820,10 +859,14 @@ interface MapViewProps {
   pinsError?: Error | null;
   /** Ponowienie pobrania pinów rodzica — parą do `pinsError`. */
   onPinsRetry?: () => void;
+  /** W-I-01: nazwa obszaru do etykiety mapy, zwykle H1 strony (np. „Atrakcje w Małopolsce"). */
+  nazwaObszaru?: string;
 }
 
-const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry, nazwaObszaru }: MapViewProps) => {
   const isMobile = useIsMobile();
+  // W-I-01: nazwa mapy idzie za H1 strony; na home (brak H1 obszaru) zostaje ogólna.
+  const etykietaMapy = nazwaObszaru ? `Mapa: ${nazwaObszaru}` : "Mapa atrakcji dla dzieci";
   const { isFavorite, toggleFavorite } = useSavedActivities();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
@@ -1091,6 +1134,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
+          <OpisMapy nazwa={etykietaMapy} />
           {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
               dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
               rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej
@@ -1237,6 +1281,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
+          <OpisMapy nazwa={etykietaMapy} />
           {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
               dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
               rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej

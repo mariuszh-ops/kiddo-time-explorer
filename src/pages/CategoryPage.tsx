@@ -708,6 +708,7 @@ const CategoryPage = () => {
                     onSaveMapState={handleSaveMapState}
                     pinsError={pinsError}
                     onPinsRetry={refetchPins}
+                    nazwaObszaru={resolvedH1}
                   />
                 </Suspense>
               ) : (
