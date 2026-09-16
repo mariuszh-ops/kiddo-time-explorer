@@ -86,10 +86,34 @@ const catalogFetch: typeof fetch = async (input, init) => {
   return response;
 };
 
+/**
+ * W-D-01: `window.localStorage` to GETTER. Polityka MDM albo rozszerzenie
+ * prywatnosci potrafi sprawic, ze sam odczyt rzuca `SecurityError` — a ten
+ * odczyt stal wczesniej w wywolaniu `createClient` na poziomie MODULU, wiec
+ * wyjatek leci przy imporcie, zanim React w ogole sie zamontuje. Skutek:
+ * biala strona (sam shell z index.html), zero kafli, zero klikalnych
+ * przyciskow — dla KAZDEGO, takze goscia, ktory o logowanie nie prosil.
+ *
+ * Dotykamy magazynu raz, w try/catch, i przy odmowie oddajemy `undefined`.
+ * Wtedy auth-js sam wykrywa brak localStorage (`supportsLocalStorage()` jest
+ * u niego opakowane w try/catch) i wklada `memoryLocalStorageAdapter` —
+ * sesja zyje do zamkniecia karty, a katalog dziala bez zmian.
+ */
+const bezpiecznyMagazynSesji = ((): Storage | undefined => {
+  try {
+    if (typeof window === "undefined") return undefined;
+    const magazyn = window.localStorage; // tu wlasnie leci SecurityError
+    magazyn.getItem(CATALOG_AUTH_STORAGE_KEY); // i tu, gdy getter oddaje atrape
+    return magazyn;
+  } catch {
+    return undefined; // sesja tylko w pamieci — gosc dziala normalnie
+  }
+})();
+
 export const catalogClient = createClient(CATALOG_URL, CATALOG_ANON_KEY, {
   global: { fetch: catalogFetch },
   auth: {
-    storage: typeof window !== "undefined" ? window.localStorage : undefined,
+    storage: bezpiecznyMagazynSesji,
     persistSession: true,
     autoRefreshToken: true,
     storageKey: CATALOG_AUTH_STORAGE_KEY,

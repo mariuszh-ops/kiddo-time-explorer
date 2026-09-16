@@ -192,17 +192,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!hasAcceptedTerms()) {
       throw new Error(TERMS_REQUIRED_ERROR);
     }
+    const sciezkaTeraz = window.location.pathname + window.location.search;
+    // W-D-01: `window.localStorage` bywa getterem rzucajacym SecurityError
+    // (polityka MDM, rozszerzenie prywatnosci). Niezabezpieczony odczyt
+    // wywracal tu CALE logowanie Google — do `signInWithOAuth` nie doszlo.
+    let returnTo = sciezkaTeraz;
     try {
-      const returnTo = window.location.pathname + window.location.search;
-      window.localStorage.setItem("auth_return_to", returnTo);
+      window.localStorage.setItem("auth_return_to", sciezkaTeraz);
+      returnTo = window.localStorage.getItem("auth_return_to") || sciezkaTeraz;
     } catch {
-      // storage unavailable — ignore
+      // magazyn zablokowany — wracamy tam, gdzie uzytkownik jest teraz
     }
-    const returnTo =
-      (typeof window !== "undefined" &&
-        (window.localStorage.getItem("auth_return_to") ||
-          window.location.pathname + window.location.search)) ||
-      "/";
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin + returnTo },

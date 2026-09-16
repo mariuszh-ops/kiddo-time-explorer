@@ -23,11 +23,32 @@ declare global {
 
 const STORAGE_KEY = "ff:layout-diagnostics-open";
 
-const LayoutDiagnostics = () => {
-  const [open, setOpen] = useState<boolean>(() => {
+/**
+ * W-D-01: ten panel siedzi w App.tsx na KAZDEJ trasie, a `window.localStorage`
+ * to getter, ktory przy polityce MDM / rozszerzeniu prywatnosci rzuca
+ * `SecurityError`. Bez try/catch rzut z inicjalizatora `useState` wywraca cale
+ * drzewo Reacta do ErrorBoundary — czyli narzedzie deweloperskie zabijaloby
+ * katalog uzytkownikowi. Odmowa magazynu = panel po prostu zamkniety.
+ */
+const czytajOtwarcie = (): boolean => {
+  try {
     if (typeof window === "undefined") return false;
     return window.localStorage.getItem(STORAGE_KEY) === "1";
-  });
+  } catch {
+    return false;
+  }
+};
+
+const zapiszOtwarcie = (otwarty: boolean): void => {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, otwarty ? "1" : "0");
+  } catch {
+    /* magazyn zablokowany — stan panelu nie przezyje przeladowania */
+  }
+};
+
+const LayoutDiagnostics = () => {
+  const [open, setOpen] = useState<boolean>(() => czytajOtwarcie());
   const [tick, setTick] = useState(0);
 
   // Toggle with Alt+L
@@ -36,7 +57,7 @@ const LayoutDiagnostics = () => {
       if (e.altKey && (e.key === "l" || e.key === "L")) {
         setOpen((v) => {
           const next = !v;
-          window.localStorage.setItem(STORAGE_KEY, next ? "1" : "0");
+          zapiszOtwarcie(next);
           return next;
         });
       }
@@ -97,7 +118,7 @@ const LayoutDiagnostics = () => {
         type="button"
         onClick={() => {
           setOpen(true);
-          window.localStorage.setItem(STORAGE_KEY, "1");
+          zapiszOtwarcie(true);
         }}
         title="Layout diagnostics (Alt+L)"
         className="fixed bottom-2 left-2 z-[9999] px-2 py-1 rounded-md text-[10px] font-mono bg-zinc-900/80 text-zinc-100 border border-zinc-700 shadow-lg backdrop-blur-sm hover:bg-zinc-800"
@@ -121,7 +142,7 @@ const LayoutDiagnostics = () => {
           aria-label="Close diagnostics"
           onClick={() => {
             setOpen(false);
-            window.localStorage.setItem(STORAGE_KEY, "0");
+            zapiszOtwarcie(false);
           }}
           className="text-zinc-400 hover:text-zinc-100 px-1 leading-none"
         >
