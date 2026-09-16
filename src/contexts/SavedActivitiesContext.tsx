@@ -26,6 +26,39 @@ import { toast } from "sonner";
 const SAVE_ERROR = "Nie udało się zapisać. Spróbuj ponownie.";
 const notifySaveError = () => toast.error(SAVE_ERROR);
 
+// U-B-01: PostgREST domyślnie tnie odpowiedź na 1000 wierszy, a płaski
+// `.select().eq()` nie miał ani `.range()`, ani informacji o obcięciu — konto
+// z 1001 zapisanymi atrakcjami dostawało CICHO 1000 wierszy i zaniżony licznik.
+// Czytamy więc stronami aż do partii krótszej niż strona, dokładnie jak
+// `_loadActivitiesInner` w `@/data/activities`. Porządek po (activity_slug, kind)
+// jest totalny dzięki unikalnemu indeksowi (user_id, activity_slug, kind),
+// więc kolejne strony nie gubią ani nie powtarzają wierszy.
+const SAVED_PAGE_SIZE = 1000;
+
+type SavedRow = { activity_slug: string; kind: string };
+
+type SavedRowsResult =
+  | { rows: SavedRow[]; error: null }
+  | { rows: null; error: unknown };
+
+async function fetchAllSavedRows(userId: string): Promise<SavedRowsResult> {
+  const rows: SavedRow[] = [];
+  for (let from = 0; ; from += SAVED_PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("saved_activities")
+      .select("activity_slug, kind")
+      .eq("user_id", userId)
+      .order("activity_slug", { ascending: true })
+      .order("kind", { ascending: true })
+      .range(from, from + SAVED_PAGE_SIZE - 1);
+    if (error) return { rows: null, error };
+    if (!data || data.length === 0) break;
+    rows.push(...data);
+    if (data.length < SAVED_PAGE_SIZE) break;
+  }
+  return { rows, error: null };
+}
+
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
 // interface Collection {
 //   id: string;
@@ -225,20 +258,17 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      const { data, error } = await supabase
-        .from("saved_activities")
-        .select("activity_slug, kind")
-        .eq("user_id", user.id);
+      const { rows, error } = await fetchAllSavedRows(user.id);
       if (cancelled) return;
-      if (error || !data) {
-        if (error) toast.error("Nie udało się wczytać zapisanych atrakcji.");
+      if (error || !rows) {
+        toast.error("Nie udało się wczytać zapisanych atrakcji.");
         setIsLoadingSaved(false);
         return;
       }
 
       const fav = new Set<number>();
       const wtv = new Set<number>();
-      for (const row of data) {
+      for (const row of rows) {
         const id = idFromSlug(row.activity_slug);
         if (id == null) continue;
         if (row.kind === "favorite") fav.add(id);
@@ -423,15 +453,12 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         return;
       }
     }
-    const { data, error } = await supabase
-      .from("saved_activities")
-      .select("activity_slug, kind")
-      .eq("user_id", user.id);
-    if (error || !data) return;
+    const { rows, error } = await fetchAllSavedRows(user.id);
+    if (error || !rows) return;
     const fav = new Set<number>();
     const wtv = new Set<number>();
     let unresolved = false;
-    for (const row of data) {
+    for (const row of rows) {
       const id = idFromSlug(row.activity_slug);
       if (id == null) {
         unresolved = true;
