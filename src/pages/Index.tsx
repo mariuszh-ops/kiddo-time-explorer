@@ -16,6 +16,8 @@ import DiscoverSections from "@/components/DiscoverSections";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
+import { useHomeCatalog, HOME_PAGE_SIZE } from "@/hooks/useHomeCatalog";
+import { Button } from "@/components/ui/button";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
@@ -98,10 +100,17 @@ const Index = () => {
   // useActivityFilters po stronie klienta i to on woła ensureActivitiesLoaded().
   const listingSerwerowy = showAll && !hasActiveFilters;
   const dataStatus = useDataStatus();
-  // Katalog ładuje się leniwie — flaga musi być true także w momencie tuż po
-  // włączeniu filtra, zanim ensureActivitiesLoaded() przestawi status.
-  const katalogSieLaduje =
-    dataStatus === "loading" || (hasActiveFilters && dataStatus === "idle");
+  // Q-E-10b: pełny katalog w pamięci dociąga już TYLKO widok mapy z filtrami
+  // (mapa musi mieć wszystkie pasujące piny, nie jedną stronę). Siatka i liczniki
+  // idą serwerowo, więc tu wystarczy stan tamtego jednego pobrania.
+  const katalogSieLaduje = dataStatus === "loading";
+
+  // Q-E-10b: liczniki przy opcjach filtrów liczy serwer. Włączamy je, gdy filtr
+  // jest aktywny albo gdy użytkownik dopiero sięga po kontrolkę filtrującą —
+  // samo wejście na stronę główną nie ma odpalać żadnego zapytania.
+  const [dotknietoFiltrow, setDotknietoFiltrow] = useState(false);
+  const zapytaniaSerwerowe = viewMode !== "map" && (hasActiveFilters || dotknietoFiltrow);
+  const home = useHomeCatalog(filters, searchQuery, zapytaniaSerwerowe);
 
   // F-1: "Zobacz wszystkie atrakcje" prowadzi na /?all=1, czyli TEN SAM pathname.
   // useScrollPosition przewija tylko przy zmianie location.pathname, wiec po
@@ -282,7 +291,8 @@ const Index = () => {
           filters={filters}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
-          filterCounts={filterCounts}
+          filterCounts={home.filterCounts}
+          onFilterIntent={() => setDotknietoFiltrow(true)}
           onUpdateFilter={(key, value) => {
             // Pasek filtrów na home: zdarzenia analityki dla trzech pól, po których
             // widać, czego ludzie szukają (A-12).
@@ -315,16 +325,46 @@ const Index = () => {
       ) : listingSerwerowy ? (
         <AllActivitiesListing />
       ) : hasActiveFilters ? (
-        <ActivityGrid
-          activities={filteredActivities} 
-          hasActiveFilters={hasActiveFilters}
-          onClearFilters={clearAllFilters}
-          onClearFiltersKeepCity={clearFiltersKeepCity}
-          searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery("")}
-          filters={filters}
-          isLoading={katalogSieLaduje}
-        />
+        <>
+          {/* Q-E-10b: wyniki filtrów idą serwerową paginacją (porcje po
+              HOME_PAGE_SIZE), nie filtrowaniem całego katalogu w pamięci. */}
+          <ActivityGrid
+            activities={home.activities}
+            hasActiveFilters={hasActiveFilters}
+            onClearFilters={clearAllFilters}
+            onClearFiltersKeepCity={clearFiltersKeepCity}
+            searchQuery={searchQuery}
+            onClearSearch={() => setSearchQuery("")}
+            filters={filters}
+            isLoading={home.loading}
+            hasError={Boolean(home.error) && home.activities.length === 0}
+            onRetry={home.refetch}
+            paginate={false}
+          />
+          {home.hasMore && !home.error && (
+            <div className="container mt-8 flex justify-center">
+              <Button onClick={home.loadMore} disabled={home.loadingMore} variant="outline" size="lg">
+                {home.loadingMore
+                  ? "Wczytywanie…"
+                  : `Pokaż więcej (${Math.max(0, home.filterCounts.filtered - home.activities.length)})`}
+              </Button>
+            </div>
+          )}
+          {/* Doładowanie kolejnej porcji padło — to, co już jest, zostaje na ekranie. */}
+          {home.error && home.activities.length > 0 && (
+            <div className="container mt-8 flex flex-col items-center gap-3">
+              <p className="text-sm text-muted-foreground">Nie udało się wczytać kolejnych atrakcji.</p>
+              <Button onClick={home.refetch} variant="outline" size="lg">
+                Spróbuj ponownie
+              </Button>
+            </div>
+          )}
+          {!home.hasMore && !home.loading && !home.error && home.filterCounts.filtered > HOME_PAGE_SIZE && (
+            <p className="text-center text-muted-foreground mt-10 text-sm">
+              To wszystkie atrakcje pasujące do filtrów
+            </p>
+          )}
+        </>
       ) : (
         <>
           {/* Prominent search field above city tiles */}

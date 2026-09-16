@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
-import { getActivities, filterOptions, Activity, cityCenters, ensureActivitiesLoaded } from "@/data/activities";
+import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -114,13 +114,14 @@ export function useActivityFilters() {
   }, [filters, searchQuery]);
 
 
-  // Filtrowanie/wyszukiwanie po stronie klienta wymaga pełnego zbioru —
-  // dociągamy go dopiero, gdy użytkownik faktycznie użyje filtra lub szukajki.
-  useEffect(() => {
-    const hasFilter =
-      Object.keys(filters).length > 0 || searchQuery.trim().length > 0;
-    if (hasFilter) ensureActivitiesLoaded();
-  }, [filters, searchQuery]);
+  // Q-E-10b: ten hook NIE dociąga już katalogu. Siatkę wyników i liczniki przy
+  // opcjach filtrów liczy serwer (useHomeCatalog → rpc('ff_home_list') /
+  // rpc('ff_home_counts')), więc filtr na stronie głównej nie sprowadza już
+  // 4892 wierszy do pamięci. `filteredActivities` i `filterCounts` poniżej
+  // zostają dla JEDNEJ ścieżki, która wciąż potrzebuje kompletu w pamięci:
+  // widoku mapy z filtrem (mapa rysuje wszystkie pasujące piny, nie stronę).
+  // Ładowanie katalogu dla tej ścieżki włącza Index.tsx własnym efektem
+  // `if (viewMode === "map" && hasActiveFilters) ensureActivitiesLoaded()`.
 
   const updateFilter = useCallback((key: keyof Filters, value: string | string[] | number | undefined) => {
     setFilters((prev) => {

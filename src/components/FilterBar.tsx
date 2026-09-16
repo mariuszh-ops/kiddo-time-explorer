@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useDataStatus } from "@/hooks/useDataStatus";
 import { cn } from "@/lib/utils";
 import { activityCount, activityWord, verbPl } from "@/lib/plural";
 import FilterDropdown from "@/components/FilterDropdown";
@@ -12,7 +11,6 @@ import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
-import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 
 interface FilterBarProps {
   filters: Filters;
@@ -37,6 +35,13 @@ interface FilterBarProps {
   onViewModeChange?: (mode: "grid" | "map") => void;
   /** Ukryj pole wyszukiwania w pasku filtrów (np. na home, gdzie szukanie żyje w hero). */
   hideSearch?: boolean;
+  /**
+   * Q-E-10b: sygnał „użytkownik sięga po filtr”. Strona główna włącza wtedy
+   * serwerowe liczniki (rpc('ff_home_counts')), żeby liczby przy opcjach były
+   * gotowe w chwili rozwinięcia listy. Wcześniej to samo miejsce wołało
+   * ensureActivitiesLoaded(), czyli ściągało cały katalog.
+   */
+  onFilterIntent?: () => void;
 }
 
 // Dopełniacz nazwy stolicy województwa — używany w podpisach typu "…od centrum {miasto}".
@@ -45,11 +50,6 @@ import { REGION_BY_SLUG } from "@/data/regions";
 const getCapitalCityGenitive = (cityValue: string): string => {
   return REGION_BY_SLUG[cityValue]?.capitalCityGenitive ?? cityValue;
 };
-
-// Prefetch katalogu dla konkretnych kontrolek filtrujących.
-// Nie podpinamy tego pod cały pasek — przewijanie palcem po sticky barze
-// lub przejście tabem przez niego nie powinno ściągać 2 MB katalogu.
-const prefetchCatalog = () => ensureActivitiesLoaded();
 
 const FilterBar = ({
   filters,
@@ -62,12 +62,14 @@ const FilterBar = ({
   viewMode,
   onViewModeChange,
   hideSearch = false,
+  onFilterIntent,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const isMobile = useIsMobile();
-  // Re-render po leniwym dociągnięciu katalogu (podpowiedzi wyszukiwarki).
-  useDataStatus();
+  // Sygnał „sięgam po filtr”. Nie podpinamy go pod cały pasek — przewijanie
+  // palcem po sticky barze ani przejście tabem nie mają nic pobierać.
+  const prefetchCatalog = () => onFilterIntent?.();
 
   // Sort is not counted as an active filter
   const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
@@ -108,7 +110,6 @@ const FilterBar = ({
               <div className="mb-3 w-full [&_input]:!w-full">
                 <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
                   <SearchAutocomplete
-                    activities={getActivities()}
                     searchQuery={searchQuery}
                     onSearchChange={onSearchChange}
                   />
@@ -263,7 +264,6 @@ const FilterBar = ({
             {hideSearch ? null : FEATURES.SEARCH_AUTOCOMPLETE ? (
               <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
                 <SearchAutocomplete
-                  activities={getActivities()}
                   searchQuery={searchQuery}
                   onSearchChange={onSearchChange}
                 />

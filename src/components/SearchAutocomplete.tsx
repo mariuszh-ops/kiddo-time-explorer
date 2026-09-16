@@ -6,23 +6,23 @@ import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { REGION_BY_SLUG } from "@/data/regions";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
-import { matchesSearchQuery, normalizeSearchText } from "@/lib/searchMatch";
+import { normalizeSearchText } from "@/lib/searchMatch";
+import { useActivitySuggestions } from "@/hooks/useActivitySuggestions";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 interface SearchAutocompleteProps {
-  activities: Activity[];
+  /**
+   * Q-E-10b: lista podpowiedzi nie jest juz przekazywana z zewnatrz. Wczesniej
+   * byl to CALY katalog (getActivities()), filtrowany w pamieci przegladarki.
+   */
   searchQuery: string;
   onSearchChange: (query: string) => void;
 }
 
 function fuzzyMatch(text: string, query: string): boolean {
   return normalizeSearchText(text).includes(normalizeSearchText(query));
-}
-
-function matchActivity(activity: Activity, query: string): boolean {
-  return matchesSearchQuery(activity, query);
 }
 
 // Get human-readable category label from type value
@@ -60,7 +60,6 @@ function matchCategories(query: string) {
 }
 
 const SearchAutocomplete = ({
-  activities,
   searchQuery,
   onSearchChange,
 }: SearchAutocompleteProps) => {
@@ -88,10 +87,10 @@ const SearchAutocomplete = ({
     setInputValue(searchQuery);
   }, [searchQuery]);
 
-  const matchingActivities = useMemo(() => {
-    if (debouncedQuery.length < 2) return [];
-    return activities.filter((a) => matchActivity(a, debouncedQuery)).slice(0, 5);
-  }, [activities, debouncedQuery]);
+  // Podpowiedzi liczy serwer na frazie WPISYWANEJ w tym polu. Prop `searchQuery`
+  // niesie fraze ZATWIERDZONA (z ?search= w URL) i podczas pisania jest pusty —
+  // podpiecie hooka pod niego dawalo zawsze „Nie znaleziono atrakcji".
+  const matchingActivities = useActivitySuggestions(debouncedQuery, 5);
 
   const matchingCategories = useMemo(() => {
     if (debouncedQuery.length < 2) return [];

@@ -1,11 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, MapPin, Check } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
-import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
-import { useDataStatus } from "@/hooks/useDataStatus";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FEATURES } from "@/lib/featureFlags";
@@ -154,14 +152,10 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 0);
-  // Reaguje na załadowanie katalogu — memo z pustą tablicą zamrażałoby dane.
-  const dataStatus = useDataStatus();
-  // Arkusz filtrów otwiera się na żądanie — tu dopiero potrzebny pełny zbiór.
-  useEffect(() => {
-    if (isOpen) ensureActivitiesLoaded();
-  }, [isOpen]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const activities = useMemo(() => getActivities(), [dataStatus]);
+  // Q-E-10b: arkusz nie dotyka juz pelnego katalogu. Jedyne, co go tu
+  // potrzebowalo, to podpowiedzi wyszukiwarki — te bierze teraz z serwera sam
+  // SearchAutocomplete. Otwarcie arkusza na telefonie kosztowalo wczesniej
+  // 4892 wiersze (534 kB po sieci).
   const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
@@ -211,7 +205,6 @@ const MobileFilterSheet = ({
           {/* Search autocomplete */}
           <div className="py-4 border-b border-border">
             <SearchAutocomplete
-              activities={activities}
               searchQuery={localSearch}
               onSearchChange={setLocalSearch}
             />

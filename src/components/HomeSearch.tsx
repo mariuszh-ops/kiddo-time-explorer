@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { MapPin, Search, X } from "lucide-react";
-import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
+import { filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
-import { useDataStatus } from "@/hooks/useDataStatus";
-import { matchesSearchQuery } from "@/lib/searchMatch";
+import { useActivitySuggestions } from "@/hooks/useActivitySuggestions";
 import { trackEvent } from "@/lib/analytics";
 
 function normalize(text: string): string {
@@ -73,28 +72,15 @@ const HomeSearch = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const listboxId = "home-search-listbox";
 
-  // Reaguje na załadowanie katalogu — bez tego memo zamrażałoby puste dane.
-  const dataStatus = useDataStatus();
-  // Katalog dociągamy dopiero przy pierwszym wpisanym znaku.
-  useEffect(() => {
-    if (value.trim().length > 0) ensureActivitiesLoaded();
-  }, [value]);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const activities = useMemo(() => getActivities(), [dataStatus]);
-
   useEffect(() => {
     const t = setTimeout(() => setDebounced(value), 150);
     return () => clearTimeout(t);
   }, [value]);
 
-  const matchingActivities = useMemo(() => {
-    if (debounced.trim().length < 2) return [];
-    const q = debounced.trim();
-    return activities
-      // Dopasowanie AND po tokenach: kolejność słów nie ma znaczenia.
-      .filter((a) => matchesSearchQuery(a, q))
-      .slice(0, 6);
-  }, [activities, debounced]);
+  // Q-E-10b: podpowiedzi przychodzą z serwera (6 wierszy, rpc('ff_home_list')).
+  // Wcześniej pierwszy wpisany znak wołał ensureActivitiesLoaded(), czyli
+  // ściągał cały katalog (4892 wiersze, 534 kB po sieci) dla sześciu podpowiedzi.
+  const matchingActivities = useActivitySuggestions(debounced, 6);
 
   const matchingCategories = useMemo(() => {
     if (debounced.trim().length < 2) return [];
