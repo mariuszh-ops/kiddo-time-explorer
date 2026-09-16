@@ -39,6 +39,10 @@ const toTime24 = (raw: string): string | undefined => {
   return `${String(h).padStart(2, "0")}:${min}`;
 };
 
+/** Pojedynczy zakres godzin w obrebie dnia. Flaga /g – dzien moze miec kilka zakresow. */
+const RANGE_RE =
+  /(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)\s*(?:[–—-]|do)\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)/g;
+
 export interface OpeningHoursSpec {
   "@type": "OpeningHoursSpecification";
   dayOfWeek: string;
@@ -66,14 +70,14 @@ export function buildOpeningHoursSpecification(hours?: string | null): OpeningHo
       out.push({ "@type": "OpeningHoursSpecification", dayOfWeek, opens: "00:00", closes: "23:59" });
       continue;
     }
-    const match = time.match(
-      /(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)\s*(?:[–—-]|do)\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)/,
-    );
-    if (!match) continue;
-    const opens = toTime24(match[1]);
-    const closes = toTime24(match[2]);
-    if (!opens || !closes) continue;
-    out.push({ "@type": "OpeningHoursSpecification", dayOfWeek, opens, closes });
+    // Dzien moze miec przerwe ("10:00-14:00, 16:00-20:00") – bierzemy KAZDY zakres,
+    // po jednym OpeningHoursSpecification na zakres (tak wymaga schema.org).
+    for (const match of time.matchAll(RANGE_RE)) {
+      const opens = toTime24(match[1]);
+      const closes = toTime24(match[2]);
+      if (!opens || !closes) continue;
+      out.push({ "@type": "OpeningHoursSpecification", dayOfWeek, opens, closes });
+    }
   }
 
   return out;
