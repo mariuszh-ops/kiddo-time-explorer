@@ -3,6 +3,25 @@ import type { SetURLSearchParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import type { SavedMapState } from "@/components/MapView";
 
+/** Leaflet bez jawnego maxZoom tnie kafle na 18; 19 zostawiamy jako zapas. */
+const ZOOM_MIN = 3;
+const ZOOM_MAX = 19;
+
+/**
+ * Liczba z query stringa. Pusty parametr, smiec i wartosc poza zakresem
+ * znacza BRAK parametru (null), a nie zero: Number("") === 0, wiec
+ * `?lat=&lng=&zoom=` wysylalo mape na (0,0) — Zatoka Gwinejska (V-H-06).
+ */
+function liczbaZZakresu(raw: string | null, min: number, max: number): number | null {
+  if (raw === null) return null;
+  const tekst = raw.trim();
+  if (tekst === "") return null;
+  const n = Number(tekst);
+  if (!Number.isFinite(n)) return null;
+  if (n < min || n > max) return null;
+  return n;
+}
+
 /**
  * Tryb widoku (lista/mapa) oraz pozycja mapy (center, zoom, chipsy kategorii)
  * trzymane w query params — tak samo jak filtry listingu.
@@ -33,10 +52,10 @@ export function useMapUrlState(
   const rawCats = searchParams.get("cats");
 
   const savedMapState = useMemo<SavedMapState | null>(() => {
-    const lat = rawLat !== null ? Number(rawLat) : NaN;
-    const lng = rawLng !== null ? Number(rawLng) : NaN;
-    const zoom = rawZoom !== null ? Number(rawZoom) : NaN;
-    if (!Number.isFinite(lat) || !Number.isFinite(lng) || !Number.isFinite(zoom)) return null;
+    const lat = liczbaZZakresu(rawLat, -90, 90);
+    const lng = liczbaZZakresu(rawLng, -180, 180);
+    const zoom = liczbaZZakresu(rawZoom, ZOOM_MIN, ZOOM_MAX);
+    if (lat === null || lng === null || zoom === null) return null;
     return {
       center: [lat, lng],
       zoom,
