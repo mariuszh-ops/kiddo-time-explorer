@@ -4,7 +4,7 @@ import { WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const OfflineIndicator = () => {
-  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [isOffline, setIsOffline] = useState(false);
   const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
@@ -20,7 +20,24 @@ const OfflineIndicator = () => {
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
+    // navigator.onLine potrafi klamac na starcie (VPN firmowy, przelaczenie
+    // Wi-Fi <-> LAN) i zaslanialo dzialajaca strone. Flaga sama z siebie nie
+    // pokazuje juz nakladki - robi to dopiero nieudany HEAD na wlasny origin
+    // albo zdarzenie "offline".
+    let cancelled = false;
+
+    if (!navigator.onLine) {
+      fetch(window.location.origin, { method: "HEAD", cache: "no-store" }).catch(
+        () => {
+          if (!cancelled && !navigator.onLine) {
+            setIsOffline(true);
+          }
+        }
+      );
+    }
+
     return () => {
+      cancelled = true;
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };
