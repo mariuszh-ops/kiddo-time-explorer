@@ -7,8 +7,8 @@ import SEOHead from "@/components/SEOHead";
 
 // N-17 uwaga (d): format daty zrownany z Regulamin.tsx. Data = dzien publikacji (klikniecie Publish),
 // nie data z gory. Zmieniasz polityke merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
-const OBOWIAZUJE_OD = "5 września 2026 r.";
-const WERSJA = 1;
+const OBOWIAZUJE_OD = "16 września 2026 r.";
+const WERSJA = 2;
 
 const PolitykaPrywatnosci = () => {
   return (
@@ -176,7 +176,7 @@ const PolitykaPrywatnosci = () => {
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia.</li>
                   <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia. Zgłoszenie, którego jeszcze nie rozpatrzyliśmy, czeka do czasu rozpatrzenia.</li>
-                  <li><strong>Skrót (hash) adresu IP z formularza „Zgłoś atrakcję"</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie. Formularz „Zgłoś błąd w danych" nie zapisuje adresu IP.</li>
+                  <li><strong>Skrót (hash) adresu IP z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie.</li>
                   <li><strong>Zapisy o błędach aplikacji w przeglądarce</strong> (treść komunikatu, adres podstrony, wersja przeglądarki) — 30 dni od ostatniego wystąpienia danego błędu. Jeśli błąd wystąpił u zalogowanego użytkownika, identyfikator konta usuwamy z takiego zapisu w ciągu doby od usunięcia konta.</li>
                 </ul>
 
