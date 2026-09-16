@@ -325,9 +325,24 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     };
 
     setIsSubmitting(true);
-    const { error } = await catalogClient
+    // U-F-03: trigger activity_submissions_rate_limit ma gałąź dedupu (a) — jeśli w
+    // ostatnich 10 min istnieje wiersz o tym samym name+city, robi RETURN NULL z BEFORE
+    // INSERT. Insert jest wtedy cicho anulowany, a PostgREST i tak oddaje 201 bez błędu,
+    // więc sam `error` NIE odróżnia „zapisane" od „pominięte".
+    //
+    // DLACZEGO count=exact, a NIE .select("id"): anon ma na tej tabeli WYŁĄCZNIE GRANT
+    // INSERT (zmierzone: GET jako anon -> 401/42501 "permission denied"). RETURNING
+    // wymaga uprawnienia SELECT, więc `.select(...)` / `Prefer: return=representation`
+    // wywaliłoby KAŻDE zgłoszenie niezalogowanego (formularz jest w stopce, czyli na
+    // każdej stronie) — i to razem z rollbackiem wstawionego wiersza. `Prefer:
+    // count=exact` liczbę wstawionych wierszy oddaje w nagłówku Content-Range, bez
+    // RETURNING i bez grantu SELECT. Zmierzone na produkcji 16.09: 1. POST -> 201,
+    // Content-Range "*/1"; 2. POST (ta sama nazwa+miasto) -> 201, Content-Range "*/0".
+    // Content-Range jest na liście access-control-expose-headers, więc przeglądarka
+    // czyta go także cross-origin.
+    const { error, count } = await catalogClient
       .from("activity_submissions")
-      .insert(payload);
+      .insert(payload, { count: "exact" });
     setIsSubmitting(false);
 
     if (error) {
@@ -349,6 +364,21 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
         toast.error("Nie udało się wysłać zgłoszenia", { description: error.message });
       }
       // Nieudana wysyłka NIE kasuje wersji roboczej.
+      return;
+    }
+
+    // count === 0 -> dedupe zjadł insert: moderator tego zgłoszenia NIE zobaczy.
+    // Nie kasujemy wersji roboczej i nie pokazujemy ekranu sukcesu.
+    // count === null zostawiamy jako sukces celowo (fail-open): gdyby pośrednik
+    // obciął nagłówek Content-Range, formularz ma działać jak dotąd, a nie odmawiać.
+    if (count === 0) {
+      toast.info(
+        "To miejsce zgłosił już ktoś w ciągu ostatnich 10 minut — nie dodaliśmy drugiego zgłoszenia.",
+        {
+          description:
+            "Jeśli to nie było Twoje zgłoszenie i chcesz dopisać coś od siebie, spróbuj ponownie za kilka minut.",
+        },
+      );
       return;
     }
 
