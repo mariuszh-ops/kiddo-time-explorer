@@ -219,6 +219,31 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     });
   });
 
+  it("komunikat błędu jest nieobecny w drzewie dostępności przed pierwszym submitem, a pojawia się dopiero po nim bez zaznaczonej zgody", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+
+    // Przed submitem: ani roli alert, ani sam tekst — nawet ukryty — nie mogą istnieć w DOM,
+    // więc komunikat jest nieobecny także w drzewie dostępności.
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.queryByText(errorText)).not.toBeInTheDocument();
+    expect(document.getElementById("auth-error")).toBeNull();
+
+    // Pierwszy submit bez zaznaczonej zgody — dopiero teraz komunikat się pojawia.
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    // getByRole domyślnie ignoruje elementy ukryte — znalezienie alertu oznacza,
+    // że jest widoczny i obecny w drzewie dostępności.
+    const alert = screen.getByRole("alert");
+    expect(alert).toBeVisible();
+    expect(alert).toHaveTextContent(errorText);
+  });
+
   it("komunikat błędu zgody jest powiązany z checkboxem przez aria-describedby", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
