@@ -76,6 +76,8 @@ $fn$;
 --     wartosci „park_rozrywki") i etykiete wojewodztwa — ta druga po
 --     normalizacji jest rowna slugowi, wiec realna strata to tylko szukanie
 --     po polskiej nazwie kategorii.
+--     NIEAKTUALNE od 16.09: migracja 20260916120000 doklada do stogu
+--     ff_cat_label(a.type), wiec roznicy wobec klienta juz nie ma.
 create or replace function public.ff_home_match(
   p_region     text             default null,
   p_types      text[]           default null,
