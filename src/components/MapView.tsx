@@ -247,6 +247,28 @@ const createClusterIcon = (cluster: L.MarkerCluster) => {
   });
 };
 
+// W-I-07: dymek dostaje fokus tylko przy otwarciu Z INICJATYWY UZYTKOWNIKA
+// (klik/Enter na markerze). Otwarcia programowe — odtworzenie dymku po
+// przebudowie grupy i przelot z listy — musza fokus zostawic tam, gdzie jest,
+// inaczej mapa wyrywalaby go uzytkownikowi z listy albo z filtrow.
+// Leaflet odpala `popupopen` synchronicznie w `openPopup()`, wiec flaga modulowa
+// wystarczy (Popup.onAdd -> map.fire('popupopen'), leaflet 1.9.4).
+let otwarcieProgramowe = false;
+// Fokus uznajemy za zgubiony, gdy wisi na <body> albo w dymku, ktory wlasnie
+// znika (przy `fadeAnimation` kontener zyje jeszcze ~200 ms po zamknieciu).
+const fokusZgubiony = () => {
+  const a = document.activeElement as HTMLElement | null;
+  return !a || a === document.body || !!a.closest(".leaflet-popup");
+};
+const otworzDymekBezFokusu = (marker: L.Marker) => {
+  otwarcieProgramowe = true;
+  try {
+    marker.openPopup();
+  } finally {
+    otwarcieProgramowe = false;
+  }
+};
+
 // Manages clustered markers on the map
 function ClusteredMarkers({
   activities,
@@ -271,6 +293,8 @@ function ClusteredMarkers({
   // Ktory dymek jest otwarty i czy wlasnie przebudowujemy grupe markerow.
   const otwartyIdRef = useRef<number | null>(null);
   const przebudowaRef = useRef(false);
+  // W-I-07: czy fokus czeka na oddanie do dymku odtworzonego po przebudowie.
+  const fokusDoOdtworzeniaRef = useRef(false);
 
   // Build markers
   useEffect(() => {
@@ -323,14 +347,40 @@ function ClusteredMarkers({
       });
 
       marker.on("click", () => onMarkerClick(activity.id));
+      // W-I-07: czy to MY przenieslismy fokus do tego dymku. Marker powstaje na
+      // nowo przy kazdej przebudowie grupy, wiec zmienna zyje tyle, co dymek.
+      let fokusWDymku = false;
       // Zamkniecie w trakcie przebudowy grupy nie liczy sie jako decyzja
       // uzytkownika — inaczej skasowaloby pamiec o otwartym dymku.
       marker.on("popupclose", () => {
         if (!przebudowaRef.current) otwartyIdRef.current = null;
+        if (!fokusWDymku) return;
+        fokusWDymku = false;
+        // Przebudowa grupy usuwa marker razem z dymkiem — fokus odda dopiero
+        // odtworzony dymek (autoPan po kliknieciu pinu przy krawedzi kadru
+        // przestawia widok, a to przebudowuje cala grupe markerow).
+        if (przebudowaRef.current) {
+          fokusDoOdtworzeniaRef.current = true;
+          return;
+        }
+        // W-I-07: fokus wraca na marker, ktory dymek otworzyl (wzorzec dialogu).
+        // Przy `fadeAnimation` kontener dymku zyje jeszcze ~200 ms z fokusem w
+        // srodku, bez niej fokus jest juz na <body> — obsługujemy oba przypadki.
+        if (fokusZgubiony()) marker.getElement()?.focus({ preventScroll: true });
       });
       marker.on("popupopen", (e: L.PopupEvent) => {
         otwartyIdRef.current = activity.id;
         const popup = e.popup;
+        // W-I-07: dymek zachowuje sie jak dialog, ale nie mial ani roli, ani
+        // nazwy, ani fokusu — po Enterze na markerze `document.activeElement`
+        // zostawal NA MARKERZE i czytnik ekranu nie oglaszal niczego.
+        // `aria-modal` swiadomie pomijamy: mapa pod spodem dziala dalej.
+        const dymek = popup.getElement();
+        if (dymek) {
+          dymek.setAttribute("role", "dialog");
+          dymek.setAttribute("aria-label", `Szczegóły atrakcji: ${activity.title}`);
+          dymek.setAttribute("tabindex", "-1");
+        }
         // Podpiecie kontrolek dymku — wolane tez po kazdej podmianie tresci,
         // bo podmiana innerHTML kasuje wczesniejsze handlery.
         const podepnij = () => {
@@ -346,20 +396,48 @@ function ClusteredMarkers({
           btn.onclick = async (ev) => {
             ev.preventDefault();
             ev.stopPropagation();
+            const mialFokus = document.activeElement === btn;
             const next = await toggleFavorite(activity.id, activity.slug);
             btn.outerHTML = favButtonMarkup(next);
             podepnij();
+            // W-I-07: podmiana `outerHTML` niszczy element z fokusem. Bez tego
+            // Enter na sercu wyrzucal klawiature na <body>, a nasluch Escape
+            // siedzi na kontenerze mapy — dymku nie dalo sie juz zamknac.
+            // Dwa warunki konieczne. `marker.isPopupOpen()` — zapis ulubionego
+            // zmienia tozsamosc `isFavorite`, wiec efekt przebudowuje CALA grupe
+            // markerow: ten `popup` bywa juz nieaktualny, a fokus na oderwanym
+            // elemencie ZRZUCA fokus na <body> (tak gubil sie po naprawie).
+            // `fokusZgubiony()` — gosciowi zapis otwiera modal „Zapisz to miejsce
+            // na pozniej", ktory przejmuje fokus; nie wolno go sciagac z powrotem.
+            const noweSerce = popup.getElement()?.querySelector<HTMLElement>("[data-fav-toggle]");
+            if (mialFokus && marker.isPopupOpen() && noweSerce?.isConnected && fokusZgubiony()) {
+              noweSerce.focus({ preventScroll: true });
+            }
           };
         };
         podepnij();
+        // Fokus ladujemy na KONTENERZE dymku, nie na pierwszym przycisku: kontener
+        // przezywa `popup.update()` (dociaganie zdjecia), a czytnik odczytuje cala
+        // tresc dymku zamiast samego „Dodaj do ulubionych”.
+        if (dymek && !otwarcieProgramowe) {
+          dymek.focus({ preventScroll: true });
+          fokusWDymku = true;
+        }
         // Piny z rpc('get_map_pins') nie maja zdjecia ani miejscowosci — jesli
         // szczegolow nie ma w cache, dociagamy je dla TEGO pinu i odswiezamy dymek.
         if (!getCachedPinDetails(activity.slug)) {
           void fetchPinDetails([activity.slug])
             .then(() => {
               if (!marker.isPopupOpen()) return;
+              const el = popup.getElement();
+              const fokusWSrodku = !!el && el.contains(document.activeElement);
               popup.update();
               podepnij();
+              // W-I-07: `update()` podmienia innerHTML tresci. Jesli fokus siedzial
+              // w srodku, wraca na kontener dymku, a nie na <body>.
+              if (fokusWSrodku && el && !el.contains(document.activeElement)) {
+                el.focus({ preventScroll: true });
+              }
             })
             .catch(() => {
               /* zostaje wersja bez zdjęcia */
@@ -378,13 +456,17 @@ function ClusteredMarkers({
     // Odtworzenie dymku po przebudowie. autoPan wylaczamy na czas otwarcia,
     // bo kolejne przesuniecie mapy wywolaloby ten efekt jeszcze raz.
     if (doOtwarcia !== null) {
+      // W-I-07: fokus wraca do dymku tylko wtedy, gdy przebudowa go osierocila.
+      const oddajFokus = fokusDoOdtworzeniaRef.current && fokusZgubiony();
+      fokusDoOdtworzeniaRef.current = false;
       const marker = markersRef.current[doOtwarcia];
       // Gdy pin wpadl do klastra, jego dymek nie ma sie gdzie pokazac.
       if (marker && group.getVisibleParent(marker) === marker) {
         const popup = marker.getPopup();
         const autoPan = popup?.options.autoPan;
         if (popup) popup.options.autoPan = false;
-        marker.openPopup();
+        if (oddajFokus) marker.openPopup();
+        else otworzDymekBezFokusu(marker);
         if (popup) popup.options.autoPan = autoPan;
       } else {
         otwartyIdRef.current = null;
@@ -426,8 +508,11 @@ function ClusteredMarkers({
       if (!kontener.querySelector(".leaflet-popup")) return;
       const zrodlo = (e.target as HTMLElement | null)?.closest(".leaflet-popup");
       map.closePopup();
-      // Fokus zostaje na markerze; jesli byl w dymku (element znika), wracamy na mape.
-      if (zrodlo) kontener.focus({ preventScroll: true });
+      // W-I-07: fokus siedzi teraz W dymku, a handler `popupclose` oddaje go
+      // markerowi, ktory ten dymek otworzyl. Kontener mapy zostaje FALLBACKIEM na
+      // wypadek, gdy fokus nie trafil na marker (np. dymek otwarty programowo, a
+      // uzytkownik wszedl do niego Tabem) — inaczej wpadlby na <body>.
+      if (zrodlo && fokusZgubiony()) kontener.focus({ preventScroll: true });
       e.stopPropagation();
     };
     kontener.addEventListener("keydown", naKlawisz, true);
@@ -546,7 +631,7 @@ function FlyToHandler({
     map.flyTo([targetActivity.latitude, targetActivity.longitude], targetZoom, { duration: 0.5 });
     const marker = markersRef.current[targetActivity.id];
     if (marker) {
-      setTimeout(() => marker.openPopup(), 400);
+      setTimeout(() => otworzDymekBezFokusu(marker), 400);
     }
   }, [targetActivity, map, markersRef]);
   return null;
