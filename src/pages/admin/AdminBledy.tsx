@@ -26,9 +26,10 @@
  * i zapycha widok (do jego czytania sluzy `7_public/pokaz_bledy_js.py --pelne`),
  * a `client_fp` to pseudonimizowany odcisk IP — w panelu do niczego nie sluzy.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { catalogClient } from "@/lib/catalogClient";
 import { cn } from "@/lib/utils";
 
@@ -117,6 +118,7 @@ function nazwaSystemu(ua: string | null): string {
 
 export default function AdminBledy() {
   const [days, setDays] = useState(7);
+  const [szukaj, setSzukaj] = useState("");
   const [rows, setRows] = useState<ClientErrorRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -160,6 +162,23 @@ export default function AdminBledy() {
     };
   }, [days]);
 
+  // Y-A-07 — filtr KLIENCKI po tym, co panel juz ma w pamieci. Swiadomie bez
+  // nowego zapytania do bazy i bez zmiany ROW_LIMIT: przy 200 wierszach szukanie
+  // w pamieci jest natychmiastowe, a kazde `ilike` do bazy dokladaloby okraglo
+  // sekunde opoznienia na kazde nacisniecie klawisza. Szukamy w `message` i
+  // `page`, bo to jedyne dwa pola, po ktorych admin rozpoznaje konkretny blad.
+  const widoczne = useMemo(() => {
+    const fraza = szukaj.trim().toLowerCase();
+    if (!fraza) return rows;
+    return rows.filter(
+      (row) =>
+        (row.message ?? "").toLowerCase().includes(fraza) ||
+        (row.page ?? "").toLowerCase().includes(fraza)
+    );
+  }, [rows, szukaj]);
+
+  const filtrAktywny = szukaj.trim().length > 0;
+
   return (
     <>
       <Helmet>
@@ -197,6 +216,46 @@ export default function AdminBledy() {
           </div>
         </div>
 
+        <div className="flex flex-col sm:flex-row sm:items-end gap-2">
+          <div className="flex-1 min-w-[240px] max-w-xl">
+            <label
+              htmlFor="bledy-szukaj"
+              className="text-xs text-muted-foreground block mb-1"
+            >
+              Szukaj w treści błędu
+            </label>
+            <div className="relative">
+              <Search
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <Input
+                id="bledy-szukaj"
+                type="search"
+                value={szukaj}
+                onChange={(e) => setSzukaj(e.target.value)}
+                placeholder="Szukaj w treści błędu"
+                className="pl-8"
+                autoComplete="off"
+                aria-describedby="bledy-szukaj-opis"
+              />
+            </div>
+          </div>
+
+          {/* Licznik czyta komunikat na glos przy kazdej zmianie frazy — bez tego
+              osoba na czytniku nie wie, czy lista jeszcze cokolwiek zawiera. */}
+          <p
+            id="bledy-szukaj-opis"
+            role="status"
+            aria-live="polite"
+            className="text-xs text-muted-foreground sm:pb-3"
+          >
+            {filtrAktywny
+              ? `Pasuje ${widoczne.length} z ${rows.length} wpisów`
+              : "Filtruje wczytane wpisy po komunikacie i adresie strony."}
+          </p>
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
             <Loader2 className="w-5 h-5 animate-spin mr-2" />
@@ -211,12 +270,24 @@ export default function AdminBledy() {
           <div className="text-center py-16 text-muted-foreground">
             Brak błędów w tym zakresie
           </div>
+        ) : widoczne.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground space-y-3">
+            <p>Żaden z {rows.length} wpisów nie pasuje do frazy „{szukaj.trim()}”.</p>
+            <button
+              type="button"
+              onClick={() => setSzukaj("")}
+              className="text-sm font-medium text-primary underline underline-offset-4"
+            >
+              Wyczyść filtr
+            </button>
+          </div>
         ) : (
           <>
             <div className="overflow-x-auto rounded-lg border border-border bg-card">
               <table className="w-full text-sm">
                 <caption className="sr-only">
                   Błędy JavaScriptu z ostatnich {days} dni, od najnowszego
+                  {filtrAktywny && ` — przefiltrowane frazą „${szukaj.trim()}”`}
                 </caption>
                 <thead className="bg-muted/50">
                   <tr>
@@ -247,7 +318,7 @@ export default function AdminBledy() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((row) => {
+                  {widoczne.map((row) => {
                     const system = nazwaSystemu(row.user_agent);
                     return (
                       <tr
@@ -313,8 +384,8 @@ export default function AdminBledy() {
 
             {rows.length >= ROW_LIMIT && (
               <p className="text-xs text-muted-foreground">
-                Pokazano {ROW_LIMIT} najnowszych wpisów. Starsze z tego zakresu są
-                w tabeli — pełną listę wypisuje{" "}
+                Wczytano {ROW_LIMIT} najnowszych wpisów i tylko w nich szuka filtr.
+                Starsze z tego zakresu są w tabeli — pełną listę wypisuje{" "}
                 <code>7_public/pokaz_bledy_js.py</code>.
               </p>
             )}
