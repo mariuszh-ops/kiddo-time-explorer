@@ -80,7 +80,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     fireEvent.submit(submit.closest("form")!);
     expect(signUpWithEmail).not.toHaveBeenCalled();
     expect(
-      screen.getByText("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto."),
+      screen.getByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat."),
     ).toBeInTheDocument();
   });
 
@@ -168,7 +168,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
 
     expect(checkbox).toHaveFocus();
     expect(
-      screen.getByText("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto."),
+      screen.getByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat."),
     ).toBeInTheDocument();
   });
 
@@ -181,7 +181,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     const submit = screen.getByRole("button", { name: "Załóż konto" });
     fireEvent.submit(submit.closest("form")!);
 
-    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+    const errorText = "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.";
     await waitFor(() => {
       expect(screen.getByText(errorText)).toBeInTheDocument();
     });
@@ -207,7 +207,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
 
     const alert = await screen.findByRole("alert");
     expect(alert).toHaveTextContent(
-      "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.",
+      "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.",
     );
     expect(alert).toHaveAttribute("id", "auth-error");
 
@@ -225,7 +225,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
 
     fillSignupForm();
 
-    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+    const errorText = "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.";
 
     // Przed submitem: ani roli alert, ani sam tekst — nawet ukryty — nie mogą istnieć w DOM,
     // więc komunikat jest nieobecny także w drzewie dostępności.
@@ -261,7 +261,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     const errorEl = document.getElementById("auth-error");
     expect(errorEl).not.toBeNull();
     expect(errorEl!.textContent).toContain(
-      "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.",
+      "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.",
     );
   });
 
@@ -278,7 +278,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     // Po nieudanym submicie fokus sterujemy na element z błędem — checkbox zgody.
     expect(checkbox).toHaveFocus();
 
-    const errorText = "Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.";
+    const errorText = "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.";
     expect(screen.getByText(errorText)).toBeInTheDocument();
 
     fireEvent.click(checkbox);
@@ -473,6 +473,16 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(checkbox).toHaveAttribute("id", "terms-accept");
   });
 
+  it("Y-H-02: zaznaczenie obejmuje oświadczenie o pełnoletności", () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+
+    // Jedno zaznaczenie, dwa oświadczenia — czytnik ekranu musi usłyszeć oba.
+    expect(checkbox).toHaveAccessibleName(/ukończone 18 lat/i);
+    // Bez nowego pola: w formularzu stoi dokładnie jeden checkbox.
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+  });
+
   it("ma obszar kliknięcia min. 24x24 px (WCAG 2.5.8)", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = getCheckbox();
@@ -526,7 +536,7 @@ describe("EmailAuthForm — automatyczny audyt axe", () => {
 
     fillSignupForm();
     fireEvent.submit(screen.getByRole("button", { name: "Załóż konto" }).closest("form")!);
-    await screen.findByText("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+    await screen.findByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.");
 
     const results = await axe(container, AXE_OPTIONS);
     expectNoA11yViolations(results);

@@ -10,6 +10,7 @@ import { trackEvent } from "@/lib/analytics";
 import { translateAuthError, isEmailRateLimitError } from "@/lib/authErrors";
 import { passwordErrorMessage, checkPassword, PASSWORD_HINT } from "@/lib/passwordPolicy";
 import PasswordRequirements from "@/components/PasswordRequirements";
+import { TERMS_ERROR_MESSAGE } from "@/lib/termsConsent";
 import {
   TURNSTILE_SITE_KEY,
   TURNSTILE_ERROR_MESSAGE,
@@ -167,8 +168,10 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     }
     // I-07: zgoda na regulamin jest WARUNKIEM rejestracji, nie tylko wyszarzonym
     // przyciskiem — sam `disabled` znika po jednym kliknięciu w devtoolsach.
+    // Y-H-02: to samo zaznaczenie niesie oświadczenie o pełnoletności (Regulamin
+    // par. 4 — konto może założyć wyłącznie osoba pełnoletnia).
     if (mode === "signup" && !termsAccepted) {
-      setError("Zaznacz zgodę na Regulamin i Politykę prywatności, aby założyć konto.");
+      setError(TERMS_ERROR_MESSAGE);
       setErrorField("terms");
       termsRef.current?.focus();
       return;
@@ -398,7 +401,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
               className="text-primary hover:underline"
             >
               Politykę prywatności
-            </a>
+            </a>{" "}
+            oraz oświadczam, że mam ukończone 18 lat
           </Label>
         </div>
       )}

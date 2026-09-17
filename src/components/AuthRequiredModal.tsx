@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { hasAcceptedTerms, recordTermsAccepted } from "@/lib/termsConsent";
+import { hasAcceptedTerms, recordTermsAccepted, TERMS_ERROR_MESSAGE } from "@/lib/termsConsent";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import {
@@ -183,7 +183,7 @@ const AuthRequiredModal = ({
    */
   const handleGoogleClick = () => {
     if (needsTerms && !termsAccepted) {
-      setError("Zaznacz zgode na Regulamin i Polityke prywatnosci, aby kontynuowac.");
+      setError(TERMS_ERROR_MESSAGE);
       return;
     }
     if (needsTerms) recordTermsAccepted();
@@ -236,7 +236,9 @@ const AuthRequiredModal = ({
 
         <div className="flex flex-col gap-3 pt-2">
           {/* I-07b: zgoda STOI PRZED przyciskiem — warunek widac, zanim sie klika,
-              a Tab prowadzi checkbox → „Kontynuuj z Google". */}
+              a Tab prowadzi checkbox → „Kontynuuj z Google".
+              Y-H-02: ten sam checkbox niesie oswiadczenie o pelnoletnosci
+              (Regulamin par. 4), zeby nie mnozyc pol w bramce logowania. */}
           {needsTerms && (
             <div className="flex items-start gap-2">
               <Checkbox
@@ -267,7 +269,8 @@ const AuthRequiredModal = ({
                   className="text-primary hover:underline"
                 >
                   Politykę prywatności
-                </a>
+                </a>{" "}
+                oraz oświadczam, że mam ukończone 18 lat
               </Label>
             </div>
           )}

@@ -23,6 +23,15 @@ export const TERMS_METADATA_KEY = "terms_accepted_at";
 export const TERMS_REQUIRED_ERROR = "TERMS_REQUIRED";
 
 /**
+ * Y-H-02: komunikat odmowy dla OBU sciezek (haslo i Google). Jedno zrodlo, bo
+ * checkbox jest jeden i niesie dwa oswiadczenia naraz — akceptacje dokumentow
+ * i pelnoletnosc (Regulamin par. 4). Dwa osobne teksty rozjechalyby sie przy
+ * pierwszej zmianie klauzuli.
+ */
+export const TERMS_ERROR_MESSAGE =
+  "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.";
+
+/**
  * Zapasowa pamiec na czas jednej karty. localStorage bywa niedostepny
  * (tryb prywatny, zablokowane dane witryny) i zapis cichnie w try/catch.
  * Bez tego zapasu uzytkownik zaznaczalby zgode, bramka i tak by ja odrzucila,

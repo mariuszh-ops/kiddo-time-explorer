@@ -106,6 +106,15 @@ describe("I-07b: zgoda na regulamin przy logowaniu Google", () => {
     expect(googleButton()).toBeDisabled();
   });
 
+  it("Y-H-02: zaznaczenie obejmuje oswiadczenie o pelnoletnosci", () => {
+    openModal();
+    const checkbox = screen.getByLabelText(/Akceptuję/i);
+
+    expect(checkbox).toHaveAccessibleName(/ukończone 18 lat/i);
+    // Bez nowego pola: bramka Google ma dokladnie jeden checkbox.
+    expect(screen.getAllByRole("checkbox")).toHaveLength(1);
+  });
+
   it("etykieta jest powiazana z checkboxem, osiagalna Tabem i ma 24x24 px (WCAG 2.5.8)", () => {
     openModal();
     const checkbox = screen.getByLabelText(/Akceptuję/i);
