@@ -29,6 +29,24 @@ function bezWspolrzednych(pathname: string, search: string): string {
   }
 }
 
+// Ślad po zgłoszeniach odrzuconych serwerowo (limit/dedupe w log_client_error).
+// Bez tego `false` z RPC ginął po cichu i nikt nie wiedział, że coś ucięto.
+let uciete = 0;
+let ostrzezonoOUcieciu = false;
+
+/** Ile zgłoszeń serwer odrzucił w tym załadowaniu strony (diagnostyka). */
+export function getRejectedErrorReports(): number {
+  return uciete;
+}
+
+function odnotujUciecie(): void {
+  uciete += 1;
+  if (!ostrzezonoOUcieciu) {
+    ostrzezonoOUcieciu = true;
+    console.warn("[errorReporter] zgłoszenie odrzucone przez limit");
+  }
+}
+
 export function reportClientError(
   kind: "boundary" | "onerror" | "unhandledrejection",
   error: unknown,
@@ -71,7 +89,10 @@ export function reportClientError(
         p_page: page,
       })
       .then(
-        () => {},
+        ({ data, error: rpcError }) => {
+          // RPC oddaje false, gdy zgłoszenie odpadło na limicie/dedupie po stronie bazy.
+          if (!rpcError && data === false) odnotujUciecie();
+        },
         () => {}
       );
   } catch {
