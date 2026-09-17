@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { onInvalidSession, type InvalidSessionReason } from "@/lib/sessionRecovery";
+import {
+  clearInvalidSessionFlag,
+  onInvalidSession,
+  type InvalidSessionReason,
+} from "@/lib/sessionRecovery";
 import {
   catalogClient as supabase,
   CATALOG_AUTH_STORAGE_KEY,
@@ -45,6 +49,18 @@ const SessionExpiredHandler = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [opisModala, setOpisModala] = useState(OPIS_WYGASLA);
 
+  // W-G-04: nowa sesja kasuje pamiec o poprzednim komunikacie. Bez tego
+  // uzytkownik, ktory zalogowal sie ponownie i stracil sesje drugi raz,
+  // nie dostawal juz zadnego ostrzezenia w tej samej karcie.
+  useEffect(() => {
+    const { data: nasluch } = supabase.auth.onAuthStateChange((zdarzenie) => {
+      if (zdarzenie === "SIGNED_IN" || zdarzenie === "TOKEN_REFRESHED") {
+        clearInvalidSessionFlag();
+      }
+    });
+    return () => nasluch.subscription.unsubscribe();
+  }, []);
+
   useEffect(() => {
     return onInvalidSession((powod: InvalidSessionReason) => {
       void supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
@@ -65,15 +81,23 @@ const SessionExpiredHandler = () => {
           {
             duration: 20000,
             action: { label: "Zaloguj się", onClick: () => setIsModalOpen(true) },
+            onDismiss: clearInvalidSessionFlag,
+            onAutoClose: clearInvalidSessionFlag,
           }
         );
         return;
       }
 
       setOpisModala(OPIS_WYGASLA);
+      // W-G-04: flaga w `sessionRecovery` ma scinac SERIE rownoleglych 401
+      // do jednego komunikatu, a nie wyciszac wszystkie kolejne do konca
+      // zycia karty. Zdejmujemy ja, gdy komunikat znika z ekranu — wtedy
+      // nastepne zerwanie sesji znowu ma prawo sie odezwac.
       toast.error("Twoja sesja wygasła — zaloguj się ponownie", {
         duration: 10000,
         action: { label: "Zaloguj się", onClick: () => setIsModalOpen(true) },
+        onDismiss: clearInvalidSessionFlag,
+        onAutoClose: clearInvalidSessionFlag,
       });
     });
   }, []);

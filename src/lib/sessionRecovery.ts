@@ -26,7 +26,7 @@ export function onInvalidSession(listener: Listener): () => void {
   return () => listeners.delete(listener);
 }
 
-/** Zgłoś nieważny token — tylko raz na cykl życia strony. */
+/** Zgłoś nieważny token — tylko raz na jeden pokazany komunikat. */
 export function reportInvalidSession(reason: InvalidSessionReason = "token"): void {
   if (alreadyReported) return;
   alreadyReported = true;
@@ -37,4 +37,17 @@ export function reportInvalidSession(reason: InvalidSessionReason = "token"): vo
       // silent
     }
   });
+}
+
+/**
+ * W-G-04: `alreadyReported` nie bylo NIGDY zerowane, wiec flaga znaczyla
+ * „kiedykolwiek w zyciu tej karty", a nie „komunikat wisi na ekranie".
+ * Skutek: drugie zerwanie sesji w tej samej karcie konczylo sie cisza —
+ * zapytania leciały w 401, a uzytkownik nie dostawal zadnego sygnalu.
+ * Flaga ma dalej scinac SERIE rownoleglych 401 do jednego komunikatu,
+ * dlatego zerujemy ja dopiero, gdy komunikat zniknie z ekranu albo gdy
+ * zacznie sie nowa sesja (`SIGNED_IN` / `TOKEN_REFRESHED`).
+ */
+export function clearInvalidSessionFlag(): void {
+  alreadyReported = false;
 }
