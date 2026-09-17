@@ -234,7 +234,7 @@ export default function AdminBledy() {
                 type="search"
                 value={szukaj}
                 onChange={(e) => setSzukaj(e.target.value)}
-                placeholder="Szukaj w treści błędu"
+                placeholder="np. Failed to fetch"
                 className="pl-8"
                 autoComplete="off"
                 aria-describedby="bledy-szukaj-opis"

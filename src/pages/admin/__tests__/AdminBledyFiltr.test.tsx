@@ -82,7 +82,7 @@ describe("AdminBledy — filtr po tresci (Y-A-07)", () => {
     );
 
     const pole = getByLabelText("Szukaj w treści błędu") as HTMLInputElement;
-    expect(pole.getAttribute("placeholder")).toBe("Szukaj w treści błędu");
+    expect(pole.getAttribute("placeholder")).toBe("np. Failed to fetch");
     expect(pole.hasAttribute("disabled")).toBe(false);
     pole.focus();
     expect(document.activeElement).toBe(pole);
