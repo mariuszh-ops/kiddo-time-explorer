@@ -290,7 +290,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
 
     await waitFor(() => {
       expect(checkbox).not.toHaveAttribute("aria-describedby");
- expect(document.getElementById("auth-error")).toBeNull();
+      expect(document.getElementById("auth-error")).toBeNull();
     });
   });
 
