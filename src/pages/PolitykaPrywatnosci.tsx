@@ -7,8 +7,8 @@ import SEOHead from "@/components/SEOHead";
 
 // N-17 uwaga (d): format daty zrownany z Regulamin.tsx. Data = dzien publikacji (klikniecie Publish),
 // nie data z gory. Zmieniasz polityke merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
-const OBOWIAZUJE_OD = "16 września 2026 r.";
-const WERSJA = 2;
+const OBOWIAZUJE_OD = "17 września 2026 r.";
+const WERSJA = 3;
 
 const PolitykaPrywatnosci = () => {
   return (
@@ -179,6 +179,22 @@ const PolitykaPrywatnosci = () => {
                   <li><strong>Skrót (hash) adresu IP z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie.</li>
                   <li><strong>Zapisy o błędach aplikacji w przeglądarce</strong> (treść komunikatu, adres podstrony, wersja przeglądarki) — 30 dni od ostatniego wystąpienia danego błędu. Jeśli błąd wystąpił u zalogowanego użytkownika, identyfikator konta usuwamy z takiego zapisu w ciągu doby od usunięcia konta.</li>
                 </ul>
+
+                <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Dziennik decyzji moderacyjnych — nie kasujemy go</h3>
+                <p className="mb-4">
+                  Zapisujemy, kto z naszego zespołu i kiedy zmienił status zgłoszenia lub opinii albo
+                  ukrył atrakcję w katalogu. Taki wpis zawiera identyfikator konta administratora,
+                  nazwę tabeli, identyfikator zmienianego wiersza oraz status przed zmianą i po niej.
+                  <strong> Nie zawiera</strong> treści zgłoszenia, treści opinii ani danych kontaktowych.
+                </p>
+                <p className="mb-4">
+                  Tego dziennika nie kasujemy w żadnym terminie. Jest jedynym dowodem na to, kto podjął
+                  daną decyzję moderacyjną, i to jest cel, dla którego go prowadzimy (art. 6 ust. 1 lit. f
+                  RODO — prawnie uzasadniony interes administratora, polegający na rozliczalności własnych
+                  decyzji). Po usunięciu konta użytkownika i jego treści w dzienniku zostaje sam
+                  identyfikator nieistniejącego już wiersza, którego nie da się powiązać z żadną osobą —
+                  dlatego dziennik nie wchodzi do kopii danych wydawanej na wniosek.
+                </p>
 
                 <h3 className="text-lg font-semibold mt-6 mb-2 text-foreground">Logi techniczne dostawców</h3>
                 <p className="mb-4">
