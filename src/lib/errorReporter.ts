@@ -6,6 +6,29 @@ const MAX_PER_PAGELOAD = 10;
 const sent = new Set<string>();
 let count = 0;
 
+// Parametry kadru mapy niosa pozycje uzytkownika z dokladnoscia do ~1 m
+// (useMapUrlState zapisuje je przez toFixed(5)). Do diagnozy bledu nie sa
+// potrzebne, a admin widzi `page` w /admin/bledy — wycinamy je.
+const PRYWATNE_PARAMY = ["lat", "lng", "zoom"];
+
+function bezWspolrzednych(pathname: string, search: string): string {
+  if (!search) return pathname;
+  try {
+    const params = new URLSearchParams(search);
+    // Porownanie bez wzgledu na wielkosc liter — `?LAT=` tez niesie pozycje.
+    const bylo = [...params.keys()].filter((klucz) =>
+      PRYWATNE_PARAMY.includes(klucz.toLowerCase())
+    );
+    if (bylo.length === 0) return `${pathname}${search}`;
+    for (const klucz of bylo) params.delete(klucz);
+    const reszta = params.toString();
+    return reszta ? `${pathname}?${reszta}` : pathname;
+  } catch {
+    // Gdyby cokolwiek poszlo nie tak, wolimy stracic kontekst niz wyslac pozycje.
+    return pathname;
+  }
+}
+
 export function reportClientError(
   kind: "boundary" | "onerror" | "unhandledrejection",
   error: unknown,
@@ -23,7 +46,10 @@ export function reportClientError(
     }
     if (stack) stack = stack.slice(0, 4000);
 
-    const page = `${window.location.pathname}${window.location.search}`;
+    const page = bezWspolrzednych(
+      window.location.pathname,
+      window.location.search
+    );
 
     // Filtr szumu
     if (message.includes("ResizeObserver loop")) return;
