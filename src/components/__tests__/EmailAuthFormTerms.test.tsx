@@ -265,6 +265,35 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     );
   });
 
+  it("aria-describedby na checkboxie pojawia się dopiero po submicie bez zgody i znika po jego zaznaczeniu", async () => {
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+
+    // Przed submitem checkbox nie ma powiązania z komunikatem błędu.
+    expect(checkbox).not.toHaveAttribute("aria-describedby");
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    fireEvent.submit(submit.closest("form")!);
+
+    // Dopiero po nieudanym submicie pojawia się aria-describedby → auth-error.
+    await waitFor(() => {
+      expect(checkbox).toHaveAttribute("aria-describedby", "auth-error");
+    });
+
+    // Zaznaczenie zgody czyta błąd i usuwa powiązanie.
+    fireEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    await waitFor(() => {
+      expect(checkbox).not.toHaveAttribute("aria-describedby");
+      expect(document.getElementById("auth-error")).toBeNull();
+    });
+  });
+
   it("po submicie bez zgody fokus przenosi się na checkbox, a po jego zaznaczeniu błąd znika", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
