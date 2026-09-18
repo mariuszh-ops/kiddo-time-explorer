@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
@@ -34,84 +34,81 @@ export interface Filters {
   sort?: string; // "rating" | "most_reviewed" | "name"
 }
 
-// Persist filter state outside component to survive navigation
-let persistedFilters: Filters = {};
-let persistedSearchQuery: string = "";
+// Nazwy parametrów w adresie — spójne ze stronami /kategoria/* i /atrakcje/*.
+// Brak parametru = BRAK filtra. Adres jest JEDYNYM źródłem prawdy dla tych pięciu.
+const URL_FILTER_KEYS = ["region", "age", "type", "sort", "dist"] as const;
 
-// URL <-> filters mapping. Nazwy parametrów spójne ze stronami /kategoria/* i /atrakcje/*.
-// Brak parametru w adresie oznacza BRAK filtra — adres jest źródłem prawdy.
-function filtersFromParams(params: URLSearchParams): { filters: Filters; search: string } {
-  const region = params.get("region") ?? undefined;
-  const age = params.get("age") ?? undefined;
-  const typeRaw = params.get("type");
-  const sort = params.get("sort") ?? undefined;
-  const distRaw = params.get("dist");
-  const search = params.get("search") ?? "";
+// Filtry bez własnego parametru w adresie (UI ukryte w FilterBar/MobileFilterSheet,
+// logika w `filteredActivities` zostaje). Trzymane lokalnie — tak samo jak wcześniej
+// nie przeżywały zmiany adresu.
+type LocalOnlyFilters = Pick<Filters, "indoor" | "price" | "activityKind">;
+const LOCAL_ONLY_KEYS = ["indoor", "price", "activityKind"] as const;
+type LocalOnlyKey = (typeof LOCAL_ONLY_KEYS)[number];
 
-  const next: Filters = {};
-  if (region) next.city = region;
-  if (age) next.age = age;
-  if (typeRaw) next.type = typeRaw.split(",").filter(Boolean);
-  if (sort) next.sort = sort;
-  const dist = distRaw ? Number(distRaw) : NaN;
-  if (region && Number.isFinite(dist) && dist > 0) next.distance = dist;
-  return { filters: next, search };
-}
-
-// Porównanie po wartości — chroni przed pętlą URL ⇄ stan.
-function sameFilters(a: Filters, b: Filters): boolean {
-  return JSON.stringify(a) === JSON.stringify(b);
+function isLocalOnly(key: keyof Filters): key is LocalOnlyKey {
+  return (LOCAL_ONLY_KEYS as readonly string[]).includes(key);
 }
 
 export function useActivityFilters() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialFromUrl = filtersFromParams(new URLSearchParams(window.location.search));
-  // Adres wygrywa z pamięcią modułu: brak parametrów = brak filtrów.
-  const [filters, setFilters] = useState<Filters>(initialFromUrl.filters);
-  const [searchQuery, setSearchQuery] = useState(initialFromUrl.search);
-  // Pierwszy zapis stanu do URL ma nadpisać wpis (nie dokładać pustego do historii).
-  const firstUrlWriteRef = useRef(true);
+
+  // Filtry NIE mają drugiej kopii w `useState` — liczymy je wprost z adresu.
+  //
+  // Wcześniej adres i stan były lustrem, a dwa efekty (URL→stan, stan→URL)
+  // chodziły w przeciwfazie: writer zapisywał adres z bieżącego stanu, reader
+  // ustawiał stan z POPRZEDNIEGO adresu. Zmierzone na nagraniu 18.09.2026:
+  // `?type=` znikało i wracało co ~0,37 s, chip „Kategoria" mrugał i nie dawał
+  // się kliknąć, a kategoria łapała dopiero po ruchu mapą — bo
+  // `handleSaveMapState` był jedynym zapisem funkcyjnym (od świeżego stanu)
+  // i resynchronizował parę. Jedno źródło prawdy = pętla nie ma z czego powstać.
+  const rawRegion = searchParams.get("region");
+  const rawAge = searchParams.get("age");
+  const rawType = searchParams.get("type");
+  const rawSort = searchParams.get("sort");
+  const rawDist = searchParams.get("dist");
+  // Memo po surowych wartościach, nie po całym `searchParams`: zapis mapy
+  // (lat/lng/zoom/cats) nie ma zmieniać tożsamości `filters`.
+  const urlFilters = useMemo<Filters>(() => {
+    const next: Filters = {};
+    if (rawRegion) next.city = rawRegion;
+    if (rawAge) next.age = rawAge;
+    if (rawType) next.type = rawType.split(",").filter(Boolean);
+    if (rawSort) next.sort = rawSort;
+    const dist = rawDist ? Number(rawDist) : NaN;
+    if (rawRegion && Number.isFinite(dist) && dist > 0) next.distance = dist;
+    return next;
+  }, [rawRegion, rawAge, rawType, rawSort, rawDist]);
+
+  const [localFilters, setLocalFilters] = useState<LocalOnlyFilters>({});
+  const filters = useMemo<Filters>(
+    () => ({ ...urlFilters, ...localFilters }),
+    [urlFilters, localFilters],
+  );
+
+  const rawSearch = searchParams.get("search") ?? "";
+  const [searchQuery, setSearchQuery] = useState(rawSearch);
+  // Adres → pole wyszukiwania (m.in. „wstecz" w przeglądarce). W drugą stronę
+  // pisze Index.tsx (debounce 300 ms, replace) — jeden pisarz na parametr.
+  useEffect(() => {
+    setSearchQuery((prev) => (prev.trim() === rawSearch.trim() ? prev : rawSearch));
+  }, [rawSearch]);
+
   // Katalog ładuje się asynchronicznie — bez tej zależności memo policzyłoby
   // się raz na pustej tablicy i utknęło do pierwszej interakcji z filtrem.
   const dataStatus = useDataStatus();
 
-  // Sync to persisted state whenever filters change
-  useEffect(() => {
-    persistedFilters = filters;
-  }, [filters]);
-
-  useEffect(() => {
-    persistedSearchQuery = searchQuery;
-  }, [searchQuery]);
-
-  // Kierunek URL → stan dla wszystkich parametrów (m.in. „wstecz” w przeglądarce):
-  // po cofnięciu ekran musi odpowiadać adresowi.
-  const paramsKey = searchParams.toString();
-  useEffect(() => {
-    const { filters: urlFilters, search } = filtersFromParams(new URLSearchParams(paramsKey));
-    setFilters((prev) => (sameFilters(prev, urlFilters) ? prev : urlFilters));
-    setSearchQuery((prev) => (prev.trim() === search.trim() ? prev : search));
-  }, [paramsKey]);
-
-  // Zapis stanu filtrów do URL — świadoma zmiana filtra tworzy wpis w historii.
-  useEffect(() => {
-    const next = new URLSearchParams(searchParams);
-    const setOrDelete = (key: string, value?: string) => {
-      if (value) next.set(key, value);
-      else next.delete(key);
-    };
-    setOrDelete("region", filters.city);
-    setOrDelete("age", filters.age);
-    setOrDelete("type", filters.type?.length ? filters.type.join(",") : undefined);
-    setOrDelete("sort", filters.sort);
-    setOrDelete("dist", filters.city && filters.distance ? String(filters.distance) : undefined);
-    setOrDelete("search", searchQuery.trim() || undefined);
-    if (next.toString() !== searchParams.toString()) {
-      setSearchParams(next, firstUrlWriteRef.current ? { replace: true } : undefined);
-    }
-    firstUrlWriteRef.current = false;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, searchQuery]);
+  // Każdy zapis filtra idzie funkcyjnie: `prev` jest zawsze świeży, więc
+  // równoległy zapis mapy (lat/lng/zoom/cats) nie ginie pod starym snapshotem.
+  // Świadoma zmiana filtra zostawia wpis w historii (push) — tak jak wcześniej.
+  const zapiszFiltrDoUrl = useCallback(
+    (mutuj: (params: URLSearchParams) => void) => {
+      setSearchParams((prev) => {
+        mutuj(prev);
+        return prev;
+      });
+    },
+    [setSearchParams],
+  );
 
 
   // Q-E-10b: ten hook NIE dociąga już katalogu. Siatkę wyników i liczniki przy
@@ -123,51 +120,75 @@ export function useActivityFilters() {
   // Ładowanie katalogu dla tej ścieżki włącza Index.tsx własnym efektem
   // `if (viewMode === "map" && hasActiveFilters) ensureActivitiesLoaded()`.
 
-  const updateFilter = useCallback((key: keyof Filters, value: string | string[] | number | undefined) => {
-    setFilters((prev) => {
-      const newFilters = { ...prev };
-      if (value === undefined || (Array.isArray(value) && value.length === 0)) {
-        delete newFilters[key];
-      } else {
-        // @ts-expect-error - we handle string, string[], and number values
-        newFilters[key] = value;
+  const updateFilter = useCallback(
+    (key: keyof Filters, value: string | string[] | number | undefined) => {
+      const pusty = value === undefined || (Array.isArray(value) && value.length === 0);
+      if (isLocalOnly(key)) {
+        setLocalFilters((prev) => {
+          const next = { ...prev };
+          if (pusty) delete next[key];
+          else next[key] = String(value);
+          return next;
+        });
+        return;
       }
-      // Clear distance filter when city is cleared
-      if (key === "city" && value === undefined) {
-        delete newFilters.distance;
-      }
-      // Distance is intentionally left undefined when a city is selected,
-      // so the user sees every attraction in the region and must consciously
-      // narrow the radius with the slider.
-      return newFilters;
-    });
-  }, []);
+      zapiszFiltrDoUrl((params) => {
+        const ustaw = (nazwa: string, wartosc?: string) => {
+          if (wartosc) params.set(nazwa, wartosc);
+          else params.delete(nazwa);
+        };
+        switch (key) {
+          case "city":
+            ustaw("region", pusty ? undefined : String(value));
+            // Wyczyszczenie regionu kasuje też promień — `dist` bez regionu nic nie znaczy.
+            if (pusty) params.delete("dist");
+            // Przy WYBORZE regionu promień celowo zostaje pusty: użytkownik ma
+            // najpierw zobaczyć całe województwo i świadomie zawęzić suwakiem.
+            break;
+          case "age":
+            ustaw("age", pusty ? undefined : String(value));
+            break;
+          case "type":
+            ustaw("type", pusty ? undefined : (value as string[]).join(","));
+            break;
+          case "sort":
+            ustaw("sort", pusty ? undefined : String(value));
+            break;
+          case "distance":
+            // `dist` zapisujemy tylko przy wybranym regionie (tak jak wcześniej).
+            ustaw("dist", pusty || !params.get("region") ? undefined : String(value));
+            break;
+          default:
+            break;
+        }
+      });
+    },
+    [zapiszFiltrDoUrl],
+  );
 
-  // Toggle a single value in an array filter (for multi-select)
-  const toggleArrayFilter = useCallback((key: keyof Filters, value: string) => {
-    setFilters((prev) => {
-      const current = (prev[key] as string[] | undefined) || [];
-      const next = current.includes(value)
-        ? current.filter(v => v !== value)
-        : [...current, value];
-      const newFilters = { ...prev };
-      if (next.length === 0) {
-        delete newFilters[key];
-      } else {
-        // @ts-expect-error - array values
-        newFilters[key] = next;
-      }
-      return newFilters;
-    });
-  }, []);
+  // Przełączenie jednej wartości w filtrze wielokrotnym (jedyny taki filtr to `type`).
+  const toggleArrayFilter = useCallback(
+    (key: "type", value: string) => {
+      zapiszFiltrDoUrl((params) => {
+        const current = (params.get(key) ?? "").split(",").filter(Boolean);
+        const next = current.includes(value)
+          ? current.filter((v) => v !== value)
+          : [...current, value];
+        if (next.length) params.set(key, next.join(","));
+        else params.delete(key);
+      });
+    },
+    [zapiszFiltrDoUrl],
+  );
 
   const clearAllFilters = useCallback(() => {
-    // Complete reset - clear both local and persisted state
-    setFilters({});
+    setLocalFilters({});
     setSearchQuery("");
-    persistedFilters = {};
-    persistedSearchQuery = "";
-  }, []);
+    zapiszFiltrDoUrl((params) => {
+      for (const klucz of URL_FILTER_KEYS) params.delete(klucz);
+      params.delete("search");
+    });
+  }, [zapiszFiltrDoUrl]);
 
   const filteredActivities = useMemo(() => {
     let result = [...getActivities()];
