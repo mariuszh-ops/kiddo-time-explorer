@@ -157,7 +157,7 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
 
     // Dopiero zaznaczenie zgody odblokowuje wysyłkę.
-    await user.click(getCheckbox());
+    await user.click(screen.getByRole("checkbox", { name: /Akceptuję/i }));
     expect(submit).toBeEnabled();
     await user.click(submit);
 
