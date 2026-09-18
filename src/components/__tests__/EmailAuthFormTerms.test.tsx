@@ -219,6 +219,45 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     });
   });
 
+  it("komunikat błędu z rolą alert aktualizuje się poprawnie: pojawia się po submicie, znika po zaznaczeniu, wraca po ponownym submicie", async () => {
+    const ERROR_TEXT =
+      "Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat.";
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+
+    // 1. Przed submitem alert nie istnieje.
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    // 2. Pierwszy submit bez zgody — alert pojawia się z poprawną treścią.
+    fireEvent.submit(submit.closest("form")!);
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(ERROR_TEXT);
+
+    // 3. Ponowny submit bez zgody — jeden i ten sam alert, bez duplikatów.
+    fireEvent.submit(submit.closest("form")!);
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
+    expect(screen.getAllByRole("alert")[0]).toHaveTextContent(ERROR_TEXT);
+
+    // 4. Zaznaczenie zgody — alert znika.
+    fireEvent.click(checkbox);
+    await waitFor(() => {
+      expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      expect(screen.queryByText(ERROR_TEXT)).not.toBeInTheDocument();
+    });
+
+    // 5. Odznaczenie i ponowny submit — alert wraca z tą samą treścią.
+    fireEvent.click(checkbox);
+    fireEvent.submit(submit.closest("form")!);
+    const alertAgain = await screen.findByRole("alert");
+    expect(alertAgain).toHaveTextContent(ERROR_TEXT);
+    expect(alertAgain).toHaveAttribute("id", "auth-error");
+  });
+
+
   it("komunikat błędu jest nieobecny w drzewie dostępności przed pierwszym submitem, a pojawia się dopiero po nim bez zaznaczonej zgody", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
