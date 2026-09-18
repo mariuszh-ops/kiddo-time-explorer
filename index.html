@@ -153,6 +153,39 @@
     <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
+    <!-- A1000-T (wyciek tokena do Plausible). script.js buduje pole `u` z
+         location.href RAZEM z fragmentem, wiec link potwierdzajacy z maila
+         (#access_token=...&refresh_token=...) wychodzil w calosci POST-em na
+         plausible.io — zywy JWT (1 h) i refresh token u obcej firmy.
+         Zmierzone 18.09 na produkcji, payload v36.
+
+         Ten blok jest INLINE, wiec wykonuje sie przy parsowaniu; tag Plausible
+         nizej ma `defer`, czyli dopiero po parsowaniu. Fragment wraca na adres
+         w src/lib/authHashShield.ts, ZANIM powstanie klient Supabase — jego
+         `detectSessionInUrl` dziala wtedy dokladnie jak wczesniej i sam go
+         sprząta. `replaceState` jest dla Plausible niewidoczny (zmierzone:
+         0 dodatkowych zdarzen; kontrolny pushState dal 2).
+
+         Warunek celowo lapie WYLACZNIE tokeny. Linki bledow (#error_code=...)
+         i zmiany e-maila (#message=...) zostaja nietkniete, bo czytaja je
+         AuthLinkErrorHandler.tsx i AccountSettingsSection.tsx. -->
+    <script>
+      (function () {
+        try {
+          var h = window.location.hash;
+          if (!h || !/[#&](access_token|refresh_token)=/.test(h)) return;
+          window.__ffAuthFragment = h;
+          window.history.replaceState(
+            null,
+            "",
+            window.location.pathname + window.location.search
+          );
+        } catch (e) {
+          /* brak History API — zostawiamy adres w spokoju, logowanie wazniejsze */
+        }
+      })();
+    </script>
+
     <!-- Analytics: Plausible -->
     <script defer data-domain="familyfun.pl" src="https://plausible.io/js/script.js"></script>
 

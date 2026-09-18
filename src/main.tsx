@@ -1,4 +1,10 @@
-// MUSI byc pierwszym importem w tym pliku: modul wysyla zapytanie o pierwsza
+// A1000-T: MUSI stac przed KAZDYM innym importem. Oddaje na adres fragment
+// z tokenami, ktory index.html zdjal przed skryptem Plausible — a klient
+// Supabase (jego `detectSessionInUrl`) powstaje juz przy imporcie nizej.
+// Sam replaceState, zero zadan sieciowych.
+import "@/lib/authHashShield";
+
+// MUSI byc pierwszym importem SIECIOWYM w tym pliku: modul wysyla zapytanie o pierwsza
 // strone listingu przy wlasnej ewaluacji, czyli PRZED grafem Reacta i przed
 // leniwymi chunkami trasy (A1000-P bloker 2 — 1202 ms bezczynnosci sieci).
 import "@/lib/earlyListingStart";
