@@ -137,6 +137,41 @@ describe("EmailAuthForm — zgoda na regulamin (signup)", () => {
     });
   });
 
+  it("formularz nie wysyła się bez zaznaczonej zgody, a wysyłka następuje dopiero po jej zaznaczeniu", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    await user.type(screen.getByLabelText("E-mail"), "rodzina@example.com");
+    await user.type(screen.getByLabelText("Hasło"), VALID_PASSWORD);
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    const form = submit.closest("form")!;
+
+    // Bez zgody żadna droga wysyłki nie dochodzi do rejestracji:
+    // klik w (nieaktywny) przycisk, wymuszony submit formularza, Enter w polu.
+    await user.click(submit);
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    expect(signUpWithEmail).not.toHaveBeenCalled();
+    expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
+
+    // Dopiero zaznaczenie zgody odblokowuje wysyłkę.
+    await user.click(screen.getByRole("checkbox", { name: /Akceptuję/i }));
+    expect(submit).toBeEnabled();
+    await user.click(submit);
+
+    await waitFor(() => {
+      expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+      expect(signUpWithEmail).toHaveBeenCalledWith(
+        "rodzina@example.com",
+        VALID_PASSWORD,
+        "test-captcha-token",
+      );
+    });
+    expect(await screen.findByText("Sprawdź skrzynkę")).toBeInTheDocument();
+  });
+
   it("przycisk submit jest zablokowany bez zgody i dostępny po zaznaczeniu checkboxa", async () => {
     render(<EmailAuthForm initialMode="signup" />);
     await screen.findByTestId("turnstile-mock");
