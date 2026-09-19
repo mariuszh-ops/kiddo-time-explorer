@@ -99,6 +99,14 @@ export function useHomeCatalog(
   searchQuery: string,
   /** false na trasach, które i tak renderują coś innego (mapa) — oszczędza zapytanie. */
   enabled = true,
+  /**
+   * Liczniki przy opcjach filtrow maja WLASNA bramke, bo pasek filtrow jest
+   * widoczny takze nad mapa (wrapper `hidden sm:block` w Index). Gdy szly ta
+   * sama bramka co lista, widok mapy zostawal z PUSTE_LICZNIKI: kazda kategoria
+   * pokazywala "(0)", a pasek twierdzil "Zadna atrakcja nie spelnia wybranych
+   * filtrow" OBOK dzialajacej mapy pinow.
+   */
+  licznikiWlaczone = enabled,
 ): UseHomeCatalogResult {
   const argumenty = useMemo(() => zbudujArgumenty(filters, searchQuery), [filters, searchQuery]);
   const sort = filters.sort || "rating";
@@ -132,7 +140,7 @@ export function useHomeCatalog(
 
   // Liczniki — jedno wywołanie na komplet 31 osi, niezależne od paginacji.
   useEffect(() => {
-    if (!enabled) return;
+    if (!licznikiWlaczone) return;
     let anulowane = false;
     const kluczNaStarcie = kluczAktywny;
     const { argumenty: a, sort: _sort } = JSON.parse(kluczAktywny) as {
@@ -156,7 +164,7 @@ export function useHomeCatalog(
     return () => {
       anulowane = true;
     };
-  }, [kluczAktywny, enabled, zetonOdswiezenia]);
+  }, [kluczAktywny, licznikiWlaczone, zetonOdswiezenia]);
 
   // Lista — strona po stronie.
   useEffect(() => {

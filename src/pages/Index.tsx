@@ -111,7 +111,13 @@ const Index = () => {
   // samo wejście na stronę główną nie ma odpalać żadnego zapytania.
   const [dotknietoFiltrow, setDotknietoFiltrow] = useState(false);
   const zapytaniaSerwerowe = viewMode !== "map" && (hasActiveFilters || dotknietoFiltrow);
-  const home = useHomeCatalog(filters, searchQuery, zapytaniaSerwerowe);
+  // Pasek filtrow wisi rowniez NAD mapa (wrapper ponizej ma `hidden sm:block`),
+  // wiec liczniki musza sie liczyc takze w trybie mapy. Bez tego kazda opcja
+  // w dropdownie "Kategoria" pokazywala "(0)", a pasek pisal "Zadna atrakcja nie
+  // spelnia wybranych filtrow" nad mapa pelna pinow. To JEDNO rpc('ff_home_counts'),
+  // lista atrakcji dalej nie jedzie serwerem na mapie.
+  const licznikiSerwerowe = hasActiveFilters || dotknietoFiltrow;
+  const home = useHomeCatalog(filters, searchQuery, zapytaniaSerwerowe, licznikiSerwerowe);
 
   // F-1: "Zobacz wszystkie atrakcje" prowadzi na /?all=1, czyli TEN SAM pathname.
   // useScrollPosition przewija tylko przy zmianie location.pathname, wiec po
@@ -319,7 +325,12 @@ const Index = () => {
 
       {/* Activity cards grid or curated sections — osobna granica bledu (W-E-01). */}
       <ErrorBoundary fallbackLevel="section">
-      {mapVisibleActivities ? (
+      {/* W trybie mapy siatka pod mapa jest zbedna (mapa ma wlasna liste
+          widocznych atrakcji), a przy tym SZKODLIWA: `zapytaniaSerwerowe` jest
+          wtedy false, wiec `home.activities` zostaje puste i na desktopie
+          (wrapper `hidden sm:block`) pod pelna mapa pinow wyswietlal sie
+          EmptyFilterState "Nic nie pasuje do filtrow". */}
+      {viewMode === "map" ? null : mapVisibleActivities ? (
         <ActivityGrid 
           activities={mapVisibleActivities} 
           hasActiveFilters={true}

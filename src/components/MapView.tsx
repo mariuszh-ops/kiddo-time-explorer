@@ -595,20 +595,37 @@ function ViewportFilter({
   // Pierwsze przeliczenie: natychmiast po gotowości mapy ORAZ po każdej zmianie
   // zbioru atrakcji (piny z RPC dochodzą asynchronicznie). Bez tego licznik
   // pokazywał cały katalog do pierwszego moveend/zoomend.
+  // Wywolania trzymamy w refach. `reportViewport` zmienia tozsamosc po KAZDYM
+  // zapisie adresu (setSearchParams z react-routera zalezy od searchParams),
+  // wiec z lista [map, filterByBounds, reportViewport, reportBounds] ten efekt
+  // startowal od nowa po kazdym zapisie i 100 ms pozniej zapisywal znowu --
+  // samopodtrzymujaca sie petla ~10 Hz, ktora przemielala cala strone: pasek
+  // filtrow migotal, dropdown "Kategoria" nie dawal sie kliknac, a piny
+  // przebudowywaly sie w kolko (klastry <-> pojedyncze znaczniki).
+  // Efekt ma sie wykonac raz na mape i po kazdej zmianie zbioru pinow.
+  const filterByBoundsRef = useRef(filterByBounds);
+  const reportViewportRef = useRef(reportViewport);
+  const reportBoundsRef = useRef(reportBounds);
+  useEffect(() => {
+    filterByBoundsRef.current = filterByBounds;
+    reportViewportRef.current = reportViewport;
+    reportBoundsRef.current = reportBounds;
+  });
+
   useEffect(() => {
     map.whenReady(() => {
-      filterByBounds();
-      // Kadr startowy bez debounce — inaczej mapa stoi pusta o 300 ms dłużej.
-      reportBounds();
+      filterByBoundsRef.current();
+      // Kadr startowy bez debounce -- inaczej mapa stoi pusta o 300 ms dluzej.
+      reportBoundsRef.current();
     });
-    // fitBounds/invalidateSize mogą jeszcze zmienić kadr — przelicz ponownie
+    // fitBounds/invalidateSize moga jeszcze zmienic kadr -- przelicz ponownie
     const t = setTimeout(() => {
-      filterByBounds();
-      reportViewport();
-      reportBounds();
+      filterByBoundsRef.current();
+      reportViewportRef.current();
+      reportBoundsRef.current();
     }, 100);
     return () => clearTimeout(t);
-  }, [map, filterByBounds, reportViewport, reportBounds]);
+  }, [map, activities]);
 
 
   useMapEvents({
@@ -923,17 +940,26 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // Kategoria z trasy/filtra listingu (np. /kategoria/zoo, ?type=zoo) zawsze
   // zasila chipsy — także gdy zmieni się przy zamontowanej mapie.
   const routeTypesKey = (filters.type ?? []).join(",");
+  const poprzednieTypyTrasyRef = useRef(routeTypesKey);
   useEffect(() => {
-    if (!filters.type || filters.type.length === 0) return;
+    const poprzednie = poprzednieTypyTrasyRef.current.split(",").filter(Boolean);
+    const biezace = routeTypesKey.split(",").filter(Boolean);
+    poprzednieTypyTrasyRef.current = routeTypesKey;
     setSelectedCategories((prev) => {
       const next = new Set(prev);
       let changed = false;
-      for (const t of filters.type!) {
+      // Odznaczenie kategorii w dropdownie "Kategoria" MUSI zdjac takze chip.
+      // Wczesniej efekt tylko dodawal, wiec raz wlaczona kategoria zostawala na
+      // mapie na zawsze: uzytkownik odklikiwal ja w filtrze i nic sie nie dzialo
+      // ("wybrana kategoria nie znajduje zastosowania").
+      for (const t of poprzednie) {
+        if (!biezace.includes(t) && next.delete(t)) changed = true;
+      }
+      for (const t of biezace) {
         if (!next.has(t)) { next.add(t); changed = true; }
       }
       return changed ? next : prev;
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routeTypesKey]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -948,39 +974,56 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const mapCenter: [number, number] = savedMapState ? savedMapState.center : [center.lat, center.lng];
   const initialZoom = savedMapState ? savedMapState.zoom : 11;
 
-  // Save map state on unmount
+  // Zapis stanu mapy (srodek, zoom, chipsy) w JEDNYM stabilnym callbacku.
+  // Wartosci ida przez refy, dzieki czemu tozsamosc `zapiszStanMapy` NIGDY sie
+  // nie zmienia. Wczesniej zarowno efekt "zapis przy unmoncie", jak i
+  // handleViewportSave mialy w zaleznosciach [onSaveMapState, selectedCategories],
+  // a onSaveMapState zmienia tozsamosc po kazdym zapisie adresu -- cleanup
+  // efektu (ktory wykonuje sie przy KAZDEJ zmianie zaleznosci, nie tylko przy
+  // unmoncie) zapisywal wtedy URL ponownie i napedzal petle.
+  const onSaveMapStateRef = useRef(onSaveMapState);
+  const selectedCategoriesRef = useRef(selectedCategories);
   useEffect(() => {
-    return () => {
-      const map = mapInstanceRef.current;
-      if (map && onSaveMapState) {
-        const c = map.getCenter();
-        onSaveMapState({
-          center: [c.lat, c.lng],
-          zoom: map.getZoom(),
-          selectedCategories,
-        });
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onSaveMapState, selectedCategories]);
+    onSaveMapStateRef.current = onSaveMapState;
+    selectedCategoriesRef.current = selectedCategories;
+  });
 
-  // Live sync (center/zoom/chipsy) — zapis przy KAŻDYM moveend/zoomend,
-  // wykonywany w ViewportFilter (poniżej) przez handleViewportSave.
-  // Środek i zoom są odczytywane z map.getCenter()/getZoom() w momencie
-  // zapisu — wcześniejsza wersja szła przez stan Reacta ustawiany w
-  // debounce 400 ms, więc po przeciągnięciu myszą do URL trafiała wartość
-  // sprzed ostatniego moveend (albo zapis nie dochodził wcale, gdy
-  // nawigacja do karty wyprzedziła timer).
-  const handleViewportSave = useCallback(() => {
+  const zapiszStanMapy = useCallback(() => {
     const map = mapInstanceRef.current;
-    if (!map || !onSaveMapState) return;
+    const zapisz = onSaveMapStateRef.current;
+    if (!map || !zapisz) return;
     const c = map.getCenter();
-    onSaveMapState({
+    zapisz({
       center: [c.lat, c.lng],
       zoom: map.getZoom(),
-      selectedCategories,
+      selectedCategories: selectedCategoriesRef.current,
     });
-  }, [onSaveMapState, selectedCategories]);
+  }, []);
+
+  // Zapis przy odmontowaniu -- zaleznosci MUSZA byc puste.
+  useEffect(() => () => zapiszStanMapy(), [zapiszStanMapy]);
+
+  // Chipsy kategorii trzymamy w adresie (?cats=), zeby "wstecz" i F5 je
+  // odtworzyly. Robi to osobny efekt, a nie cleanup powyzszego: cleanup
+  // odpalal sie takze przy zmianie tozsamosci callbacka, czyli po kazdym
+  // zapisie URL-a.
+  const pierwszySkladChipow = useRef(true);
+  useEffect(() => {
+    if (pierwszySkladChipow.current) {
+      pierwszySkladChipow.current = false;
+      return;
+    }
+    zapiszStanMapy();
+  }, [selectedCategories, zapiszStanMapy]);
+
+  // Live sync (center/zoom/chipsy) -- zapis przy KAZDYM moveend/zoomend,
+  // wykonywany w ViewportFilter (ponizej) przez handleViewportSave.
+  // Srodek i zoom sa odczytywane z map.getCenter()/getZoom() w momencie
+  // zapisu -- wczesniejsza wersja szla przez stan Reacta ustawiany w
+  // debounce 400 ms, wiec po przeciagnieciu mysza do URL trafiala wartosc
+  // sprzed ostatniego moveend (albo zapis nie dochodzil wcale, gdy
+  // nawigacja do karty wyprzedzila timer).
+  const handleViewportSave = zapiszStanMapy;
 
   // Normalize for search
   const normalizeText = useCallback((text: string) =>

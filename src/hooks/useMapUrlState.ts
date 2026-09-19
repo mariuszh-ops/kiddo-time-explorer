@@ -86,13 +86,25 @@ export function useMapUrlState(
   const handleSaveMapState = useCallback(
     (state: SavedMapState) => {
       if (!isStillOnThisRoute()) return;
-      // Nie przywracaj widoku mapy, jeśli adres w przeglądarce już go nie ma
-      // (np. klik logo → "/" bez query, a MapView zapisuje stan w unmouncie).
-      if (
-        typeof window !== "undefined" &&
-        new URLSearchParams(window.location.search).get("view") !== "map"
-      ) {
-        return;
+      if (typeof window !== "undefined") {
+        const biezace = new URLSearchParams(window.location.search);
+        // Nie przywracaj widoku mapy, jesli adres w przegladarce juz go nie ma
+        // (np. klik logo -> "/" bez query, a MapView zapisuje stan w unmouncie).
+        if (biezace.get("view") !== "map") return;
+        // Zapis BEZ zmiany wartosci i tak wola navigate(): router robi nowa
+        // lokalizacje, useSearchParams nowe setSearchParams, a wiec nowa
+        // tozsamosc handleSaveMapState. Kazdy efekt trzymajacy ten callback w
+        // zaleznosciach (ViewportFilter) odpalal sie wtedy ponownie i zapisywal
+        // znowu -- petla ~10 Hz, ktora migotala paskiem filtrow i nie dawala
+        // kliknac dropdownu "Kategoria". Identyczny adres = zaden zapis.
+        const docelowe = new URLSearchParams(biezace);
+        docelowe.set("lat", state.center[0].toFixed(5));
+        docelowe.set("lng", state.center[1].toFixed(5));
+        docelowe.set("zoom", String(Math.round(state.zoom)));
+        const kategorie = Array.from(state.selectedCategories);
+        if (kategorie.length) docelowe.set("cats", kategorie.join(","));
+        else docelowe.delete("cats");
+        if (docelowe.toString() === biezace.toString()) return;
       }
       setSearchParams(
         (prev) => {
