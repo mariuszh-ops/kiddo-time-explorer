@@ -564,6 +564,62 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(screen.getByRole("button", { name: "Mam już konto — zaloguj się" })).toHaveFocus();
   });
 
+  it("formularz wysyła się klawiaturą po zaznaczeniu zgody, a bez zgody próba klawiaturowa pozostaje zablokowana", async () => {
+    const user = userEvent.setup();
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    // Wypełnienie pól wyłącznie klawiaturą: Tab do e-maila, wpisanie, Tab do hasła, wpisanie.
+    await user.tab(); // e-mail
+    await user.keyboard("rodzina@example.com");
+    await user.tab(); // hasło
+    await user.keyboard(VALID_PASSWORD);
+    await user.tab(); // checkbox zgody
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    expect(checkbox).toHaveFocus();
+    expect(checkbox).toHaveAttribute("data-state", "unchecked");
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    expect(submit).toBeDisabled();
+
+    // Klawiaturowa próba wysyłki bez zgody: Enter w polu tekstowym (submit formularza).
+    await user.keyboard("{Shift>}{Tab}{/Shift}"); // wróć na hasło
+    await user.keyboard("{Enter}");
+    expect(signUpWithEmail).not.toHaveBeenCalled();
+    expect(
+      screen.getByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat."),
+    ).toBeInTheDocument();
+
+    // Zaznaczenie zgody klawiaturą (Shift+Tab na checkbox, spacja).
+    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    expect(checkbox).toHaveFocus();
+    await user.keyboard(" ");
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+    expect(submit).toBeEnabled();
+    expect(
+      screen.queryByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat."),
+    ).not.toBeInTheDocument();
+
+    // Nawigacja Tab do przycisku i wysyłka klawiszem Enter — dokładnie jedna rejestracja.
+    await user.tab(); // link "Regulamin"
+    expect(screen.getByRole("link", { name: "Regulamin" })).toHaveFocus();
+    await user.tab(); // link "Polityka prywatności"
+    expect(screen.getByRole("link", { name: "Politykę prywatności" })).toHaveFocus();
+    await user.tab(); // submit
+    expect(submit).toHaveFocus();
+    await user.keyboard("{Enter}");
+
+    await waitFor(() => {
+      expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+    });
+    expect(signUpWithEmail).toHaveBeenCalledWith(
+      "rodzina@example.com",
+      VALID_PASSWORD,
+      "test-captcha-token",
+    );
+    expect(await screen.findByText("Sprawdź skrzynkę")).toBeInTheDocument();
+  });
+
   it("checkbox ma czytelną nazwę dostępną w drzewie dostępności", () => {
     render(<EmailAuthForm initialMode="signup" />);
     const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
