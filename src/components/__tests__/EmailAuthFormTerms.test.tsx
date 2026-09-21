@@ -582,13 +582,13 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     const submit = screen.getByRole("button", { name: "Załóż konto" });
     expect(submit).toBeDisabled();
 
-    // Klawiaturowa próba wysyłki bez zgody: Enter w polu tekstowym (submit formularza).
+    // Klawiaturowa próba wysyłki bez zgody: Enter w polu tekstowym. Disabled
+    // przycisk blokuje implicit submission — handler submitu nie jest wywołany.
     await user.keyboard("{Shift>}{Tab}{/Shift}"); // wróć na hasło
     await user.keyboard("{Enter}");
     expect(signUpWithEmail).not.toHaveBeenCalled();
-    expect(
-      screen.getByText("Potwierdź zaznaczeniem, że akceptujesz Regulamin i Politykę prywatności oraz masz ukończone 18 lat."),
-    ).toBeInTheDocument();
+    expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
+    expect(submit).toBeDisabled();
 
     // Zaznaczenie zgody klawiaturą (Shift+Tab na checkbox, spacja).
     await user.keyboard("{Shift>}{Tab}{/Shift}");
