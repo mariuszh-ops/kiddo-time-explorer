@@ -571,11 +571,18 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
 
     // Wypełnienie pól wyłącznie klawiaturą: Tab do e-maila, wpisanie, Tab do hasła, wpisanie.
     await user.tab(); // e-mail
+    expect(screen.getByLabelText("E-mail")).toHaveFocus();
     await user.keyboard("rodzina@example.com");
     await user.tab(); // hasło
+    expect(screen.getByLabelText("Hasło")).toHaveFocus();
     await user.keyboard(VALID_PASSWORD);
-    await user.tab(); // checkbox zgody
+    // Tab z hasła (ewentualnie przez przełącznik widoczności hasła) aż do checkboxa.
     const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    let tabs = 0;
+    while (document.activeElement !== checkbox && tabs < 3) {
+      await user.tab();
+      tabs += 1;
+    }
     expect(checkbox).toHaveFocus();
     expect(checkbox).toHaveAttribute("data-state", "unchecked");
 
