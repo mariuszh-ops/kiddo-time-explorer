@@ -613,6 +613,52 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
       expect(link.getAttribute("rel")).toContain("noopener");
     }
   });
+
+  it("wielokrotne kliknięcie submit po zaznaczeniu zgody nie powoduje podwójnej rejestracji", async () => {
+    // Powolna sieć: rejestracja trwa, dopóki sami jej nie zakończymy —
+    // w tym oknie czasowym łapiemy wszystkie "nerwowe" kliknięcia.
+    let resolveSignup!: () => void;
+    signUpWithEmail.mockImplementationOnce(
+      () => new Promise<void>((resolve) => { resolveSignup = resolve; }),
+    );
+
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    await userEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    await userEvent.click(submit);
+
+    expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+    expect(signUpWithEmail).toHaveBeenCalledWith(
+      "rodzina@example.com",
+      VALID_PASSWORD,
+      "test-captcha-token",
+    );
+
+    // Podwójne kliknięcie w trakcie wysyłki (fireEvent omija disabled —
+    // formularz musi się bronić własnym guardem `busy`).
+    fireEvent.click(submit);
+    fireEvent.click(submit);
+    fireEvent.submit(submit.closest("form")!);
+
+    expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+    // Ekran potwierdzenia jeszcze nie widoczny — wysyłka trwa.
+    expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
+
+    resolveSignup();
+    await waitFor(() => {
+      expect(screen.getByText("Sprawdź skrzynkę")).toBeInTheDocument();
+    });
+
+    // Nawet po zakończeniu rejestracji — dokładnie jedno wywołanie.
+    expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+  });
 });
 
 describe("EmailAuthForm — automatyczny audyt axe", () => {
