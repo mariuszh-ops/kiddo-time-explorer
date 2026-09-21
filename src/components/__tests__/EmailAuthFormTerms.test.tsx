@@ -597,8 +597,8 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
     expect(submit).toBeDisabled();
 
-    // Zaznaczenie zgody klawiaturą (Enter zostawił fokus na haśle — Shift+Tab na checkbox, spacja).
-    await user.keyboard("{Shift>}{Tab}{/Shift}");
+    // Zaznaczenie zgody klawiaturą (Enter zostawił fokus na haśle — Tab do przodu na checkbox, spacja).
+    await user.tab();
     expect(checkbox).toHaveFocus();
     await user.keyboard(" ");
     expect(checkbox).toHaveAttribute("data-state", "checked");
