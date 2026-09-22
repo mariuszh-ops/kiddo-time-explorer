@@ -722,6 +722,55 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     // Nawet po zakończeniu rejestracji — dokładnie jedno wywołanie.
     expect(signUpWithEmail).toHaveBeenCalledTimes(1);
   });
+
+  it("błąd rejestracji po wysyłce wyświetla polski komunikat bez podwójnego wywołania", async () => {
+    // Serwer odrzuca rejestrację (np. zajęty adres) — widget captcha resetuje
+    // token, więc kolejna wysyłka jest niemożliwa dopóki użytkownik go nie rozwiąże.
+    signUpWithEmail.mockRejectedValueOnce(new Error("User already registered"));
+
+    render(<EmailAuthForm initialMode="signup" />);
+    await screen.findByTestId("turnstile-mock");
+
+    fillSignupForm();
+
+    const checkbox = screen.getByRole("checkbox", { name: /Akceptuję/i });
+    await userEvent.click(checkbox);
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    const submit = screen.getByRole("button", { name: "Załóż konto" });
+    await userEvent.click(submit);
+
+    // Rejestracja wywołana dokładnie raz, z poprawnymi danymi.
+    expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+    expect(signUpWithEmail).toHaveBeenCalledWith(
+      "rodzina@example.com",
+      VALID_PASSWORD,
+      "test-captcha-token",
+    );
+
+    // Komunikat błędu pojawia się po polsku, z rolą alert.
+    const alert = await screen.findByRole("alert");
+    expect(alert).toHaveTextContent(
+      "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.",
+    );
+
+    // Nie przechodzimy na ekran potwierdzenia — konto nie zostało założone.
+    expect(screen.queryByText("Sprawdź skrzynkę")).not.toBeInTheDocument();
+    // Formularz zostaje na ekranie, checkbox pozostaje zaznaczony.
+    expect(checkbox).toHaveAttribute("data-state", "checked");
+
+    // Nerwowe ponowne kliknięcia po błędzie nie powodują drugiej rejestracji
+    // (token captcha jest jednorazowy — po odrzuceniu wysyłka jest zablokowana).
+    fireEvent.click(submit);
+    fireEvent.submit(submit.closest("form")!);
+    expect(signUpWithEmail).toHaveBeenCalledTimes(1);
+
+    // Komunikat o rejestracji zniknął — zamiast niego walidacja blokuje wysyłkę
+    // bez świeżego tokenu captcha (token jest jednorazowy), więc nie ma ryzyka
+    // drugiej rejestracji.
+    expect(screen.queryByText("Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.")).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Weryfikacja antybotowa nie powiodła się.");
+  });
 });
 
 describe("EmailAuthForm — automatyczny audyt axe", () => {
