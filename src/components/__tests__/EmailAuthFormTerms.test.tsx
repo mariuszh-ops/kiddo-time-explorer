@@ -765,10 +765,11 @@ describe("EmailAuthForm — dostępność checkboxa zgody", () => {
     fireEvent.submit(submit.closest("form")!);
     expect(signUpWithEmail).toHaveBeenCalledTimes(1);
 
-    // Komunikat błędu nadal widoczny — użytkownik wie, co się stało.
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.",
-    );
+    // Komunikat o rejestracji zniknął — zamiast niego walidacja blokuje wysyłkę
+    // bez świeżego tokenu captcha (token jest jednorazowy), więc nie ma ryzyka
+    // drugiej rejestracji.
+    expect(screen.queryByText("Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.")).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Weryfikacja antybotowa nie powiodła się.");
   });
 });
 
