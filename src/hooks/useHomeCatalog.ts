@@ -24,17 +24,22 @@ interface SurowiLicznicy {
   total: number;
 }
 
-/** Kształt oczekiwany przez FilterBar / MobileFilterSheet (dawniej liczony w pamięci). */
+/**
+ * Kształt oczekiwany przez FilterBar / MobileFilterSheet (dawniej liczony w pamięci).
+ *
+ * FMN-B07: `count`, `total` i `filtered` są `null`, dopóki liczniki nie przyszły
+ * (albo padły mimo ponowień). `null` = "nie wiemy", a NIE "zero wyników".
+ */
 export interface HomeFilterCounts {
-  city: { value: string; label: string; count: number }[];
-  age: { value: string; label: string; count: number }[];
-  type: { value: string; label: string; count: number }[];
-  indoor: { value: string; label: string; count: number }[];
-  activityKind: { value: string; label: string; count: number }[];
-  distance: { value: string; label: string; count: number }[];
-  price: { value: string; label: string; count: number }[];
-  total: number;
-  filtered: number;
+  city: { value: string; label: string; count: number | null }[];
+  age: { value: string; label: string; count: number | null }[];
+  type: { value: string; label: string; count: number | null }[];
+  indoor: { value: string; label: string; count: number | null }[];
+  activityKind: { value: string; label: string; count: number | null }[];
+  distance: { value: string; label: string; count: number | null }[];
+  price: { value: string; label: string; count: number | null }[];
+  total: number | null;
+  filtered: number | null;
   hasAnyFilter: boolean;
 }
 
@@ -87,7 +92,13 @@ function zbudujArgumenty(filters: Filters, searchQuery: string): ArgumentyRpc {
 // Definicja przedziałów wieku jedzie z frontu, żeby nie rozjechała się z UI.
 const KUBELKI_WIEKU = filterOptions.age.map((o) => ({ value: o.value, min: o.min, max: o.max }));
 
-const PUSTE_LICZNIKI: SurowiLicznicy = { region: {}, type: {}, age: {}, filtered: 0, total: 0 };
+/**
+ * FMN-B07: odstępy ponowień rpc('ff_home_counts') po błędzie, w ms. Pierwsze
+ * krótkie — pojedyncza awaria (500, zerwane połączenie) ma się naprawić, zanim
+ * rodzic rozwinie listę opcji. Po wyczerpaniu liczniki zostają nieznane (opcje
+ * bez liczb); ponowi je dopiero zmiana filtrów albo refetch().
+ */
+export const PONOWIENIA_LICZNIKOW_MS = [400, 1500, 4000];
 
 /**
  * Filtry strony głównej liczone i stronicowane na SERWERZE (Q-E-10b).
@@ -109,7 +120,7 @@ export function useHomeCatalog(
   /**
    * Liczniki przy opcjach filtrow maja WLASNA bramke, bo pasek filtrow jest
    * widoczny takze nad mapa (wrapper `hidden sm:block` w Index). Gdy szly ta
-   * sama bramka co lista, widok mapy zostawal z PUSTE_LICZNIKI: kazda kategoria
+   * sama bramka co lista, widok mapy zostawal z pustymi licznikami: kazda kategoria
    * pokazywala "(0)", a pasek twierdzil "Zadna atrakcja nie spelnia wybranych
    * filtrow" OBOK dzialajacej mapy pinow.
    */
@@ -134,7 +145,10 @@ export function useHomeCatalog(
   }, [kluczSurowy, kluczAktywny]);
 
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [licznicy, setLicznicy] = useState<SurowiLicznicy>(PUSTE_LICZNIKI);
+  // FMN-B07: null = liczniki jeszcze nie przyszly. Dawniej startowaly od zer
+  // (filtered 0), wiec pasek pisal "Zadna atrakcja nie spelnia wybranych
+  // filtrow", a opcje "(0)", zanim serwer w ogole odpowiedzial.
+  const [licznicy, setLicznicy] = useState<SurowiLicznicy | null>(null);
   // Strona, na ktorej konczy sie pierwsze zapytanie (0 = zwykle wejscie).
   const stronaStartowaRef = useRef(Math.max(0, Math.floor(stronyStartowe) - 1));
   // Klucz filtrow, dla ktorego strona startowa obowiazuje. Po pierwszej zmianie
@@ -159,30 +173,44 @@ export function useHomeCatalog(
   }, [kluczAktywny]);
 
   // Liczniki — jedno wywołanie na komplet 31 osi, niezależne od paginacji.
+  // FMN-B07: błąd liczników NIE jest błędem listy (dawniej setError zdejmował
+  // "Pokaż więcej" przy działającej liście) i jest ponawiany z odstępami.
   useEffect(() => {
     if (!licznikiWlaczone) return;
     let anulowane = false;
+    let timerPonowienia: ReturnType<typeof setTimeout> | null = null;
     const kluczNaStarcie = kluczAktywny;
     const { argumenty: a, sort: _sort } = JSON.parse(kluczAktywny) as {
       argumenty: ArgumentyRpc;
       sort: string;
     };
 
-    void (async () => {
-      const { data, error: blad } = await catalogClient.rpc("ff_home_counts", {
-        ...a,
-        p_age_buckets: KUBELKI_WIEKU,
-      });
+    const pobierz = async (proba: number) => {
+      let dane: SurowiLicznicy | null = null;
+      try {
+        const { data, error: blad } = await catalogClient.rpc("ff_home_counts", {
+          ...a,
+          p_age_buckets: KUBELKI_WIEKU,
+        });
+        if (!blad) dane = (data as SurowiLicznicy | null) ?? null;
+      } catch {
+        // zerwane polaczenie — traktujemy jak kazdy inny blad
+      }
       if (anulowane || kluczWLocie.current !== kluczNaStarcie) return;
-      if (blad) {
-        setError(blad instanceof Error ? blad : new Error(String(blad)));
+      if (dane) {
+        setLicznicy(dane);
         return;
       }
-      setLicznicy((data as SurowiLicznicy | null) ?? PUSTE_LICZNIKI);
-    })();
+      // Liczniki poprzednich filtrow nie moga udawac licznikow biezacych.
+      setLicznicy(null);
+      const odstep = PONOWIENIA_LICZNIKOW_MS[proba];
+      if (odstep !== undefined) timerPonowienia = setTimeout(() => void pobierz(proba + 1), odstep);
+    };
+    void pobierz(0);
 
     return () => {
       anulowane = true;
+      if (timerPonowienia) clearTimeout(timerPonowienia);
     };
   }, [kluczAktywny, licznikiWlaczone, zetonOdswiezenia]);
 
@@ -266,10 +294,12 @@ export function useHomeCatalog(
   );
 
   const filterCounts = useMemo<HomeFilterCounts>(() => {
-    const zMapy = (mapa: Record<string, number>) => (value: string) => mapa[value] ?? 0;
-    const region = zMapy(licznicy.region);
-    const typ = zMapy(licznicy.type);
-    const wiek = zMapy(licznicy.age);
+    // Brak klucza w ODPOWIEDZI serwera = realne 0; brak odpowiedzi = null.
+    const zMapy = (mapa: Record<string, number> | undefined) => (value: string): number | null =>
+      licznicy ? mapa?.[value] ?? 0 : null;
+    const region = zMapy(licznicy?.region);
+    const typ = zMapy(licznicy?.type);
+    const wiek = zMapy(licznicy?.age);
     return {
       city: filterOptions.city.map((o) => ({ ...o, count: region(o.value) })),
       age: filterOptions.age.map((o) => ({ value: o.value, label: o.label, count: wiek(o.value) })),
@@ -280,13 +310,13 @@ export function useHomeCatalog(
       activityKind: filterOptions.activityKind.map((o) => ({ ...o, count: 0 })),
       distance: [],
       price: filterOptions.price.map((o) => ({ ...o, count: 0 })),
-      total: licznicy.total,
-      filtered: licznicy.filtered,
+      total: licznicy ? licznicy.total : null,
+      filtered: licznicy ? licznicy.filtered : null,
       hasAnyFilter,
     };
   }, [licznicy, hasAnyFilter]);
 
-  const hasMore = activities.length < licznicy.filtered;
+  const hasMore = licznicy !== null && activities.length < licznicy.filtered;
 
   const loadMore = useCallback(() => {
     if (loading || loadingMore) return;

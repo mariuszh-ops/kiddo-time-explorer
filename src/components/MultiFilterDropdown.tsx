@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 interface FilterOption {
   value: string;
   label: string;
-  count: number;
+  /** null = licznik jeszcze nieznany (FMN-B07) — opcja bez liczby, nie "(0)". */
+  count: number | null;
 }
 
 interface MultiFilterDropdownProps {
@@ -122,7 +123,9 @@ const MultiFilterDropdown = ({
             >
               <span>{option.label}</span>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">({option.count})</span>
+                {option.count != null && (
+                  <span className="text-xs text-muted-foreground">({option.count})</span>
+                )}
                 {isSelected && <Check className="w-4 h-4 text-primary" />}
               </div>
             </button>

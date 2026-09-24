@@ -8,7 +8,8 @@ import { Slider } from "@/components/ui/slider";
 interface FilterOption {
   value: string;
   label: string;
-  count: number;
+  /** null = licznik jeszcze nieznany (FMN-B07): region klikalny, bez liczby. */
+  count: number | null;
 }
 
 interface CityFilterDropdownProps {
@@ -16,7 +17,7 @@ interface CityFilterDropdownProps {
   selectedCity?: string;
   selectedDistance?: number;
   hasAnyFilter: boolean;
-  filteredCount: number;
+  filteredCount: number | null;
   onCitySelect: (value: string | undefined) => void;
   onDistanceChange: (value: number) => void;
 }
@@ -167,9 +168,11 @@ const CityFilterDropdown = ({
               >
                 <span>{option.label}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">
-                    {isEmpty ? "(wkrótce)" : `(${option.count})`}
-                  </span>
+                  {option.count != null && (
+                    <span className="text-xs text-muted-foreground">
+                      {isEmpty ? "(wkrótce)" : `(${option.count})`}
+                    </span>
+                  )}
                   {option.value === selectedCity && !isEmpty && (
                     <Check className="w-4 h-4 text-primary" />
                   )}
@@ -208,12 +211,14 @@ const CityFilterDropdown = ({
                 <span>100 km</span>
               </div>
               
-              {/* Results preview */}
-              <div className="mt-4 pt-3 border-t border-border/50 text-center">
-                <span className="text-sm text-muted-foreground">
-                  <span className="font-medium text-foreground">{filteredCount}</span> atrakcji
-                </span>
-              </div>
+              {/* Results preview — tylko gdy licznik przyszedl (FMN-B07) */}
+              {filteredCount != null && (
+                <div className="mt-4 pt-3 border-t border-border/50 text-center">
+                  <span className="text-sm text-muted-foreground">
+                    <span className="font-medium text-foreground">{filteredCount}</span> atrakcji
+                  </span>
+                </div>
+              )}
             </div>
           </>
         )}

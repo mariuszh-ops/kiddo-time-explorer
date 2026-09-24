@@ -17,16 +17,17 @@ interface FilterBarProps {
   filters: Filters;
   searchQuery: string;
   onSearchChange: (query: string) => void;
+  /** `null` przy liczniku = jeszcze nie wiadomo (FMN-B07), nie zero. */
   filterCounts: {
-    city: { value: string; label: string; count: number }[];
-    age: { value: string; label: string; count: number }[];
-    type: { value: string; label: string; count: number }[];
-    indoor: { value: string; label: string; count: number }[];
-    activityKind: { value: string; label: string; count: number }[];
-    distance: { value: string; label: string; count: number }[];
-    price: { value: string; label: string; count: number }[];
-    total: number;
-    filtered: number;
+    city: { value: string; label: string; count: number | null }[];
+    age: { value: string; label: string; count: number | null }[];
+    type: { value: string; label: string; count: number | null }[];
+    indoor: { value: string; label: string; count: number | null }[];
+    activityKind: { value: string; label: string; count: number | null }[];
+    distance: { value: string; label: string; count: number | null }[];
+    price: { value: string; label: string; count: number | null }[];
+    total: number | null;
+    filtered: number | null;
     hasAnyFilter: boolean;
   };
   /** `opcje` podaje tylko arkusz filtrów na telefonie (FMN-B05). */
@@ -102,7 +103,10 @@ const FilterBar = ({
   );
 
   // Generate dynamic feedback text
-  const getFeedbackText = () => {
+  const getFeedbackText = (): string | null => {
+    // FMN-B07: liczniki jeszcze nie przyszly — nic nie mowimy, zamiast
+    // oglaszac "Zadna atrakcja nie spelnia wybranych filtrow".
+    if (filterCounts.filtered == null) return null;
     const count = formatCount(filterCounts.filtered);
     if (filters.distance !== undefined && filters.distance > 0 && filters.city) {
       const cityName = getCapitalCityGenitive(filters.city);
@@ -174,7 +178,7 @@ const FilterBar = ({
                 aria-atomic="true"
                 className={hasActiveFilters ? "text-sm text-muted-foreground" : "sr-only"}
               >
-                {hasActiveFilters ? (
+                {hasActiveFilters && filterCounts.filtered != null ? (
                   <>
                     <span className="font-medium text-foreground">{filterCounts.filtered}</span>{" "}
                     {formatAttractionWord(filterCounts.filtered)}
@@ -391,8 +395,10 @@ const FilterBar = ({
         aria-atomic="true"
         className={hasActiveFilters ? "container py-2 text-sm text-muted-foreground" : "sr-only"}
       >
+        {/* Twarda spacja trzyma wysokosc wiersza, zanim przyjda liczniki —
+            bez niej lista pod spodem skakalaby o linijke (CLS). */}
         {hasActiveFilters ? (
-          <span className="font-medium text-foreground">{getFeedbackText()}</span>
+          <span className="font-medium text-foreground">{getFeedbackText() ?? "\u00a0"}</span>
         ) : null}
       </div>
     </>

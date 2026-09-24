@@ -13,7 +13,8 @@ import { cn } from "@/lib/utils";
 interface FilterOption {
   value: string;
   label: string;
-  count: number;
+  /** null = licznik jeszcze nieznany (FMN-B07) — wiersz bez liczby, nie "(0)". */
+  count: number | null;
 }
 
 interface MobileFilterSheetProps {
@@ -30,8 +31,8 @@ interface MobileFilterSheetProps {
     activityKind: FilterOption[];
     distance: FilterOption[];
     price: FilterOption[];
-    total: number;
-    filtered: number;
+    total: number | null;
+    filtered: number | null;
     hasAnyFilter: boolean;
   };
   onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined, opcje?: FilterWriteOptions) => void;
@@ -54,7 +55,7 @@ const FilterOptionRow = ({
   onToggle,
 }: {
   label: string;
-  count: number;
+  count: number | null;
   checked: boolean;
   onToggle: () => void;
 }) => (
@@ -62,7 +63,7 @@ const FilterOptionRow = ({
     type="button"
     role="checkbox"
     aria-checked={checked}
-    aria-label={`${label} (${count})`}
+    aria-label={count != null ? `${label} (${count})` : label}
     onClick={onToggle}
     className="flex items-center justify-between w-full min-h-11 py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
   >
@@ -78,7 +79,7 @@ const FilterOptionRow = ({
       </span>
       <span className="text-sm text-foreground">{label}</span>
     </span>
-    <span className="text-xs text-muted-foreground">({count})</span>
+    {count != null && <span className="text-xs text-muted-foreground">({count})</span>}
   </button>
 );
 
@@ -349,7 +350,7 @@ const MobileFilterSheet = ({
               onClick={handleApply}
               className="flex-1"
             >
-              Pokaż wyniki ({filterCounts.filtered})
+              {filterCounts.filtered != null ? `Pokaż wyniki (${filterCounts.filtered})` : "Pokaż wyniki"}
             </Button>
           </div>
         </div>

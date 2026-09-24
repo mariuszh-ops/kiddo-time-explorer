@@ -473,7 +473,7 @@ const Index = () => {
               </Button>
             </div>
           )}
-          {!home.hasMore && !home.loading && !home.error && home.filterCounts.filtered > HOME_PAGE_SIZE && (
+          {!home.hasMore && !home.loading && !home.error && (home.filterCounts.filtered ?? 0) > HOME_PAGE_SIZE && (
             <p className="text-center text-muted-foreground mt-10 text-sm">
               To wszystkie atrakcje pasujące do filtrów
             </p>
