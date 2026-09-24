@@ -86,9 +86,11 @@ const CategoryPage = () => {
 
   // URL-persisted filter state
   const [searchParams, setSearchParams] = useSearchParams();
+  // Kategoria w ścieżce (/kategoria/zoo) blokuje ?type=, bez niej strona zna jedną wartość `type`.
   const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
     searchParams,
     setSearchParams,
+    categorySlug ? "sciezka" : "jedna",
   );
   // Walidacja parametrów URL — nieznane wartości odrzucamy po cichu,
   // żeby nie budować z nich zapytania do backendu.
@@ -712,6 +714,14 @@ const CategoryPage = () => {
                     onViewModeChange={(mode) => setViewMode(mode)}
                     savedMapState={savedMapState}
                     onSaveMapState={handleSaveMapState}
+                    // FMN-B02: chip mapy = „Kategoria" z paska listingu, czyli JEDNA
+                    // wartość `type` (drugi chip zastępuje pierwszy, odklik zdejmuje).
+                    // Przy kategorii w ścieżce pasek nie ma „Kategorii" — mapa też nie.
+                    onCategoryToggle={
+                      categorySlug
+                        ? undefined
+                        : (value) => updateParams({ type: urlType === value ? undefined : value })
+                    }
                     pinsError={pinsError}
                     onPinsRetry={refetchPins}
                     nazwaObszaru={resolvedH1}

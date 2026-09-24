@@ -20,9 +20,12 @@ const CATEGORIES: { key: string; label: string; emoji: string }[] = [
 interface MapCategoryChipsProps {
   selected: Set<string>;
   onToggle: (category: string) => void;
+  /** false = kategoria zablokowana sciezka strony; zostaje sam chip „Ulubione". */
+  showCategories?: boolean;
 }
 
-export default function MapCategoryChips({ selected, onToggle }: MapCategoryChipsProps) {
+export default function MapCategoryChips({ selected, onToggle, showCategories = true }: MapCategoryChipsProps) {
+  const chipy = showCategories ? CATEGORIES : CATEGORIES.filter((c) => c.key === FAVORITES_CHIP_KEY);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -83,7 +86,7 @@ export default function MapCategoryChips({ selected, onToggle }: MapCategoryChip
       )}
 
       <div ref={scrollRef} className="flex gap-2 overflow-x-auto scrollbar-hide py-1">
-      {CATEGORIES.map(({ key, label, emoji }) => {
+      {chipy.map(({ key, label, emoji }) => {
         const isActive = selected.has(key);
         return (
           <button

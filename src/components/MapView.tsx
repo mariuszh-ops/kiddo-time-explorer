@@ -75,18 +75,6 @@ const CATEGORY_EMOJI: Record<string, string> = {
   "muzeum": "🎭",
 };
 
-/** Aliasy starej taksonomii → wartości używane na listingu (FILTER_OPTIONS.type). */
-const TYPE_ALIASES: Record<string, string> = {
-  muzeum: "muzeum-teatr",
-  teatr: "muzeum-teatr",
-  warsztaty: "inne",
-};
-
-const canonicalType = (type?: string) => {
-  const t = (type || "inne").trim();
-  return TYPE_ALIASES[t] ?? t;
-};
-
 // Border color based on rating
 const getRatingBorderColor = (rating: number): string => {
   if (rating >= 4.5) return "#22c55e";
@@ -863,7 +851,8 @@ function OpisMapy({ nazwa }: { nazwa: string }) {
 export interface SavedMapState {
   center: [number, number];
   zoom: number;
-  selectedCategories: Set<string>;
+  /** Chip „Ulubione" (`?fav=1`). Kategorie mapy to filtr `type` strony, nie stan mapy. */
+  favoritesOnly: boolean;
 }
 
 interface MapViewProps {
@@ -878,9 +867,15 @@ interface MapViewProps {
   onPinsRetry?: () => void;
   /** W-I-01: nazwa obszaru do etykiety mapy, zwykle H1 strony (np. „Atrakcje w Małopolsce"). */
   nazwaObszaru?: string;
+  /**
+   * FMN-B02: klik chipa kategorii = zmiana filtra `type` u rodzica (ten sam filtr
+   * co „Kategoria" w pasku). Brak = kategoria zablokowana ścieżką (/kategoria/zoo):
+   * pasek nie ma wtedy „Kategorii", więc mapa nie pokazuje chipów kategorii.
+   */
+  onCategoryToggle?: (category: string) => void;
 }
 
-const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry, nazwaObszaru }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry, nazwaObszaru, onCategoryToggle }: MapViewProps) => {
   const isMobile = useIsMobile();
   // W-I-01: nazwa mapy idzie za H1 strony; na home (brak H1 obszaru) zostaje ogólna.
   const etykietaMapy = nazwaObszaru ? `Mapa: ${nazwaObszaru}` : "Mapa atrakcji dla dzieci";
@@ -934,33 +929,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
-    () => new Set([...(filters.type ?? []), ...(savedMapState?.selectedCategories ?? [])]),
-  );
-  // Kategoria z trasy/filtra listingu (np. /kategoria/zoo, ?type=zoo) zawsze
-  // zasila chipsy — także gdy zmieni się przy zamontowanej mapie.
+  // FMN-B02: chip kategorii jest aktywny <=> kategoria jest w `filters.type`.
+  // Wczesniej chipy mialy wlasny zbior (w adresie ?cats=), nakladany na piny
+  // juz przyciete do `type` warunkiem AND: chip „Zoo" przy type=plac-zabaw nie
+  // dodawal zoo, a odklik „Place zabaw" dawal 0 pinow przy type=plac-zabaw
+  // w adresie. Jedyny chip z wlasnym stanem to „Ulubione" — nie jest kategoria.
+  const [tylkoUlubione, setTylkoUlubione] = useState(() => savedMapState?.favoritesOnly ?? false);
+  // Klucz tekstowy, bo CategoryPage buduje `filters.type` na nowo przy kazdym renderze.
   const routeTypesKey = (filters.type ?? []).join(",");
-  const poprzednieTypyTrasyRef = useRef(routeTypesKey);
-  useEffect(() => {
-    const poprzednie = poprzednieTypyTrasyRef.current.split(",").filter(Boolean);
-    const biezace = routeTypesKey.split(",").filter(Boolean);
-    poprzednieTypyTrasyRef.current = routeTypesKey;
-    setSelectedCategories((prev) => {
-      const next = new Set(prev);
-      let changed = false;
-      // Odznaczenie kategorii w dropdownie "Kategoria" MUSI zdjac takze chip.
-      // Wczesniej efekt tylko dodawal, wiec raz wlaczona kategoria zostawala na
-      // mapie na zawsze: uzytkownik odklikiwal ja w filtrze i nic sie nie dzialo
-      // ("wybrana kategoria nie znajduje zastosowania").
-      for (const t of poprzednie) {
-        if (!biezace.includes(t) && next.delete(t)) changed = true;
-      }
-      for (const t of biezace) {
-        if (!next.has(t)) { next.add(t); changed = true; }
-      }
-      return changed ? next : prev;
-    });
-  }, [routeTypesKey]);
+  const selectedCategories = useMemo(() => {
+    const s = new Set(routeTypesKey.split(",").filter(Boolean));
+    if (tylkoUlubione) s.add(FAVORITES_CHIP_KEY);
+    return s;
+  }, [routeTypesKey, tylkoUlubione]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
@@ -974,7 +955,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const mapCenter: [number, number] = savedMapState ? savedMapState.center : [center.lat, center.lng];
   const initialZoom = savedMapState ? savedMapState.zoom : 11;
 
-  // Zapis stanu mapy (srodek, zoom, chipsy) w JEDNYM stabilnym callbacku.
+  // Zapis stanu mapy (srodek, zoom, „Ulubione") w JEDNYM stabilnym callbacku.
   // Wartosci ida przez refy, dzieki czemu tozsamosc `zapiszStanMapy` NIGDY sie
   // nie zmienia. Wczesniej zarowno efekt "zapis przy unmoncie", jak i
   // handleViewportSave mialy w zaleznosciach [onSaveMapState, selectedCategories],
@@ -982,10 +963,10 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // efektu (ktory wykonuje sie przy KAZDEJ zmianie zaleznosci, nie tylko przy
   // unmoncie) zapisywal wtedy URL ponownie i napedzal petle.
   const onSaveMapStateRef = useRef(onSaveMapState);
-  const selectedCategoriesRef = useRef(selectedCategories);
+  const tylkoUlubioneRef = useRef(tylkoUlubione);
   useEffect(() => {
     onSaveMapStateRef.current = onSaveMapState;
-    selectedCategoriesRef.current = selectedCategories;
+    tylkoUlubioneRef.current = tylkoUlubione;
   });
 
   const zapiszStanMapy = useCallback(() => {
@@ -996,17 +977,17 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     zapisz({
       center: [c.lat, c.lng],
       zoom: map.getZoom(),
-      selectedCategories: selectedCategoriesRef.current,
+      favoritesOnly: tylkoUlubioneRef.current,
     });
   }, []);
 
   // Zapis przy odmontowaniu -- zaleznosci MUSZA byc puste.
   useEffect(() => () => zapiszStanMapy(), [zapiszStanMapy]);
 
-  // Chipsy kategorii trzymamy w adresie (?cats=), zeby "wstecz" i F5 je
+  // Chip „Ulubione" trzymamy w adresie (?fav=1), zeby "wstecz" i F5 go
   // odtworzyly. Robi to osobny efekt, a nie cleanup powyzszego: cleanup
   // odpalal sie takze przy zmianie tozsamosci callbacka, czyli po kazdym
-  // zapisie URL-a.
+  // zapisie URL-a. Kategorie zapisuje rodzic (filtr `type`), nie ten efekt.
   const pierwszySkladChipow = useRef(true);
   useEffect(() => {
     if (pierwszySkladChipow.current) {
@@ -1014,7 +995,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       return;
     }
     zapiszStanMapy();
-  }, [selectedCategories, zapiszStanMapy]);
+  }, [tylkoUlubione, zapiszStanMapy]);
 
   // Live sync (center/zoom/chipsy) -- zapis przy KAZDYM moveend/zoomend,
   // wykonywany w ViewportFilter (ponizej) przez handleViewportSave.
@@ -1031,16 +1012,9 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   const searchNormalized = useMemo(() => normalizeText(searchQuery.trim()), [searchQuery, normalizeText]);
 
-  // Filter activities by selected categories + favorites + search
-  const showFavoritesOnly = selectedCategories.has(FAVORITES_CHIP_KEY);
-  const categoryFilters = useMemo(() => {
-    const s = new Set<string>();
-    selectedCategories.forEach((c) => {
-      if (c === FAVORITES_CHIP_KEY) return;
-      s.add(canonicalType(c));
-    });
-    return s;
-  }, [selectedCategories]);
+  // Kategorie przycina juz rodzic (`activities` / piny sa po filtrze `type`);
+  // tu zostaja tylko „Ulubione" i fraza z pola mapy.
+  const showFavoritesOnly = tylkoUlubione;
 
   const matchesSearch = useCallback((a: Activity) => {
     if (!searchNormalized) return true;
@@ -1051,9 +1025,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   const filteredActivities = useMemo(() => {
     let result = sourceActivities;
-    if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
-    }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
     }
@@ -1061,23 +1032,22 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       result = result.filter(matchesSearch);
     }
     return result;
-  }, [sourceActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+  }, [sourceActivities, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
+  // Klik chipa kategorii zmienia filtr `type` u rodzica (jeden wpis historii,
+  // jak w pasku filtrow). „Ulubione" to lokalny stan mapy.
   const handleCategoryToggle = useCallback((category: string) => {
-    setSelectedCategories((prev) => {
-      const next = new Set(prev);
-      if (next.has(category)) next.delete(category);
-      else next.add(category);
-      return next;
-    });
-  }, []);
+    if (category === FAVORITES_CHIP_KEY) {
+      setTylkoUlubione((v) => !v);
+      return;
+    }
+    onCategoryToggle?.(category);
+  }, [onCategoryToggle]);
+  const pokazChipyKategorii = onCategoryToggle != null;
 
-  // Filtered visible activities (viewport + category + favorites + search)
+  // Filtered visible activities (viewport + favorites + search)
   const displayedActivities = useMemo(() => {
     let result = visibleActivities;
-    if (categoryFilters.size > 0) {
-      result = result.filter((a) => categoryFilters.has(canonicalType(a.type)));
-    }
     if (showFavoritesOnly) {
       result = result.filter((a) => isFavorite(a.id));
     }
@@ -1085,7 +1055,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       result = result.filter(matchesSearch);
     }
     return result;
-  }, [visibleActivities, categoryFilters, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
+  }, [visibleActivities, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
   // Uwaga: NIE zasilamy tu visibleActivities całym katalogiem. Jedynym źródłem
   // prawdy jest zbiór przefiltrowany przez kadr mapy (ViewportFilter), który
@@ -1208,6 +1178,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           onSheetStateChange={setMobileSheetState}
           selectedCategories={selectedCategories}
           onCategoryToggle={handleCategoryToggle}
+          showCategoryChips={pokazChipyKategorii}
           mapCenter={liveMapCenter}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -1256,7 +1227,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
               >
                 {displayedActivities.length} atrakcji w widoku
               </p>
-              <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} />
+              <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} showCategories={pokazChipyKategorii} />
             </div>
             <div
               className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}

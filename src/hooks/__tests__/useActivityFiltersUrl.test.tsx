@@ -25,7 +25,7 @@ const wrapper = (initial: string) =>
     <MemoryRouter initialEntries={[initial]}>{children}</MemoryRouter>
   );
 
-const MAPA = "?region=mazowieckie&age=3-5&view=map&lat=52.29&lng=21.20&zoom=8&cats=zoo&type=park-rozrywki";
+const MAPA = "?region=mazowieckie&age=3-5&view=map&lat=52.29&lng=21.20&zoom=8&fav=1&type=park-rozrywki";
 
 describe("useActivityFilters — filtry liczone z adresu", () => {
   it("kategorie z adresu widać już przy pierwszym renderze", () => {
@@ -43,7 +43,7 @@ describe("useActivityFilters — filtry liczone z adresu", () => {
 
     const s = new URLSearchParams(result.current.search);
     expect(s.get("type")).toBe("park-rozrywki,plac-zabaw");
-    expect(s.get("cats")).toBe("zoo");
+    expect(s.get("fav")).toBe("1");
     expect(s.get("lat")).toBe("52.29");
     expect(s.get("zoom")).toBe("8");
     expect(s.get("view")).toBe("map");
@@ -57,7 +57,7 @@ describe("useActivityFilters — filtry liczone z adresu", () => {
       result.current.setParams(
         (prev) => {
           prev.set("zoom", "9");
-          prev.set("cats", "zoo,sport");
+          prev.delete("fav");
           return prev;
         },
         { replace: true },
@@ -78,6 +78,6 @@ describe("useActivityFilters — filtry liczone z adresu", () => {
     expect(s.get("region")).toBeNull();
     expect(s.get("age")).toBeNull();
     expect(s.get("view")).toBe("map");
-    expect(s.get("cats")).toBe("zoo");
+    expect(s.get("fav")).toBe("1");
   });
 });

@@ -289,6 +289,8 @@ const Index = () => {
             onViewModeChange={handleViewModeChange}
             savedMapState={savedMapState}
             onSaveMapState={handleSaveMapState}
+            // FMN-B02: chip mapy = ten sam filtr co „Kategoria" w pasku (push, jak tam).
+            onCategoryToggle={(value) => toggleArrayFilter("type", value)}
           />
         </Suspense>
         </ErrorBoundary>

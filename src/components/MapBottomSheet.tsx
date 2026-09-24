@@ -21,6 +21,8 @@ interface MapBottomSheetProps {
   onSheetStateChange?: (state: SheetState) => void;
   selectedCategories: Set<string>;
   onCategoryToggle: (category: string) => void;
+  /** false = kategoria zablokowana sciezka strony (patrz MapCategoryChips). */
+  showCategoryChips?: boolean;
   mapCenter?: [number, number] | null;
   searchQuery: string;
   onSearchChange: (query: string) => void;
@@ -71,6 +73,7 @@ export default function MapBottomSheet({
   onSheetStateChange,
   selectedCategories,
   onCategoryToggle,
+  showCategoryChips,
   mapCenter,
   searchQuery,
   onSearchChange,
@@ -383,7 +386,7 @@ export default function MapBottomSheet({
 
       {/* Category chips */}
       <div className="px-3 pb-1 shrink-0">
-        <MapCategoryChips selected={selectedCategories} onToggle={onCategoryToggle} />
+        <MapCategoryChips selected={selectedCategories} onToggle={onCategoryToggle} showCategories={showCategoryChips} />
       </div>
 
       {/* List content */}
