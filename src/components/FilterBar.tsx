@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { activityCount, activityWord, verbPl } from "@/lib/plural";
 import FilterDropdown from "@/components/FilterDropdown";
@@ -76,6 +76,19 @@ const FilterBar = ({
   // Sort is not counted as an active filter
   const activeFilterCount = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length + (searchQuery.trim() ? 1 : 0);
   const hasActiveFilters = activeFilterCount > 0;
+
+  // FMN-B09: „Wyczyść filtry” znika razem z hasActiveFilters, a fokus z
+  // odpiętego przycisku spadał na <body>. Po wyczyszczeniu przenosimy go na
+  // pierwszy trigger filtra — ten zostaje w DOM. Efekt, nie handler: zapis do
+  // URL-a może dojść w kolejnym renderze, a fokus ustawiamy dopiero wtedy, gdy
+  // przycisku już nie ma.
+  const pasekFiltrowRef = useRef<HTMLDivElement>(null);
+  const fokusPoWyczyszczeniu = useRef(false);
+  useEffect(() => {
+    if (hasActiveFilters || !fokusPoWyczyszczeniu.current) return;
+    fokusPoWyczyszczeniu.current = false;
+    pasekFiltrowRef.current?.querySelector<HTMLElement>("button")?.focus();
+  }, [hasActiveFilters]);
 
   // Polish grammar for "atrakcja/atrakcje/atrakcji"
   const formatCount = (n: number): string => (n === 0 ? "Brak atrakcji" : activityCount(n));
@@ -195,7 +208,7 @@ const FilterBar = ({
       <section className="bg-card sticky top-14 md:top-16 z-40 shadow-sm border-b border-border notranslate" translate="no">
         <div className="container py-3">
           {/* Filter pills - horizontal scroll on mobile */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
+          <div ref={pasekFiltrowRef} className="flex items-center gap-2 overflow-x-auto pb-1 -mb-1 scrollbar-hide">
             {/* Combined City + Distance filter — shown only when multiple cities enabled */}
             {FEATURES.ENABLED_CITIES.length > 1 && (
               <span onPointerDown={prefetchCatalog} onFocus={prefetchCatalog} className="contents">
@@ -356,7 +369,10 @@ const FilterBar = ({
             {/* Clear all button - only when filters active */}
             {hasActiveFilters && (
               <button
-                onClick={() => onClearAll()}
+                onClick={() => {
+                  fokusPoWyczyszczeniu.current = true;
+                  onClearAll();
+                }}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap shrink-0"
               >
                 <X className="w-3.5 h-3.5" />

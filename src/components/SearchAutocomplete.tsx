@@ -136,6 +136,20 @@ const SearchAutocomplete = ({
       inputRef.current?.blur();
       return;
     }
+    // FMN-B09: Enter nie moze czekac na liste podpowiedzi. `showDropdown` zalezy
+    // od `debouncedQuery`, ktory dogania pole 150 ms po ostatnim znaku — Enter
+    // wcisniety od razu po pisaniu przepadal (0/6 na /?age=3-5). Zaznaczona
+    // podpowiedz liczy sie tylko wtedy, gdy lista jest na ekranie.
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (showDropdown && selectedIndex >= 0) {
+        handleSelect(selectedIndex);
+      } else {
+        onSearchChange(inputValue);
+        setIsOpen(false);
+      }
+      return;
+    }
     if (!showDropdown) return;
 
     if (e.key === "ArrowDown") {
@@ -144,14 +158,6 @@ const SearchAutocomplete = ({
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : totalResults - 1));
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      if (selectedIndex >= 0) {
-        handleSelect(selectedIndex);
-      } else {
-        onSearchChange(inputValue);
-        setIsOpen(false);
-      }
     }
   };
 
