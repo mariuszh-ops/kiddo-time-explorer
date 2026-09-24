@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { X, MapPin, Check } from "lucide-react";
 import { Filters } from "@/hooks/useActivityFilters"; 
+import { useFilterSheetHistory, type FilterWriteOptions } from "@/hooks/useFilterSheetHistory";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FEATURES } from "@/lib/featureFlags";
@@ -33,9 +34,9 @@ interface MobileFilterSheetProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
-  onToggleTypeFilter: (value: string) => void;
-  onClearAll: () => void;
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined, opcje?: FilterWriteOptions) => void;
+  onToggleTypeFilter: (value: string, opcje?: FilterWriteOptions) => void;
+  onClearAll: (opcje?: FilterWriteOptions) => void;
 }
 
 // DisabledFilterSection removed - distance is now integrated with city filter
@@ -159,6 +160,12 @@ const MobileFilterSheet = ({
   const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
   const hasCitySelected = Boolean(filters.city);
 
+  // FMN-B05 (R3): „wstecz" przy otwartym arkuszu zamyka arkusz, filtry zostają.
+  // Każdy zapis filtra z arkusza idzie przez `zapiszWArkuszu` — patrz hook.
+  const { zapiszWArkuszu } = useFilterSheetHistory(isOpen, onClose);
+  const ustawFiltr = (key: keyof Filters, value: string | string[] | number | undefined) =>
+    zapiszWArkuszu((opcje) => onUpdateFilter(key, value, opcje));
+
   // Sync local distance when filters change
   useEffect(() => {
     if (filters.distance !== undefined) {
@@ -170,13 +177,13 @@ const MobileFilterSheet = ({
     onSearchChange(localSearch);
     if (hasCitySelected) {
       // 0 km means "no distance filter" — show the whole region.
-      onUpdateFilter("distance", localDistance > 0 ? localDistance : undefined);
+      ustawFiltr("distance", localDistance > 0 ? localDistance : undefined);
     }
     onClose();
   };
 
   const handleClearAll = () => {
-    onClearAll();
+    zapiszWArkuszu((opcje) => onClearAll(opcje));
     setLocalSearch("");
     setLocalDistance(5);
   };
@@ -217,7 +224,7 @@ const MobileFilterSheet = ({
                 title="Województwo"
                 options={filterCounts.city}
                 selectedValue={filters.city}
-                onSelect={(value) => onUpdateFilter("city", value)}
+                onSelect={(value) => ustawFiltr("city", value)}
               />
               
               {/* Distance slider - shown when city selected */}
@@ -258,14 +265,14 @@ const MobileFilterSheet = ({
             title="Wiek dziecka"
             options={filterCounts.age}
             selectedValue={filters.age}
-            onSelect={(value) => onUpdateFilter("age", value)}
+            onSelect={(value) => ustawFiltr("age", value)}
           />
           
           <MultiFilterSection
             title="Kategoria"
             options={filterCounts.type}
             selectedValues={filters.type || []}
-            onToggle={onToggleTypeFilter}
+            onToggle={(value) => zapiszWArkuszu((opcje) => onToggleTypeFilter(value, opcje))}
           />
           
           {/* Sekcja „Pod dachem / Na zewnątrz" ukryta — isIndoor twardo false (0 wyników). Logika zostaje.
@@ -311,7 +318,7 @@ const MobileFilterSheet = ({
               ].map((option) => (
                 <button
                   key={option.value}
-                  onClick={() => onUpdateFilter("sort", option.value)}
+                  onClick={() => ustawFiltr("sort", option.value)}
                   className={cn(
                     "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                     (filters.sort || "rating") === option.value

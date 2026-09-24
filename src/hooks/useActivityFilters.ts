@@ -5,6 +5,7 @@ import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { matchesSearchQuery } from "@/lib/searchMatch";
+import type { FilterWriteOptions } from "@/hooks/useFilterSheetHistory";
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -100,12 +101,17 @@ export function useActivityFilters() {
   // Każdy zapis filtra idzie funkcyjnie: `prev` jest zawsze świeży, więc
   // równoległy zapis mapy (lat/lng/zoom/cats) nie ginie pod starym snapshotem.
   // Świadoma zmiana filtra zostawia wpis w historii (push) — tak jak wcześniej.
+  // `replace` zamawia tylko arkusz filtrów na telefonie, który sam dokłada wpis
+  // (FMN-B05, useFilterSheetHistory).
   const zapiszFiltrDoUrl = useCallback(
-    (mutuj: (params: URLSearchParams) => void) => {
-      setSearchParams((prev) => {
-        mutuj(prev);
-        return prev;
-      });
+    (mutuj: (params: URLSearchParams) => void, opcje?: FilterWriteOptions) => {
+      setSearchParams(
+        (prev) => {
+          mutuj(prev);
+          return prev;
+        },
+        opcje?.replace ? { replace: true } : undefined,
+      );
     },
     [setSearchParams],
   );
@@ -121,7 +127,7 @@ export function useActivityFilters() {
   // `if (viewMode === "map" && hasActiveFilters) ensureActivitiesLoaded()`.
 
   const updateFilter = useCallback(
-    (key: keyof Filters, value: string | string[] | number | undefined) => {
+    (key: keyof Filters, value: string | string[] | number | undefined, opcje?: FilterWriteOptions) => {
       const pusty = value === undefined || (Array.isArray(value) && value.length === 0);
       if (isLocalOnly(key)) {
         setLocalFilters((prev) => {
@@ -161,14 +167,14 @@ export function useActivityFilters() {
           default:
             break;
         }
-      });
+      }, opcje);
     },
     [zapiszFiltrDoUrl],
   );
 
   // Przełączenie jednej wartości w filtrze wielokrotnym (jedyny taki filtr to `type`).
   const toggleArrayFilter = useCallback(
-    (key: "type", value: string) => {
+    (key: "type", value: string, opcje?: FilterWriteOptions) => {
       zapiszFiltrDoUrl((params) => {
         const current = (params.get(key) ?? "").split(",").filter(Boolean);
         const next = current.includes(value)
@@ -176,18 +182,18 @@ export function useActivityFilters() {
           : [...current, value];
         if (next.length) params.set(key, next.join(","));
         else params.delete(key);
-      });
+      }, opcje);
     },
     [zapiszFiltrDoUrl],
   );
 
-  const clearAllFilters = useCallback(() => {
+  const clearAllFilters = useCallback((opcje?: FilterWriteOptions) => {
     setLocalFilters({});
     setSearchQuery("");
     zapiszFiltrDoUrl((params) => {
       for (const klucz of URL_FILTER_KEYS) params.delete(klucz);
       params.delete("search");
-    });
+    }, opcje);
   }, [zapiszFiltrDoUrl]);
 
   const filteredActivities = useMemo(() => {

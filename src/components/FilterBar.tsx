@@ -7,6 +7,7 @@ import CityFilterDropdown from "@/components/CityFilterDropdown";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
 import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { Filters } from "@/hooks/useActivityFilters";
+import type { FilterWriteOptions } from "@/hooks/useFilterSheetHistory";
 import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
@@ -28,9 +29,10 @@ interface FilterBarProps {
     filtered: number;
     hasAnyFilter: boolean;
   };
-  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined) => void;
-  onToggleTypeFilter: (value: string) => void;
-  onClearAll: () => void;
+  /** `opcje` podaje tylko arkusz filtrów na telefonie (FMN-B05). */
+  onUpdateFilter: (key: keyof Filters, value: string | string[] | number | undefined, opcje?: FilterWriteOptions) => void;
+  onToggleTypeFilter: (value: string, opcje?: FilterWriteOptions) => void;
+  onClearAll: (opcje?: FilterWriteOptions) => void;
   viewMode?: "grid" | "map";
   onViewModeChange?: (mode: "grid" | "map") => void;
   /** Ukryj pole wyszukiwania w pasku filtrów (np. na home, gdzie szukanie żyje w hero). */
@@ -354,7 +356,7 @@ const FilterBar = ({
             {/* Clear all button - only when filters active */}
             {hasActiveFilters && (
               <button
-                onClick={onClearAll}
+                onClick={() => onClearAll()}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors whitespace-nowrap shrink-0"
               >
                 <X className="w-3.5 h-3.5" />

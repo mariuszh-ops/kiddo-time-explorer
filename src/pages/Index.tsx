@@ -400,16 +400,16 @@ const Index = () => {
           onSearchChange={setSearchQuery}
           filterCounts={home.filterCounts}
           onFilterIntent={() => setDotknietoFiltrow(true)}
-          onUpdateFilter={(key, value) => {
+          onUpdateFilter={(key, value, opcje) => {
             // Pasek filtrów na home: zdarzenia analityki dla trzech pól, po których
             // widać, czego ludzie szukają (A-12).
             if (key === "city" && value) trackEvent("filter_city", { city: String(value), source: "filterbar" });
             if (key === "age" && value) trackEvent("filter_age", { age: String(value), source: "filterbar" });
-            updateFilter(key, value);
+            updateFilter(key, value, opcje);
           }}
-          onToggleTypeFilter={(value) => {
+          onToggleTypeFilter={(value, opcje) => {
             trackEvent("filter_type", { type: value, source: "filterbar" });
-            toggleArrayFilter("type", value);
+            toggleArrayFilter("type", value, opcje);
           }}
           onClearAll={clearAllFilters}
           viewMode={viewMode}
