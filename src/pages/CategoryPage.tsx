@@ -176,7 +176,7 @@ const CategoryPage = () => {
   // zaraz odrzucić 86% z nich. `citySlug` jest tu już zwalidowany do jednego
   // z 16 slugów województw (nieznany → NotFound wyżej), więc idzie wprost do RPC.
   const mapQuery = useMemo(() => ({ region: citySlug ?? null }), [citySlug]);
-  const { pins, error: pinsError, refetch: refetchPins } = useMapPins(mapEnabled, mapQuery);
+  const { pins, loading: pinsLoading, error: pinsError, refetch: refetchPins } = useMapPins(mapEnabled, mapQuery);
 
   // Filtry, których NIE ma w tuplach get_map_pins (min / auto=0 / amenities).
   // Dla nich dociągamy z katalogu same slugi spełniające komplet warunków.
@@ -725,6 +725,8 @@ const CategoryPage = () => {
                     pinsError={pinsError}
                     onPinsRetry={refetchPins}
                     nazwaObszaru={resolvedH1}
+                    // FMN-B01: do czasu pinów (i slugów dla filtrów spoza krotek) mapa „wczytuje".
+                    wczytujeDane={pinsLoading || (needsSlugFilter && !allowedSlugs)}
                   />
                 </Suspense>
               ) : (

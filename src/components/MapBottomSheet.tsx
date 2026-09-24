@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { Activity } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import { Star, ArrowUpDown, Check, Heart, Search, X, MapPin, AlertCircle, RefreshCw } from "lucide-react";
+import { Star, ArrowUpDown, Check, Heart, Search, X, MapPin, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { getCategoryColor } from "@/data/categoryColors";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -29,6 +29,8 @@ interface MapBottomSheetProps {
   onShowAll?: () => void;
   error?: Error | null;
   onRetry?: () => void;
+  /** FMN-B01: dane mapy jeszcze w drodze — pusta lista to „wczytuję", nie „brak atrakcji". */
+  loading?: boolean;
 }
 
 // Available height = viewport - header(56) - bottomNav(64)
@@ -80,6 +82,7 @@ export default function MapBottomSheet({
   onShowAll,
   error,
   onRetry,
+  loading = false,
 }: MapBottomSheetProps) {
   const [sheetState, setSheetState] = useState<SheetState>("peek");
   const [sheetHeight, setSheetHeight] = useState(PEEK_HEIGHT);
@@ -294,7 +297,9 @@ export default function MapBottomSheet({
 
   const headerText = error
     ? "Nie udało się wczytać mapy"
-    : searchQuery.trim()
+    : loading
+      ? "Wczytuję…"
+      : searchQuery.trim()
       ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
       : `${visibleActivities.length} atrakcji w widoku`;
 
@@ -329,6 +334,9 @@ export default function MapBottomSheet({
             aria-atomic="true"
             className="text-xs text-muted-foreground font-medium truncate"
           >
+            {loading && !error && (
+              <Loader2 className="inline w-3.5 h-3.5 mr-1 -mt-0.5 animate-spin" aria-hidden="true" />
+            )}
             {headerText}
           </span>
           {/* Przy awarii pinów nie ma czego sortować, a panel startuje zwinięty —
@@ -413,6 +421,11 @@ export default function MapBottomSheet({
                   Spróbuj ponownie
                 </button>
               )}
+            </div>
+          ) : loading ? (
+            <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" aria-hidden="true" />
+              <p className="text-sm text-muted-foreground">Wczytuję atrakcje…</p>
             </div>
           ) : sortedActivities.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">

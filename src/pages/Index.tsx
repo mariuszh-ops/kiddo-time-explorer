@@ -105,6 +105,12 @@ const Index = () => {
   // (mapa musi mieć wszystkie pasujące piny, nie jedną stronę). Siatka i liczniki
   // idą serwerowo, więc tu wystarczy stan tamtego jednego pobrania.
   const katalogSieLaduje = dataStatus === "loading";
+  // FMN-B01: mapa z filtrem czeka na ten katalog (efekt z ensureActivitiesLoaded
+  // niżej). "idle" też liczymy — pierwszy render mapy wyprzedza ten efekt.
+  // Warunek hasActiveFilters pilnuje, żeby mapa nie czekała na pobranie,
+  // którego nikt nie uruchomi.
+  const mapaCzekaNaKatalog =
+    hasActiveFilters && (dataStatus === "idle" || dataStatus === "loading");
 
   // Q-E-10b: liczniki przy opcjach filtrów liczy serwer. Włączamy je, gdy filtr
   // jest aktywny albo gdy użytkownik dopiero sięga po kontrolkę filtrującą —
@@ -291,6 +297,7 @@ const Index = () => {
             onSaveMapState={handleSaveMapState}
             // FMN-B02: chip mapy = ten sam filtr co „Kategoria" w pasku (push, jak tam).
             onCategoryToggle={(value) => toggleArrayFilter("type", value)}
+            wczytujeDane={mapaCzekaNaKatalog}
           />
         </Suspense>
         </ErrorBoundary>

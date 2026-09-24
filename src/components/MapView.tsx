@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback, useMemo } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from "react";
 import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -6,7 +6,7 @@ import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import { Link } from "react-router-dom";
-import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw } from "lucide-react";
+import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
@@ -873,9 +873,11 @@ interface MapViewProps {
    * pasek nie ma wtedy „Kategorii", więc mapa nie pokazuje chipów kategorii.
    */
   onCategoryToggle?: (category: string) => void;
+  /** FMN-B01: rodzic wciąż dociąga `activities` (katalog albo piny regionu) — pusta lista to wtedy „wczytuję", nie „brak atrakcji". */
+  wczytujeDane?: boolean;
 }
 
-const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry, nazwaObszaru, onCategoryToggle }: MapViewProps) => {
+const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveMapState, pinsError, onPinsRetry, nazwaObszaru, onCategoryToggle, wczytujeDane }: MapViewProps) => {
   const isMobile = useIsMobile();
   // W-I-01: nazwa mapy idzie za H1 strony; na home (brak H1 obszaru) zostaje ogólna.
   const etykietaMapy = nazwaObszaru ? `Mapa: ${nazwaObszaru}` : "Mapa atrakcji dla dzieci";
@@ -914,6 +916,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   );
   const {
     pins,
+    loading: ownPinsLoading,
     error: ownPinsError,
     refetch: refetchOwnPins,
   } = useMapPins(trybKadru && kadry != null, zapytanieOPiny);
@@ -925,6 +928,35 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const mapPinsFailed = pinsFetchError != null;
   const refetchPins = pinsError != null ? onPinsRetry : refetchOwnPins;
   const sourceActivities = hasCatalogFilters ? activities : pins;
+
+  // FMN-B01: pusty zbiór w trakcie ładowania to NIE „brak atrakcji". Rodzic
+  // dociąga katalog (home z filtrem, 2-6 s) albo piny regionu (CategoryPage),
+  // a mapa bez filtrów czeka na piny pierwszego kadru. Wcześniej przez ten czas
+  // pusty stan radził „oddal mapę lub przesuń" (rodzic psuł sobie widok albo
+  // wracał do listy), a licznik ogłaszał „0 atrakcji w widoku".
+  const daneWDrodze = hasCatalogFilters
+    ? Boolean(wczytujeDane)
+    : pins.length === 0 && ownPinsError == null && (kadry == null || ownPinsLoading);
+  // Po dojściu danych lista kadru liczy się jeszcze chwilę (ViewportFilter +
+  // wygaszanie 100 ms). „Wczytuję" zdejmujemy dopiero po pierwszym przeliczeniu
+  // na PEŁNYM zbiorze — inaczej na 0,3-0,8 s wracały „0 atrakcji" i pusty stan.
+  const daneWDrodzeRef = useRef(daneWDrodze);
+  // Layout effect, nie zwykły: ref musi być świeży, zanim ViewportFilter
+  // (efekt dziecka) przeliczy kadr w tym samym commicie.
+  useLayoutEffect(() => {
+    daneWDrodzeRef.current = daneWDrodze;
+  });
+  const [kadrNaDanych, setKadrNaDanych] = useState(!daneWDrodze);
+  useEffect(() => {
+    if (daneWDrodze) {
+      setKadrNaDanych(false);
+      return;
+    }
+    // Bezpiecznik: gdyby kadr nie przeliczył się sam, mapa nie wisi w „wczytuję".
+    const t = setTimeout(() => setKadrNaDanych(true), 2000);
+    return () => clearTimeout(t);
+  }, [daneWDrodze]);
+  const wczytuje = daneWDrodze || !kadrNaDanych;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
@@ -1101,10 +1133,13 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   }, []);
 
   const handleVisibleChange = useCallback((visible: Activity[]) => {
+    // FMN-B01: przeliczenie na zbiorze sprzed dojścia danych nie zdejmuje „wczytuję".
+    const naDanych = !daneWDrodzeRef.current;
     setFading(true);
     // Brief fade transition
     setTimeout(() => {
       setVisibleActivities(visible);
+      if (naDanych) setKadrNaDanych(true);
       setFading(false);
     }, 100);
   }, []);
@@ -1166,7 +1201,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          {mapPinsFailed ? "Lista" : `Lista · ${displayedActivities.length}`}
+          {mapPinsFailed || wczytuje ? "Lista" : `Lista · ${displayedActivities.length}`}
         </button>
 
         {/* Draggable bottom sheet */}
@@ -1185,6 +1220,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           onShowAll={handleShowAll}
           error={pinsFetchError}
           onRetry={refetchPins}
+          loading={wczytuje}
         />
       </div>
     );
@@ -1225,14 +1261,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
                 aria-atomic="true"
                 className="text-sm text-muted-foreground font-medium"
               >
-                {displayedActivities.length} atrakcji w widoku
+                {wczytuje ? "Wczytuję…" : `${displayedActivities.length} atrakcji w widoku`}
               </p>
               <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} showCategories={pokazChipyKategorii} />
             </div>
             <div
               className={cn("p-3 space-y-3 transition-opacity duration-150", fading ? "opacity-50" : "opacity-100")}
             >
-              {displayedActivities.length === 0 ? (
+              {wczytuje ? (
+                <div className="py-12 text-center px-4 flex flex-col items-center gap-3">
+                  <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" aria-hidden="true" />
+                  <p className="text-sm text-muted-foreground">Wczytuję atrakcje…</p>
+                </div>
+              ) : displayedActivities.length === 0 ? (
                 /* Bez przycisku pusty stan był ślepą uliczką: kadr poza Polską
                    nie ma jak wrócić do pinów (audyt 400: K-21). */
                 <div className="py-12 text-center px-4 flex flex-col items-center gap-3">
@@ -1313,7 +1354,11 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           aria-hidden="true"
           className="absolute top-3 left-3 z-[1000] bg-background/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 text-sm font-medium text-foreground shadow-sm"
         >
-          {mapPinsFailed ? "Nie udało się wczytać mapy" : `${displayedActivities.length} atrakcji w widoku`}
+          {mapPinsFailed
+            ? "Nie udało się wczytać mapy"
+            : wczytuje
+              ? "Wczytuję atrakcje…"
+              : `${displayedActivities.length} atrakcji w widoku`}
         </div>
 
       </div>
