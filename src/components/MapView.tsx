@@ -281,6 +281,10 @@ const otworzDymekBezFokusu = (marker: L.Marker) => {
   }
 };
 
+/** FMN-B08: pola, z ktorych zbudowany jest marker (pozycja, ikona, nazwa, link). Inny podpis = marker do wymiany. */
+const podpisPinu = (a: Activity): string =>
+  `${a.latitude}|${a.longitude}|${a.rating}|${a.type}|${a.slug}|${a.title}`;
+
 // Manages clustered markers on the map
 function ClusteredMarkers({
   activities,
@@ -302,26 +306,28 @@ function ClusteredMarkers({
   const map = useMap();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const activityMapRef = useRef<Record<number, Activity>>({});
-  // Ktory dymek jest otwarty i czy wlasnie przebudowujemy grupe markerow.
+  // Ktory dymek jest otwarty i czy wlasnie wymieniamy jego marker.
   const otwartyIdRef = useRef<number | null>(null);
   const przebudowaRef = useRef(false);
-  // W-I-07: czy fokus czeka na oddanie do dymku odtworzonego po przebudowie.
+  // W-I-07: czy fokus czeka na oddanie do dymku odtworzonego po wymianie markera.
   const fokusDoOdtworzeniaRef = useRef(false);
 
-  // Build markers
+  // FMN-B08: markery zyja dluzej niz jeden render, wiec wywolania i stan ikony
+  // czytaja przez refy. Zmiana tozsamosci `isFavorite` (kazdy zapis ulubionego)
+  // nie moze juz przebudowywac markerow — ikony poprawia efekt nizej.
+  const onMarkerClickRef = useRef(onMarkerClick);
+  const isFavoriteRef = useRef(isFavorite);
+  const toggleFavoriteRef = useRef(toggleFavorite);
+  const highlightedIdRef = useRef(highlightedId);
   useEffect(() => {
-    // Dymek przezywa przebudowe grupy. Klikniecie pinu przy krawedzi kadru
-    // wyzwala autoPan -> moveend -> ViewportFilter oddaje NOWA tablice ->
-    // ten efekt leci od nowa -> cleanup robi removeLayer -> Leaflet zamyka
-    // dymek po ~250-500 ms. Zapamietujemy wiec, co bylo otwarte, i po
-    // zlozeniu nowej grupy otwieramy to samo ponownie.
-    const doOtwarcia = otwartyIdRef.current;
-    if (clusterGroupRef.current) {
-      map.removeLayer(clusterGroupRef.current);
-    }
-    markersRef.current = {};
-    activityMapRef.current = {};
+    onMarkerClickRef.current = onMarkerClick;
+    isFavoriteRef.current = isFavorite;
+    toggleFavoriteRef.current = toggleFavorite;
+    highlightedIdRef.current = highlightedId;
+  });
 
+  // Jedna grupa klastrow na zycie mapy.
+  useEffect(() => {
     const group = L.markerClusterGroup({
       disableClusteringAtZoom: 12,
       maxClusterRadius: 60,
@@ -330,21 +336,103 @@ function ClusteredMarkers({
       showCoverageOnHover: false,
       animate: true,
     });
+    map.addLayer(group);
+    clusterGroupRef.current = group;
+    return () => {
+      map.removeLayer(group);
+      clusterGroupRef.current = null;
+      markersRef.current = {};
+      activityMapRef.current = {};
+      otwartyIdRef.current = null;
+    };
+  }, [map, markersRef]);
 
-    activities.forEach((activity) => {
+  // FMN-B08: markery DIFFUJEMY po id: dokladamy nowe, zdejmujemy znikajace,
+  // reszty nie ruszamy. Wczesniej KAZDA nowa tablica `activities` (ViewportFilter
+  // oddaje nowa przy kazdym przeliczeniu kadru, nawet z tym samym zbiorem) zdejmowala
+  // cala grupe i skladala ja od nowa: jedna akcja (zoom, chip, filtr, "wstecz")
+  // wymieniala wszystkie piny 2-5 razy (zmierzone 24.09, smoke FMN-0 I11).
+  useEffect(() => {
+    const group = clusterGroupRef.current;
+    if (!group) return;
+
+    const nowe = new Map<number, Activity>();
+    for (const a of activities) nowe.set(a.id, a);
+
+    const doUsuniecia: L.Marker[] = [];
+    const doDodania: L.Marker[] = [];
+    for (const [idStr, marker] of Object.entries(markersRef.current)) {
+      const id = Number(idStr);
+      const nowa = nowe.get(id);
+      const stara = activityMapRef.current[id];
+      if (nowa && stara && podpisPinu(nowa) === podpisPinu(stara)) {
+        // Ten sam pin, moze pelniejszy rekord (np. katalog zamiast krotki z RPC).
+        activityMapRef.current[id] = nowa;
+        nowe.delete(id);
+        continue;
+      }
+      // Pin zniknal albo zmienil pozycje/wyglad -> marker do zdjecia (i ewentualnie na nowo).
+      doUsuniecia.push(marker);
+      delete markersRef.current[id];
+      delete activityMapRef.current[id];
+    }
+    nowe.forEach((activity) => doDodania.push(zbudujMarker(activity)));
+    if (doUsuniecia.length === 0 && doDodania.length === 0) return;
+
+    // Dymek przezywa wymiane swojego markera (ten sam pin, inny rekord): zamkniecie
+    // w trakcie removeLayers nie kasuje pamieci o otwartym dymku, a po dodaniu
+    // nowego markera otwieramy go ponownie.
+    const doOtwarcia = otwartyIdRef.current;
+    przebudowaRef.current = true;
+    try {
+      if (doUsuniecia.length > 0) group.removeLayers(doUsuniecia);
+    } finally {
+      przebudowaRef.current = false;
+    }
+    if (doDodania.length > 0) group.addLayers(doDodania);
+
+    const marker = doOtwarcia !== null ? markersRef.current[doOtwarcia] : undefined;
+    if (doOtwarcia !== null && !marker?.isPopupOpen()) {
+      // W-I-07: fokus wraca do dymku tylko wtedy, gdy wymiana go osierocila.
+      const oddajFokus = fokusDoOdtworzeniaRef.current && fokusZgubiony();
+      fokusDoOdtworzeniaRef.current = false;
+      // Gdy pin zniknal albo wpadl do klastra, jego dymek nie ma sie gdzie pokazac.
+      // autoPan wylaczamy na czas otwarcia, bo przesuniecie mapy to kolejne przeliczenie kadru.
+      if (marker && group.getVisibleParent(marker) === marker) {
+        const popup = marker.getPopup();
+        const autoPan = popup?.options.autoPan;
+        if (popup) popup.options.autoPan = false;
+        if (oddajFokus) marker.openPopup();
+        else otworzDymekBezFokusu(marker);
+        if (popup) popup.options.autoPan = autoPan;
+      } else {
+        otwartyIdRef.current = null;
+      }
+    }
+
+    function zbudujMarker(activity: Activity): L.Marker {
+      const id = activity.id;
+      const podswietlony = highlightedIdRef.current;
       const marker = L.marker([activity.latitude, activity.longitude], {
-        icon: createPinIcon(activity.rating, activity.type, false, false, isFavorite(activity.id)),
+        icon: createPinIcon(
+          activity.rating,
+          activity.type,
+          podswietlony === id,
+          podswietlony !== null && podswietlony !== id,
+          isFavoriteRef.current(id),
+        ),
         title: activity.title,
         alt: activity.title,
         keyboard: true,
       });
+      if (podswietlony === id) marker.setZIndexOffset(1000);
 
       // K-06: tresc dymku budujemy LENIWIE (Leaflet przyjmuje funkcje), wiec przy
       // kazdym otwarciu bierze aktualny stan cache szczegolow. Wersja z gotowym
       // stringiem lepila dymek raz, przy tworzeniu markera — gdy szczegoly (zdjecie)
       // doszly pozniej, dymek do konca zycia pokazywal placeholder.svg.
       const trescDymku = () =>
-        createPopupContent(mergePinDetails(activity), isFavorite(activity.id));
+        createPopupContent(mergePinDetails(activityMapRef.current[id] ?? activity), isFavoriteRef.current(id));
       marker.bindPopup(trescDymku, {
         maxWidth: 240,
         className: "custom-map-popup",
@@ -358,19 +446,18 @@ function ClusteredMarkers({
         marker.getElement()?.setAttribute("aria-label", activity.title);
       });
 
-      marker.on("click", () => onMarkerClick(activity.id));
-      // W-I-07: czy to MY przenieslismy fokus do tego dymku. Marker powstaje na
-      // nowo przy kazdej przebudowie grupy, wiec zmienna zyje tyle, co dymek.
+      marker.on("click", () => onMarkerClickRef.current(id));
+      // W-I-07: czy to MY przenieslismy fokus do tego dymku. Zmienna zyje tyle,
+      // co marker, a ten jest wymieniany razem z dymkiem.
       let fokusWDymku = false;
-      // Zamkniecie w trakcie przebudowy grupy nie liczy sie jako decyzja
+      // Zamkniecie w trakcie wymiany markera nie liczy sie jako decyzja
       // uzytkownika — inaczej skasowaloby pamiec o otwartym dymku.
       marker.on("popupclose", () => {
         if (!przebudowaRef.current) otwartyIdRef.current = null;
         if (!fokusWDymku) return;
         fokusWDymku = false;
-        // Przebudowa grupy usuwa marker razem z dymkiem — fokus odda dopiero
-        // odtworzony dymek (autoPan po kliknieciu pinu przy krawedzi kadru
-        // przestawia widok, a to przebudowuje cala grupe markerow).
+        // Wymiana usuwa marker razem z dymkiem — fokus odda dopiero dymek
+        // odtworzony na nowym markerze.
         if (przebudowaRef.current) {
           fokusDoOdtworzeniaRef.current = true;
           return;
@@ -381,7 +468,7 @@ function ClusteredMarkers({
         if (fokusZgubiony()) marker.getElement()?.focus({ preventScroll: true });
       });
       marker.on("popupopen", (e: L.PopupEvent) => {
-        otwartyIdRef.current = activity.id;
+        otwartyIdRef.current = id;
         const popup = e.popup;
         // W-I-07: dymek zachowuje sie jak dialog, ale nie mial ani roli, ani
         // nazwy, ani fokusu — po Enterze na markerze `document.activeElement`
@@ -409,15 +496,15 @@ function ClusteredMarkers({
             ev.preventDefault();
             ev.stopPropagation();
             const mialFokus = document.activeElement === btn;
-            const next = await toggleFavorite(activity.id, activity.slug);
+            const next = await toggleFavoriteRef.current(id, activity.slug);
             btn.outerHTML = favButtonMarkup(next);
             podepnij();
             // W-I-07: podmiana `outerHTML` niszczy element z fokusem. Bez tego
             // Enter na sercu wyrzucal klawiature na <body>, a nasluch Escape
             // siedzi na kontenerze mapy — dymku nie dalo sie juz zamknac.
-            // Dwa warunki konieczne. `marker.isPopupOpen()` — zapis ulubionego
-            // zmienia tozsamosc `isFavorite`, wiec efekt przebudowuje CALA grupe
-            // markerow: ten `popup` bywa juz nieaktualny, a fokus na oderwanym
+            // Dwa warunki konieczne. `marker.isPopupOpen()` — w trakcie zapisu
+            // marker mogl zniknac z mapy (np. odznaczenie przy „Ulubionych"):
+            // ten `popup` jest wtedy nieaktualny, a fokus na oderwanym
             // elemencie ZRZUCA fokus na <body> (tak gubil sie po naprawie).
             // `fokusZgubiony()` — gosciowi zapis otwiera modal „Zapisz to miejsce
             // na pozniej", ktory przejmuje fokus; nie wolno go sciagac z powrotem.
@@ -456,43 +543,12 @@ function ClusteredMarkers({
             });
         }
       });
-      markersRef.current[activity.id] = marker;
-      activityMapRef.current[activity.id] = activity;
-      group.addLayer(marker);
-    });
-
-    map.addLayer(group);
-    clusterGroupRef.current = group;
-    przebudowaRef.current = false;
-
-    // Odtworzenie dymku po przebudowie. autoPan wylaczamy na czas otwarcia,
-    // bo kolejne przesuniecie mapy wywolaloby ten efekt jeszcze raz.
-    if (doOtwarcia !== null) {
-      // W-I-07: fokus wraca do dymku tylko wtedy, gdy przebudowa go osierocila.
-      const oddajFokus = fokusDoOdtworzeniaRef.current && fokusZgubiony();
-      fokusDoOdtworzeniaRef.current = false;
-      const marker = markersRef.current[doOtwarcia];
-      // Gdy pin wpadl do klastra, jego dymek nie ma sie gdzie pokazac.
-      if (marker && group.getVisibleParent(marker) === marker) {
-        const popup = marker.getPopup();
-        const autoPan = popup?.options.autoPan;
-        if (popup) popup.options.autoPan = false;
-        if (oddajFokus) marker.openPopup();
-        else otworzDymekBezFokusu(marker);
-        if (popup) popup.options.autoPan = autoPan;
-      } else {
-        otwartyIdRef.current = null;
-      }
+      markersRef.current[id] = marker;
+      activityMapRef.current[id] = activity;
+      return marker;
     }
-
-    return () => {
-      przebudowaRef.current = true;
-      if (clusterGroupRef.current) {
-        map.removeLayer(clusterGroupRef.current);
-      }
-      markersRef.current = {};
-    };
-  }, [activities, map, onMarkerClick, markersRef, isFavorite, toggleFavorite]);
+    // `map` w zaleznosciach: nowa mapa = nowa, pusta grupa, ktora trzeba zapelnic.
+  }, [activities, map, markersRef]);
 
   // Update pin icons when highlightedId or favorites change
   useEffect(() => {
