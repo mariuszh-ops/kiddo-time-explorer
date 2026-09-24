@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { act, renderHook } from "@testing-library/react";
-import { MemoryRouter, useSearchParams } from "react-router-dom";
+import { MemoryRouter, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import type { ReactNode } from "react";
 import { useActivityFilters } from "@/hooks/useActivityFilters";
 
@@ -17,12 +17,14 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 function useHarness() {
   const api = useActivityFilters();
   const [params, setParams] = useSearchParams();
-  return { ...api, search: params.toString(), setParams };
+  const location = useLocation();
+  const navigate = useNavigate();
+  return { ...api, search: params.toString(), setParams, locationKey: location.key, navigate };
 }
 
-const wrapper = (initial: string) =>
+const wrapper = (...entries: string[]) =>
   ({ children }: { children: ReactNode }) => (
-    <MemoryRouter initialEntries={[initial]}>{children}</MemoryRouter>
+    <MemoryRouter initialEntries={entries} initialIndex={entries.length - 1}>{children}</MemoryRouter>
   );
 
 const MAPA = "?region=mazowieckie&age=3-5&view=map&lat=52.29&lng=21.20&zoom=8&fav=1&type=park-rozrywki";
@@ -79,5 +81,38 @@ describe("useActivityFilters — filtry liczone z adresu", () => {
     expect(s.get("age")).toBeNull();
     expect(s.get("view")).toBe("map");
     expect(s.get("fav")).toBe("1");
+  });
+
+  // FMN-B06: „Pokaż wyniki" w arkuszu bez zmian zapisuje promień (undefined przy
+  // 0 km) i dokładał wpis z identycznym adresem — „wstecz" nic nie zmieniało.
+  it("zapis filtra bez zmiany wartości nie dokłada wpisu w historii", () => {
+    const { result } = renderHook(useHarness, {
+      wrapper: wrapper("/", "/?type=muzeum-teatr%2Csport&region=malopolskie"),
+    });
+    const kluczPrzed = result.current.locationKey;
+
+    act(() => result.current.updateFilter("distance", undefined));
+    act(() => result.current.updateFilter("city", "malopolskie"));
+    act(() => result.current.updateFilter("type", ["muzeum-teatr", "sport"]));
+
+    expect(result.current.locationKey).toBe(kluczPrzed);
+
+    act(() => result.current.navigate(-1));
+    expect(result.current.search).toBe("");
+  });
+
+  it("zmiana wartości filtra nadal zostawia wpis w historii", () => {
+    const { result } = renderHook(useHarness, {
+      wrapper: wrapper("/", "/?region=malopolskie"),
+    });
+    const kluczPrzed = result.current.locationKey;
+
+    act(() => result.current.updateFilter("distance", 10));
+
+    expect(result.current.locationKey).not.toBe(kluczPrzed);
+    expect(new URLSearchParams(result.current.search).get("dist")).toBe("10");
+
+    act(() => result.current.navigate(-1));
+    expect(result.current.search).toBe("region=malopolskie");
   });
 });

@@ -156,3 +156,38 @@ describe("MobileFilterSheet — „wstecz” przy otwartym arkuszu (FMN-B05, R3)
     expect(adres()).toBe("/");
   });
 });
+
+/**
+ * FMN-B06: przy wybranym regionie „Pokaż wyniki" zawsze zapisuje promień
+ * (0 km = undefined). Zapis bez zmiany adresu zjadał znacznik atrapy, arkusz
+ * kładł nową i po zamknięciu zostawał wpis z identycznym adresem — „wstecz"
+ * nic nie zmieniało (smoke FMN-0, SMOKE-18 krok 10).
+ */
+describe("MobileFilterSheet — „Pokaż wyniki” bez zmian (FMN-B06)", () => {
+  beforeEach(() => {
+    // Z wybranym regionem arkusz rysuje suwak promienia (Radix Slider), a jsdom
+    // nie ma ResizeObserver.
+    globalThis.ResizeObserver ??= class {
+      observe() {}
+      unobserve() {}
+      disconnect() {}
+    } as unknown as typeof ResizeObserver;
+    window.history.replaceState(null, "", "/poprzednia");
+    window.history.pushState(null, "", "/?region=malopolskie");
+    render(
+      <BrowserRouter>
+        <Strona />
+      </BrowserRouter>,
+    );
+  });
+
+  it("nie zostawia wpisu z identycznym adresem — „wstecz” wraca na poprzednią stronę", async () => {
+    otworz();
+    fireEvent.click(screen.getByRole("button", { name: /Pokaż wyniki/ }));
+    await waitFor(() => expect(arkuszOtwarty()).toBe(false));
+    await waitFor(() => expect(window.history.state?.filterSheetOpen).toBeUndefined());
+    expect(adres()).toBe("/?region=malopolskie");
+
+    await wstecz("/poprzednia");
+  });
+});

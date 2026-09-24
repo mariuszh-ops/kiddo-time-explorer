@@ -103,8 +103,19 @@ export function useActivityFilters() {
   // Świadoma zmiana filtra zostawia wpis w historii (push) — tak jak wcześniej.
   // `replace` zamawia tylko arkusz filtrów na telefonie, który sam dokłada wpis
   // (FMN-B05, useFilterSheetHistory).
+  //
+  // FMN-B06: zapis BEZ zmiany wartości i tak woła navigate(), a navigate robi
+  // push — identyczny adres dostawał drugi wpis w historii. „Pokaż wyniki"
+  // w arkuszu na telefonie zapisuje promień przy każdym wybranym regionie, więc
+  // arkusz zamknięty bez zmian dokładał pusty wpis i „wstecz" nic nie zmieniało.
+  // Identyczny adres = żaden zapis (w arkuszu atrapa zostaje wtedy na wierzchu,
+  // patrz useFilterSheetHistory). Porównujemy z `searchParams` z routera, bo
+  // to ten sam obiekt, który react-router podaje jako `prev` poniżej.
   const zapiszFiltrDoUrl = useCallback(
     (mutuj: (params: URLSearchParams) => void, opcje?: FilterWriteOptions) => {
+      const docelowe = new URLSearchParams(searchParams);
+      mutuj(docelowe);
+      if (docelowe.toString() === searchParams.toString()) return;
       setSearchParams(
         (prev) => {
           mutuj(prev);
@@ -113,7 +124,9 @@ export function useActivityFilters() {
         opcje?.replace ? { replace: true } : undefined,
       );
     },
-    [setSearchParams],
+    // `searchParams` nie pogarsza stabilności: `setSearchParams` i tak zmienia
+    // tożsamość po każdym zapisie adresu (react-router: [navigate, searchParams]).
+    [searchParams, setSearchParams],
   );
 
 
