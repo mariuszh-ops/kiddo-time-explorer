@@ -20,7 +20,17 @@ export function getSavedScrollPosition(pathname: string): number | undefined {
   return scrollPositions.get(pathname);
 }
 
-export function useScrollPosition() {
+/**
+ * Co zrobic z przewinieciem przy montazu strony:
+ * - "zapisana": przywroc pozycje zapisana dla pathname (dotychczasowe zachowanie),
+ * - "gora": nowy wpis historii — zacznij od gory strony,
+ * - "reczny": na razie gora strony, docelowa pozycje ustawia wywolujacy, gdy
+ *   tresc jest gotowa (FMN-B03: lista po "wstecz" doczytuje dane PO montazu,
+ *   a przewiniecie ustawione od razu przegladarka przycina do wysokosci szkieletu).
+ */
+export type TrybPrzewiniecia = "zapisana" | "gora" | "reczny";
+
+export function useScrollPosition(tryb: TrybPrzewiniecia = "zapisana") {
   const location = useLocation();
   const previousPathnameRef = useRef(location.pathname);
   const [isScrollRestored, setIsScrollRestored] = useState(false);
@@ -49,15 +59,18 @@ export function useScrollPosition() {
       return;
     }
     
-    const savedPosition = scrollPositions.get(location.pathname);
-    
-    if (savedPosition !== undefined && savedPosition > 0) {
-      // Restore immediately, synchronously before paint
-      window.scrollTo(0, savedPosition);
+    if (tryb !== "zapisana") {
+      window.scrollTo(0, 0);
+    } else {
+      const savedPosition = scrollPositions.get(location.pathname);
+      if (savedPosition !== undefined && savedPosition > 0) {
+        // Restore immediately, synchronously before paint
+        window.scrollTo(0, savedPosition);
+      }
     }
-    
+
     setIsScrollRestored(true);
-  }, [location.pathname]);
+  }, [location.pathname, tryb]);
 
   // Reset scroll restored state when navigating away
   useEffect(() => {

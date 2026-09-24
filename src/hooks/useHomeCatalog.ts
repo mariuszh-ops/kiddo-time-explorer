@@ -9,6 +9,11 @@ const QUERY_TIMEOUT_MS = 15000;
 const DEBOUNCE_MS = 250;
 
 export const HOME_PAGE_SIZE = 24;
+/**
+ * ff_home_list tnie p_limit do 200 wierszy (migracja q_e_10b). Przywracanie po
+ * "wstecz" doczytuje wiec zalegle porcje kawalkami po 8 stron.
+ */
+const MAX_WIERSZY_NA_ZAPYTANIE = 8 * HOME_PAGE_SIZE;
 
 /** Kontekstowe liczniki zwracane przez rpc('ff_home_counts'). */
 interface SurowiLicznicy {
@@ -42,6 +47,8 @@ export interface UseHomeCatalogResult {
   error: Error | null;
   loadMore: () => void;
   refetch: () => void;
+  /** Ile porcji po {@link HOME_PAGE_SIZE} jest zaladowanych albo w drodze (1 = pierwsza). */
+  strony: number;
 }
 
 /** Argumenty obu funkcji RPC wyprowadzone ze stanu filtrów. */
@@ -107,6 +114,12 @@ export function useHomeCatalog(
    * filtrow" OBOK dzialajacej mapy pinow.
    */
   licznikiWlaczone = enabled,
+  /**
+   * FMN-B03: ile porcji wczytac od razu przy montazu (powrot "wstecz" z karty
+   * atrakcji po "Pokaz wiecej"). Czytane raz; dotyczy tylko filtrow z montazu —
+   * kazda pozniejsza zmiana filtrow zaczyna liste od 1 porcji.
+   */
+  stronyStartowe = 1,
 ): UseHomeCatalogResult {
   const argumenty = useMemo(() => zbudujArgumenty(filters, searchQuery), [filters, searchQuery]);
   const sort = filters.sort || "rating";
@@ -122,7 +135,13 @@ export function useHomeCatalog(
 
   const [activities, setActivities] = useState<Activity[]>([]);
   const [licznicy, setLicznicy] = useState<SurowiLicznicy>(PUSTE_LICZNIKI);
-  const [page, setPage] = useState(0);
+  // Strona, na ktorej konczy sie pierwsze zapytanie (0 = zwykle wejscie).
+  const stronaStartowaRef = useRef(Math.max(0, Math.floor(stronyStartowe) - 1));
+  // Klucz filtrow, dla ktorego strona startowa obowiazuje. Po pierwszej zmianie
+  // filtrow jest "zuzyta" i lista zaczyna od zera.
+  const kluczStartowyRef = useRef(kluczAktywny);
+  const startAktywnyRef = useRef(true);
+  const [page, setPage] = useState(stronaStartowaRef.current);
   const [loading, setLoading] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -133,7 +152,8 @@ export function useHomeCatalog(
   // Zmiana filtrów zaczyna listę od nowa.
   useEffect(() => {
     kluczWLocie.current = kluczAktywny;
-    setPage(0);
+    if (kluczAktywny !== kluczStartowyRef.current) startAktywnyRef.current = false;
+    setPage(startAktywnyRef.current ? stronaStartowaRef.current : 0);
     setActivities([]);
     setError(null);
   }, [kluczAktywny]);
@@ -172,7 +192,12 @@ export function useHomeCatalog(
     let anulowane = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     const kluczNaStarcie = kluczAktywny;
-    const pierwszaStrona = page === 0;
+    const stronaStartowa = startAktywnyRef.current ? stronaStartowaRef.current : 0;
+    // Pierwsze zapytanie dla klucza wczytuje od razu strony 0..stronaStartowa
+    // (przy zwyklym wejsciu to po prostu strona 0). "Pokaz wiecej" dokleja po jednej.
+    const pierwszaStrona = page === stronaStartowa;
+    const odWiersza = pierwszaStrona ? 0 : page * HOME_PAGE_SIZE;
+    const ileWierszy = pierwszaStrona ? (stronaStartowa + 1) * HOME_PAGE_SIZE : HOME_PAGE_SIZE;
     const { argumenty: a, sort: sortowanie } = JSON.parse(kluczAktywny) as {
       argumenty: ArgumentyRpc;
       sort: string;
@@ -191,21 +216,27 @@ export function useHomeCatalog(
 
     void (async () => {
       try {
-        const { data, error: blad } = await catalogClient
-          .rpc("ff_home_list", {
-            ...a,
-            p_sort: sortowanie,
-            p_region_centers: cityCenters,
-            p_limit: HOME_PAGE_SIZE,
-            p_offset: page * HOME_PAGE_SIZE,
-          })
-          // Zwężenie kolumn po stronie serwera — ciężkie jsonb-y (`reviews`,
-          // `experience_points`) nie idą po sieci.
-          .select(CARD_COLUMNS);
-        if (blad) throw blad;
-        if (anulowane || kluczWLocie.current !== kluczNaStarcie) return;
-        const rows = (data as unknown as CatalogRow[] | null) ?? [];
-        const zmapowane = rows.map((r, i) => mapCatalogRow(r, page * HOME_PAGE_SIZE + i));
+        const rows: CatalogRow[] = [];
+        for (let przesuniecie = 0; przesuniecie < ileWierszy; przesuniecie += MAX_WIERSZY_NA_ZAPYTANIE) {
+          const limit = Math.min(MAX_WIERSZY_NA_ZAPYTANIE, ileWierszy - przesuniecie);
+          const { data, error: blad } = await catalogClient
+            .rpc("ff_home_list", {
+              ...a,
+              p_sort: sortowanie,
+              p_region_centers: cityCenters,
+              p_limit: limit,
+              p_offset: odWiersza + przesuniecie,
+            })
+            // Zwężenie kolumn po stronie serwera — ciężkie jsonb-y (`reviews`,
+            // `experience_points`) nie idą po sieci.
+            .select(CARD_COLUMNS);
+          if (blad) throw blad;
+          if (anulowane || kluczWLocie.current !== kluczNaStarcie) return;
+          const porcja = (data as unknown as CatalogRow[] | null) ?? [];
+          rows.push(...porcja);
+          if (porcja.length < limit) break;
+        }
+        const zmapowane = rows.map((r, i) => mapCatalogRow(r, odWiersza + i));
         setActivities((prev) => (pierwszaStrona ? zmapowane : [...prev, ...zmapowane]));
         setError(null);
       } catch (e) {
@@ -267,5 +298,5 @@ export function useHomeCatalog(
     setZetonOdswiezenia((t) => t + 1);
   }, []);
 
-  return { activities, filterCounts, loading, loadingMore, hasMore, error, loadMore, refetch };
+  return { activities, filterCounts, loading, loadingMore, hasMore, error, loadMore, refetch, strony: page + 1 };
 }

@@ -1,7 +1,7 @@
 import { trackEvent } from "@/lib/analytics";
-import { lazy, Suspense, useRef, useCallback, useState, useEffect, useMemo } from "react";
+import { lazy, Suspense, useRef, useCallback, useState, useEffect, useLayoutEffect, useMemo } from "react";
 import MapViewSkeleton from "@/components/MapViewSkeleton";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { Activity } from "@/data/activities";
 import type { SavedMapState } from "@/components/MapView";
@@ -20,7 +20,7 @@ import { useActivityFilters } from "@/hooks/useActivityFilters";
 import { useHomeCatalog, HOME_PAGE_SIZE } from "@/hooks/useHomeCatalog";
 import { Button } from "@/components/ui/button";
 import { useGeolocationCity } from "@/hooks/useGeolocationCity";
-import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { useScrollPosition, type TrybPrzewiniecia } from "@/hooks/useScrollPosition";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { FEATURES } from "@/lib/featureFlags";
@@ -33,14 +33,28 @@ import HomeSearch from "@/components/HomeSearch";
 import { useTopActivities } from "@/hooks/useTopActivities";
 import { ensureActivitiesLoaded } from "@/data/activities";
 import { useRealNavigationType } from "@/lib/navigationType";
+import { czytajZapisListy, zapiszListe } from "@/lib/homeListReturn";
+
+/**
+ * Po "wstecz" z karty glowna jest ukryta, dopoki lista nie wroci do dawnej
+ * dlugosci (patrz FMN-B03 nizej) — ale nie dluzej niz tyle. Na wolnym laczu
+ * pokazujemy szkielet, a przewiniecie ustawi sie, gdy dojda dane.
+ */
+const LIMIT_UKRYCIA_PRZY_POWROCIE_MS = 1500;
 
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const { detectCity } = useGeolocationCity();
-  
-  // Scroll position restoration - isScrollRestored ensures content only shows after scroll is set
-  const { isScrollRestored } = useScrollPosition();
+  const location = useLocation();
+  const realNavigationType = useRealNavigationType();
+
+  // FMN-B03: stan listy z wpisu historii (history.state), zapisany przy
+  // "Pokaz wiecej" i przy wyjsciu z listy linkiem. Nowy wpis (PUSH/REPLACE)
+  // nie ma zapisu, wiec zwykle wejscie zaczyna od 24 kafli i gory strony.
+  const [zapisPowrotu] = useState(() =>
+    realNavigationType === "POP" ? czytajZapisListy(location.key) : null,
+  );
   
   // Initialize filters without initial city - city is set explicitly on explore
   const { filters, searchQuery, setSearchQuery, updateFilter, toggleArrayFilter, clearAllFilters, filteredActivities, filterCounts } = useActivityFilters();
@@ -123,14 +137,86 @@ const Index = () => {
   // spelnia wybranych filtrow" nad mapa pelna pinow. To JEDNO rpc('ff_home_counts'),
   // lista atrakcji dalej nie jedzie serwerem na mapie.
   const licznikiSerwerowe = hasActiveFilters || dotknietoFiltrow;
-  const home = useHomeCatalog(filters, searchQuery, zapytaniaSerwerowe, licznikiSerwerowe);
+  // Galaz "wyniki filtrow" (useHomeCatalog) — jedyna, ktorej dlugosc listy
+  // zapisujemy w historii i odtwarzamy po powrocie z karty.
+  const listaKatalogu = viewMode !== "map" && !mapVisibleActivities && !listingSerwerowy && hasActiveFilters;
+  const [przywracanie] = useState(() => (listaKatalogu ? zapisPowrotu : null));
+  const home = useHomeCatalog(
+    filters,
+    searchQuery,
+    zapytaniaSerwerowe,
+    licznikiSerwerowe,
+    przywracanie?.strony ?? 1,
+  );
+
+  // Scroll position restoration - isScrollRestored ensures content only shows after scroll is set
+  const [trybPrzewiniecia] = useState<TrybPrzewiniecia>(() =>
+    przywracanie?.y !== undefined ? "reczny" : realNavigationType === "POP" ? "zapisana" : "gora",
+  );
+  const { isScrollRestored } = useScrollPosition(trybPrzewiniecia);
+
+  // FMN-B03: przewiniecie po "wstecz" ustawiamy dopiero, gdy skonczy sie pierwsze
+  // zapytanie listy — wczesniej strona ma wysokosc szkieletu i przegladarka
+  // przycina pozycje (zmierzone 24.09: 3127 -> 473 px, 48 -> 24 kafle).
+  const [czekaNaListe, setCzekaNaListe] = useState(trybPrzewiniecia === "reczny");
+  const [ukryjDoPrzewiniecia, setUkryjDoPrzewiniecia] = useState(trybPrzewiniecia === "reczny");
+  const widzialLadowanie = useRef(false);
+  useLayoutEffect(() => {
+    if (!czekaNaListe) return;
+    if (home.loading) {
+      widzialLadowanie.current = true;
+      return;
+    }
+    if (!widzialLadowanie.current) return;
+    // Koniec pierwszego zapytania: sukces, pusta lista albo blad.
+    if (home.activities.length > 0 && przywracanie?.y !== undefined) window.scrollTo(0, przywracanie.y);
+    setCzekaNaListe(false);
+    setUkryjDoPrzewiniecia(false);
+  }, [czekaNaListe, home.loading, home.activities.length, przywracanie]);
+
+  useEffect(() => {
+    if (!ukryjDoPrzewiniecia) return;
+    const t = window.setTimeout(() => setUkryjDoPrzewiniecia(false), LIMIT_UKRYCIA_PRZY_POWROCIE_MS);
+    return () => window.clearTimeout(t);
+  }, [ukryjDoPrzewiniecia]);
+
+  // Rodzic zaczal sam przewijac, zanim doszly dane — nie szarpiemy mu strony.
+  useEffect(() => {
+    if (!czekaNaListe) return;
+    const przerwij = () => setCzekaNaListe(false);
+    const zdarzenia = ["wheel", "touchstart", "keydown", "mousedown"] as const;
+    zdarzenia.forEach((z) => window.addEventListener(z, przerwij, { passive: true }));
+    return () => zdarzenia.forEach((z) => window.removeEventListener(z, przerwij));
+  }, [czekaNaListe]);
+
+  // Wyjscie z listy linkiem (kafel, logo, okruszki) zapisuje w BIEZACYM wpisie
+  // historii dlugosc listy i przewiniecie. Faza przechwytywania na document
+  // odpala sie przed onClick <Link>, czyli zanim router dopisze nowy wpis.
+  useEffect(() => {
+    if (!listaKatalogu) return;
+    const przyWyjsciu = (e: MouseEvent) => {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const cel = e.target instanceof Element ? e.target : null;
+      const link = cel?.closest("a[href]");
+      // Przycisk wewnatrz kafla (serce) nie wyprowadza z listy.
+      if (!link || link.getAttribute("target") === "_blank" || cel?.closest("button")) return;
+      zapiszListe(location.key, { strony: home.strony, y: Math.round(window.scrollY) });
+    };
+    document.addEventListener("click", przyWyjsciu, true);
+    return () => document.removeEventListener("click", przyWyjsciu, true);
+  }, [listaKatalogu, location.key, home.strony]);
+
+  const pokazWiecej = useCallback(() => {
+    // Ten sam warunek, ktorym loadMore odrzuca klik w trakcie ladowania.
+    if (!home.loading && !home.loadingMore) zapiszListe(location.key, { strony: home.strony + 1 });
+    home.loadMore();
+  }, [home.loading, home.loadingMore, home.strony, home.loadMore, location.key]);
 
   // F-1: "Zobacz wszystkie atrakcje" prowadzi na /?all=1, czyli TEN SAM pathname.
   // useScrollPosition przewija tylko przy zmianie location.pathname, wiec po
   // kliknieciu uzytkownik zostawal na wysokosci przycisku (zmierzone: 1537 px na
   // desktopie, 4045 px na mobile) i ladowal w polowie siatki, ktora dodatkowo
   // skakala w trakcie doladowywania katalogu. Nowa lista = gora strony.
-  const realNavigationType = useRealNavigationType();
   const poprzednioShowAll = useRef(showAll);
   useEffect(() => {
     const wlasnieWlaczony = showAll && !poprzednioShowAll.current;
@@ -271,7 +357,7 @@ const Index = () => {
             : "min-h-[calc(100vh-var(--header-h,72px))]"
         )}
         style={{ 
-          opacity: isScrollRestored ? 1 : 0
+          opacity: isScrollRestored && !ukryjDoPrzewiniecia ? 1 : 0
         }}
       >
 
@@ -371,7 +457,7 @@ const Index = () => {
           />
           {home.hasMore && !home.error && (
             <div className="container mt-8 flex justify-center">
-              <Button onClick={home.loadMore} disabled={home.loadingMore} variant="outline" size="lg">
+              <Button onClick={pokazWiecej} disabled={home.loadingMore} variant="outline" size="lg">
                 {home.loadingMore
                   ? "Wczytywanie…"
                   : `Pokaż więcej (${Math.max(0, home.filterCounts.filtered - home.activities.length)})`}
