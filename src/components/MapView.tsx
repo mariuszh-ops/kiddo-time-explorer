@@ -5,7 +5,8 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useRealNavigationType } from "@/lib/navigationType";
 import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
@@ -674,31 +675,147 @@ function MapInvalidateSize() {
   return null;
 }
 
-// Fit map bounds to all activity pins — on mount and whenever the list changes (filter change)
-function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boolean }) {
+/** Prywatne pole Leafleta 1.9.4 (Map.js): true od startu animacji zoomu do _onZoomTransitionEnd. */
+type MapaZAnimacjaZoomu = L.Map & { _animatingZoom?: boolean };
+
+// FMN-B04: "wstecz" w trakcie animacji zoomu (np. fitBounds zaraz po wejsciu na
+// mape regionu) sypal TypeError "Cannot read properties of undefined (reading
+// '_leaflet_pos')". Leaflet 1.9.4 konczy animacje zoomu timerem
+// setTimeout(_onZoomTransitionEnd, 250) (Map.js:1714), ktorego map.remove() NIE
+// kasuje. Timer odpalal na zniszczonej mapie: _onZoomTransitionEnd sprawdza
+// _mapPane tylko przy zdjeciu klasy, a potem wola _move() -> getPosition(undefined).
+// Zdejmujemy flage _animatingZoom, zanim react-leaflet zniszczy mape: cleanup
+// useLayoutEffect wykonuje sie w fazie mutacji, a remove() siedzi w cleanupie
+// useEffect <MapContainer>. Spozniony timer konczy sie wtedy na pierwszym
+// warunku `if (!this._animatingZoom) return`. Latki na L.Map.prototype nie
+// robimy celowo: dotyczylaby kazdej mapy w aplikacji, nie tylko tej.
+function ZatrzymajAnimacjeZoomu() {
   const map = useMap();
-  const isFirstRender = useRef(true);
-  // `skip` snapshotujemy z PIERWSZEGO renderu. Prop ten zmienia się po mount,
-  // bo ViewportFilter od razu zapisuje center/zoom do URL (lat/lng/zoom),
-  // przez co savedMapState staje się nie-nullowe ZANIM dojdą przefiltrowane
-  // piny — i fitBounds nigdy by nie odpalił (mapa zostaje na zoom=11,
-  // licznik „w widoku" pokazuje ułamek wyników). Honorujemy tylko stan,
-  // który był w URL przy wejściu na stronę.
-  const initialSkipRef = useRef(skip);
+  useLayoutEffect(
+    () => () => {
+      (map as MapaZAnimacjaZoomu)._animatingZoom = false;
+    },
+    [map],
+  );
+  return null;
+}
+
+/** Parametry adresu, ktore NIE sa filtrem: pisze je sama mapa (`fav` = „Ulubione", `cats` = stare linki), przelacznik widoku albo paginacja listy. */
+const PARAMY_POZA_FILTREM = ["view", "lat", "lng", "zoom", "fav", "cats", "page"];
+
+/** Filtry z adresu w stalej kolejnosci, np. "age=0-2&region=mazowieckie". */
+function kluczFiltrowZAdresu(search: string): string {
+  const params = new URLSearchParams(search);
+  PARAMY_POZA_FILTREM.forEach((k) => params.delete(k));
+  params.sort();
+  return params.toString();
+}
+
+/** Kadr, do ktorego dopasowalibysmy mape. Ten sam podpis = ta sama docelowa ramka. */
+function podpisKadru(activities: Activity[]): string {
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLng = Infinity;
+  let maxLng = -Infinity;
+  for (const a of activities) {
+    minLat = Math.min(minLat, a.latitude);
+    maxLat = Math.max(maxLat, a.latitude);
+    minLng = Math.min(minLng, a.longitude);
+    maxLng = Math.max(maxLng, a.longitude);
+  }
+  return [minLat, maxLat, minLng, maxLng].map((v) => v.toFixed(5)).join(",");
+}
+
+/**
+ * Mapa DOKLADNIE na kadr z adresu. `reset: true` (Map.js, setView) idzie wprost do
+ * _resetView: bez niego, przy tym samym zoomie, Leaflet przesuwa mape przez panBy
+ * o offset obciety do calych pikseli, srodek odjezdza o ulamek piksela, a
+ * ViewportFilter zapisuje go do adresu (zmierzone 24.09: lat 52.22913 -> 52.22780
+ * przy zoom 7, I4 w SMOKE-02). W trakcie animacji zoomu Leaflet po cichu ignoruje
+ * setView (`_tryAnimatedZoom`: `if (this._animatingZoom) return true`), wiec wtedy
+ * ustawiamy kadr dopiero po jej koncu.
+ */
+function przywrocKadr(map: L.Map, stan: SavedMapState) {
+  const ustaw = () => {
+    const c = map.getCenter();
+    const tenSam =
+      c.lat.toFixed(5) === stan.center[0].toFixed(5) &&
+      c.lng.toFixed(5) === stan.center[1].toFixed(5) &&
+      Math.round(map.getZoom()) === Math.round(stan.zoom);
+    // `reset` jest w dokumentacji Leafleta, ale nie w @types/leaflet (ZoomPanOptions).
+    if (!tenSam) map.setView(stan.center, stan.zoom, { reset: true } as L.ZoomPanOptions);
+  };
+  if ((map as MapaZAnimacjaZoomu)._animatingZoom) map.once("zoomend", ustaw);
+  else ustaw();
+}
+
+// FMN-B04: kadr idzie za pinami TYLKO po zmianie filtra przez uzytkownika.
+// Wczesniej fitBounds szedl po KAZDEJ nowej tablicy `activities`, a kadr z adresu
+// mapa czytala wylacznie przy montazu. "Wstecz" do wpisu z lat/lng/zoom zmienial
+// filtr -> nowa tablica pinow -> fitBounds, wiec mapa ladowala w innym kadrze niz
+// zapisany we wpisie (zmierzone 24.09: zoom 11 -> 7, SMOKE-02). Zasady:
+//  - wejscie z adresu z lat/lng/zoom (link, F5, "wstecz" z karty) = kadr z adresu;
+//  - "wstecz"/"naprzod" przy zamontowanej mapie = kadr z adresu tego wpisu;
+//  - zmiana filtra w adresie (push/replace, tez chip kategorii) albo „Ulubione"
+//    i fraza na mapie = dopasuj do pinow;
+//  - nowa tablica pinow z ta sama ramka (np. doladowane ulubione) = nic.
+// `aktywny=false` (tryb kadrowy F-17) wylacza samo dopasowanie; przywracanie kadru
+// z adresu dziala dalej. Komponent montuje sie razem z mapa, a nie z pierwszym
+// filtrem: montowany dopiero z filtrem widzial lat/lng zapisane chwile wczesniej
+// przez tryb kadrowy, bral to za "wejscie z adresu" i gubil dopasowanie do regionu.
+function MapFitBounds({
+  activities,
+  aktywny,
+  savedMapState,
+  zadanieDopasowania,
+}: {
+  activities: Activity[];
+  aktywny: boolean;
+  savedMapState?: SavedMapState | null;
+  /** Licznik akcji uzytkownika na samej mapie („Ulubione", fraza) — kazda zmiana = dopasuj kadr. */
+  zadanieDopasowania: number;
+}) {
+  const map = useMap();
+  const { search } = useLocation();
+  const typNawigacji = useRealNavigationType();
+  const kluczFiltrow = kluczFiltrowZAdresu(search);
+
+  // "piny": kadr idzie za pinami. "adres": kadr nalezy do adresu, dopasowanie
+  // czeka na najblizsza zmiane filtra przez uzytkownika.
+  const trybRef = useRef<"piny" | "adres">(savedMapState ? "adres" : "piny");
+  const poprzedniKluczRef = useRef(kluczFiltrow);
+  const poprzednieZadanieRef = useRef(zadanieDopasowania);
+  // Ramka ostatniego dopasowania. null = najblizsze piny dopasuj zawsze.
+  const dopasowanaRamkaRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (activities.length === 0) return;
-    // On first render, skip if restoring saved map state from the entry URL
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      if (initialSkipRef.current) return;
+    const zmianaNaMapie = zadanieDopasowania !== poprzednieZadanieRef.current;
+    const zmianaFiltra = kluczFiltrow !== poprzedniKluczRef.current;
+    poprzednieZadanieRef.current = zadanieDopasowania;
+    poprzedniKluczRef.current = kluczFiltrow;
+    if (!zmianaNaMapie && !zmianaFiltra) return;
+    dopasowanaRamkaRef.current = null;
+    // Filtry liczymy wprost z adresu (useActivityFilters), wiec "wstecz" zmienia
+    // klucz w tym samym renderze, w ktorym typ nawigacji to jeszcze "POP".
+    if (!zmianaNaMapie && typNawigacji === "POP" && savedMapState) {
+      trybRef.current = "adres";
+      przywrocKadr(map, savedMapState);
+    } else {
+      trybRef.current = "piny";
     }
+  }, [kluczFiltrow, zadanieDopasowania, typNawigacji, savedMapState, map]);
+
+  useEffect(() => {
+    if (!aktywny || trybRef.current !== "piny" || activities.length === 0) return;
+    const ramka = podpisKadru(activities);
+    if (ramka === dopasowanaRamkaRef.current) return;
 
     const coords = activities.map((a) => [a.latitude, a.longitude] as [number, number]);
     // Check if all points are identical
     const allSame = coords.every((c) => c[0] === coords[0][0] && c[1] === coords[0][1]);
 
     const timeoutId = setTimeout(() => {
+      dopasowanaRamkaRef.current = ramka;
       map.invalidateSize();
       if (activities.length === 1 || allSame) {
         map.setView(coords[0], 13, { animate: true });
@@ -708,7 +825,9 @@ function MapFitBounds({ activities, skip }: { activities: Activity[]; skip?: boo
     }, 150);
 
     return () => clearTimeout(timeoutId);
-  }, [activities, map, skip]);
+    // kluczFiltrow i zadanieDopasowania: po przejsciu w tryb "piny" efekt ma ruszyc
+    // takze wtedy, gdy tablica pinow zostala ta sama.
+  }, [activities, aktywny, map, kluczFiltrow, zadanieDopasowania]);
 
   return null;
 }
@@ -1066,16 +1185,28 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return result;
   }, [sourceActivities, showFavoritesOnly, isFavorite, searchNormalized, matchesSearch]);
 
+  // FMN-B04: filtry, ktore zyja TYLKO w mapie („Ulubione", fraza w polu mapy), to
+  // zmiana filtra przez uzytkownika -> MapFitBounds dopasowuje kadr. Chip kategorii
+  // tego licznika nie potrzebuje: zmienia `type` w adresie (push), a to MapFitBounds
+  // widzi sam.
+  const [zadanieDopasowania, setZadanieDopasowania] = useState(0);
+
   // Klik chipa kategorii zmienia filtr `type` u rodzica (jeden wpis historii,
   // jak w pasku filtrow). „Ulubione" to lokalny stan mapy.
   const handleCategoryToggle = useCallback((category: string) => {
     if (category === FAVORITES_CHIP_KEY) {
       setTylkoUlubione((v) => !v);
+      setZadanieDopasowania((n) => n + 1);
       return;
     }
     onCategoryToggle?.(category);
   }, [onCategoryToggle]);
   const pokazChipyKategorii = onCategoryToggle != null;
+
+  const handleSearchChange = useCallback((query: string) => {
+    setSearchQuery(query);
+    setZadanieDopasowania((n) => n + 1);
+  }, []);
 
   // Filtered visible activities (viewport + favorites + search)
   const displayedActivities = useMemo(() => {
@@ -1183,12 +1314,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <OpisMapy nazwa={etykietaMapy} />
-          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
-              dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
-              rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej
-              Polski). Kadr nalezy tu do uzytkownika; ucieczka z pustego obszaru jest
-              pod przyciskiem „Pokaz wszystkie atrakcje". */}
-          {!trybKadru && <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />}
+          <ZatrzymajAnimacjeZoomu />
+          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow (aktywny=false):
+              kazda paczka pinow rozszerzalaby kadr -> nowe zapytanie -> kolejne piny
+              (petla az do calej Polski). Kadr nalezy tu do uzytkownika; ucieczka
+              z pustego obszaru jest pod przyciskiem „Pokaz wszystkie atrakcje".
+              FMN-B04: komponent jest zawsze zamontowany, bo „wstecz" przywraca
+              kadr z adresu takze w trybie kadrowym. */}
+          <MapFitBounds
+            activities={filteredActivities}
+            aktywny={!trybKadru}
+            savedMapState={savedMapState}
+            zadanieDopasowania={zadanieDopasowania}
+          />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
 
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
@@ -1216,7 +1354,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           showCategoryChips={pokazChipyKategorii}
           mapCenter={liveMapCenter}
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={handleSearchChange}
           onShowAll={handleShowAll}
           error={pinsFetchError}
           onRetry={refetchPins}
@@ -1337,12 +1475,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
           <OpisMapy nazwa={etykietaMapy} />
-          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow. `skip` w MapFitBounds
-              dziala tylko na pierwszym renderze, wiec kazda kolejna paczka pinow
-              rozszerzalaby kadr -> nowe zapytanie -> kolejne piny (petla az do calej
-              Polski). Kadr nalezy tu do uzytkownika; ucieczka z pustego obszaru jest
-              pod przyciskiem „Pokaz wszystkie atrakcje". */}
-          {!trybKadru && <MapFitBounds activities={filteredActivities} skip={!!savedMapState} />}
+          <ZatrzymajAnimacjeZoomu />
+          {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow (aktywny=false):
+              kazda paczka pinow rozszerzalaby kadr -> nowe zapytanie -> kolejne piny
+              (petla az do calej Polski). Kadr nalezy tu do uzytkownika; ucieczka
+              z pustego obszaru jest pod przyciskiem „Pokaz wszystkie atrakcje".
+              FMN-B04: komponent jest zawsze zamontowany, bo „wstecz" przywraca
+              kadr z adresu takze w trybie kadrowym. */}
+          <MapFitBounds
+            activities={filteredActivities}
+            aktywny={!trybKadru}
+            savedMapState={savedMapState}
+            zadanieDopasowania={zadanieDopasowania}
+          />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
