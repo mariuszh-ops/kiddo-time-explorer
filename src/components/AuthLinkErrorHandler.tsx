@@ -56,6 +56,22 @@ const KOMUNIKAT_DOMYSLNY =
   "Nie udało się otworzyć tego linku. Zaloguj się ponownie albo poproś o nowy link z wiadomości e-mail.";
 
 /**
+ * A1000-T3: skanery odnośników w poczcie firmowej (Google Workspace, zmierzone
+ * 2 z 2: ~25–30 s po rejestracji) otwierają jednorazowy link, zanim zrobi to
+ * człowiek. Konto jest już potwierdzone, rodzic widzi „link wygasł", a resend
+ * na potwierdzonym koncie oddaje 200 BEZ wysyłki — mail nigdy nie przyjdzie.
+ * Wyjściem jest zwykłe logowanie, więc mówimy o nim wprost.
+ *
+ * Oba zdania są STAŁE — takie same dla konta nieistniejącego, niepotwierdzonego
+ * i potwierdzonego — więc nie zdradzają, czy adres ma konto. Z tego samego
+ * powodu front NIE sprawdza, czy konto istnieje.
+ */
+const KONTO_AKTYWNE_PRZED_WYSYLKA =
+  "Twoje konto może być już aktywne — wtedy nowy link nie przyjdzie, wystarczy się zalogować.";
+const KONTO_AKTYWNE_PO_WYSYLCE =
+  "Jeśli mail nie dotrze w ciągu kilku minut, spróbuj się zalogować — Twoje konto może być już aktywne.";
+
+/**
  * Kod z adresu pokazujemy wyłącznie jako ślad dla wsparcia i tylko wtedy, gdy
  * wygląda jak kod — do UI nie trafia dowolny tekst z paska adresu.
  */
@@ -270,6 +286,24 @@ const AuthLinkErrorHandler = () => {
               </Button>
             </form>
           )}
+
+          {/* A1000-T3: droga do logowania, gdy link zużył skaner poczty. */}
+          <div className="flex flex-col gap-2 border-t pt-3">
+            <p className="text-sm text-muted-foreground text-center">
+              {sent ? KONTO_AKTYWNE_PO_WYSYLCE : KONTO_AKTYWNE_PRZED_WYSYLKA}
+            </p>
+            <Button
+              type="button"
+              variant={sent ? "default" : "outline"}
+              className="w-full"
+              onClick={() => {
+                setWidok("none");
+                setLogowanieOtwarte(true);
+              }}
+            >
+              Zaloguj się
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
 
