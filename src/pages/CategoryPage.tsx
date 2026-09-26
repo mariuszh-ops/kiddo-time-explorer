@@ -275,7 +275,13 @@ const CategoryPage = () => {
     [setSearchParams],
   );
 
+  // FMN-B42: kazdy przycisk „Wyczyść filtry” (pasek, pusty stan, ActivityGrid)
+  // znika razem z hasActiveFilters, a fokus spadal na <body>. Flaga + efekt
+  // nizej przenosza go na pierwsza kontrolke paska filtrow — jak FMN-B09 na „/”.
+  const pasekFiltrowRef = useRef<HTMLDivElement>(null);
+  const fokusPoWyczyszczeniu = useRef(false);
   const clearAll = useCallback(() => {
+    fokusPoWyczyszczeniu.current = true;
     setSearchParams(new URLSearchParams());
   }, [setSearchParams]);
 
@@ -393,6 +399,13 @@ const CategoryPage = () => {
     Boolean(urlAge) ||
     onlyFree ||
     Boolean(urlSearch);
+
+  // FMN-B42: efekt, nie handler — fokus ustawiamy dopiero, gdy przycisku juz nie ma.
+  useEffect(() => {
+    if (hasActiveFilters || !fokusPoWyczyszczeniu.current) return;
+    fokusPoWyczyszczeniu.current = false;
+    pasekFiltrowRef.current?.querySelector<HTMLElement>("button")?.focus();
+  }, [hasActiveFilters]);
 
   // Fallback config / cityLabel so we never render a completely blank page
   const effectiveConfig = config ?? {
@@ -561,6 +574,7 @@ const CategoryPage = () => {
           {/* Filter bar — wlasna granica bledu (W-E-01): awaria jednego
               dropdownu nie ma zdejmowac calego widoku listingu. */}
           <ErrorBoundary fallbackLevel="section">
+          <div ref={pasekFiltrowRef}>
           <CategoryFilterBar
             type={effectiveType}
             typeLocked={Boolean(categorySlug)}
@@ -588,6 +602,7 @@ const CategoryPage = () => {
             onlyFree={onlyFree}
             onOnlyFreeChange={(v) => updateParams({ free: v ? "1" : undefined })}
           />
+          </div>
           </ErrorBoundary>
 
           {/* Count */}
