@@ -39,6 +39,7 @@ import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useMapPins } from "@/hooks/useMapPins";
 import { fetchFilteredSlugs } from "@/lib/mapPins";
 import { useRealNavigationType } from "@/lib/navigationType";
+import { pierwszaStronaListy, stanListy } from "@/lib/categoryListReturn";
 import { trackEvent } from "@/lib/analytics";
 
 
@@ -86,6 +87,7 @@ const CategoryPage = () => {
 
   // URL-persisted filter state
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   // Kategoria w ścieżce (/kategoria/zoo) blokuje ?type=, bez niej strona zna jedną wartość `type`.
   const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
     searchParams,
@@ -122,7 +124,10 @@ const CategoryPage = () => {
   const urlSearch = searchParams.get("search")?.trim() ?? "";
   // ?page=N (1-based) → N-ta porcja wyników. Linki paginacji renderujemy pod listą.
   const pageParam = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
-  const initialPage = pageParam - 1;
+  // FMN-B21: przy montażu (powrót „wstecz" z karty, F5) lista wraca od strony
+  // zapisanej przez „Pokaż więcej" w stanie wpisu historii. Bez zapisu (link
+  // paginacji, wklejony adres) ?page=N to sama strona N.
+  const [stronaStartowa] = useState(() => pierwszaStronaListy(location.state, pageParam - 1));
 
   // O-F-06: kazda kombinacja filtrow tworzy osobny adres z ta sama trescia.
   // Takie strony dostaja "noindex, follow" (canonical do wersji bez parametrow
@@ -148,6 +153,7 @@ const CategoryPage = () => {
     loadingMore,
     loadMore,
     page,
+    firstPage,
     refetch,
     goToPage,
   } = useActivitiesInfinite(
@@ -164,7 +170,8 @@ const CategoryPage = () => {
     search: urlSearch,
     },
     24,
-    initialPage,
+    stronaStartowa,
+    pageParam - stronaStartowa,
   );
 
   // Mapa musi pokazywać WSZYSTKIE piny spełniające filtry, nie tylko
@@ -258,7 +265,7 @@ const CategoryPage = () => {
   const updateParams = useCallback(
     (
       patch: Record<string, string | undefined | null>,
-      options?: { replace?: boolean },
+      options?: { replace?: boolean; state?: unknown },
     ) => {
       setSearchParams(
         (prev) => {
@@ -269,7 +276,7 @@ const CategoryPage = () => {
           }
           return next;
         },
-        { replace: options?.replace ?? false },
+        { replace: options?.replace ?? false, state: options?.state },
       );
     },
     [setSearchParams],
@@ -293,6 +300,10 @@ const CategoryPage = () => {
   //   stan → URL   „Pokaż więcej" zapisuje osiągniętą stronę (replace).
   // Wcześniej istniał tylko drugi kierunek, więc efekt natychmiast cofał
   // ?page= wpisane przez <Link> i paginacja SEO była martwa dla człowieka (K-03).
+  // FMN-B21: „Pokaż więcej" zapisuje razem z ?page= numer pierwszej strony listy
+  // w stanie wpisu historii (categoryListReturn.ts). „Wstecz"/„naprzód" na taki
+  // wpis odbudowuje strony od tej pierwszej; link paginacji (nowy wpis, bez stanu)
+  // dalej pokazuje samą stronę N.
   const headingRef = useRef<HTMLHeadingElement>(null);
   const pageJumpRef = useRef(false);
   const lastPageParamRef = useRef(pageParam);
@@ -301,16 +312,20 @@ const CategoryPage = () => {
       lastPageParamRef.current = pageParam;
       if (pageParam - 1 !== page) {
         pageJumpRef.current = true;
-        goToPage(pageParam - 1);
+        const od = pierwszaStronaListy(location.state, pageParam - 1);
+        goToPage(od, pageParam - od);
         window.scrollTo(0, 0);
       }
       return;
     }
     if (pageParam !== page + 1) {
       lastPageParamRef.current = page > 0 ? page + 1 : 1;
-      updateParams({ page: page > 0 ? String(page + 1) : undefined }, { replace: true });
+      updateParams(
+        { page: page > 0 ? String(page + 1) : undefined },
+        { replace: true, state: stanListy(location.state, firstPage, page) },
+      );
     }
-  }, [pageParam, page, goToPage, updateParams]);
+  }, [pageParam, page, firstPage, goToPage, updateParams, location.state]);
 
   // Po dojściu nowej porcji: góra listy + fokus na H1. Bez tego klawiatura
   // zostaje na dole strony, przy linku, którego już nie ma.
@@ -322,7 +337,6 @@ const CategoryPage = () => {
   }, [loading, activities.length]);
 
   // Zapamiętaj i przywróć pozycję scrolla dla tego widoku (klucz = ścieżka + filtry).
-  const location = useLocation();
   // NIE useNavigationType(): wewnątrz <Routes location={…}> react-router zawsze
   // zwraca "POP", przez co reset scrolla nigdy się nie wykonywał (F-12).
   const navigationType = useRealNavigationType();
@@ -364,8 +378,9 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (restoredRef.current || loading || activities.length === 0) return;
-    // Czekaj, aż doładowane („Pokaż więcej") strony faktycznie dojdą.
-    if (page > initialPage && activities.length <= 24) return;
+    // Czekaj, aż dojdzie ostatnia strona listy. Odbudowa po „wstecz"/F5
+    // (FMN-B21) przynosi strony firstPage..page jednym wczytaniem.
+    if (activities.length <= (page - firstPage) * 24) return;
     restoredRef.current = true;
     // Przy wejściu w przód nie przywracamy zapisanej pozycji — pokazujemy górę
     // listingu. Reset powtarzamy po dojściu kart: dokument urósł od pierwszego
@@ -388,7 +403,7 @@ const CategoryPage = () => {
         if (Math.abs(window.scrollY - saved) <= 4 || tries >= 60) window.clearInterval(timer);
       }, 100);
     }
-  }, [loading, activities.length, page, scrollKey, isBackNavigation]);
+  }, [loading, activities.length, page, firstPage, scrollKey, isBackNavigation]);
 
   const hasActiveFilters =
     (urlType && !categorySlug ? true : false) ||
@@ -769,7 +784,7 @@ const CategoryPage = () => {
                 variant="outline"
                 size="lg"
               >
-                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${Math.max(0, total - initialPage * 24 - activities.length)})`}
+                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${Math.max(0, total - firstPage * 24 - activities.length)})`}
               </Button>
             </div>
           )}
