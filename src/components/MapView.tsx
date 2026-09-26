@@ -858,12 +858,15 @@ function MapFitBounds({
   aktywny,
   savedMapState,
   zadanieDopasowania,
+  dopasowanieWDrodzeRef,
 }: {
   activities: Activity[];
   aktywny: boolean;
   savedMapState?: SavedMapState | null;
   /** Licznik akcji uzytkownika na samej mapie („Ulubione", fraza) — kazda zmiana = dopasuj kadr. */
   zadanieDopasowania: number;
+  /** FMN-B01: true od zaplanowania dopasowania do jego moveend. */
+  dopasowanieWDrodzeRef: React.MutableRefObject<boolean>;
 }) {
   const map = useMap();
   const { search } = useLocation();
@@ -877,6 +880,12 @@ function MapFitBounds({
   const poprzednieZadanieRef = useRef(zadanieDopasowania);
   // Ramka ostatniego dopasowania. null = najblizsze piny dopasuj zawsze.
   const dopasowanaRamkaRef = useRef<string | null>(null);
+  // Numer najnowszego dopasowania: moveend starszego nie konczy nowszego.
+  const nrDopasowaniaRef = useRef(0);
+  // Nowa mapa (np. przejscie telefon <-> desktop) nie dostanie moveend starej.
+  useEffect(() => () => {
+    dopasowanieWDrodzeRef.current = false;
+  }, [dopasowanieWDrodzeRef]);
 
   useEffect(() => {
     const zmianaNaMapie = zadanieDopasowania !== poprzednieZadanieRef.current;
@@ -904,9 +913,22 @@ function MapFitBounds({
     // Check if all points are identical
     const allSame = coords.every((c) => c[0] === coords[0][0] && c[1] === coords[0][1]);
 
+    // FMN-B01: MapView trzyma „Wczytuję", dopóki kadr jedzie do pinów. Leaflet
+    // kończy każdą ścieżkę setView/fitBounds zdarzeniem moveend (animacja, skok
+    // przez _resetView, przesunięcie o 0 px), także gdy trwa inna animacja zoomu.
+    const nr = ++nrDopasowaniaRef.current;
+    const zakoncz = () => {
+      if (nrDopasowaniaRef.current === nr) dopasowanieWDrodzeRef.current = false;
+    };
+    dopasowanieWDrodzeRef.current = true;
+    let ruszylo = false;
+
     const timeoutId = setTimeout(() => {
+      ruszylo = true;
       dopasowanaRamkaRef.current = ramka;
       map.invalidateSize();
+      // Po invalidateSize: zmiana rozmiaru wysyła własny moveend, jeszcze na starym kadrze.
+      map.once("moveend", zakoncz);
       if (activities.length === 1 || allSame) {
         map.setView(coords[0], 13, { animate: true });
       } else {
@@ -914,7 +936,11 @@ function MapFitBounds({
       }
     }, 150);
 
-    return () => clearTimeout(timeoutId);
+    return () => {
+      clearTimeout(timeoutId);
+      // Niewystartowane dopasowanie już nie jest w drodze; wystartowane kończy moveend.
+      if (!ruszylo) zakoncz();
+    };
     // kluczFiltrow i zadanieDopasowania: po przejsciu w tryb "piny" efekt ma ruszyc
     // takze wtedy, gdy tablica pinow zostala ta sama.
   }, [activities, aktywny, map, kluczFiltrow, zadanieDopasowania]);
@@ -1155,7 +1181,15 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   useLayoutEffect(() => {
     daneWDrodzeRef.current = daneWDrodze;
   });
-  const [kadrNaDanych, setKadrNaDanych] = useState(!daneWDrodze);
+  // Zawsze false na starcie, także gdy dane już są (lista -> mapa przy
+  // wczytanym katalogu): lista kadru rusza pusta i wypełnia ją dopiero pierwsze
+  // przeliczenie. Z `!daneWDrodze` mapa przez 0,15-0,45 s mówiła „Brak atrakcji
+  // w tym obszarze" i ogłaszała „0 atrakcji w widoku" (zmierzone 26.09, 3/3).
+  const [kadrNaDanych, setKadrNaDanych] = useState(false);
+  // Dopasowanie kadru do pinów w drodze (MapFitBounds). Pierwsze przeliczenie po
+  // dojściu danych liczy jeszcze STARY kadr: na wejściu z filtrem „0 atrakcji"
+  // i „Brak", po kliku regionu liczba sprzed dopasowania (307 zamiast 550).
+  const dopasowanieWDrodzeRef = useRef(false);
   useEffect(() => {
     if (daneWDrodze) {
       setKadrNaDanych(false);
@@ -1354,13 +1388,16 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   }, []);
 
   const handleVisibleChange = useCallback((visible: Activity[]) => {
-    // FMN-B01: przeliczenie na zbiorze sprzed dojścia danych nie zdejmuje „wczytuję".
-    const naDanych = !daneWDrodzeRef.current;
+    // FMN-B01: przeliczenie na zbiorze sprzed dojścia danych nie zdejmuje „wczytuję",
+    // tak samo przeliczenie kadru, który jeszcze jedzie do pinów. Dopasowanie
+    // sprawdzamy dwa razy: przed nim (efekt MapFitBounds mógł jeszcze nie ruszyć)
+    // i po 100 ms (przeliczenie z kadru sprzed moveend dopasowania).
+    const naDanych = !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current;
     setFading(true);
     // Brief fade transition
     setTimeout(() => {
       setVisibleActivities(visible);
-      if (naDanych) setKadrNaDanych(true);
+      if (naDanych && !dopasowanieWDrodzeRef.current) setKadrNaDanych(true);
       setFading(false);
     }, 100);
   }, []);
@@ -1416,6 +1453,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             aktywny={!trybKadru}
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
+            dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
 
@@ -1577,6 +1615,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             aktywny={!trybKadru}
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
+            dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
