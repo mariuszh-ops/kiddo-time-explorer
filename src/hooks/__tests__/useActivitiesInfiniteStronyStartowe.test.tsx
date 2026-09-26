@@ -42,9 +42,10 @@ vi.mock("@/lib/listingQuery", async (importOriginal) => {
   };
 });
 
+import type { UseActivitiesFilters } from "@/hooks/useActivities";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
 
-const FILTRY = { region: "mazowieckie" };
+const FILTRY: UseActivitiesFilters = { region: "mazowieckie" };
 
 describe("useActivitiesInfinite — strony startowe (FMN-B21)", () => {
   beforeEach(() => {
@@ -117,7 +118,7 @@ describe("useActivitiesInfinite — strony startowe (FMN-B21)", () => {
 
   it("zmiana filtrów po odbudowie zaczyna od strony 1", async () => {
     const { result, rerender } = renderHook(
-      ({ f }: { f: { region: string; ageMin?: number; ageMax?: number } }) => useActivitiesInfinite(f, 24, 0, 2),
+      ({ f }: { f: UseActivitiesFilters }) => useActivitiesInfinite(f, 24, 0, 2),
       { initialProps: { f: FILTRY } },
     );
     await waitFor(() => expect(result.current.data).toHaveLength(48));
