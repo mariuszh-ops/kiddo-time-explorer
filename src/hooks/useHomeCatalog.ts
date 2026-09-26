@@ -156,7 +156,21 @@ export function useHomeCatalog(
   const kluczStartowyRef = useRef(kluczAktywny);
   const startAktywnyRef = useRef(true);
   const [page, setPage] = useState(stronaStartowaRef.current);
-  const [loading, setLoading] = useState(false);
+  // FMN-B31: lista startuje jako "wczytuje". Dawniej loading = false az do
+  // pierwszego efektu, wiec pierwszy render z filtrem z adresu mial 0 wynikow,
+  // bez bledu i bez ladowania, a ActivityGrid pisal "Nic nie pasuje do filtrow"
+  // (zmierzone 26.09 na /?age=3-5, CPU 6x + Fast 3G: 357 i 1004 ms).
+  const [loading, setLoading] = useState(enabled);
+  // FMN-B31: to samo przy wlaczeniu listy (mapa -> lista). Stan poprawiany
+  // w trakcie renderu — React renderuje jeszcze raz, zanim cokolwiek pokaze,
+  // wiec render "wlaczona, pusta, nie laduje" nigdy nie trafia na ekran.
+  // Wylaczenie przerywa zapytanie (efekt listy konczy sie bez setLoading(false)),
+  // wiec tu tez zdejmujemy flage.
+  const [bylaWlaczona, setBylaWlaczona] = useState(enabled);
+  if (bylaWlaczona !== enabled) {
+    setBylaWlaczona(enabled);
+    setLoading(enabled);
+  }
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [zetonOdswiezenia, setZetonOdswiezenia] = useState(0);
@@ -233,6 +247,10 @@ export function useHomeCatalog(
 
     if (pierwszaStrona) setLoading(true);
     else setLoadingMore(true);
+    // FMN-B31: blad zdejmujemy TU, w tym samym renderze, w ktorym wlacza sie
+    // ladowanie. Gdy robil to refetch(), jeden render mial 0 wynikow, bez bledu
+    // i bez ladowania — migniecie "Nic nie pasuje" po "Sprobuj ponownie".
+    setError(null);
 
     timeoutId = setTimeout(() => {
       if (anulowane) return;
@@ -323,8 +341,8 @@ export function useHomeCatalog(
     setPage((p) => p + 1);
   }, [loading, loadingMore]);
 
+  // Bez setError(null): blad zdejmuje efekt listy razem z wlaczeniem ladowania (FMN-B31).
   const refetch = useCallback(() => {
-    setError(null);
     setZetonOdswiezenia((t) => t + 1);
   }, []);
 
