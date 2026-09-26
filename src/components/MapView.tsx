@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
@@ -294,6 +294,7 @@ function ClusteredMarkers({
   onMapClick,
   isFavorite,
   toggleFavorite,
+  onBeforePopupNavigate,
 }: {
   activities: Activity[];
   onMarkerClick: (id: number) => void;
@@ -302,8 +303,11 @@ function ClusteredMarkers({
   onMapClick: () => void;
   isFavorite: (id: number) => boolean;
   toggleFavorite: (id: number, slug?: string) => Promise<boolean>;
+  /** FMN-B22: wolane tuz przed przejsciem z dymku na karte (zapis kadru do adresu). */
+  onBeforePopupNavigate?: () => void;
 }) {
   const map = useMap();
+  const navigate = useNavigate();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const activityMapRef = useRef<Record<number, Activity>>({});
   // Ktory dymek jest otwarty i czy wlasnie wymieniamy jego marker.
@@ -319,11 +323,15 @@ function ClusteredMarkers({
   const isFavoriteRef = useRef(isFavorite);
   const toggleFavoriteRef = useRef(toggleFavorite);
   const highlightedIdRef = useRef(highlightedId);
+  const onBeforePopupNavigateRef = useRef(onBeforePopupNavigate);
+  const navigateRef = useRef(navigate);
   useEffect(() => {
     onMarkerClickRef.current = onMarkerClick;
     isFavoriteRef.current = isFavorite;
     toggleFavoriteRef.current = toggleFavorite;
     highlightedIdRef.current = highlightedId;
+    onBeforePopupNavigateRef.current = onBeforePopupNavigate;
+    navigateRef.current = navigate;
   });
 
   // Jedna grupa klastrow na zycie mapy.
@@ -585,6 +593,32 @@ function ClusteredMarkers({
     };
     kontener.addEventListener("keydown", naKlawisz, true);
     return () => { kontener.removeEventListener("keydown", naKlawisz, true); };
+  }, [map]);
+
+  // FMN-B22: link w dymku to zwykle <a href> w HTML-u Leafleta, wiec router go nie
+  // widzial i przegladarka ladowala cala aplikacje od nowa: 0 wpisow pushState,
+  // a „wstecz" = drugie pelne ladowanie mapy z katalogiem. Zwykly klik (takze Enter
+  // na linku) przejmujemy i nawigujemy routerem. Klik z modyfikatorem (nowa karta,
+  // nowe okno, pobranie) i srodkowy przycisk (osobne zdarzenie auxclick) zostaja
+  // przegladarce. Delegacja na kontenerze, bo tresc dymku podmienia innerHTML.
+  useEffect(() => {
+    const kontener = map.getContainer();
+    const naKlik = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const cel = e.target instanceof Element ? e.target : null;
+      // Tylko tresc dymku: krzyzyk Leafleta to tez <a href="#close">, poza `-content`.
+      const link = cel?.closest<HTMLAnchorElement>(".leaflet-popup-content a[href]");
+      if (!link || (link.target && link.target !== "_self")) return;
+      const adres = new URL(link.href, window.location.href);
+      if (adres.origin !== window.location.origin) return;
+      e.preventDefault();
+      // FMN-B04: kadr trafia do BIEZACEGO wpisu (replace) przed wpisem karty,
+      // wiec „wstecz" wraca do tego samego kadru i chipow.
+      onBeforePopupNavigateRef.current?.();
+      navigateRef.current(adres.pathname + adres.search + adres.hash);
+    };
+    kontener.addEventListener("click", naKlik, true);
+    return () => { kontener.removeEventListener("click", naKlik, true); };
   }, [map]);
 
   // Listen for clicks on empty map area to deselect
@@ -1383,7 +1417,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
           />
-          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
 
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
@@ -1544,7 +1578,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
           />
-          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+          <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
         </MapContainer>
