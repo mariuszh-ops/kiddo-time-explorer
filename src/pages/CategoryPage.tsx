@@ -23,7 +23,13 @@ import {
 } from "@/data/categoryPages";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
 import { DEFAULT_LISTING_SORT, LISTING_FILTER_PARAMS } from "@/lib/listingQuery";
-import CategoryFilterBar, { type SortOption, AGE_RANGES, CATEGORY_TYPES, AMENITY_FILTER_VALUES } from "@/components/CategoryFilterBar";
+import CategoryFilterBar, {
+  type SortOption,
+  AGE_RANGES,
+  CATEGORY_TYPES,
+  AMENITY_FILTER_VALUES,
+  minRatingFromUrl,
+} from "@/components/CategoryFilterBar";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -107,7 +113,8 @@ const CategoryPage = () => {
       .map((v) => v.trim())
       .filter((v) => AMENITY_FILTER_VALUES.includes(v));
   }, [searchParams]);
-  const urlMinRating = Number(searchParams.get("min") ?? "0") || 0;
+  // FMN-B82: tylko wartości z opcji pola oceny; min=10 / min=5 = „Dowolna ocena".
+  const urlMinRating = minRatingFromUrl(searchParams.get("min"));
   // Domyślnie "reviews" (najpopularniejsze): rating desc wypychał na górę
   // obiekty 5.0★ z kilkudziesięcioma opiniami ponad znane kotwice (zoo/aquaparki).
   const rawSort = searchParams.get("sort");

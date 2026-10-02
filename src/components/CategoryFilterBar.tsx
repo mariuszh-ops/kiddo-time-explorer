@@ -77,8 +77,20 @@ export const RATING_OPTIONS = [
   { value: 4.8, label: "4,8+" },
 ];
 
-/** Maps a raw minimum rating (including legacy URL values) to the closest
- *  available UI threshold so the control always shows a meaningful label. */
+/**
+ * FMN-B82: `?min=` z adresu przyjmujemy TYLKO, gdy jest jedną z opcji pola
+ * oceny (4,5+ / 4,8+). Reszta (min=10, min=5, min=4, śmieci) = 0, czyli
+ * „Dowolna ocena" — tak jak `type` i `age`. Wcześniej strona województwa
+ * pokazywała dla min=10 „4,8+", a filtrowała po 10: 0 wyników zamiast 600.
+ */
+export function minRatingFromUrl(raw: string | null | undefined): number {
+  const n = Number(raw ?? "0");
+  return RATING_OPTIONS.some((r) => r.value > 0 && r.value === n) ? n : 0;
+}
+
+/** Maps a minimum rating to the closest available UI threshold. CategoryPage
+ *  passes a value already validated by `minRatingFromUrl`, so this is only a
+ *  safety net: the label must never claim a filter the query does not apply. */
 function toDisplayRating(minRating: number): number {
   if (minRating <= 0) return 0;
   const thresholds = RATING_OPTIONS.map((r) => r.value).filter((v) => v > 0);
