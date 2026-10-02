@@ -859,6 +859,7 @@ function MapFitBounds({
   savedMapState,
   zadanieDopasowania,
   dopasowanieWDrodzeRef,
+  onDopasowanieStart,
 }: {
   activities: Activity[];
   aktywny: boolean;
@@ -867,6 +868,8 @@ function MapFitBounds({
   zadanieDopasowania: number;
   /** FMN-B01: true od zaplanowania dopasowania do jego moveend. */
   dopasowanieWDrodzeRef: React.MutableRefObject<boolean>;
+  /** FMN-B11: dopasowanie ruszyło — MapView wraca do „Wczytuję" do pierwszego przeliczenia po nim. */
+  onDopasowanieStart: () => void;
 }) {
   const map = useMap();
   const { search } = useLocation();
@@ -921,6 +924,7 @@ function MapFitBounds({
       if (nrDopasowaniaRef.current === nr) dopasowanieWDrodzeRef.current = false;
     };
     dopasowanieWDrodzeRef.current = true;
+    onDopasowanieStart();
     let ruszylo = false;
 
     const timeoutId = setTimeout(() => {
@@ -943,7 +947,7 @@ function MapFitBounds({
     };
     // kluczFiltrow i zadanieDopasowania: po przejsciu w tryb "piny" efekt ma ruszyc
     // takze wtedy, gdy tablica pinow zostala ta sama.
-  }, [activities, aktywny, map, kluczFiltrow, zadanieDopasowania]);
+  }, [activities, aktywny, map, kluczFiltrow, zadanieDopasowania, onDopasowanieStart]);
 
   return null;
 }
@@ -1199,6 +1203,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     const t = setTimeout(() => setKadrNaDanych(true), 2000);
     return () => clearTimeout(t);
   }, [daneWDrodze]);
+  // FMN-B11: dopasowanie kadru BEZ nowych danych też jest „w drodze". Zmiana
+  // województwa z paska filtrów przy wczytanym katalogu podmienia zbiór od razu
+  // (daneWDrodze się nie zapala), a kadr stoi jeszcze nad starym województwem:
+  // przez 0,6-1,2 s „0 atrakcji w widoku" i „Brak atrakcji w tym obszarze" obok
+  // 37 wyników (FMN-1, 6 scenariuszy 3/3). „Wczytuję" zdejmuje pierwsze
+  // przeliczenie po moveend dopasowania (handleVisibleChange) albo bezpiecznik.
+  const bezpiecznikDopasowaniaRef = useRef<ReturnType<typeof setTimeout>>();
+  const handleDopasowanieStart = useCallback(() => {
+    setKadrNaDanych(false);
+    clearTimeout(bezpiecznikDopasowaniaRef.current);
+    bezpiecznikDopasowaniaRef.current = setTimeout(() => setKadrNaDanych(true), 2000);
+  }, []);
+  useEffect(() => () => clearTimeout(bezpiecznikDopasowaniaRef.current), []);
   const wczytuje = daneWDrodze || !kadrNaDanych;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
@@ -1454,6 +1471,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
             dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
+            onDopasowanieStart={handleDopasowanieStart}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
 
@@ -1616,6 +1634,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             savedMapState={savedMapState}
             zadanieDopasowania={zadanieDopasowania}
             dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
+            onDopasowanieStart={handleDopasowanieStart}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
