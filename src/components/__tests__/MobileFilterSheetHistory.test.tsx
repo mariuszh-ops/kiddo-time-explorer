@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import MobileFilterSheet from "@/components/MobileFilterSheet";
@@ -189,5 +189,62 @@ describe("MobileFilterSheet — „Pokaż wyniki” bez zmian (FMN-B06)", () => 
     expect(adres()).toBe("/?region=malopolskie");
 
     await wstecz("/poprzednia");
+  });
+});
+
+/**
+ * FMN-B72: F5 przy OTWARTYM arkuszu przeładowuje stronę na wpisie-atrapie.
+ * Zmierzone 26.09 (FMN-7-014, 390x844, 4/4): / → arkusz → wiek 3-5 → F5 →
+ * „wstecz" zostawia /?age=3-5 (martwy wpis), do wyjścia 3× „wstecz" zamiast 2×.
+ * Po poprawce arkusz zamontowany na atrapie, na której załadowano dokument,
+ * zdejmuje ją sam: historia [/poprzednia, /, /?age=3-5].
+ */
+describe("MobileFilterSheet — F5 przy otwartym arkuszu (FMN-B72)", () => {
+  const nawigacja = (type: string, name?: string) =>
+    vi
+      .spyOn(performance, "getEntriesByType")
+      .mockImplementation(() => [{ type, name: name ?? window.location.href }] as unknown as PerformanceEntryList);
+
+  const polozHistorie = (token: string) => {
+    window.history.replaceState(null, "", "/poprzednia");
+    window.history.pushState({ idx: 1, key: "a" }, "", "/");
+    window.history.pushState({ idx: 2, key: "b" }, "", "/?age=3-5");
+    // Atrapa: ten sam adres i stan routera co wpis filtra + znacznik arkusza.
+    window.history.pushState({ idx: 2, key: "b", filterSheetOpen: token }, "", "/?age=3-5");
+  };
+
+  const zamontuj = () =>
+    render(
+      <BrowserRouter>
+        <Strona />
+      </BrowserRouter>,
+    );
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it("montaż na osieroconej atrapie po F5 zdejmuje ją: 2× „wstecz” wychodzi", async () => {
+    polozHistorie("b72-reload");
+    nawigacja("reload");
+    zamontuj();
+
+    await waitFor(() => expect(window.history.state?.filterSheetOpen).toBeUndefined());
+    expect(arkuszOtwarty()).toBe(false);
+    expect(adres()).toBe("/?age=3-5");
+
+    await wstecz("/");
+    await wstecz("/poprzednia");
+  });
+
+  it("atrapa, na którą wrócono wewnątrz aplikacji (nie F5), zostaje", async () => {
+    polozHistorie("b72-spa");
+    // Dokument przeładowano na innej stronie (np. na karcie), atrapa to inny adres.
+    nawigacja("reload", "http://localhost:3000/atrakcje/cos");
+    zamontuj();
+
+    await new Promise((r) => setTimeout(r, 50));
+    expect(window.history.state?.filterSheetOpen).toBe("b72-spa");
+    expect(adres()).toBe("/?age=3-5");
   });
 });

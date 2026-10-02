@@ -47,6 +47,40 @@ const polozAtrape = (token: string) => {
 
 const nowyToken = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 
+/**
+ * Atrapa, którą już zdejmuje któryś egzemplarz hooka (`history.back()` jest
+ * asynchroniczne). Arkusz zamontowany na nowo, zanim cofnięcie dojdzie, nie
+ * może cofnąć drugi raz — zabrałby użytkownika o wpis za daleko.
+ */
+let zdejmowanaAtrapa: string | null = null;
+
+/**
+ * FMN-B72: dokument załadowano NA wpisie-atrapie (F5 przy otwartym arkuszu albo
+ * powrót z innej witryny). Znacznik w `history.state` przeżywa przeładowanie,
+ * a nowy arkusz startuje zamknięty i z pustym tokenem, więc atrapy nikt nie
+ * zdejmuje: pod nią leży wpis filtra z tym samym adresem i pierwsze „wstecz"
+ * nic nie zmienia na ekranie (R1).
+ *
+ * Tylko wpis, na którym załadowano dokument (`name` = bieżący adres). Atrapa,
+ * na którą wraca się z karty wewnątrz aplikacji, zostaje: podpowiedź
+ * wyszukiwarki dopisuje na niej frazę (persistSearchInHistory), a wpis pod nią
+ * frazy nie ma.
+ */
+const osieroconaAtrapaPoZaladowaniu = (): string | null => {
+  const znacznik = stanHistorii()?.[SHEET_HISTORY_KEY];
+  if (typeof znacznik !== "string" || znacznik === zdejmowanaAtrapa) return null;
+  try {
+    const nawigacja = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    if (nawigacja?.type !== "reload" && nawigacja?.type !== "back_forward") return null;
+    if (nawigacja.name !== window.location.href) return null;
+  } catch {
+    return null;
+  }
+  return znacznik;
+};
+
 export function useFilterSheetHistory(isOpen: boolean, onClose: () => void) {
   // Token bieżącego otwarcia; null = arkusz nie ma wpisu w historii.
   const tokenRef = useRef<string | null>(null);
@@ -69,11 +103,29 @@ export function useFilterSheetHistory(isOpen: boolean, onClose: () => void) {
     // Ktoś już przenawigował (np. podpowiedź wyszukiwarki otworzyła kartę) —
     // atrapy nie ma na wierzchu, cofnięcie zabrałoby użytkownika za daleko.
     if (!stoimyNaAtrapie(token)) return;
+    zdejmowanaAtrapa = token;
     try {
       window.history.back();
     } catch {
       /* brak History API */
     }
+  }, []);
+
+  // FMN-B72: osierocona atrapa po F5 — jedno „wstecz" na wpis filtra pod nią
+  // (ten sam adres). Popstate z tego cofnięcia trafia na `tokenRef === null`
+  // i niczego nie zamyka; router dostaje POP na ten sam adres, bez wpisu.
+  useEffect(() => {
+    if (isOpen) return;
+    const znacznik = osieroconaAtrapaPoZaladowaniu();
+    if (znacznik === null) return;
+    zdejmowanaAtrapa = znacznik;
+    try {
+      window.history.back();
+    } catch {
+      /* brak History API */
+    }
+    // Tylko przy montażu: osierocona atrapa to wpis, na którym załadowano dokument.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
