@@ -145,6 +145,9 @@ export function useHomeCatalog(
   }, [kluczSurowy, kluczAktywny]);
 
   const [activities, setActivities] = useState<Activity[]>([]);
+  // FMN-B41: klucz, dla ktorego rozstrzygnela sie pierwsza porcja listy
+  // (sukces albo blad). null = lista wyczyszczona, nowa jeszcze w drodze.
+  const [kluczListy, setKluczListy] = useState<string | null>(null);
   // FMN-B07: null = liczniki jeszcze nie przyszly. Dawniej startowaly od zer
   // (filtered 0), wiec pasek pisal "Zadna atrakcja nie spelnia wybranych
   // filtrow", a opcje "(0)", zanim serwer w ogole odpowiedzial.
@@ -183,6 +186,7 @@ export function useHomeCatalog(
     if (kluczAktywny !== kluczStartowyRef.current) startAktywnyRef.current = false;
     setPage(startAktywnyRef.current ? stronaStartowaRef.current : 0);
     setActivities([]);
+    setKluczListy(null);
     setError(null);
   }, [kluczAktywny]);
 
@@ -256,6 +260,8 @@ export function useHomeCatalog(
       if (anulowane) return;
       anulowane = true;
       setError(new Error("Przekroczono czas oczekiwania na odpowiedź serwera."));
+      // Ta sciezka omija finally (anulowane = true), wiec klucz listy tez tu.
+      if (pierwszaStrona) setKluczListy(kluczNaStarcie);
       setLoading(false);
       setLoadingMore(false);
     }, QUERY_TIMEOUT_MS);
@@ -284,9 +290,13 @@ export function useHomeCatalog(
         }
         const zmapowane = rows.map((r, i) => mapCatalogRow(r, odWiersza + i));
         setActivities((prev) => (pierwszaStrona ? zmapowane : [...prev, ...zmapowane]));
+        if (pierwszaStrona) setKluczListy(kluczNaStarcie);
         setError(null);
       } catch (e) {
-        if (!anulowane) setError(e instanceof Error ? e : new Error(String(e)));
+        if (!anulowane) {
+          setError(e instanceof Error ? e : new Error(String(e)));
+          if (pierwszaStrona) setKluczListy(kluczNaStarcie);
+        }
       } finally {
         if (timeoutId) clearTimeout(timeoutId);
         if (!anulowane) {
@@ -334,17 +344,36 @@ export function useHomeCatalog(
     };
   }, [licznicy, hasAnyFilter]);
 
+  // FMN-B41: pusta lista policzona dla INNEGO klucza (np. fraza bez wynikow,
+  // ktora rodzic wlasnie wyczyscil) to nie wynik, tylko ladowanie — przez
+  // 250 ms debounce i jeden render po nim `loading` bylo false i ActivityGrid
+  // pisal "Nic nie pasuje do filtrow". Lista z kaflami zostaje na ekranie jak
+  // dotad (pisanie frazy nie miga szkieletem). Wylaczona lista nie laduje.
+  const ladowanie = loading || (enabled && activities.length === 0 && kluczListy !== kluczSurowy);
+
   const hasMore = licznicy !== null && activities.length < licznicy.filtered;
 
+  // Ten sam warunek co Index.pokazWiecej (home.loading), inaczej zapis stron
+  // w historii (FMN-B03/B21) rozjechalby sie z lista.
   const loadMore = useCallback(() => {
-    if (loading || loadingMore) return;
+    if (ladowanie || loadingMore) return;
     setPage((p) => p + 1);
-  }, [loading, loadingMore]);
+  }, [ladowanie, loadingMore]);
 
   // Bez setError(null): blad zdejmuje efekt listy razem z wlaczeniem ladowania (FMN-B31).
   const refetch = useCallback(() => {
     setZetonOdswiezenia((t) => t + 1);
   }, []);
 
-  return { activities, filterCounts, loading, loadingMore, hasMore, error, loadMore, refetch, strony: page + 1 };
+  return {
+    activities,
+    filterCounts,
+    loading: ladowanie,
+    loadingMore,
+    hasMore,
+    error,
+    loadMore,
+    refetch,
+    strony: page + 1,
+  };
 }
