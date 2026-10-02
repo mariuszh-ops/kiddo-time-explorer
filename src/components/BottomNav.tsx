@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Compass, Heart, Map, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { bottomNavMapTarget } from "@/lib/bottomNavMapTarget";
 import { env } from "@/config/env";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -146,7 +147,10 @@ const BottomNav = () => {
 
   const handleMapClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate("/?view=map");
+    // FMN-B53: na „/” zachowaj filtry (jak „Mapa” w pasku filtrów); na już
+    // otwartej mapie nic nie rób — drugi tap nie dokłada wpisu historii.
+    const target = bottomNavMapTarget(location.pathname, location.search);
+    if (target !== null) navigate(target);
   };
 
   const navItems = [
