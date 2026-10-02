@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback, useMemo } from "react";
+import { flushSync } from "react-dom";
 import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -29,6 +30,7 @@ import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
 import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
 import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
+import { pinyPrzywroconegoKadru } from "@/lib/pinyPrzywroconegoKadru";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -860,7 +862,7 @@ function podpisKadru(activities: Activity[]): string {
  * setView (`_tryAnimatedZoom`: `if (this._animatingZoom) return true`), wiec wtedy
  * ustawiamy kadr dopiero po jej koncu.
  */
-function przywrocKadr(map: L.Map, stan: SavedMapState) {
+function przywrocKadr(map: L.Map, stan: SavedMapState, poUstawieniu?: () => void) {
   const ustaw = () => {
     const c = map.getCenter();
     const tenSam =
@@ -869,6 +871,7 @@ function przywrocKadr(map: L.Map, stan: SavedMapState) {
       Math.round(map.getZoom()) === Math.round(stan.zoom);
     // `reset` jest w dokumentacji Leafleta, ale nie w @types/leaflet (ZoomPanOptions).
     if (!tenSam) map.setView(stan.center, stan.zoom, { reset: true } as L.ZoomPanOptions);
+    poUstawieniu?.();
   };
   if ((map as MapaZAnimacjaZoomu)._animatingZoom) map.once("zoomend", ustaw);
   else ustaw();
@@ -895,6 +898,7 @@ function MapFitBounds({
   zadanieDopasowania,
   dopasowanieWDrodzeRef,
   onDopasowanieStart,
+  onKadrPrzywrocony,
 }: {
   activities: Activity[];
   aktywny: boolean;
@@ -905,6 +909,8 @@ function MapFitBounds({
   dopasowanieWDrodzeRef: React.MutableRefObject<boolean>;
   /** FMN-B11: dopasowanie ruszyło — MapView wraca do „Wczytuję" do pierwszego przeliczenia po nim. */
   onDopasowanieStart: () => void;
+  /** FMN-B65: kadr z adresu przywrócony („wstecz") — MapView od razu pokazuje piny tego kadru. */
+  onKadrPrzywrocony?: (map: L.Map, piny: Activity[]) => void;
 }) {
   const map = useMap();
   const { search } = useLocation();
@@ -925,6 +931,13 @@ function MapFitBounds({
     dopasowanieWDrodzeRef.current = false;
   }, [dopasowanieWDrodzeRef]);
 
+  // FMN-B65: wywołanie w refie, żeby nowa tożsamość callbacku nie ruszała efektu.
+  const onKadrPrzywroconyRef = useRef(onKadrPrzywrocony);
+  onKadrPrzywroconyRef.current = onKadrPrzywrocony;
+
+  // Zwykły efekt, nie układu: w fazie efektów ViewportFilter ma już odpięte stare
+  // handlery moveend (useMapEvents), więc setView nie odpala ich zamkniętych na
+  // starych pinach (zmierzone: efekt układu = 200 ms później 1 pin zamiast 2).
   useEffect(() => {
     const zmianaNaMapie = zadanieDopasowania !== poprzednieZadanieRef.current;
     const zmianaFiltra = kluczFiltrow !== poprzedniKluczRef.current;
@@ -936,10 +949,12 @@ function MapFitBounds({
     // klucz w tym samym renderze, w ktorym typ nawigacji to jeszcze "POP".
     if (!zmianaNaMapie && typNawigacji === "POP" && savedMapState) {
       trybRef.current = "adres";
-      przywrocKadr(map, savedMapState);
+      przywrocKadr(map, savedMapState, () => onKadrPrzywroconyRef.current?.(map, activities));
     } else {
       trybRef.current = "piny";
     }
+    // activities: czytane tylko przy zmianie klucza (ten sam render), nie wyzwalają efektu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [kluczFiltrow, zadanieDopasowania, typNawigacji, savedMapState, map]);
 
   useEffect(() => {
@@ -1552,6 +1567,31 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     }, 100);
   }, [bramkaPinow]);
 
+  // FMN-B65 (reszta, „wstecz"): piny przywróconego kadru od razu, w tym samym
+  // zadaniu co setView — markercluster nie rysuje starego zbioru w nowym kadrze.
+  // Późniejsze przeliczenia ViewportFilter dają ten sam zbiór (bez zmian w DOM).
+  const daneWDrodzeTerazRef = useRef(daneWDrodze);
+  daneWDrodzeTerazRef.current = daneWDrodze;
+  const handleKadrPrzywrocony = useCallback(
+    (map: L.Map, piny: Activity[]) => {
+      const odRazu = pinyPrzywroconegoKadru(piny, map.getBounds(), {
+        trybKadru,
+        daneWDrodze: daneWDrodzeTerazRef.current,
+      });
+      if (odRazu === null) return;
+      nrPrzeliczeniaRef.current += 1;
+      // flushSync: markery dostają nowy zbiór w tym samym zadaniu co setView
+      // (wołane z efektu MapFitBounds — React domyka render na końcu fazy efektów,
+      // zanim przeglądarka coś namaluje). Bez tego markercluster rysował najpierw
+      // stary zbiór w nowym kadrze.
+      flushSync(() => {
+        setVisibleActivities(odRazu);
+        setFading(false);
+      });
+    },
+    [trybKadru],
+  );
+
   const handleShowAll = useCallback(() => {
     const map = mapInstanceRef.current;
     if (!map) return;
@@ -1608,6 +1648,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             zadanieDopasowania={zadanieDopasowania}
             dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
             onDopasowanieStart={handleDopasowanieStart}
+            onKadrPrzywrocony={handleKadrPrzywrocony}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
 
@@ -1784,6 +1825,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             zadanieDopasowania={zadanieDopasowania}
             dopasowanieWDrodzeRef={dopasowanieWDrodzeRef}
             onDopasowanieStart={handleDopasowanieStart}
+            onKadrPrzywrocony={handleKadrPrzywrocony}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
           <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
