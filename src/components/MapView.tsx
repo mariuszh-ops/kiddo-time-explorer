@@ -19,6 +19,7 @@ import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
+import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -1221,11 +1222,18 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // 37 wyników (FMN-1, 6 scenariuszy 3/3). „Wczytuję" zdejmuje pierwsze
   // przeliczenie po moveend dopasowania (handleVisibleChange) albo bezpiecznik.
   const bezpiecznikDopasowaniaRef = useRef<ReturnType<typeof setTimeout>>();
+  // FMN-B65: przeliczenia kadru z czasu dopasowania czekają w bramce (stare piny
+  // zostają), żeby jedna zmiana filtra wymieniała piny raz, a nie dwa razy.
+  const [bramkaPinow] = useState(() => utworzBramkePinow<Activity>());
   const handleDopasowanieStart = useCallback(() => {
     setKadrNaDanych(false);
     clearTimeout(bezpiecznikDopasowaniaRef.current);
-    bezpiecznikDopasowaniaRef.current = setTimeout(() => setKadrNaDanych(true), 2000);
-  }, []);
+    bezpiecznikDopasowaniaRef.current = setTimeout(() => {
+      const odlozone = bramkaPinow.bezpiecznik();
+      if (odlozone) setVisibleActivities(odlozone);
+      setKadrNaDanych(true);
+    }, 2000);
+  }, [bramkaPinow]);
   useEffect(() => () => clearTimeout(bezpiecznikDopasowaniaRef.current), []);
   const wczytuje = daneWDrodze || !kadrNaDanych;
 
@@ -1421,6 +1429,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // sprawdzamy dwa razy: przed nim (efekt MapFitBounds mógł jeszcze nie ruszyć)
     // i po 100 ms (przeliczenie z kadru sprzed moveend dopasowania).
     const naDanych = !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current;
+    const kadrWDrodze = dopasowanieWDrodzeRef.current;
     // FMN-B11 krok 2: liczy się tylko NAJNOWSZE przeliczenie. Po „Wyczyść filtry"
     // przeliczenie na starych pinach (0 w kadrze) i to na nowych (643) dzieli
     // często mniej niż 100 ms; spóźniony timer starszego wpisywał wtedy 0
@@ -1430,12 +1439,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // Brief fade transition
     setTimeout(() => {
       if (nr !== nrPrzeliczeniaRef.current) return;
-      setVisibleActivities(visible);
+      // FMN-B65: nowe piny w STARYM kadrze (dopasowanie w drodze) nie trafiają
+      // do markerów ani listy — pokaże je przeliczenie po moveend dopasowania.
+      const doPokazania = bramkaPinow.przeliczenie(visible, kadrWDrodze, dopasowanieWDrodzeRef.current);
+      if (doPokazania === null) {
+        setFading(false);
+        return;
+      }
+      setVisibleActivities(doPokazania);
       // Dane mogły wejść „w drogę" w trakcie tych 100 ms (nowy kadr trybu kadrowego).
       if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) setKadrNaDanych(true);
       setFading(false);
     }, 100);
-  }, []);
+  }, [bramkaPinow]);
 
   const handleShowAll = useCallback(() => {
     const map = mapInstanceRef.current;
