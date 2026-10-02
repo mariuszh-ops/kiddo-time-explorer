@@ -31,6 +31,7 @@ import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
+import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 
 /** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
@@ -972,13 +973,14 @@ function LocateButton({
   mapRef: React.MutableRefObject<L.Map | null>;
 }) {
   const [locating, setLocating] = useState(false);
-  const [denied, setDenied] = useState(false);
   const markerRef = useRef<L.CircleMarker | null>(null);
   const pulseRef = useRef<L.CircleMarker | null>(null);
 
   const handleLocate = useCallback(() => {
     const map = mapRef.current;
-    if (!map || denied || locating) return;
+    // FMN-B62: bez trwałego `denied` — po odmowie i zmianie ustawień albo po
+    // timeoucie GPS kolejne kliknięcie pyta przeglądarkę jeszcze raz.
+    if (!map || locating) return;
     setLocating(true);
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -1005,23 +1007,21 @@ function LocateButton({
         map.setView([latitude, longitude], 13, { animate: true });
         setLocating(false);
       },
-      () => {
-        setDenied(true);
+      (err) => {
         setLocating(false);
-        toast.error("Włącz lokalizację w ustawieniach przeglądarki");
+        toast.error(komunikatBleduLokalizacji(err?.code));
       },
       { enableHighAccuracy: false, timeout: 8000 }
     );
-  }, [mapRef, denied, locating]);
+  }, [mapRef, locating]);
 
   return (
     <button
       onClick={handleLocate}
-      disabled={denied}
       className={cn(
         "absolute z-[1000] w-11 h-11 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
         bottomOffset ? `right-4` : "bottom-4 right-4",
-        denied ? "opacity-40 cursor-not-allowed" : "hover:bg-accent cursor-pointer"
+        "hover:bg-accent cursor-pointer"
       )}
       style={bottomOffset ? { bottom: bottomOffset } : undefined}
       aria-label="Moja lokalizacja"
