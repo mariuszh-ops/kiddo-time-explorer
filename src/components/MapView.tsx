@@ -13,6 +13,7 @@ import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { MAPA_MAX_ZOOM, ZOOM_MIN } from "@/hooks/useMapUrlState";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
@@ -1033,26 +1034,44 @@ function LocateButton({
 function MapControls({
   mapRef,
   locateBottomOffset,
+  granicaZoomu = null,
 }: {
   mapRef: React.MutableRefObject<L.Map | null>;
   locateBottomOffset?: string;
+  granicaZoomu?: GranicaZoomu;
 }) {
+  // FMN-B61: na granicy zoomu przycisk jest nieaktywny (aria-disabled, a nie
+  // `disabled` — fokus klawiatury zostaje na przycisku zamiast spasc na <body>).
+  // Klasa leaflet-disabled to konwencja wbudowanych kontrolek Leafleta.
+  const klasa = (granica: boolean) =>
+    cn(
+      "w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none",
+      granica && "leaflet-disabled opacity-50 cursor-not-allowed hover:bg-background",
+    );
+  const naMax = granicaZoomu === "max";
+  const naMin = granicaZoomu === "min";
   return (
     <>
       <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
         <button
           type="button"
           aria-label="Przybliż mapę"
-          onClick={() => mapRef.current?.zoomIn()}
-          className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          aria-disabled={naMax || undefined}
+          onClick={() => {
+            if (!naMax) mapRef.current?.zoomIn();
+          }}
+          className={klasa(naMax)}
         >
           +
         </button>
         <button
           type="button"
           aria-label="Oddal mapę"
-          onClick={() => mapRef.current?.zoomOut()}
-          className="w-9 h-9 rounded-md bg-background hover:bg-muted shadow-md border border-border flex items-center justify-center text-foreground text-xl font-semibold leading-none"
+          aria-disabled={naMin || undefined}
+          onClick={() => {
+            if (!naMin) mapRef.current?.zoomOut();
+          }}
+          className={klasa(naMin)}
         >
           −
         </button>
@@ -1060,6 +1079,30 @@ function MapControls({
       <LocateButton mapRef={mapRef} bottomOffset={locateBottomOffset} />
     </>
   );
+}
+
+/** Mapa na minimalnym albo maksymalnym zoomie (FMN-B61) — wtedy jeden z przyciskow zoomu jest martwy. */
+type GranicaZoomu = "min" | "max" | null;
+
+/**
+ * FMN-B61: kontrolki zoomu leza POZA <MapContainer> (K-05), wiec nie maja useMap().
+ * Ten komponent siedzi w mapie i zglasza rodzicowi, czy zoom dotarl do granicy.
+ * Wartosc to prymityw — przy zoomie wewnatrz zakresu setState(null) nic nie renderuje.
+ */
+function SledzGraniceZoomu({ onZmiana }: { onZmiana: (granica: GranicaZoomu) => void }) {
+  const map = useMap();
+  useEffect(() => {
+    const sprawdz = () => {
+      const z = map.getZoom();
+      onZmiana(z <= map.getMinZoom() ? "min" : z >= map.getMaxZoom() ? "max" : null);
+    };
+    sprawdz();
+    map.on("zoomend", sprawdz);
+    return () => {
+      map.off("zoomend", sprawdz);
+    };
+  }, [map, onZmiana]);
+  return null;
 }
 
 // MapRefCapture — stores map instance for external use
@@ -1254,6 +1297,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return s;
   }, [routeTypesKey, tylkoUlubione]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
+  const [granicaZoomu, setGranicaZoomu] = useState<GranicaZoomu>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
   const markersRef = useRef<Record<number, L.Marker>>({});
@@ -1476,10 +1520,12 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     return (
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         {/* K-05: kontrolki mapy w DOM PRZED mapa i lista */}
-        <MapControls mapRef={mapInstanceRef} locateBottomOffset={locateBottomOffset} />
+        <MapControls mapRef={mapInstanceRef} locateBottomOffset={locateBottomOffset} granicaZoomu={granicaZoomu} />
         <MapContainer
           center={mapCenter}
           zoom={initialZoom}
+          minZoom={ZOOM_MIN}
+          maxZoom={MAPA_MAX_ZOOM}
           className="w-full h-full z-0"
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
@@ -1491,6 +1537,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
+          <SledzGraniceZoomu onZmiana={setGranicaZoomu} />
           <OpisMapy nazwa={etykietaMapy} />
           <ZatrzymajAnimacjeZoomu />
           {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow (aktywny=false):
@@ -1548,7 +1595,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   return (
     <div className="flex relative" style={{ height: "calc(100vh - 64px - 52px)" }}>
       {/* K-05: kontrolki mapy w DOM PRZED lista boczna (Tab trafia w nie od razu) */}
-      <MapControls mapRef={mapInstanceRef} />
+      <MapControls mapRef={mapInstanceRef} granicaZoomu={granicaZoomu} />
 
       {/* Sidebar */}
       <div className="w-[320px] min-w-[320px] flex-shrink-0 border-r border-border bg-card overflow-y-auto">
@@ -1643,6 +1690,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
         <MapContainer
           center={mapCenter}
           zoom={initialZoom}
+          minZoom={ZOOM_MIN}
+          maxZoom={MAPA_MAX_ZOOM}
           className="w-full h-full z-0"
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
@@ -1654,6 +1703,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <MapInvalidateSize />
           <MapRefCapture mapRef={mapInstanceRef} />
+          <SledzGraniceZoomu onZmiana={setGranicaZoomu} />
           <OpisMapy nazwa={etykietaMapy} />
           <ZatrzymajAnimacjeZoomu />
           {/* F-17: w trybie kadrowym NIE dopasowujemy kadru do pinow (aktywny=false):

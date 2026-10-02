@@ -1,7 +1,14 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { MemoryRouter, type SetURLSearchParams } from "react-router-dom";
-import { przepiszStareCats, useMapUrlState, type KategorieWAdresie } from "@/hooks/useMapUrlState";
+import {
+  przepiszStareCats,
+  useMapUrlState,
+  zoomDoAdresu,
+  ZOOM_MAX,
+  ZOOM_MIN,
+  type KategorieWAdresie,
+} from "@/hooks/useMapUrlState";
 
 /**
  * Regresja pętli zapisów adresu na widoku mapy.
@@ -170,5 +177,39 @@ describe("przepiszStareCats — stary link pokazuje ten sam widok", () => {
     const p = new URLSearchParams("?cats=zoo&view=MAP");
     expect(przepiszStareCats(p, "wiele")).toBe(false);
     expect(p.toString()).toBe("cats=zoo&view=MAP");
+  });
+});
+
+describe("FMN-B61 — zapis zoomu zawsze w zakresie, który adres odtworzy", () => {
+  it("zoomDoAdresu przycina do ZOOM_MIN..ZOOM_MAX i zaokrągla", () => {
+    expect(zoomDoAdresu(0)).toBe(String(ZOOM_MIN));
+    expect(zoomDoAdresu(2)).toBe(String(ZOOM_MIN));
+    expect(zoomDoAdresu(2.6)).toBe(String(ZOOM_MIN));
+    expect(zoomDoAdresu(3)).toBe("3");
+    expect(zoomDoAdresu(11.4)).toBe("11");
+    expect(zoomDoAdresu(19)).toBe("19");
+    expect(zoomDoAdresu(25)).toBe(String(ZOOM_MAX));
+  });
+
+  it.each([0, 1, 2, 2.4, 20, 25])("zapis stanu mapy z zoomem %s daje zoom, który F5 przyjmie", (zoom) => {
+    ustawAdres("?view=map&lat=52.00000&lng=19.00000&zoom=3");
+    const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
+    const { result } = zamontuj(setSearchParams);
+
+    act(() => result.current.handleSaveMapState({ center: [52, 19], zoom, favoritesOnly: false }));
+
+    const wywolania = vi.mocked(setSearchParams).mock.calls;
+    const po = wywolania.length
+      ? (wywolania[0][0] as (p: URLSearchParams) => URLSearchParams)(new URLSearchParams(window.location.search))
+      : new URLSearchParams(window.location.search);
+    const z = Number(po.get("zoom"));
+    expect(Number.isInteger(z)).toBe(true);
+    expect(z).toBeGreaterThanOrEqual(ZOOM_MIN);
+    expect(z).toBeLessThanOrEqual(ZOOM_MAX);
+
+    // To, co zapisaliśmy, wraca przy wejściu z adresu (F5 / link) jako zapisany kadr.
+    ustawAdres(`?${po.toString()}`);
+    const { result: poF5 } = zamontuj(vi.fn() as unknown as SetURLSearchParams);
+    expect(poF5.current.savedMapState?.zoom).toBe(z);
   });
 });

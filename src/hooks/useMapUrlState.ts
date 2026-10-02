@@ -4,9 +4,22 @@ import { useLocation } from "react-router-dom";
 import type { SavedMapState } from "@/components/MapView";
 import { CATEGORY_ORDER } from "@/data/categoryLabels";
 
-/** Leaflet bez jawnego maxZoom tnie kafle na 18; 19 zostawiamy jako zapas. */
-const ZOOM_MIN = 3;
-const ZOOM_MAX = 19;
+/**
+ * Zakres zoomu, który adres odtwarza (F5, link, „wstecz”). 19 zostaje jako zapas
+ * dla starych linków — mapa i tak kończy się na MAPA_MAX_ZOOM.
+ * FMN-B61: mapa (MapContainer w MapView) ma minZoom = ZOOM_MIN. Wcześniej dało się
+ * oddalić do zoomu 0–2, adres zapisywał taki zoom, a F5 i link go odrzucały
+ * (zoom 11 nad Warszawą zamiast mapy Europy).
+ */
+export const ZOOM_MIN = 3;
+export const ZOOM_MAX = 19;
+/** Kafle CARTO kończą się na 18 — dalej mapa nie przybliża (MapContainer maxZoom). */
+export const MAPA_MAX_ZOOM = 18;
+
+/** Zoom do adresu: zawsze liczba całkowita z zakresu, który adres potem odtworzy. */
+export function zoomDoAdresu(zoom: number): string {
+  return String(Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, Math.round(zoom))));
+}
 
 /**
  * Liczba z query stringa. Pusty parametr, smiec i wartosc poza zakresem
@@ -164,7 +177,7 @@ export function useMapUrlState(
         const docelowe = new URLSearchParams(biezace);
         docelowe.set("lat", state.center[0].toFixed(5));
         docelowe.set("lng", state.center[1].toFixed(5));
-        docelowe.set("zoom", String(Math.round(state.zoom)));
+        docelowe.set("zoom", zoomDoAdresu(state.zoom));
         if (state.favoritesOnly) docelowe.set("fav", "1");
         else docelowe.delete("fav");
         if (docelowe.toString() === biezace.toString()) return;
@@ -174,7 +187,7 @@ export function useMapUrlState(
           if (prev.get("view") !== "map") return prev;
           prev.set("lat", state.center[0].toFixed(5));
           prev.set("lng", state.center[1].toFixed(5));
-          prev.set("zoom", String(Math.round(state.zoom)));
+          prev.set("zoom", zoomDoAdresu(state.zoom));
           if (state.favoritesOnly) prev.set("fav", "1");
           else prev.delete("fav");
           return prev;
