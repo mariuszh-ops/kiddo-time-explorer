@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -167,16 +167,30 @@ const MobileFilterSheet = ({
   const ustawFiltr = (key: keyof Filters, value: string | string[] | number | undefined) =>
     zapiszWArkuszu((opcje) => onUpdateFilter(key, value, opcje));
 
-  // Sync local distance when filters change
+  // FMN-B71: arkusz żyje cały czas (Sheet tylko chowa treść), więc kopie frazy
+  // i odległości ustawione raz przy montażu rozjeżdżały się z adresem: fraza
+  // wpisana w pole na stronie znikała po „Pokaż wyniki", a skasowana wracała.
+  // Przy każdym otwarciu arkusz startuje od tego, co jest w adresie.
+  const bylOtwartyRef = useRef(isOpen);
   useEffect(() => {
-    if (filters.distance !== undefined) {
-      setLocalDistance(filters.distance);
+    if (isOpen && !bylOtwartyRef.current) {
+      setLocalSearch(searchQuery);
+      setLocalDistance(filters.distance ?? 0);
     }
+    bylOtwartyRef.current = isOpen;
+  }, [isOpen, searchQuery, filters.distance]);
+
+  // Zmiana odległości w adresie (także jej zniknięcie po odznaczeniu
+  // województwa) przestawia suwak. 0 = brak filtra odległości.
+  useEffect(() => {
+    setLocalDistance(filters.distance ?? 0);
   }, [filters.distance]);
 
   const handleApply = () => {
-    onSearchChange(localSearch);
-    if (hasCitySelected) {
+    // Zapis tylko tego, czego rodzic dotknął w arkuszu — bez zmian „Pokaż wyniki"
+    // nie ma prawa zmienić wyniku (wcześniej dopisywał 5/25 km albo starą frazę).
+    if (localSearch.trim() !== searchQuery.trim()) onSearchChange(localSearch);
+    if (hasCitySelected && localDistance !== (filters.distance ?? 0)) {
       // 0 km means "no distance filter" — show the whole region.
       ustawFiltr("distance", localDistance > 0 ? localDistance : undefined);
     }
@@ -186,7 +200,8 @@ const MobileFilterSheet = ({
   const handleClearAll = () => {
     zapiszWArkuszu((opcje) => onClearAll(opcje));
     setLocalSearch("");
-    setLocalDistance(5);
+    // Stan bez filtra odległości to 0 km, nie 5.
+    setLocalDistance(0);
   };
 
   return (
