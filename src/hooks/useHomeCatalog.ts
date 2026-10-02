@@ -93,6 +93,16 @@ function zbudujArgumenty(filters: Filters, searchQuery: string): ArgumentyRpc {
 const KUBELKI_WIEKU = filterOptions.age.map((o) => ({ value: o.value, min: o.min, max: o.max }));
 
 /**
+ * FMN-B51: klucz samych argumentow filtrow (bez sortowania — liczniki od niego
+ * nie zaleza). Obie strony porownania ida przez te sama funkcje.
+ */
+const kluczArgumentow = (klucz: string): string =>
+  JSON.stringify((JSON.parse(klucz) as { argumenty: ArgumentyRpc }).argumenty);
+
+/** FMN-B51: ile kompletow licznikow hook pamieta (ostatnio uzyte filtry). */
+export const PAMIEC_LICZNIKOW_MAKS = 20;
+
+/**
  * FMN-B07: odstępy ponowień rpc('ff_home_counts') po błędzie, w ms. Pierwsze
  * krótkie — pojedyncza awaria (500, zerwane połączenie) ma się naprawić, zanim
  * rodzic rozwinie listę opcji. Po wyczerpaniu liczniki zostają nieznane (opcje
@@ -152,6 +162,13 @@ export function useHomeCatalog(
   // (filtered 0), wiec pasek pisal "Zadna atrakcja nie spelnia wybranych
   // filtrow", a opcje "(0)", zanim serwer w ogole odpowiedzial.
   const [licznicy, setLicznicy] = useState<SurowiLicznicy | null>(null);
+  // FMN-B51: liczniki juz policzone, po kluczu argumentow. Po "wstecz" albo logo
+  // filtry wracaja do stanu, ktory serwer juz policzyl — dawniej pasek przez
+  // debounce + zapytanie pisal liczbe POPRZEDNICH filtrow ("40 -> 4892 -> 40").
+  // Nowe filtry (bez wpisu) dalej pokazuja ostatnie liczniki do odpowiedzi:
+  // wyciszanie paska przy kazdej zmianie migalo "A -> pusto -> A" (wiersz 27).
+  const pamiecLicznikow = useRef(new Map<string, SurowiLicznicy>());
+  const kluczArgumentowSurowy = useMemo(() => kluczArgumentow(kluczSurowy), [kluczSurowy]);
   // Strona, na ktorej konczy sie pierwsze zapytanie (0 = zwykle wejscie).
   const stronaStartowaRef = useRef(Math.max(0, Math.floor(stronyStartowe) - 1));
   // Klucz filtrow, dla ktorego strona startowa obowiazuje. Po pierwszej zmianie
@@ -198,6 +215,7 @@ export function useHomeCatalog(
     let anulowane = false;
     let timerPonowienia: ReturnType<typeof setTimeout> | null = null;
     const kluczNaStarcie = kluczAktywny;
+    const kluczArgumentowNaStarcie = kluczArgumentow(kluczAktywny);
     const { argumenty: a, sort: _sort } = JSON.parse(kluczAktywny) as {
       argumenty: ArgumentyRpc;
       sort: string;
@@ -215,7 +233,12 @@ export function useHomeCatalog(
         // zerwane polaczenie — traktujemy jak kazdy inny blad
       }
       if (anulowane || kluczWLocie.current !== kluczNaStarcie) return;
+      const pamiec = pamiecLicznikow.current;
+      pamiec.delete(kluczArgumentowNaStarcie);
       if (dane) {
+        // Map pamieta kolejnosc wstawiania: najstarszy wpis wylatuje pierwszy.
+        pamiec.set(kluczArgumentowNaStarcie, dane);
+        if (pamiec.size > PAMIEC_LICZNIKOW_MAKS) pamiec.delete(pamiec.keys().next().value as string);
         setLicznicy(dane);
         return;
       }
@@ -321,13 +344,17 @@ export function useHomeCatalog(
     [filters, searchQuery],
   );
 
+  // FMN-B51: filtry na ekranie juz policzone = ich liczniki od razu (klucz SUROWY,
+  // bez czekania na debounce); inaczej ostatnie, az przyjda nowe.
+  const biezacy = pamiecLicznikow.current.get(kluczArgumentowSurowy) ?? licznicy;
+
   const filterCounts = useMemo<HomeFilterCounts>(() => {
     // Brak klucza w ODPOWIEDZI serwera = realne 0; brak odpowiedzi = null.
     const zMapy = (mapa: Record<string, number> | undefined) => (value: string): number | null =>
-      licznicy ? mapa?.[value] ?? 0 : null;
-    const region = zMapy(licznicy?.region);
-    const typ = zMapy(licznicy?.type);
-    const wiek = zMapy(licznicy?.age);
+      biezacy ? mapa?.[value] ?? 0 : null;
+    const region = zMapy(biezacy?.region);
+    const typ = zMapy(biezacy?.type);
+    const wiek = zMapy(biezacy?.age);
     return {
       city: filterOptions.city.map((o) => ({ ...o, count: region(o.value) })),
       age: filterOptions.age.map((o) => ({ value: o.value, label: o.label, count: wiek(o.value) })),
@@ -338,11 +365,11 @@ export function useHomeCatalog(
       activityKind: filterOptions.activityKind.map((o) => ({ ...o, count: 0 })),
       distance: [],
       price: filterOptions.price.map((o) => ({ ...o, count: 0 })),
-      total: licznicy ? licznicy.total : null,
-      filtered: licznicy ? licznicy.filtered : null,
+      total: biezacy ? biezacy.total : null,
+      filtered: biezacy ? biezacy.filtered : null,
       hasAnyFilter,
     };
-  }, [licznicy, hasAnyFilter]);
+  }, [biezacy, hasAnyFilter]);
 
   // FMN-B41: pusta lista policzona dla INNEGO klucza (np. fraza bez wynikow,
   // ktora rodzic wlasnie wyczyscil) to nie wynik, tylko ladowanie — przez
@@ -351,7 +378,7 @@ export function useHomeCatalog(
   // dotad (pisanie frazy nie miga szkieletem). Wylaczona lista nie laduje.
   const ladowanie = loading || (enabled && activities.length === 0 && kluczListy !== kluczSurowy);
 
-  const hasMore = licznicy !== null && activities.length < licznicy.filtered;
+  const hasMore = biezacy !== null && activities.length < biezacy.filtered;
 
   // Ten sam warunek co Index.pokazWiecej (home.loading), inaczej zapis stron
   // w historii (FMN-B03/B21) rozjechalby sie z lista.
