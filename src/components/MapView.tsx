@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
+import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -1173,9 +1174,19 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // a mapa bez filtrów czeka na piny pierwszego kadru. Wcześniej przez ten czas
   // pusty stan radził „oddal mapę lub przesuń" (rodzic psuł sobie widok albo
   // wracał do listy), a licznik ogłaszał „0 atrakcji w widoku".
-  const daneWDrodze = hasCatalogFilters
-    ? Boolean(wczytujeDane)
-    : pins.length === 0 && ownPinsError == null && (kadry == null || ownPinsLoading);
+  // FMN-B11 krok 2: w trybie kadrowym liczą się piny W KADRZE, nie piny w ogóle.
+  // Po „Wyczyść filtry" na mapie województwa hook trzyma piny z kadru sprzed
+  // filtrów (np. Warszawa), a kadr stoi nad opolskim: przez całe pobieranie
+  // mapa mówiła „Brak atrakcji w tym obszarze" (FMN-1-040, 3/3).
+  const kadrWidoczny = kadry?.visible ?? null;
+  const pinyWDrodze = useMemo(
+    () =>
+      pinyKadruWDrodze({ piny: pins, kadr: kadrWidoczny, wczytuje: ownPinsLoading, blad: ownPinsError != null }),
+    [pins, kadrWidoczny, ownPinsLoading, ownPinsError],
+  );
+  const daneWDrodze = hasCatalogFilters ? Boolean(wczytujeDane) : pinyWDrodze;
+  // Numer najnowszego przeliczenia listy kadru (handleVisibleChange).
+  const nrPrzeliczeniaRef = useRef(0);
   // Po dojściu danych lista kadru liczy się jeszcze chwilę (ViewportFilter +
   // wygaszanie 100 ms). „Wczytuję" zdejmujemy dopiero po pierwszym przeliczeniu
   // na PEŁNYM zbiorze — inaczej na 0,3-0,8 s wracały „0 atrakcji" i pusty stan.
@@ -1410,11 +1421,18 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     // sprawdzamy dwa razy: przed nim (efekt MapFitBounds mógł jeszcze nie ruszyć)
     // i po 100 ms (przeliczenie z kadru sprzed moveend dopasowania).
     const naDanych = !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current;
+    // FMN-B11 krok 2: liczy się tylko NAJNOWSZE przeliczenie. Po „Wyczyść filtry"
+    // przeliczenie na starych pinach (0 w kadrze) i to na nowych (643) dzieli
+    // często mniej niż 100 ms; spóźniony timer starszego wpisywał wtedy 0
+    // i zdejmował „Wczytuję" — na mgnienie „Brak atrakcji w tym obszarze".
+    const nr = ++nrPrzeliczeniaRef.current;
     setFading(true);
     // Brief fade transition
     setTimeout(() => {
+      if (nr !== nrPrzeliczeniaRef.current) return;
       setVisibleActivities(visible);
-      if (naDanych && !dopasowanieWDrodzeRef.current) setKadrNaDanych(true);
+      // Dane mogły wejść „w drogę" w trakcie tych 100 ms (nowy kadr trybu kadrowego).
+      if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) setKadrNaDanych(true);
       setFading(false);
     }, 100);
   }, []);
