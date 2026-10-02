@@ -90,6 +90,11 @@ interface SavedActivitiesContextType {
   removeFromFavorites: (id: number) => Promise<void>;
   removeFromWantToVisit: (id: number) => Promise<void>;
   favoritesCount: number;
+  /**
+   * FMN-B84: liczba zapisanych id ulubionych, bez katalogu (favoritesCount liczy
+   * tylko atrakcje z wczytanego katalogu, a mapa bez filtrów katalogu nie ładuje).
+   */
+  favoriteIdsCount: number;
   wantToVisitCount: number;
   /** True dopóki listy zapisanych atrakcji nie są wiarygodne (katalog się ładuje lub trwa pierwszy select). */
   isLoading: boolean;
@@ -484,6 +489,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         removeFromFavorites,
         removeFromWantToVisit,
         favoritesCount: favorites.length,
+        favoriteIdsCount: favoriteIds.size,
         wantToVisitCount: wantToVisit.length,
         isLoading: dataStatus !== "success" || isLoadingSaved,
         refreshSaved,

@@ -9,6 +9,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { Star, LocateFixed, LayoutGrid, MapPin, Heart, AlertCircle, RefreshCw, Loader2 } from "lucide-react";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  ignorujUlubioneZAdresu,
+  pustaMapaBezUlubionych,
+  KOMUNIKAT_BRAK_ULUBIONYCH,
+  PRZYCISK_WYLACZ_ULUBIONE,
+} from "@/lib/ulubioneNaMapie";
 import { Activity, cityCenters, filterOptions } from "@/data/activities";
 import { getCategoryColor } from "@/data/categoryColors";
 import { Filters } from "@/hooks/useActivityFilters";
@@ -1165,7 +1172,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const isMobile = useIsMobile();
   // W-I-01: nazwa mapy idzie za H1 strony; na home (brak H1 obszaru) zostaje ogólna.
   const etykietaMapy = nazwaObszaru ? `Mapa: ${nazwaObszaru}` : "Mapa atrakcji dla dzieci";
-  const { isFavorite, toggleFavorite } = useSavedActivities();
+  const { isFavorite, toggleFavorite, favoriteIdsCount } = useSavedActivities();
+  const { isLoggedIn, isReady: authGotowy } = useAuth();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
 
@@ -1278,7 +1286,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     }, 2000);
   }, [bramkaPinow]);
   useEffect(() => () => clearTimeout(bezpiecznikDopasowaniaRef.current), []);
-  const wczytuje = daneWDrodze || !kadrNaDanych;
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
@@ -1289,13 +1296,30 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // dodawal zoo, a odklik „Place zabaw" dawal 0 pinow przy type=plac-zabaw
   // w adresie. Jedyny chip z wlasnym stanem to „Ulubione" — nie jest kategoria.
   const [tylkoUlubione, setTylkoUlubione] = useState(() => savedMapState?.favoritesOnly ?? false);
+  // FMN-B84: `fav=1` z adresu (link od innego rodzica, stary `cats=_favorites`)
+  // u gościa bez żadnego ulubionego nic by nie pokazał: chip zostaje wyłączony,
+  // a `fav` znika z adresu jednym `replace` (efekt chipa niżej). Decyzja raz,
+  // przy wejściu, gdy sesja jest już odczytana; klik chipa jej nie podlega.
+  const ulubioneZAdresuRef = useRef(tylkoUlubione);
+  const ulubioneZAdresuIgnorowane =
+    ulubioneZAdresuRef.current &&
+    ignorujUlubioneZAdresu({ authGotowy, zalogowany: isLoggedIn, liczbaUlubionych: favoriteIdsCount });
+  useEffect(() => {
+    if (!ulubioneZAdresuRef.current || !authGotowy) return;
+    ulubioneZAdresuRef.current = false;
+    if (ulubioneZAdresuIgnorowane) setTylkoUlubione(false);
+  }, [authGotowy, ulubioneZAdresuIgnorowane]);
+  const ulubioneAktywne = tylkoUlubione && !ulubioneZAdresuIgnorowane;
+  // Przed odczytem sesji `fav=1` z adresu to „wczytuję", nie „brak atrakcji".
+  const ulubioneCzekajaNaSesje = ulubioneZAdresuRef.current && tylkoUlubione && !authGotowy;
+  const wczytuje = daneWDrodze || !kadrNaDanych || ulubioneCzekajaNaSesje;
   // Klucz tekstowy, bo CategoryPage buduje `filters.type` na nowo przy kazdym renderze.
   const routeTypesKey = (filters.type ?? []).join(",");
   const selectedCategories = useMemo(() => {
     const s = new Set(routeTypesKey.split(",").filter(Boolean));
-    if (tylkoUlubione) s.add(FAVORITES_CHIP_KEY);
+    if (ulubioneAktywne) s.add(FAVORITES_CHIP_KEY);
     return s;
-  }, [routeTypesKey, tylkoUlubione]);
+  }, [routeTypesKey, ulubioneAktywne]);
   const [liveMapCenter, setLiveMapCenter] = useState<[number, number] | null>(null);
   const [granicaZoomu, setGranicaZoomu] = useState<GranicaZoomu>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -1369,7 +1393,9 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   // Kategorie przycina juz rodzic (`activities` / piny sa po filtrze `type`);
   // tu zostaja tylko „Ulubione" i fraza z pola mapy.
-  const showFavoritesOnly = tylkoUlubione;
+  const showFavoritesOnly = ulubioneAktywne;
+  // FMN-B84: chip „Ulubione” bez ani jednego ulubionego — rada „oddal mapę” nic nie da.
+  const brakUlubionych = pustaMapaBezUlubionych(showFavoritesOnly, favoriteIdsCount);
 
   const matchesSearch = useCallback((a: Activity) => {
     if (!searchNormalized) return true;
@@ -1406,6 +1432,11 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     onCategoryToggle?.(category);
   }, [onCategoryToggle]);
   const pokazChipyKategorii = onCategoryToggle != null;
+  // FMN-B84: wyjście z pustych „Ulubionych” = ten sam efekt co odklik chipa.
+  const wylaczUlubione = useCallback(() => {
+    setTylkoUlubione(false);
+    setZadanieDopasowania((n) => n + 1);
+  }, []);
 
   const handleSearchChange = useCallback((query: string) => {
     setSearchQuery(query);
@@ -1582,7 +1613,9 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           mapCenter={liveMapCenter}
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
-          onShowAll={handleShowAll}
+          onShowAll={brakUlubionych ? wylaczUlubione : handleShowAll}
+          pustyKomunikat={brakUlubionych ? KOMUNIKAT_BRAK_ULUBIONYCH : undefined}
+          pustyPrzycisk={brakUlubionych ? PRZYCISK_WYLACZ_ULUBIONE : undefined}
           error={pinsFetchError}
           onRetry={refetchPins}
           loading={wczytuje}
@@ -1643,9 +1676,17 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
                    nie ma jak wrócić do pinów (audyt 400: K-21). */
                 <div className="py-12 text-center px-4 flex flex-col items-center gap-3">
                   <p className="text-sm text-muted-foreground">
-                    Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                    {brakUlubionych ? KOMUNIKAT_BRAK_ULUBIONYCH : "Brak atrakcji w tym obszarze — oddal mapę lub przesuń"}
                   </p>
-                  {filteredActivities.length > 0 && (
+                  {brakUlubionych ? (
+                    <button
+                      onClick={wylaczUlubione}
+                      className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
+                    >
+                      <MapPin className="w-4 h-4" />
+                      {PRZYCISK_WYLACZ_ULUBIONE}
+                    </button>
+                  ) : filteredActivities.length > 0 && (
                     <button
                       onClick={handleShowAll}
                       className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"

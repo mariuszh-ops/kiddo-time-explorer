@@ -27,6 +27,10 @@ interface MapBottomSheetProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onShowAll?: () => void;
+  /** FMN-B84: własny tekst pustego stanu (np. brak ulubionych) zamiast „oddal mapę”. */
+  pustyKomunikat?: string;
+  /** Etykieta przycisku `onShowAll` w pustym stanie. */
+  pustyPrzycisk?: string;
   error?: Error | null;
   onRetry?: () => void;
   /** FMN-B01: dane mapy jeszcze w drodze — pusta lista to „wczytuję", nie „brak atrakcji". */
@@ -80,6 +84,8 @@ export default function MapBottomSheet({
   searchQuery,
   onSearchChange,
   onShowAll,
+  pustyKomunikat,
+  pustyPrzycisk,
   error,
   onRetry,
   loading = false,
@@ -430,7 +436,7 @@ export default function MapBottomSheet({
           ) : sortedActivities.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 h-32 text-center px-4">
               <p className="text-sm text-muted-foreground">
-                Brak atrakcji w tym obszarze — oddal mapę lub przesuń
+                {pustyKomunikat ?? "Brak atrakcji w tym obszarze — oddal mapę lub przesuń"}
               </p>
               {onShowAll && (
                 <button
@@ -438,7 +444,7 @@ export default function MapBottomSheet({
                   className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm shadow-button hover:opacity-90 transition-opacity cursor-pointer"
                 >
                   <MapPin className="w-4 h-4" />
-                  Pokaż wszystkie atrakcje
+                  {pustyPrzycisk ?? "Pokaż wszystkie atrakcje"}
                 </button>
               )}
             </div>
