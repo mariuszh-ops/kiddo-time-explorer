@@ -2,6 +2,7 @@ import { Navigate, useLocation, useParams } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import { REGION_SLUGS, LEGACY_CITY_TO_REGION } from "@/data/regions";
 import HomeSkeleton from "@/components/HomeSkeleton";
+import { kanonicznaSciezkaRegionu } from "@/lib/slugZeSciezki";
 
 const CategoryPage = lazy(() => import("@/pages/CategoryPage"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -12,7 +13,8 @@ const isKnownRegionSlug = (slug: string) =>
 
 /**
  * Rozwiązuje krótkie ścieżki `/{region}` i `/{region}/{type}`:
- *  - slug z wielkiej litery (np. /Malopolskie) → redirect na wersję z małych
+ *  - slug z wielkiej litery albo z polskimi znakami (np. /Malopolskie, /śląskie)
+ *    → redirect na wersję kanoniczną (małe litery ASCII), kategoria też
  *  - znany slug województwa → renderuje CategoryPage
  *  - stary slug miasta (warszawa, krakow, …) → 301-podobny redirect
  *  - cokolwiek innego → 404
@@ -22,16 +24,17 @@ const RegionRouteResolver = () => {
   const location = useLocation();
 
   // O-F-10: klawiatury mobilne i edytory tekstu same podnoszą pierwszą literę,
-  // więc /Malopolskie lądowało na NotFound (HTTP 200, 0 kart). Znany slug
-  // zapisany wielkimi literami normalizujemy do wersji z małych — query i hash
-  // (fbclid, utm_*, #top) przechodzą w całości. Slug, który po zamianie na małe
-  // litery nadal jest nieznany, leci dalej na NotFound; pętli nie ma, bo cel
-  // redirectu jest już w całości z małych liter.
-  const lowerPathname = location.pathname.toLowerCase();
-  if (regionSlug && lowerPathname !== location.pathname && isKnownRegionSlug(regionSlug.toLowerCase())) {
+  // więc /Malopolskie lądowało na NotFound (HTTP 200, 0 kart). FMN-B83: rodzic
+  // wpisuje też polskie znaki (/śląskie, /Łódzkie). Znany slug po złożeniu
+  // (małe litery, bez ogonków) przekierowujemy na wersję kanoniczną, kategorię
+  // w ścieżce składamy tak samo; query i hash (fbclid, utm_*, #top) przechodzą
+  // w całości. Slug, który po złożeniu nadal jest nieznany, leci dalej na
+  // NotFound; pętli nie ma, bo cel redirectu jest już złożony.
+  const kanoniczna = kanonicznaSciezkaRegionu(regionSlug, categorySlug, isKnownRegionSlug);
+  if (kanoniczna) {
     return (
       <Navigate
-        to={{ pathname: lowerPathname, search: location.search, hash: location.hash }}
+        to={{ pathname: kanoniczna, search: location.search, hash: location.hash }}
         replace
       />
     );

@@ -41,6 +41,7 @@ import {
 import BreadcrumbCategoryDropdown from "@/components/BreadcrumbCategoryDropdown";
 import BreadcrumbCityDropdown from "@/components/BreadcrumbCityDropdown";
 import NotFound from "@/pages/NotFound";
+import { kanonicznySlugKategorii } from "@/lib/slugZeSciezki";
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useMapPins } from "@/hooks/useMapPins";
 import { fetchFilteredSlugs } from "@/lib/mapPins";
@@ -69,6 +70,8 @@ const CategoryPage = () => {
   //   /kategoria/:categorySlug (kategoria we wszystkich województwach)
   const citySlug = params.regionSlug || params.citySlug || params.slug;
   const categorySlug = params.categorySlug;
+  // Przed wczesnymi returnami: przekierowanie /kategoria/ZOO niesie query i hash.
+  const location = useLocation();
 
   // Stary slug miasta → nowe województwo. Zachowujemy kategorię.
   if (citySlug && LEGACY_CITY_TO_REGION[citySlug]) {
@@ -83,6 +86,21 @@ const CategoryPage = () => {
     return <NotFound />;
   }
 
+  // FMN-B83: /kategoria/ZOO, /kategoria/Zoo (adres wpisany ręcznie) → /kategoria/zoo.
+  // Ścieżki z województwem składa RegionRouteResolver; tu zostaje sama kategoria.
+  // Slug nieznany także po złożeniu → 404 niżej, bez przekierowania.
+  if (!citySlug) {
+    const kategoria = kanonicznySlugKategorii(categorySlug, (s) => Boolean(getCategoryConfig(s)));
+    if (kategoria) {
+      return (
+        <Navigate
+          to={{ pathname: `/kategoria/${kategoria}`, search: location.search, hash: location.hash }}
+          replace
+        />
+      );
+    }
+  }
+
   const config = getCategoryConfig(categorySlug);
 
   // Waliduj slug kategorii przeciwko znanej liście — nieznany → 404.
@@ -94,7 +112,6 @@ const CategoryPage = () => {
 
   // URL-persisted filter state
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
   // Kategoria w ścieżce (/kategoria/zoo) blokuje ?type=, bez niej strona zna jedną wartość `type`.
   const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
     searchParams,
