@@ -29,6 +29,7 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
 import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
+import { utworzBezpiecznikDanychMapy } from "@/lib/bezpiecznikDanychMapy";
 import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
 import { pinyPrzywroconegoKadru } from "@/lib/pinyPrzywroconegoKadru";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
@@ -1296,15 +1297,20 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // dojściu danych liczy jeszcze STARY kadr: na wejściu z filtrem „0 atrakcji"
   // i „Brak", po kliku regionu liczba sprzed dopasowania (307 zamiast 550).
   const dopasowanieWDrodzeRef = useRef(false);
+  // Bezpiecznik: gdyby kadr nie przeliczył się sam, mapa nie wisi w „wczytuję".
+  // Wiersz 29: rozbraja go pierwsze przeliczenie i start dopasowania — żywy
+  // timer zdejmował „Wczytuję" w trakcie dopasowania po kliku chipa i licznik
+  // pokazywał starą liczbę przy starych pinach (SMOKE-01 „12 → Wczytuję → 12 → 51").
+  const [bezpiecznikDanych] = useState(() => utworzBezpiecznikDanychMapy(() => setKadrNaDanych(true)));
   useEffect(() => {
     if (daneWDrodze) {
+      bezpiecznikDanych.rozbroj();
       setKadrNaDanych(false);
       return;
     }
-    // Bezpiecznik: gdyby kadr nie przeliczył się sam, mapa nie wisi w „wczytuję".
-    const t = setTimeout(() => setKadrNaDanych(true), 2000);
-    return () => clearTimeout(t);
-  }, [daneWDrodze]);
+    bezpiecznikDanych.uzbroj();
+    return () => bezpiecznikDanych.rozbroj();
+  }, [daneWDrodze, bezpiecznikDanych]);
   // FMN-B11: dopasowanie kadru BEZ nowych danych też jest „w drodze". Zmiana
   // województwa z paska filtrów przy wczytanym katalogu podmienia zbiór od razu
   // (daneWDrodze się nie zapala), a kadr stoi jeszcze nad starym województwem:
@@ -1316,6 +1322,8 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // zostają), żeby jedna zmiana filtra wymieniała piny raz, a nie dwa razy.
   const [bramkaPinow] = useState(() => utworzBramkePinow<Activity>());
   const handleDopasowanieStart = useCallback(() => {
+    // Dopasowanie ma własny bezpiecznik (niżej), który oddaje też odłożone piny.
+    bezpiecznikDanych.rozbroj();
     setKadrNaDanych(false);
     clearTimeout(bezpiecznikDopasowaniaRef.current);
     bezpiecznikDopasowaniaRef.current = setTimeout(() => {
@@ -1323,7 +1331,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       if (odlozone) setVisibleActivities(odlozone);
       setKadrNaDanych(true);
     }, 2000);
-  }, [bramkaPinow]);
+  }, [bramkaPinow, bezpiecznikDanych]);
   useEffect(() => () => clearTimeout(bezpiecznikDopasowaniaRef.current), []);
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
@@ -1562,10 +1570,13 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }
       setVisibleActivities(doPokazania);
       // Dane mogły wejść „w drogę" w trakcie tych 100 ms (nowy kadr trybu kadrowego).
-      if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) setKadrNaDanych(true);
+      if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) {
+        bezpiecznikDanych.rozbroj();
+        setKadrNaDanych(true);
+      }
       setFading(false);
     }, 100);
-  }, [bramkaPinow]);
+  }, [bramkaPinow, bezpiecznikDanych]);
 
   // FMN-B65 (reszta, „wstecz"): piny przywróconego kadru od razu, w tym samym
   // zadaniu co setView — markercluster nie rysuje starego zbioru w nowym kadrze.
