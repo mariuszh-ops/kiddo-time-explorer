@@ -264,8 +264,14 @@ export function useActivityFilters() {
     }, opcje);
   }, [zapiszFiltrDoUrl]);
 
-  const filteredActivities = useMemo(() => {
-    let result = [...getActivities()];
+  // Katalog po stałych warunkach (bez wydarzeń, tylko włączone województwa) i po frazie,
+  // liczony raz na zmianę frazy albo katalogu, a nie przy każdym kliku filtra. Wcześniej
+  // filterCounts przepuszczał przez matchesSearchQuery cały katalog 36 razy (raz na opcję
+  // filtra): przy frazie klik kategorii zajmował wątek ok. 5 s przy CPU 4x (FMN wiersz 20).
+  // Kluczem jest też tablica katalogu: setActivities podmienia ją w całości.
+  const katalog = getActivities();
+  const bazaFrazy = useMemo(() => {
+    let result = katalog;
 
     // Hide events when feature flag is off
     if (!FEATURES.EVENTS) {
@@ -276,12 +282,15 @@ export function useActivityFilters() {
     result = result.filter(a => FEATURES.ENABLED_CITIES.includes(a.city));
 
     // Fraza i filtry łączą się warunkiem AND.
-    const isSearchActive = searchQuery.trim().length > 0;
-
-    // Filter by search query
-    if (isSearchActive) {
+    if (searchQuery.trim().length > 0) {
       result = result.filter((a) => matchesSearchQuery(a, searchQuery));
     }
+    return result;
+  }, [katalog, searchQuery, dataStatus]);
+
+  const filteredActivities = useMemo(() => {
+    // Kopia: sortowanie niżej działa w miejscu, a bazaFrazy jest współdzielona.
+    let result = [...bazaFrazy];
 
     // Filter by city
     if (filters.city) {
@@ -385,7 +394,7 @@ export function useActivityFilters() {
     }
 
     return result;
-  }, [filters, searchQuery, dataStatus]);
+  }, [filters, bazaFrazy]);
 
   // Calculate counts for each filter option
   // Contextual: shows how many results will remain if you select this option
@@ -398,19 +407,9 @@ export function useActivityFilters() {
       value: string,
       otherFilters: Filters
     ) => {
-      // Start with activities matching the search query (if any)
-      let result = [...getActivities()];
-
-      // Hide events when feature flag is off
-      if (!FEATURES.EVENTS) {
-        result = result.filter(a => !a.isEvent);
-      }
-
-      // Filter to enabled cities only
-      result = result.filter(a => FEATURES.ENABLED_CITIES.includes(a.city));
-      if (searchQuery.trim()) {
-        result = result.filter((a) => matchesSearchQuery(a, searchQuery));
-      }
+      // Start with activities matching the search query (if any) — bez wydarzeń,
+      // tylko włączone województwa; wspólne dla wszystkich opcji (bazaFrazy wyżej).
+      let result = bazaFrazy;
 
       // Apply all OTHER filters (not the one we're calculating for)
       if (key !== "city" && otherFilters.city) {
@@ -510,7 +509,7 @@ export function useActivityFilters() {
       filtered: filteredActivities.length,
       hasAnyFilter,
     };
-  }, [filters, filteredActivities.length, searchQuery, dataStatus]);
+  }, [filters, filteredActivities.length, searchQuery, dataStatus, bazaFrazy]);
 
   return {
     filters,
