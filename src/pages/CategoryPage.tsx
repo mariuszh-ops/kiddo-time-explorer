@@ -40,6 +40,7 @@ import { useMapPins } from "@/hooks/useMapPins";
 import { fetchFilteredSlugs } from "@/lib/mapPins";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { pierwszaStronaListy, stanListy } from "@/lib/categoryListReturn";
+import { regionExitLinks } from "@/lib/regionExitLinks";
 import { trackEvent } from "@/lib/analytics";
 
 
@@ -504,11 +505,18 @@ const CategoryPage = () => {
   const countLabel = `${total} ${pluralizeActivities(total)} w ${capitalize(effectiveCityLabel.locative)}`;
 
   // Kontekst wyszukiwania: chipy do usunięcia + wyjście na wyniki ogólnopolskie.
-  const searchQS = urlSearch ? `?search=${encodeURIComponent(urlSearch)}` : "";
-  const removeRegionTo = categorySlug
-    ? `/kategoria/${categorySlug}${searchQS}`
-    : `/${searchQS}`;
-  const removeCategoryTo = citySlug ? `/${citySlug}${searchQS}` : `/${searchQS}`;
+  // FMN-B52: każdy link zdejmuje tylko swój filtr — wiek, kategoria i sort zostają
+  // (wcześniej niosły samą frazę i gubiły resztę).
+  const { removeRegionTo, removeCategoryTo, wholePolandTo } = regionExitLinks(citySlug, categorySlug, {
+    age: urlAge,
+    type: categorySlug ? undefined : urlType,
+    sort: rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : undefined,
+    minRating: urlMinRating,
+    onlyFree,
+    amenities: urlAmenities,
+    hideUncertain: !includeUncertain,
+    search: urlSearch || undefined,
+  });
   const categoryLabel =
     filterOptions.type.find((t) => t.value === categorySlug)?.label ?? effectiveConfig.label;
 
@@ -646,7 +654,7 @@ const CategoryPage = () => {
                   <span aria-hidden="true">×</span>
                 </Link>
               )}
-              <Link to={`/${searchQS}`} className="text-sm text-primary hover:underline">
+              <Link to={wholePolandTo} className="text-sm text-primary hover:underline">
                 Szukaj w całej Polsce
               </Link>
             </div>
