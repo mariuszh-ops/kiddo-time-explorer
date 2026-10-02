@@ -28,6 +28,7 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
 import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
+import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -96,7 +97,17 @@ const getRatingBorderColor = (rating: number): string => {
 };
 
 // Custom pin icon — normal state
-const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed = false, isFav = false) => {
+// FMN-B63: `przesuniecie` [dx, dy] w px odsuwa ikone od punktu markera (piny o identycznych
+// wspolrzednych stoja w rzedzie obok siebie zamiast na jednym pikselu).
+const createPinIcon = (
+  rating: number,
+  type?: string,
+  isActive = false,
+  isDimmed = false,
+  isFav = false,
+  przesuniecie: [number, number] = [0, 0],
+) => {
+  const [dx, dy] = przesuniecie;
   const emoji = CATEGORY_EMOJI[type || "inne"] || "📌";
   const borderColor = isActive ? "#1a1a1a" : getRatingBorderColor(rating);
   const size = isActive ? 46 : 40;
@@ -147,8 +158,8 @@ const createPinIcon = (rating: number, type?: string, isActive = false, isDimmed
       border-top:${Math.abs(arrowInnerOffset) + 1}px solid #fff;
     "></div></div>`,
     iconSize: [size, size + Math.abs(arrowOffset)],
-    iconAnchor: [size / 2, size + Math.abs(arrowOffset)],
-    popupAnchor: [0, -(size + Math.abs(arrowOffset))],
+    iconAnchor: [size / 2 - dx, size + Math.abs(arrowOffset) - dy],
+    popupAnchor: [dx, dy - (size + Math.abs(arrowOffset))],
   });
 };
 
@@ -321,6 +332,8 @@ function ClusteredMarkers({
   const navigate = useNavigate();
   const clusterGroupRef = useRef<L.MarkerClusterGroup | null>(null);
   const activityMapRef = useRef<Record<number, Activity>>({});
+  // FMN-B63: przesuniecie ikony, z ktorym zbudowano marker (piny o identycznych wspolrzednych).
+  const przesunieciaRef = useRef<Record<number, [number, number]>>({});
   // Ktory dymek jest otwarty i czy wlasnie wymieniamy jego marker.
   const otwartyIdRef = useRef<number | null>(null);
   const przebudowaRef = useRef(false);
@@ -362,6 +375,7 @@ function ClusteredMarkers({
       clusterGroupRef.current = null;
       markersRef.current = {};
       activityMapRef.current = {};
+      przesunieciaRef.current = {};
       otwartyIdRef.current = null;
     };
   }, [map, markersRef]);
@@ -377,6 +391,10 @@ function ClusteredMarkers({
 
     const nowe = new Map<number, Activity>();
     for (const a of activities) nowe.set(a.id, a);
+    // FMN-B63: piny dzielace pozycje z innym pinem z tego zbioru dostaja przesuniecie ikony.
+    // Zmiana przesuniecia (np. filtr zdjal sasiada z grupy) = marker do wymiany, jak zmiana pozycji.
+    const przesuniecia = przesunieciaPinow(activities);
+    const przesuniecieId = (id: number): [number, number] => przesuniecia.get(id) ?? [0, 0];
 
     const doUsuniecia: L.Marker[] = [];
     const doDodania: L.Marker[] = [];
@@ -384,7 +402,8 @@ function ClusteredMarkers({
       const id = Number(idStr);
       const nowa = nowe.get(id);
       const stara = activityMapRef.current[id];
-      if (nowa && stara && podpisPinu(nowa) === podpisPinu(stara)) {
+      const stalePrzesuniecie = String(przesunieciaRef.current[id] ?? [0, 0]) === String(przesuniecieId(id));
+      if (nowa && stara && stalePrzesuniecie && podpisPinu(nowa) === podpisPinu(stara)) {
         // Ten sam pin, moze pelniejszy rekord (np. katalog zamiast krotki z RPC).
         activityMapRef.current[id] = nowa;
         nowe.delete(id);
@@ -394,6 +413,7 @@ function ClusteredMarkers({
       doUsuniecia.push(marker);
       delete markersRef.current[id];
       delete activityMapRef.current[id];
+      delete przesunieciaRef.current[id];
     }
     nowe.forEach((activity) => doDodania.push(zbudujMarker(activity)));
     if (doUsuniecia.length === 0 && doDodania.length === 0) return;
@@ -439,6 +459,7 @@ function ClusteredMarkers({
           podswietlony === id,
           podswietlony !== null && podswietlony !== id,
           isFavoriteRef.current(id),
+          przesuniecieId(id),
         ),
         title: activity.title,
         alt: activity.title,
@@ -564,6 +585,7 @@ function ClusteredMarkers({
       });
       markersRef.current[id] = marker;
       activityMapRef.current[id] = activity;
+      przesunieciaRef.current[id] = przesuniecieId(id);
       return marker;
     }
     // `map` w zaleznosciach: nowa mapa = nowa, pusta grupa, ktora trzeba zapelnic.
@@ -577,7 +599,9 @@ function ClusteredMarkers({
       if (!activity) return;
       const isActive = highlightedId === id;
       const isDimmed = highlightedId !== null && !isActive;
-      marker.setIcon(createPinIcon(activity.rating, activity.type, isActive, isDimmed, isFavorite(id)));
+      marker.setIcon(
+        createPinIcon(activity.rating, activity.type, isActive, isDimmed, isFavorite(id), przesunieciaRef.current[id]),
+      );
       if (isActive) marker.setZIndexOffset(1000);
       else marker.setZIndexOffset(0);
     });
