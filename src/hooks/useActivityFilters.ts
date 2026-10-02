@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
@@ -111,11 +111,11 @@ export function useActivityFilters() {
   );
 
   const rawSearch = searchParams.get("search") ?? "";
-  const [searchQuery, setSearchQuery] = useState(rawSearch);
-  // Adres → pole wyszukiwania (m.in. „wstecz" w przeglądarce). W drugą stronę
-  // pisze Index.tsx (debounce 300 ms, replace) — jeden pisarz na parametr.
+  const [searchQuery, ustawPoleFrazy] = useState(rawSearch);
+  // Adres → pole wyszukiwania (m.in. „wstecz" w przeglądarce, Enter w HomeSearch).
+  // W drugą stronę pisze `setSearchQuery` niżej, od razu — jeden pisarz na parametr.
   useEffect(() => {
-    setSearchQuery((prev) => (prev.trim() === rawSearch.trim() ? prev : rawSearch));
+    ustawPoleFrazy((prev) => (prev.trim() === rawSearch.trim() ? prev : rawSearch));
   }, [rawSearch]);
 
   // Katalog ładuje się asynchronicznie — bez tej zależności memo policzyłoby
@@ -135,22 +135,52 @@ export function useActivityFilters() {
   // Identyczny adres = żaden zapis (w arkuszu atrapa zostaje wtedy na wierzchu,
   // patrz useFilterSheetHistory). Porównujemy z `searchParams` z routera, bo
   // to ten sam obiekt, który react-router podaje jako `prev` poniżej.
+  //
+  // FMN-B23: `prev` w setSearchParams to `searchParams` z DOMKNIĘCIA
+  // (react-router 6.30), nie świeży adres. Dwa zapisy w tym samym takcie
+  // (fraza + promień w „Pokaż wyniki”, fraza + filtry w „wyczyść poza
+  // województwem”) startowały od tego samego starego adresu i drugi gubił
+  // pierwszy. Drugi zapis startuje więc od wyniku pierwszego, dopóki router
+  // nie odda nowego adresu (wtedy efekt niżej kasuje notatkę).
+  const zapisWToku = useRef<{ baza: string; wynik: string } | null>(null);
+  useEffect(() => {
+    zapisWToku.current = null;
+  }, [searchParams]);
   const zapiszFiltrDoUrl = useCallback(
     (mutuj: (params: URLSearchParams) => void, opcje?: FilterWriteOptions) => {
-      const docelowe = new URLSearchParams(searchParams);
+      const teraz = searchParams.toString();
+      const wToku = zapisWToku.current;
+      const baza = wToku && wToku.baza === teraz ? wToku.wynik : teraz;
+      const docelowe = new URLSearchParams(baza);
       mutuj(docelowe);
-      if (docelowe.toString() === searchParams.toString()) return;
-      setSearchParams(
-        (prev) => {
-          mutuj(prev);
-          return prev;
-        },
-        opcje?.replace ? { replace: true } : undefined,
-      );
+      if (docelowe.toString() === baza) return;
+      zapisWToku.current = { baza: teraz, wynik: docelowe.toString() };
+      setSearchParams(docelowe, opcje?.replace ? { replace: true } : undefined);
     },
     // `searchParams` nie pogarsza stabilności: `setSearchParams` i tak zmienia
     // tożsamość po każdym zapisie adresu (react-router: [navigate, searchParams]).
     [searchParams, setSearchParams],
+  );
+
+  // FMN-B23: fraza idzie do adresu OD RAZU (replace), w tym samym takcie co
+  // pole. Wcześniej Index.tsx pisał ją z opóźnieniem 300 ms, a drugi efekt
+  // czytał adres przy KAŻDEJ jego zmianie: zapis kadru mapy albo klik
+  // kategorii w tym oknie kasował świeżą frazę ze stanu (pole „łódź”, adres
+  // i wyniki bez frazy, F5 zmieniał wynik). Samo pisanie w polu nadal adresu
+  // nie zmienia — pole woła to dopiero na Enter / wybór podpowiedzi.
+  const setSearchQuery = useCallback(
+    (q: string) => {
+      ustawPoleFrazy(q);
+      const fraza = q.trim();
+      zapiszFiltrDoUrl(
+        (params) => {
+          if (fraza) params.set("search", fraza);
+          else params.delete("search");
+        },
+        { replace: true },
+      );
+    },
+    [zapiszFiltrDoUrl],
   );
 
 
@@ -226,7 +256,8 @@ export function useActivityFilters() {
 
   const clearAllFilters = useCallback((opcje?: FilterWriteOptions) => {
     setLocalFilters({});
-    setSearchQuery("");
+    // Samo pole: fraza znika z adresu w tym samym (jednym) zapisie niżej.
+    ustawPoleFrazy("");
     zapiszFiltrDoUrl((params) => {
       for (const klucz of URL_FILTER_KEYS) params.delete(klucz);
       params.delete("search");

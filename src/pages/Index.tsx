@@ -62,29 +62,11 @@ const Index = () => {
   // View mode: grid or map (sync with URL param from bottom nav)
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // Sync ?search= from URL into filter state (supports SearchAction JSON-LD
-  // target and SPA navigations from HomeSearch Enter).
-  useEffect(() => {
-    const q = searchParams.get("search") ?? "";
-    if (q !== searchQuery) setSearchQuery(q);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  // Fraza wpisana w polu (FilterBar/HomeSearch) trafia do ?search=, żeby po
-  // „wstecz" z karty atrakcji wróciła zarówno do pola, jak i do wyników.
-  useEffect(() => {
-    const q = searchQuery.trim();
-    if ((searchParams.get("search") ?? "") === q) return;
-    const t = setTimeout(() => {
-      setSearchParams((prev) => {
-        if (q) prev.set("search", q);
-        else prev.delete("search");
-        return prev;
-      }, { replace: true });
-    }, 300);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
+  // FMN-B23: fraza ↔ ?search= synchronizuje useActivityFilters — setSearchQuery
+  // zapisuje adres od razu, a zmiana samego ?search= (wstecz, Enter w HomeSearch,
+  // cel SearchAction z JSON-LD) ustawia pole. Tu były dwa lustra: stan → adres
+  // po 300 ms i adres → stan przy KAŻDEJ zmianie adresu, które w tym oknie
+  // kasowało świeżą frazę (zapis kadru mapy, klik kategorii).
   const { viewMode, setViewMode, savedMapState, handleSaveMapState } = useMapUrlState(
     searchParams,
     setSearchParams,

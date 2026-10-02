@@ -152,3 +152,73 @@ describe("useActivityFilters — nieznane wartości z adresu (FMN-B81)", () => {
     expect(filtry("/?sort=reviews").sort).toBe("reviews");
   });
 });
+
+/**
+ * FMN-B23 (zmierzone 26.09 i 02.10): fraza z Enter przy filtrze albo na mapie
+ * siedziała w polu, a adres i wyniki jej nie miały — Index.tsx pisał ?search=
+ * po 300 ms, a w tym oknie zapis kadru mapy albo klik kategorii kasował frazę.
+ */
+describe("useActivityFilters — fraza w adresie od razu (FMN-B23)", () => {
+  it("Enter zapisuje ?search= w tym samym takcie, bez nowego wpisu historii", () => {
+    const { result } = renderHook(useHarness, { wrapper: wrapper("/", "/" + MAPA) });
+
+    act(() => result.current.setSearchQuery("łódź "));
+
+    const s = new URLSearchParams(result.current.search);
+    expect(s.get("search")).toBe("łódź");
+    expect(s.get("zoom")).toBe("8");
+    expect(s.get("type")).toBe("park-rozrywki");
+    expect(result.current.searchQuery).toBe("łódź ");
+
+    // replace: „wstecz" wraca do wpisu sprzed strony z mapą, nie do mapy bez frazy
+    act(() => result.current.navigate(-1));
+    expect(result.current.search).toBe("");
+  });
+
+  it("fraza i kategoria w tym samym takcie: drugi zapis nie gubi pierwszego", () => {
+    const { result } = renderHook(useHarness, { wrapper: wrapper("/?age=3-5") });
+
+    act(() => {
+      result.current.setSearchQuery("łódź");
+      result.current.updateFilter("type", ["park-rozrywki"]);
+    });
+
+    const s = new URLSearchParams(result.current.search);
+    expect(s.get("search")).toBe("łódź");
+    expect(s.get("type")).toBe("park-rozrywki");
+    expect(s.get("age")).toBe("3-5");
+    expect(result.current.searchQuery).toBe("łódź");
+  });
+
+  it("zapis kadru mapy po frazie nie kasuje frazy z pola ani z adresu", () => {
+    const { result } = renderHook(useHarness, { wrapper: wrapper("/" + MAPA) });
+
+    act(() => result.current.setSearchQuery("łódź"));
+    act(() =>
+      result.current.setParams(
+        (prev) => {
+          prev.set("zoom", "9");
+          return prev;
+        },
+        { replace: true },
+      ),
+    );
+
+    expect(result.current.searchQuery).toBe("łódź");
+    expect(new URLSearchParams(result.current.search).get("search")).toBe("łódź");
+  });
+
+  it("puste pole kasuje ?search=, „wstecz\" przywraca frazę w polu", () => {
+    const { result } = renderHook(useHarness, {
+      wrapper: wrapper("/?search=zoo", "/?search=zoo&age=3-5"),
+    });
+    expect(result.current.searchQuery).toBe("zoo");
+
+    act(() => result.current.setSearchQuery(""));
+    expect(new URLSearchParams(result.current.search).get("search")).toBeNull();
+    expect(result.current.searchQuery).toBe("");
+
+    act(() => result.current.navigate(-1));
+    expect(result.current.searchQuery).toBe("zoo");
+  });
+});
