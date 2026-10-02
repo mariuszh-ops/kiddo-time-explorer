@@ -42,11 +42,10 @@ const CityFilterDropdown = ({
 
   const selectedCityOption = cityOptions.find((o) => o.value === selectedCity);
   
-  // Sync local distance with prop when it changes externally
+  // Sync local distance with prop when it changes externally. FMN-B24: "wstecz"
+  // po przeciagnieciu zdejmuje dist z adresu - suwak wraca wtedy na 0 km.
   useEffect(() => {
-    if (selectedDistance !== undefined) {
-      setLocalDistance(selectedDistance);
-    }
+    setLocalDistance(selectedDistance ?? 0);
   }, [selectedDistance]);
 
   // Build combined display label
@@ -116,7 +115,14 @@ const CityFilterDropdown = ({
     close(false);
   };
 
+  // FMN-B24: przeciaganie zmienia tylko lokalna wartosc (etykieta "N km").
+  // Filtr (wpis w historii) zapisuje sie raz: po puszczeniu suwaka albo po
+  // klawiszu (onValueCommit; przy klawiszu Radix wola commit PRZED onValueChange).
   const handleSliderChange = (values: number[]) => {
+    setLocalDistance(values[0]);
+  };
+
+  const handleSliderCommit = (values: number[]) => {
     const newValue = values[0];
     setLocalDistance(newValue);
     // 0 km means "no distance filter" — show the whole region.
@@ -200,6 +206,7 @@ const CityFilterDropdown = ({
               <Slider
                 value={[localDistance]}
                 onValueChange={handleSliderChange}
+                onValueCommit={handleSliderCommit}
                 min={0}
                 max={100}
                 step={5}
