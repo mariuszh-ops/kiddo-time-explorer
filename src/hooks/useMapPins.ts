@@ -37,6 +37,10 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
     kadry: [],
   });
 
+  // FMN-B11 (trop 062): zapytanie, dla którego efekt pobierania już ruszył.
+  const kluczEfektu = `${enabled}|${retryKey}|${kluczZapytania}|${kluczWidoku}`;
+  const kluczOstatniegoEfektuRef = useRef<string | null>(null);
+
   const refetch = useCallback(() => {
     // Ponowienie po awarii musi naprawdę odpytać bazę, więc kasujemy ślad
     // po kadrach uznanych za pobrane.
@@ -45,6 +49,7 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
   }, []);
 
   useEffect(() => {
+    kluczOstatniegoEfektuRef.current = kluczEfektu;
     if (!enabled) {
       setLoading(false);
       return;
@@ -86,5 +91,20 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, retryKey, kluczZapytania, kluczWidoku]);
 
-  return { pins, loading, error, refetch };
+  // FMN-B11 (trop 062): `loading` to stan ustawiany w efekcie, więc spóźnia się
+  // o jeden render za nowym zapytaniem. Pierwszy kadr mapy (enabled: false -> true)
+  // dawał render „kadr znany, 0 pinów, nie ładuje" — MapView brał to za prawdziwe
+  // zero i przy CPU 4x na ok. 0,6 s pisał „0 atrakcji w widoku" i „Brak atrakcji
+  // w tym obszarze" przed 307 pinami (FMN-1-062 krok 0, 1-2 na 8 wejść).
+  // Dopóki efekt dla bieżącego zapytania nie ruszył, mówimy to, co on zaraz
+  // ustawi: kadr już pobrany = nie ładuje, każdy inny = ładuje.
+  let loadingTeraz = loading;
+  if (kluczOstatniegoEfektuRef.current !== kluczEfektu) {
+    const stan = magazyn.current;
+    const pokryty =
+      visible != null && stan.region === region && stan.kadry.some((k) => bboxContains(k, visible));
+    loadingTeraz = enabled && !pokryty;
+  }
+
+  return { pins, loading: loadingTeraz, error, refetch };
 }
