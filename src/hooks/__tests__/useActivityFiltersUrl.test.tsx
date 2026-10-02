@@ -116,3 +116,39 @@ describe("useActivityFilters — filtry liczone z adresu", () => {
     expect(result.current.search).toBe("region=malopolskie");
   });
 });
+
+/**
+ * FMN-B81: link z wielką literą albo literówką (zmierzone 26.09, FMN-S krok 8,
+ * każdy 4/4) dawał pustą listę przy filtrach, które wyglądały na puste:
+ * ?region=Mazowieckie = 0 wyników i chip „Województwo” bez nazwy.
+ */
+describe("useActivityFilters — nieznane wartości z adresu (FMN-B81)", () => {
+  const filtry = (adres: string) =>
+    renderHook(useHarness, { wrapper: wrapper(adres) }).result.current.filters;
+
+  it("województwo z wielkiej litery = to samo co małymi, nieznane odpada", () => {
+    expect(filtry("/?region=Mazowieckie").city).toBe("mazowieckie");
+    expect(filtry("/?region=nieistnieje&age=3-5")).toEqual({ age: "3-5" });
+  });
+
+  it("kategorie: małe litery, bez nieznanych i bez powtórzeń", () => {
+    expect(filtry("/?type=Zoo,PARK").type).toEqual(["zoo", "park"]);
+    expect(filtry("/?type=ZOO,bzdura,zoo&region=Mazowieckie")).toEqual({ city: "mazowieckie", type: ["zoo"] });
+    expect(filtry("/?type=bzdura").type).toBeUndefined();
+  });
+
+  it("wiek: półpauza z etykiety działa, nieznany odpada", () => {
+    expect(filtry("/?age=3–5").age).toBe("3-5");
+    expect(filtry("/?age=abc").age).toBeUndefined();
+  });
+
+  it("promień tylko w zakresie suwaka i przy znanym województwie", () => {
+    expect(filtry("/?region=mazowieckie&dist=1e9").distance).toBeUndefined();
+    expect(filtry("/?region=mazowieckie&dist=25").distance).toBe(25);
+    expect(filtry("/?region=bzdura&dist=25").distance).toBeUndefined();
+  });
+
+  it("sort zostaje jak w adresie (sort=reviews ze strony województwa działa na „/”)", () => {
+    expect(filtry("/?sort=reviews").sort).toBe("reviews");
+  });
+});

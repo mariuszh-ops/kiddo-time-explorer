@@ -6,6 +6,11 @@ import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { matchesSearchQuery } from "@/lib/searchMatch";
 import type { FilterWriteOptions } from "@/hooks/useFilterSheetHistory";
+import { REGION_SLUGS } from "@/data/regions";
+import { CATEGORY_ORDER } from "@/data/categoryLabels";
+
+/** Koniec suwaka „Atrakcje w pobliżu” (MobileFilterSheet, FilterBar). */
+const MAX_DIST_KM = 100;
 
 function getDistanceKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371;
@@ -69,14 +74,33 @@ export function useActivityFilters() {
   const rawDist = searchParams.get("dist");
   // Memo po surowych wartościach, nie po całym `searchParams`: zapis mapy
   // (lat/lng/zoom/cats) nie ma zmieniać tożsamości `filters`.
+  // FMN-B81: wartości z adresu sprawdzamy, zanim pójdą do zapytania — tak jak
+  // strona województwa (CategoryPage). Link z wielką literą albo literówką
+  // (?region=Mazowieckie, ?type=Zoo,bzdura) dawał 0 wyników przy chipie bez
+  // nazwy, bo serwer filtrował po nieistniejącej wartości. Wielkość liter
+  // i półpauzę z etykiety („3–5”) poprawiamy, resztę nieznanego odrzucamy po
+  // cichu. Sortu nie ruszamy: nazwa ze strony województwa (sort=reviews) działa.
   const urlFilters = useMemo<Filters>(() => {
     const next: Filters = {};
-    if (rawRegion) next.city = rawRegion;
-    if (rawAge) next.age = rawAge;
-    if (rawType) next.type = rawType.split(",").filter(Boolean);
+    const region = rawRegion?.trim().toLowerCase();
+    if (region && REGION_SLUGS.includes(region)) next.city = region;
+    const age = rawAge?.trim().replace(/[–—]/g, "-");
+    if (age && filterOptions.age.some((o) => o.value === age)) next.age = age;
+    if (rawType) {
+      const typy = [
+        ...new Set(
+          rawType
+            .split(",")
+            .map((t) => t.trim().toLowerCase())
+            .filter((t) => (CATEGORY_ORDER as readonly string[]).includes(t)),
+        ),
+      ];
+      if (typy.length > 0) next.type = typy;
+    }
     if (rawSort) next.sort = rawSort;
+    // Promień tylko przy znanym województwie i w zakresie suwaka (0-100 km).
     const dist = rawDist ? Number(rawDist) : NaN;
-    if (rawRegion && Number.isFinite(dist) && dist > 0) next.distance = dist;
+    if (next.city && Number.isFinite(dist) && dist > 0 && dist <= MAX_DIST_KM) next.distance = dist;
     return next;
   }, [rawRegion, rawAge, rawType, rawSort, rawDist]);
 
