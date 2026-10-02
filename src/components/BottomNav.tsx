@@ -3,6 +3,7 @@ import { Compass, Heart, Map, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { bottomNavMapTarget } from "@/lib/bottomNavMapTarget";
+import { bottomNavDiscoverTarget } from "@/lib/bottomNavDiscoverTarget";
 import { env } from "@/config/env";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -142,7 +143,9 @@ const BottomNav = () => {
 
   const handleDiscoverClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    navigate("/");
+    // Na czystym „/” drugi tap nic nie robi — bez martwego wpisu historii.
+    const target = bottomNavDiscoverTarget(location.pathname, location.search);
+    if (target !== null) navigate(target);
   };
 
   const handleMapClick = (e: React.MouseEvent) => {

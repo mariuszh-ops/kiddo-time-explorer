@@ -3,6 +3,7 @@ import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { BrowserRouter, useLocation } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 import { bottomNavMapTarget } from "@/lib/bottomNavMapTarget";
+import { bottomNavDiscoverTarget } from "@/lib/bottomNavDiscoverTarget";
 
 vi.mock("@/contexts/AuthContext", () => ({ useAuth: () => ({ isLoggedIn: false }) }));
 
@@ -54,6 +55,55 @@ describe("BottomNav — „Mapa” zachowuje filtry strony głównej (FMN-B53)",
     wejdz("/atrakcje/zoo-warszawa?x=1");
     mapa();
     expect(adres()).toBe("/?view=map");
+  });
+});
+
+/**
+ * Wiersz 22 (03.10): „Odkrywaj” na czystym „/” dokładał przy każdym tapie
+ * wpis z tym samym adresem (sonda: idx 0 → 1 → 2, adres i lista bez zmian),
+ * więc powrót na /?age=3-5 po resecie wymagał dwóch „wstecz”.
+ */
+describe("BottomNav — „Odkrywaj” (reset jak logo, drugi tap bez wpisu)", () => {
+  beforeEach(() => cleanup());
+  const odkrywaj = () => fireEvent.click(screen.getByRole("button", { name: "Odkrywaj" }));
+
+  it("z filtrami = reset na „/”, jeden wpis historii", () => {
+    wejdz("/?age=3-5&type=zoo");
+    const przed = window.history.length;
+    odkrywaj();
+    expect(adres()).toBe("/");
+    expect(window.history.length).toBe(przed + 1);
+  });
+
+  it("drugi tap na czystym „/” nie dokłada wpisu", () => {
+    wejdz("/?age=3-5");
+    odkrywaj();
+    const przed = window.history.length;
+    odkrywaj();
+    odkrywaj();
+    expect(adres()).toBe("/");
+    expect(window.history.length).toBe(przed);
+  });
+
+  it("z otwartej mapy wraca na listę „/” (nowy wpis)", () => {
+    wejdz("/?view=map");
+    const przed = window.history.length;
+    odkrywaj();
+    expect(adres()).toBe("/");
+    expect(window.history.length).toBe(przed + 1);
+  });
+});
+
+describe("bottomNavDiscoverTarget", () => {
+  it("czyste „/” = null", () => {
+    expect(bottomNavDiscoverTarget("/", "")).toBeNull();
+    expect(bottomNavDiscoverTarget("/", "?")).toBeNull();
+  });
+  it("„/” z parametrami, karta, strona województwa = „/”", () => {
+    expect(bottomNavDiscoverTarget("/", "?age=3-5")).toBe("/");
+    expect(bottomNavDiscoverTarget("/", "?view=map")).toBe("/");
+    expect(bottomNavDiscoverTarget("/mazowieckie", "")).toBe("/");
+    expect(bottomNavDiscoverTarget("/atrakcje/zoo-warszawa", "")).toBe("/");
   });
 });
 
