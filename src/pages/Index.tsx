@@ -106,6 +106,15 @@ const Index = () => {
 
   // Check if any filters are active - derived directly from filter state
   const hasActiveFilters = filterCounts.hasAnyFilter;
+  // FMN-B91: fraza żyje obok `filters` (searchQuery), a mapa rozpoznaje filtr
+  // katalogu tylko po `filters`. Z samą frazą brała więc piny CAŁEGO katalogu:
+  // pasek „312 pasuje", mapa „4892 w widoku" (4/4 frazy, produkcja 3/3).
+  // Z frazą w `filters` mapa rysuje to samo `filteredActivities` co lista.
+  const frazaMapy = searchQuery.trim();
+  const filtryMapy = useMemo(
+    () => (frazaMapy ? { ...filters, search: frazaMapy } : filters),
+    [filters, frazaMapy],
+  );
 
   // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
   const showAll = searchParams.get("all") === "1";
@@ -377,7 +386,7 @@ const Index = () => {
         <Suspense fallback={<MapViewSkeleton />}>
           <MapView
             activities={filteredActivities}
-            filters={filters}
+            filters={filtryMapy}
             onViewModeChange={handleViewModeChange}
             savedMapState={savedMapState}
             onSaveMapState={handleSaveMapState}
