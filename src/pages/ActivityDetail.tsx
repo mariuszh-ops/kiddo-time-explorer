@@ -167,7 +167,7 @@ const ActivityDetail = () => {
   const isFavorite = checkIsFavorite(activityId);
   const wantToVisit = checkIsWantToVisit(activityId);
   // Agregat ocen rodziców — jedyne źródło aggregateRating w JSON-LD.
-  const ownRating = useActivityRating(activityId, aggregateRefreshKey);
+  const ownRating = useActivityRating(activityId, aggregateRefreshKey, activity?.slug);
 
   // Scroll to top on mount; on mobile, position title card nicely
   useEffect(() => {
@@ -637,6 +637,7 @@ const ActivityDetail = () => {
             {/* Rating action — directly under address */}
             <InlineRatingAction 
               activityId={activityId} 
+              slug={activity?.slug}
               contextLabel="sekcja Oceny rodziców"
               onAuthRequired={(value) => {
                 setAuthContext("rate");

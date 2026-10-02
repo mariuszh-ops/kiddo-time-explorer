@@ -10,6 +10,8 @@ import { toast } from "sonner";
 
 interface InlineRatingActionProps {
   activityId: number;
+  /** Slug atrakcji: agregat ocen bez dociągania katalogu (wiersz 21). */
+  slug?: string;
   /** `rating` to liczba gwiazdek, którą gość kliknął (intencja przed logowaniem). */
   onAuthRequired: (rating?: number) => void;
   compact?: boolean;
@@ -30,6 +32,7 @@ const formatRatingCount = (count: number): string => {
 
 const InlineRatingAction = ({
   activityId,
+  slug,
   onAuthRequired,
   compact = false,
   contextLabel = "sekcja Oceny rodziców",
@@ -38,7 +41,7 @@ const InlineRatingAction = ({
   const { getUserRating, rateActivity, removeRating, aggregateRefreshKey } = useUserRatings();
   const [hoveredStar, setHoveredStar] = useState(0);
   const userRating = getUserRating(activityId)?.rating ?? null;
-  const aggregate = useActivityRating(activityId, aggregateRefreshKey);
+  const aggregate = useActivityRating(activityId, aggregateRefreshKey, slug);
   const hasRated = userRating !== null;
 
   const handleStarClick = async (rating: number) => {

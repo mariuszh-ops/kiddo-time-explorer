@@ -14,13 +14,20 @@ export interface ActivityRatingAggregate {
 const cache = new Map<string, ActivityRatingAggregate>();
 const inflight = new Map<string, Promise<ActivityRatingAggregate | null>>();
 
-function fetchAggregate(key: string, activityId: number): Promise<ActivityRatingAggregate | null> {
+function fetchAggregate(
+  key: string,
+  activityId: number,
+  znanySlug?: string,
+): Promise<ActivityRatingAggregate | null> {
   const existing = inflight.get(key);
   if (existing) return existing;
   const promise = (async () => {
     // I-06: kanonicznym kluczem atrakcji jest slug. `activityId` żyje już tylko
     // w pamięci UI (hash ze sluga), więc tłumaczymy go tuż przed wyjściem do bazy.
-    let slug = slugFromId(activityId);
+    // Wiersz 21 (03.10): karta atrakcji zna slug z adresu i z pobranego rekordu.
+    // Bez niego tłumaczenie id -> slug przy pustym katalogu dociągało CAŁY katalog
+    // (5 stron public_activities, ok. 520 KB po sieci) tylko po to, żeby znaleźć slug.
+    let slug = znanySlug || slugFromId(activityId);
     if (!slug) {
       try {
         await loadActivities();
@@ -52,7 +59,12 @@ function fetchAggregate(key: string, activityId: number): Promise<ActivityRating
  * dlatego korzystamy z RPC get_activity_rating (SECURITY DEFINER), które
  * zwraca WYŁĄCZNIE średnią i liczbę ocen — bez pojedynczych wierszy i user_id.
  */
-export function useActivityRating(activityId: number, refreshKey?: unknown): ActivityRatingAggregate {
+export function useActivityRating(
+  activityId: number,
+  refreshKey?: unknown,
+  /** Slug atrakcji, jeśli wołający go zna (karta) - wtedy bez katalogu. */
+  slug?: string,
+): ActivityRatingAggregate {
   const cacheKey = `${activityId}::${String(refreshKey ?? "")}`;
   const [aggregate, setAggregate] = useState<ActivityRatingAggregate>(
     () => cache.get(cacheKey) ?? { avg: null, count: 0 },
@@ -68,13 +80,13 @@ export function useActivityRating(activityId: number, refreshKey?: unknown): Act
       setAggregate(cached);
       return;
     }
-    void fetchAggregate(cacheKey, activityId).then((result) => {
+    void fetchAggregate(cacheKey, activityId, slug).then((result) => {
       if (!cancelled && result) setAggregate(result);
     });
     return () => {
       cancelled = true;
     };
-  }, [cacheKey, activityId]);
+  }, [cacheKey, activityId, slug]);
 
   return aggregate;
 }
