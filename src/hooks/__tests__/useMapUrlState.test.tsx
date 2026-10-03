@@ -146,6 +146,28 @@ describe("useMapUrlState — chipy kategorii to filtr `type`, nie `cats`", () =>
     expect(po.has("cats")).toBe(false);
   });
 
+  // FMN-11 (dzien_0310 w5): `/?view=map&region=podlaskie&cats=_favorites` dawało 5 replace
+  // przy wejściu (I2, W1 pozwala na 4): osobny zapis zdejmujący `cats`, a zaraz po nim zapis kadru.
+  it("stary ?cats= bez kadru: brak osobnego zapisu, `cats` znika w pierwszym zapisie kadru", () => {
+    ustawAdres("?view=map&region=podlaskie&cats=_favorites");
+    const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
+    const { result } = zamontuj(setSearchParams);
+
+    expect(setSearchParams).not.toHaveBeenCalled();
+
+    act(() => result.current.handleSaveMapState({ center: [53.1325, 23.1688], zoom: 11, favoritesOnly: false }));
+
+    expect(setSearchParams).toHaveBeenCalledTimes(1);
+    const [updater, opcje] = vi.mocked(setSearchParams).mock.calls[0] as unknown as [
+      (p: URLSearchParams) => URLSearchParams,
+      { replace?: boolean },
+    ];
+    expect(opcje).toEqual({ replace: true });
+    const po = updater(new URLSearchParams(window.location.search));
+    // Ten sam adres końcowy co wcześniej (przepisanie + zapis kadru): bez `cats`, bez `fav`.
+    expect(po.toString()).toBe("view=map&region=podlaskie&lat=53.13250&lng=23.16880&zoom=11");
+  });
+
   it("bez ?cats= przy wejściu nie ma żadnego zapisu", () => {
     ustawAdres("?view=map&type=zoo&lat=52.22970&lng=21.01220&zoom=11");
     const setSearchParams = vi.fn() as unknown as SetURLSearchParams;

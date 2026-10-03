@@ -65,6 +65,26 @@ function liczbaZZakresu(raw: string | null, min: number, max: number): number | 
 /** Klucz chipa „Ulubione" w starym ?cats= (FAVORITES_CHIP_KEY z MapCategoryChips). */
 const STARY_KLUCZ_ULUBIONYCH = "_favorites";
 
+/** Adres ma poprawny kadr (lat, lng i zoom w zakresie), czyli mapa go odtworzy. */
+function kadrWAdresie(params: URLSearchParams): boolean {
+  return (
+    liczbaZZakresu(params.get("lat"), -90, 90) !== null &&
+    liczbaZZakresu(params.get("lng"), -180, 180) !== null &&
+    liczbaZZakresu(params.get("zoom"), ZOOM_MIN, ZOOM_MAX) !== null
+  );
+}
+
+/**
+ * FMN-11 (dzien_0310 w5): stary `cats` bez poprawnego kadru stara mapa ignorowała,
+ * więc przepiszStareCats tylko go kasuje. Bez kadru MapView i tak zaraz zapisuje
+ * lat/lng/zoom (replace), więc `cats` znika w TYM zapisie, a nie w osobnym:
+ * osobny był piątym replace przy wejściu (I2, wyjątek W1 pozwala na 4).
+ * Adres końcowy bez zmian. Mutuje `params` (stan PRZED dopisaniem kadru).
+ */
+function zdejmijStareCatsBezKadru(params: URLSearchParams): void {
+  if (params.has("cats") && !kadrWAdresie(params)) params.delete("cats");
+}
+
 /**
  * Jak strona trzyma kategorię w adresie:
  * - "wiele"   strona główna, `?type=a,b` (wybór wielokrotny),
@@ -93,11 +113,7 @@ export function przepiszStareCats(params: URLSearchParams, tryb: KategorieWAdres
   const raw = params.get("cats");
   if (raw === null || params.get("view") !== "map") return false;
   params.delete("cats");
-  const mapaCzytalaCats =
-    liczbaZZakresu(params.get("lat"), -90, 90) !== null &&
-    liczbaZZakresu(params.get("lng"), -180, 180) !== null &&
-    liczbaZZakresu(params.get("zoom"), ZOOM_MIN, ZOOM_MAX) !== null;
-  if (!mapaCzytalaCats) return true;
+  if (!kadrWAdresie(params)) return true;
   const wartosci = raw.split(",").filter(Boolean);
   if (wartosci.includes(STARY_KLUCZ_ULUBIONYCH)) params.set("fav", "1");
   const kategorie = wartosci.filter((w) => (CATEGORY_ORDER as readonly string[]).includes(w));
@@ -150,7 +166,8 @@ export function useMapUrlState(
 
   // Stary link z ?cats= → `type` (+ `fav`), jeden zapis `replace` przy wejściu.
   // To jedyne miejsce, które jeszcze czyta `cats`; nic go już nie zapisuje.
-  const maStareCats = viewMode === "map" && searchParams.has("cats");
+  // Bez kadru w adresie `cats` zdejmuje pierwszy zapis kadru (zdejmijStareCatsBezKadru).
+  const maStareCats = viewMode === "map" && searchParams.has("cats") && kadrWAdresie(searchParams);
   useEffect(() => {
     if (!maStareCats || !isStillOnThisRoute()) return;
     setSearchParams(
@@ -201,6 +218,7 @@ export function useMapUrlState(
         // znowu -- petla ~10 Hz, ktora migotala paskiem filtrow i nie dawala
         // kliknac dropdownu "Kategoria". Identyczny adres = zaden zapis.
         const docelowe = new URLSearchParams(biezace);
+        zdejmijStareCatsBezKadru(docelowe);
         docelowe.set("lat", latDoAdresu(state.center[0]));
         docelowe.set("lng", lngDoAdresu(state.center[1]));
         docelowe.set("zoom", zoomDoAdresu(state.zoom));
@@ -211,6 +229,7 @@ export function useMapUrlState(
       setSearchParams(
         (prev) => {
           if (prev.get("view") !== "map") return prev;
+          zdejmijStareCatsBezKadru(prev);
           prev.set("lat", latDoAdresu(state.center[0]));
           prev.set("lng", lngDoAdresu(state.center[1]));
           prev.set("zoom", zoomDoAdresu(state.zoom));
