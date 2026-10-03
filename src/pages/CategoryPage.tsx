@@ -48,6 +48,7 @@ import { fetchFilteredSlugs } from "@/lib/mapPins";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { pierwszaStronaListy, stanListy } from "@/lib/categoryListReturn";
 import { regionExitLinks } from "@/lib/regionExitLinks";
+import { frazaZAdresu } from "@/lib/searchConfig";
 import { trackEvent } from "@/lib/analytics";
 
 
@@ -146,7 +147,9 @@ const CategoryPage = () => {
   // ?free=1 → zawężaj do atrakcji bez biletu.
   const onlyFree = searchParams.get("free") === "1";
   // ?search=zoo → fraza z wyszukiwarki w headerze (zawężona do tej strony).
-  const urlSearch = searchParams.get("search")?.trim() ?? "";
+  // FMN-8-021: z adresu bierzemy najwyżej 100 znaków (frazaZAdresu), dłuższa
+  // fraza robiła z zapytania PostgREST adres, którego serwer nie przyjmował.
+  const urlSearch = frazaZAdresu(searchParams.get("search"));
   // ?page=N (1-based) → N-ta porcja wyników. Linki paginacji renderujemy pod listą.
   const pageParam = Math.max(1, Number(searchParams.get("page") ?? "1") || 1);
   // FMN-B21: przy montażu (powrót „wstecz" z karty, F5) lista wraca od strony
@@ -655,7 +658,7 @@ const CategoryPage = () => {
           {/* Count */}
           {urlSearch && (
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <span className="text-sm text-muted-foreground">
+              <span className="min-w-0 text-sm text-muted-foreground [overflow-wrap:anywhere]">
                 Wyniki dla „{urlSearch}” w:
               </span>
               {citySlug && (
@@ -708,7 +711,7 @@ const CategoryPage = () => {
             <div className="flex flex-col items-center justify-center py-20 text-center px-4">
               {/* Po wpisaniu frazy rada o filtrach była nie na temat — rodzic
                   żadnych filtrów nie ustawiał (audyt 400: K-21). */}
-              <h2 className="text-xl md:text-2xl font-serif text-foreground mb-3">
+              <h2 className="max-w-full text-xl md:text-2xl font-serif text-foreground mb-3 [overflow-wrap:anywhere]">
                 {urlSearch
                   ? `Nie znaleźliśmy „${urlSearch}”`
                   : "Nic nie pasuje do wybranych filtrów"}
