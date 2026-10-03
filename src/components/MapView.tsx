@@ -32,6 +32,7 @@ import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
 import { utworzBezpiecznikDanychMapy } from "@/lib/bezpiecznikDanychMapy";
 import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
 import { pinyPrzywroconegoKadru } from "@/lib/pinyPrzywroconegoKadru";
+import { zaplanujPoRuchuMapy } from "@/lib/przeliczeniePoRuchuMapy";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -745,20 +746,19 @@ function ViewportFilter({
   }, [map, activities]);
 
 
+  // Wiersz 35 (FMN-7-040): timer z moveend liczy kadr tylko, jeśli mapa od tego
+  // moveend stoi. Dymek pinu przesuwa mapę 2x; timer z przerwanego pierwszego
+  // panBy liczył kadr pośredni („267 → 266 → 267”). Koniec ruchu ma własny moveend.
   useMapEvents({
     moveend: () => {
       reportViewport();
-      clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 200);
-      clearTimeout(kadrTimerRef.current);
-      kadrTimerRef.current = setTimeout(reportBounds, DEBOUNCE_KADRU_MS);
+      zaplanujPoRuchuMapy(map, timerRef, 200, filterByBounds);
+      zaplanujPoRuchuMapy(map, kadrTimerRef, DEBOUNCE_KADRU_MS, reportBounds);
     },
     zoomend: () => {
       reportViewport();
-      clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(filterByBounds, 200);
-      clearTimeout(kadrTimerRef.current);
-      kadrTimerRef.current = setTimeout(reportBounds, DEBOUNCE_KADRU_MS);
+      zaplanujPoRuchuMapy(map, timerRef, 200, filterByBounds);
+      zaplanujPoRuchuMapy(map, kadrTimerRef, DEBOUNCE_KADRU_MS, reportBounds);
     },
   });
 
