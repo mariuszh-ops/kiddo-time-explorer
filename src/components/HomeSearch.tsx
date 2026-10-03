@@ -119,7 +119,10 @@ const HomeSearch = () => {
   const submitSearch = () => {
     if (!value.trim()) return;
     trackEvent("search", { source: "home", len: value.trim().length });
-    navigate(`/?search=${encodeURIComponent(value.trim())}`);
+    // R1 (wariant A, decyzja 03.10): fraza = replace, tak jak w polu nad listą
+    // (SearchAutocomplete → setSearchQuery). Push dokładał wpis z pustym „/”,
+    // więc wyjście ze strony wymagało o jeden „wstecz” więcej (FMN-3-041, FMN-4-030).
+    navigate(`/?search=${encodeURIComponent(value.trim())}`, { replace: true });
     setIsOpen(false);
     inputRef.current?.blur();
   };
