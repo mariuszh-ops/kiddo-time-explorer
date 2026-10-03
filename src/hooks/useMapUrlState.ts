@@ -22,6 +22,18 @@ export function zoomDoAdresu(zoom: number): string {
 }
 
 /**
+ * Dlugosc geograficzna do adresu: zawsze w -180..180, ktore adres potem odtworzy.
+ * FMN-6-009: Leaflet daje przeciagnac mape za antypoludnik (na kopie swiata obok),
+ * a getCenter() oddaje wtedy np. lng 190.48. Taki adres F5 i link odrzucaja
+ * (liczbaZZakresu), wiec mapa ladowala na Warszawie z zoomem 11. Ten sam punkt
+ * Ziemi to lng - 360 (jak LatLng.wrap() w Leaflecie); wartosc w zakresie zostaje.
+ */
+export function lngDoAdresu(lng: number): string {
+  const wZakresie = lng >= -180 && lng <= 180 ? lng : ((((lng + 180) % 360) + 360) % 360) - 180;
+  return wZakresie.toFixed(5);
+}
+
+/**
  * Liczba z query stringa. Pusty parametr, smiec i wartosc poza zakresem
  * znacza BRAK parametru (null), a nie zero: Number("") === 0, wiec
  * `?lat=&lng=&zoom=` wysylalo mape na (0,0) — Zatoka Gwinejska (V-H-06).
@@ -176,7 +188,7 @@ export function useMapUrlState(
         // kliknac dropdownu "Kategoria". Identyczny adres = zaden zapis.
         const docelowe = new URLSearchParams(biezace);
         docelowe.set("lat", state.center[0].toFixed(5));
-        docelowe.set("lng", state.center[1].toFixed(5));
+        docelowe.set("lng", lngDoAdresu(state.center[1]));
         docelowe.set("zoom", zoomDoAdresu(state.zoom));
         if (state.favoritesOnly) docelowe.set("fav", "1");
         else docelowe.delete("fav");
@@ -186,7 +198,7 @@ export function useMapUrlState(
         (prev) => {
           if (prev.get("view") !== "map") return prev;
           prev.set("lat", state.center[0].toFixed(5));
-          prev.set("lng", state.center[1].toFixed(5));
+          prev.set("lng", lngDoAdresu(state.center[1]));
           prev.set("zoom", zoomDoAdresu(state.zoom));
           if (state.favoritesOnly) prev.set("fav", "1");
           else prev.delete("fav");

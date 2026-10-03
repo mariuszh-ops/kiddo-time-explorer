@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { MemoryRouter, type SetURLSearchParams } from "react-router-dom";
 import {
+  lngDoAdresu,
   przepiszStareCats,
   useMapUrlState,
   zoomDoAdresu,
@@ -212,4 +213,51 @@ describe("FMN-B61 — zapis zoomu zawsze w zakresie, który adres odtworzy", () 
     const { result: poF5 } = zamontuj(vi.fn() as unknown as SetURLSearchParams);
     expect(poF5.current.savedMapState?.zoom).toBe(z);
   });
+});
+
+describe("FMN-6-009 — zapis długości geograficznej w zakresie, który adres odtworzy", () => {
+  it("lngDoAdresu zawija kopię świata do -180..180, wartość w zakresie zostaje", () => {
+    expect(lngDoAdresu(21.0122)).toBe("21.01220");
+    expect(lngDoAdresu(179.5)).toBe("179.50000");
+    expect(lngDoAdresu(180)).toBe("180.00000");
+    expect(lngDoAdresu(-180)).toBe("-180.00000");
+    expect(lngDoAdresu(190.48)).toBe("-169.52000");
+    expect(lngDoAdresu(197.66602)).toBe("-162.33398");
+    expect(lngDoAdresu(-190)).toBe("170.00000");
+    expect(lngDoAdresu(381.0122)).toBe("21.01220");
+  });
+
+  it.each([190.48, 197.66602, -200.5, 540.25])(
+    "przeciągnięcie za antypołudnik (lng %s) zapisuje lng, który F5 przyjmie, a powtórka nie zapisuje",
+    (lng) => {
+      ustawAdres("?view=map&lat=52.00000&lng=179.50000&zoom=6");
+      const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
+      const { result } = zamontuj(setSearchParams);
+
+      act(() => result.current.handleSaveMapState({ center: [52, lng], zoom: 6, favoritesOnly: false }));
+
+      const wywolania = vi.mocked(setSearchParams).mock.calls;
+      expect(wywolania).toHaveLength(1);
+      const po = (wywolania[0][0] as (p: URLSearchParams) => URLSearchParams)(
+        new URLSearchParams(window.location.search),
+      );
+      const zapisany = Number(po.get("lng"));
+      expect(zapisany).toBeGreaterThanOrEqual(-180);
+      expect(zapisany).toBeLessThanOrEqual(180);
+      // Ten sam punkt Ziemi: różnica o całkowitą wielokrotność 360 stopni.
+      expect(Math.abs(((lng - zapisany) % 360 + 360) % 360) < 1e-4 ||
+        Math.abs(((lng - zapisany) % 360 + 360) % 360 - 360) < 1e-4).toBe(true);
+
+      // F5 / link: zapisany kadr wraca jako savedMapState (wcześniej null = Warszawa zoom 11).
+      ustawAdres(`?${po.toString()}`);
+      const drugiSet = vi.fn() as unknown as SetURLSearchParams;
+      const { result: poF5 } = zamontuj(drugiSet);
+      expect(poF5.current.savedMapState?.center[1]).toBe(zapisany);
+      expect(poF5.current.savedMapState?.zoom).toBe(6);
+
+      // Mapa dalej stoi na kopii świata (lng poza zakresem) - kolejny moveend nie zapisuje drugi raz.
+      act(() => poF5.current.handleSaveMapState({ center: [52, lng], zoom: 6, favoritesOnly: false }));
+      expect(drugiSet).not.toHaveBeenCalled();
+    },
+  );
 });
