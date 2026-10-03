@@ -2,7 +2,9 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { MemoryRouter, type SetURLSearchParams } from "react-router-dom";
 import {
+  latDoAdresu,
   lngDoAdresu,
+  MAX_LAT_MERCATORA,
   przepiszStareCats,
   useMapUrlState,
   zoomDoAdresu,
@@ -257,6 +259,55 @@ describe("FMN-6-009 — zapis długości geograficznej w zakresie, który adres 
 
       // Mapa dalej stoi na kopii świata (lng poza zakresem) - kolejny moveend nie zapisuje drugi raz.
       act(() => poF5.current.handleSaveMapState({ center: [52, lng], zoom: 6, favoritesOnly: false }));
+      expect(drugiSet).not.toHaveBeenCalled();
+    },
+  );
+});
+
+describe("FMN-6-012 — zapis szerokości geograficznej w zakresie rzutu mapy", () => {
+  it("latDoAdresu przycina do granicy Web Mercatora, wartość w zakresie zostaje", () => {
+    expect(latDoAdresu(52.2297)).toBe("52.22970");
+    expect(latDoAdresu(85)).toBe("85.00000");
+    expect(latDoAdresu(MAX_LAT_MERCATORA)).toBe("85.05113");
+    expect(latDoAdresu(88.13919)).toBe("85.05113");
+    expect(latDoAdresu(90)).toBe("85.05113");
+    expect(latDoAdresu(-87.5)).toBe("-85.05113");
+    expect(latDoAdresu(-12.5)).toBe("-12.50000");
+  });
+
+  it.each([88.13919, 87.89628, -88.2])(
+    "przeciągnięcie ponad biegun (lat %s) zapisuje lat, który F5 odtworzy, a powtórka nie zapisuje",
+    (lat) => {
+      ustawAdres("?view=map&lat=85.00543&lng=0.00000&zoom=3");
+      const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
+      const { result } = zamontuj(setSearchParams);
+
+      act(() => result.current.handleSaveMapState({ center: [lat, 0], zoom: 3, favoritesOnly: false }));
+
+      const wywolania = vi.mocked(setSearchParams).mock.calls;
+      expect(wywolania).toHaveLength(1);
+      const po = (wywolania[0][0] as (p: URLSearchParams) => URLSearchParams)(
+        new URLSearchParams(window.location.search),
+      );
+      expect(po.get("lat")).toBe(lat > 0 ? "85.05113" : "-85.05113");
+
+      // F5 / link: Leaflet rzutuje środek z przycięciem do MAX_LAT_MERCATORA, więc kadr
+      // po F5 ma tę samą szerokość co adres (wcześniej adres 88.1, mapa 85.05113).
+      ustawAdres(`?${po.toString()}`);
+      const drugiSet = vi.fn() as unknown as SetURLSearchParams;
+      const { result: poF5 } = zamontuj(drugiSet);
+      expect(poF5.current.savedMapState?.center[0]).toBe(Number(po.get("lat")));
+
+      // Mapa dalej stoi ponad biegunem - kolejny moveend nie zapisuje drugi raz,
+      // a środek po rzutowaniu (±85.0511287798) daje ten sam adres.
+      act(() => poF5.current.handleSaveMapState({ center: [lat, 0], zoom: 3, favoritesOnly: false }));
+      act(() =>
+        poF5.current.handleSaveMapState({
+          center: [Math.sign(lat) * MAX_LAT_MERCATORA, 0],
+          zoom: 3,
+          favoritesOnly: false,
+        }),
+      );
       expect(drugiSet).not.toHaveBeenCalled();
     },
   );

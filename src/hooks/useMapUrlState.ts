@@ -33,6 +33,20 @@ export function lngDoAdresu(lng: number): string {
   return wZakresie.toFixed(5);
 }
 
+/** Granica rzutu Web Mercator w Leaflecie (L.Projection.SphericalMercator.MAX_LATITUDE). */
+export const MAX_LAT_MERCATORA = 85.0511287798;
+
+/**
+ * Szerokosc geograficzna do adresu: zawsze w -85,05113..85,05113, czyli tam, gdzie
+ * mapa potem ja odtworzy. FMN-6-012: Leaflet daje przeciagnac mape ponad biegun
+ * (szary pas nad swiatem), a getCenter() oddaje wtedy np. lat 88.1. Po F5 / linku
+ * setView rzutuje srodek z przycieciem do granicy Mercatora, wiec mapa stoi na
+ * 85,05113, a adres mowil 88.1 (i czasem sam przepisywal sie na 85,05113).
+ */
+export function latDoAdresu(lat: number): string {
+  return Math.min(MAX_LAT_MERCATORA, Math.max(-MAX_LAT_MERCATORA, lat)).toFixed(5);
+}
+
 /**
  * Liczba z query stringa. Pusty parametr, smiec i wartosc poza zakresem
  * znacza BRAK parametru (null), a nie zero: Number("") === 0, wiec
@@ -187,7 +201,7 @@ export function useMapUrlState(
         // znowu -- petla ~10 Hz, ktora migotala paskiem filtrow i nie dawala
         // kliknac dropdownu "Kategoria". Identyczny adres = zaden zapis.
         const docelowe = new URLSearchParams(biezace);
-        docelowe.set("lat", state.center[0].toFixed(5));
+        docelowe.set("lat", latDoAdresu(state.center[0]));
         docelowe.set("lng", lngDoAdresu(state.center[1]));
         docelowe.set("zoom", zoomDoAdresu(state.zoom));
         if (state.favoritesOnly) docelowe.set("fav", "1");
@@ -197,7 +211,7 @@ export function useMapUrlState(
       setSearchParams(
         (prev) => {
           if (prev.get("view") !== "map") return prev;
-          prev.set("lat", state.center[0].toFixed(5));
+          prev.set("lat", latDoAdresu(state.center[0]));
           prev.set("lng", lngDoAdresu(state.center[1]));
           prev.set("zoom", zoomDoAdresu(state.zoom));
           if (state.favoritesOnly) prev.set("fav", "1");
