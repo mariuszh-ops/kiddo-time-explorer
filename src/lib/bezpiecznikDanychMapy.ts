@@ -36,3 +36,25 @@ export function utworzBezpiecznikDanychMapy(poCzasie: () => void, ms = 2000): Be
     rozbroj,
   };
 }
+
+// FMN wiersz 41 (03.10): bezpiecznik dopasowania kadru (MapFitBounds) żył tak
+// samo jak ten wyżej: 2 s od startu dopasowania, także PO udanym przeliczeniu.
+// „Wyczyść filtry” ok. 1,7 s po kliku chipa (FMN-1-058, CPU 4x, 10/10) trafiało
+// w jego koniec w trakcie pobierania pinów trybu kadrowego: bezpiecznik ustawiał
+// „kadr przeliczony”, a gdy piny doszły, licznik przez ok. 1 s mówił
+// „0 atrakcji w widoku” i „Brak atrakcji w tym obszarze” (lista kadru jeszcze
+// pusta, przeliczenie 4892 pinów trwa), zamiast „Wczytuję”.
+//
+// Rozbraja go przeliczenie kadru po dopasowaniu (tak jak bezpiecznik danych),
+// a gdy mimo to odpali w trakcie pobierania danych, nic nie robi: dane same
+// zdejmą „Wczytuję” przeliczeniem albo bezpiecznikiem danych.
+export function utworzBezpiecznikDopasowania(
+  poCzasie: () => void,
+  daneWDrodze: () => boolean,
+  ms = 2000,
+): BezpiecznikDanychMapy {
+  return utworzBezpiecznikDanychMapy(() => {
+    if (daneWDrodze()) return;
+    poCzasie();
+  }, ms);
+}

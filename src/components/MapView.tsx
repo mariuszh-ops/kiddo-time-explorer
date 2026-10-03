@@ -29,7 +29,7 @@ import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
 import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
-import { utworzBezpiecznikDanychMapy } from "@/lib/bezpiecznikDanychMapy";
+import { utworzBezpiecznikDanychMapy, utworzBezpiecznikDopasowania } from "@/lib/bezpiecznikDanychMapy";
 import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
 import { pinyPrzywroconegoKadru } from "@/lib/pinyPrzywroconegoKadru";
 import { zaplanujPoRuchuMapy } from "@/lib/przeliczeniePoRuchuMapy";
@@ -1317,22 +1317,30 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   // przez 0,6-1,2 s „0 atrakcji w widoku" i „Brak atrakcji w tym obszarze" obok
   // 37 wyników (FMN-1, 6 scenariuszy 3/3). „Wczytuję" zdejmuje pierwsze
   // przeliczenie po moveend dopasowania (handleVisibleChange) albo bezpiecznik.
-  const bezpiecznikDopasowaniaRef = useRef<ReturnType<typeof setTimeout>>();
   // FMN-B65: przeliczenia kadru z czasu dopasowania czekają w bramce (stare piny
   // zostają), żeby jedna zmiana filtra wymieniała piny raz, a nie dwa razy.
   const [bramkaPinow] = useState(() => utworzBramkePinow<Activity>());
+  // Wiersz 41 (FMN-1-058 CPU 4x): bezpiecznik dopasowania rozbraja przeliczenie
+  // po dopasowaniu, a odpalony w trakcie pobierania danych nic nie robi. Żywy
+  // timer po „Wyczyść filtry” zdejmował „Wczytuję” przed przeliczeniem pinów
+  // trybu kadrowego („1406 → Wczytuję → 0 atrakcji w widoku → 4892” + „Brak”).
+  const [bezpiecznikDopasowania] = useState(() =>
+    utworzBezpiecznikDopasowania(
+      () => {
+        const odlozone = bramkaPinow.bezpiecznik();
+        if (odlozone) setVisibleActivities(odlozone);
+        setKadrNaDanych(true);
+      },
+      () => daneWDrodzeRef.current,
+    ),
+  );
   const handleDopasowanieStart = useCallback(() => {
     // Dopasowanie ma własny bezpiecznik (niżej), który oddaje też odłożone piny.
     bezpiecznikDanych.rozbroj();
     setKadrNaDanych(false);
-    clearTimeout(bezpiecznikDopasowaniaRef.current);
-    bezpiecznikDopasowaniaRef.current = setTimeout(() => {
-      const odlozone = bramkaPinow.bezpiecznik();
-      if (odlozone) setVisibleActivities(odlozone);
-      setKadrNaDanych(true);
-    }, 2000);
-  }, [bramkaPinow, bezpiecznikDanych]);
-  useEffect(() => () => clearTimeout(bezpiecznikDopasowaniaRef.current), []);
+    bezpiecznikDopasowania.uzbroj();
+  }, [bezpiecznikDanych, bezpiecznikDopasowania]);
+  useEffect(() => () => bezpiecznikDopasowania.rozbroj(), [bezpiecznikDopasowania]);
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
@@ -1572,11 +1580,12 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       // Dane mogły wejść „w drogę" w trakcie tych 100 ms (nowy kadr trybu kadrowego).
       if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) {
         bezpiecznikDanych.rozbroj();
+        bezpiecznikDopasowania.rozbroj();
         setKadrNaDanych(true);
       }
       setFading(false);
     }, 100);
-  }, [bramkaPinow, bezpiecznikDanych]);
+  }, [bramkaPinow, bezpiecznikDanych, bezpiecznikDopasowania]);
 
   // FMN-B65 (reszta, „wstecz"): piny przywróconego kadru od razu, w tym samym
   // zadaniu co setView — markercluster nie rysuje starego zbioru w nowym kadrze.
