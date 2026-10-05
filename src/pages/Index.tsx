@@ -34,6 +34,7 @@ import { useTopActivities } from "@/hooks/useTopActivities";
 import { ensureActivitiesLoaded } from "@/data/activities";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { czytajZapisListy, zapiszListe } from "@/lib/homeListReturn";
+import { listaZKadru, stanListyZKadru } from "@/lib/mapListReturn";
 
 /**
  * Po "wstecz" z karty glowna jest ukryta, dopoki lista nie wroci do dawnej
@@ -71,17 +72,40 @@ const Index = () => {
     searchParams,
     setSearchParams,
   );
-  // Activities from map viewport — used when switching from map to grid
-  const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(null);
+  // Activities from map viewport — used when switching from map to grid.
+  // noc 06.10 wiersz 2 (K2): lista z kadru należy do wpisu historii z „Lista”
+  // (lib/mapListReturn.ts). Nowy montaż po „wstecz” z karty albo F5 czyta ją
+  // z `location.state`; wcześniej ginęła z useState (20 kafli -> 10).
+  const [mapVisibleActivities, setMapVisibleActivities] = useState<Activity[] | null>(() =>
+    listaZKadru(location.state),
+  );
+  // Inny wpis tego samego Indexu (push: „Odkrywaj”, filtr; pop: „wstecz”/„naprzód”)
+  // pokazuje to, co ma TEN wpis: listę z kadru albo stronę wg adresu. Bez tego
+  // lista z pamięci przechodziła na wpisy, które jej nie mają, i „wstecz” z karty
+  // na taki wpis zmieniało listę. REPLACE (fraza, kadr) zostawia bieżącą listę.
+  const kluczWpisuListy = useRef(location.key);
+  // Push z samego „Lista”: lista jest już w stanie (także ta za duża na wpis).
+  const pushListyZKadru = useRef(false);
+  useLayoutEffect(() => {
+    if (kluczWpisuListy.current === location.key) return;
+    kluczWpisuListy.current = location.key;
+    if (pushListyZKadru.current) {
+      pushListyZKadru.current = false;
+      return;
+    }
+    if (realNavigationType === "REPLACE") return;
+    setMapVisibleActivities(listaZKadru(location.state));
+  }, [location.key, location.state, realNavigationType]);
 
   const handleViewModeChange = useCallback((mode: "grid" | "map", visibleActivities?: Activity[]) => {
     if (mode === "grid" && visibleActivities) {
       setMapVisibleActivities(visibleActivities);
+      pushListyZKadru.current = true;
     } else {
       setMapVisibleActivities(null);
     }
     if (mode === "map") trackEvent("map_open", { source: "home" });
-    setViewMode(mode);
+    setViewMode(mode, mode === "grid" && visibleActivities ? stanListyZKadru(visibleActivities) : undefined);
   }, [setViewMode]);
 
   // No longer reset to grid when city is cleared — map works without city filter

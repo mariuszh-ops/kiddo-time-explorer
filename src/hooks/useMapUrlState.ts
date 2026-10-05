@@ -184,8 +184,11 @@ export function useMapUrlState(
 
   // Przełączenie lista ↔ mapa to świadoma zmiana ekranu → wpis w historii (push).
   const setViewMode = useCallback(
-    (mode: "grid" | "map") => {
+    // noc 06.10 wiersz 2: `stanWpisu` = stan NOWEGO wpisu historii (lista z kadru
+    // mapy przy „Lista”, patrz lib/mapListReturn.ts); brak = jak dotąd.
+    (mode: "grid" | "map", stanWpisu?: Record<string, unknown>) => {
       if (!isStillOnThisRoute()) return;
+      const opcje = stanWpisu ? { state: stanWpisu } : undefined;
       setSearchParams((prev) => {
         if (mode === "map") {
           prev.set("view", "map");
@@ -198,7 +201,7 @@ export function useMapUrlState(
           prev.delete("cats");
         }
         return prev;
-      });
+      }, opcje);
     },
     [setSearchParams, isStillOnThisRoute],
   );
