@@ -45,6 +45,14 @@ interface FilterBarProps {
    * ensureActivitiesLoaded(), czyli ściągało cały katalog.
    */
   onFilterIntent?: () => void;
+  /**
+   * noc 06.10 wiersz 1 (K1 I9a): ile wynikow BIEZACYCH filtrow widac teraz na
+   * ekranie (piny mapy z filtrem); null/brak = nie wiadomo. Licznik serwera
+   * "0" przy wynikach na ekranie to licznik POPRZEDNICH filtrow (FMN-B51 trzyma
+   * ostatnie liczniki do odpowiedzi) — pasek nie moze wtedy pisac "Zadna
+   * atrakcja nie spelnia wybranych filtrow" obok pinow.
+   */
+  wynikiNaEkranie?: number | null;
 }
 
 // Dopełniacz nazwy stolicy województwa — używany w podpisach typu "…od centrum {miasto}".
@@ -66,6 +74,7 @@ const FilterBar = ({
   onViewModeChange,
   hideSearch = false,
   onFilterIntent,
+  wynikiNaEkranie,
 }: FilterBarProps) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -102,20 +111,28 @@ const FilterBar = ({
     filters.age || (filters.type && filters.type.length > 0) || filters.indoor || filters.price || filters.activityKind || searchQuery.trim()
   );
 
+  // noc 06.10 wiersz 1 (K1 I9a): "0" z serwera przy wynikach biezacych filtrow
+  // na ekranie = licznik nieaktualny (poprzednie, puste filtry; zapytanie w toku)
+  // -> traktujemy jak nieznany (FMN-B07), bez komunikatu pustki. Realne zero
+  // (0 na ekranie albo nie wiadomo) dalej daje komunikat, wiec pisanie frazy bez
+  // wynikow nie miga "Zadna -> pusto -> Zadna" (wiersz 27, FMN-B51).
+  const filtered =
+    filterCounts.filtered === 0 && (wynikiNaEkranie ?? 0) > 0 ? null : filterCounts.filtered;
+
   // Generate dynamic feedback text
   const getFeedbackText = (): string | null => {
     // FMN-B07: liczniki jeszcze nie przyszly — nic nie mowimy, zamiast
     // oglaszac "Zadna atrakcja nie spelnia wybranych filtrow".
-    if (filterCounts.filtered == null) return null;
-    const count = formatCount(filterCounts.filtered);
+    if (filtered == null) return null;
+    const count = formatCount(filtered);
     if (filters.distance !== undefined && filters.distance > 0 && filters.city) {
       const cityName = getCapitalCityGenitive(filters.city);
       const suffix = hasExtraFilters ? " spełniających podane kryteria" : "";
       return `${count} w promieniu ${filters.distance} km od centrum ${cityName}${suffix}`;
     }
     // Przy zerze „Brak atrakcji spełnia wybrane filtry” było niegramatyczne (K-21).
-    if (filterCounts.filtered === 0) return "Żadna atrakcja nie spełnia wybranych filtrów";
-    return `${count} ${verbPl(filterCounts.filtered, "pasuje", "pasują")} do wybranych filtrów`;
+    if (filtered === 0) return "Żadna atrakcja nie spełnia wybranych filtrów";
+    return `${count} ${verbPl(filtered, "pasuje", "pasują")} do wybranych filtrów`;
   };
 
   // Mobile layout
@@ -178,10 +195,10 @@ const FilterBar = ({
                 aria-atomic="true"
                 className={hasActiveFilters ? "text-sm text-muted-foreground" : "sr-only"}
               >
-                {hasActiveFilters && filterCounts.filtered != null ? (
+                {hasActiveFilters && filtered != null ? (
                   <>
-                    <span className="font-medium text-foreground">{filterCounts.filtered}</span>{" "}
-                    {formatAttractionWord(filterCounts.filtered)}
+                    <span className="font-medium text-foreground">{filtered}</span>{" "}
+                    {formatAttractionWord(filtered)}
                   </>
                 ) : null}
               </span>
@@ -221,7 +238,7 @@ const FilterBar = ({
                   selectedCity={filters.city}
                   selectedDistance={filters.distance}
                   hasAnyFilter={filterCounts.hasAnyFilter}
-                  filteredCount={filterCounts.filtered}
+                  filteredCount={filtered}
                   onCitySelect={(value) => onUpdateFilter("city", value)}
                   onDistanceChange={(value) => onUpdateFilter("distance", value)}
                 />

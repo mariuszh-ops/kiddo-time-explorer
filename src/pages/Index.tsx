@@ -406,6 +406,10 @@ const Index = () => {
           viewMode={viewMode}
           onViewModeChange={handleViewModeChange}
           hideSearch={!mapVisibleActivities && !hasActiveFilters && !showAll}
+          // noc 06.10 wiersz 1 (K1 I9a): piny mapy z filtrem = wyniki biezacych
+          // filtrow (filteredActivities liczone od razu z filtrow); serwerowy
+          // licznik "0" obok nich jest nieaktualny.
+          wynikiNaEkranie={viewMode === "map" && !mapaCzekaNaKatalog ? filteredActivities.length : null}
         />
         </ErrorBoundary>
 
