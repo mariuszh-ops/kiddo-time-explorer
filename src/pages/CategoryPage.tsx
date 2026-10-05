@@ -156,6 +156,18 @@ const CategoryPage = () => {
   // zapisanej przez „Pokaż więcej" w stanie wpisu historii. Bez zapisu (link
   // paginacji, wklejony adres) ?page=N to sama strona N.
   const [stronaStartowa] = useState(() => pierwszaStronaListy(location.state, pageParam - 1));
+  // NIE useNavigationType(): wewnątrz <Routes location={…}> react-router zawsze
+  // zwraca "POP", przez co reset scrolla nigdy się nie wykonywał (F-12).
+  const navigationType = useRealNavigationType();
+  // FMN K3 (noc 06.10): „wstecz"/„naprzód" może naraz zmienić filtry i wrócić
+  // na wpis z ?page=N (np. lista po „Pokaż więcej" sprzed zmiany wieku). Wtedy
+  // lista startuje od stron z wpisu (ffListaOd jak przy B21), a nie od strony 1,
+  // i nikt nie zdejmuje `page` z adresu. Zmiana filtra przez użytkownika (PUSH)
+  // dalej zeruje stronę.
+  const wejscieDlaNowychFiltrow =
+    navigationType === "POP" && pageParam > 1
+      ? { od: pierwszaStronaListy(location.state, pageParam - 1), ostatnia: pageParam - 1 }
+      : null;
 
   // O-F-06: kazda kombinacja filtrow tworzy osobny adres z ta sama trescia.
   // Takie strony dostaja "noindex, follow" (canonical do wersji bez parametrow
@@ -200,6 +212,7 @@ const CategoryPage = () => {
     24,
     stronaStartowa,
     pageParam - stronaStartowa,
+    wejscieDlaNowychFiltrow,
   );
 
   // Mapa musi pokazywać WSZYSTKIE piny spełniające filtry, nie tylko
@@ -365,9 +378,6 @@ const CategoryPage = () => {
   }, [loading, activities.length]);
 
   // Zapamiętaj i przywróć pozycję scrolla dla tego widoku (klucz = ścieżka + filtry).
-  // NIE useNavigationType(): wewnątrz <Routes location={…}> react-router zawsze
-  // zwraca "POP", przez co reset scrolla nigdy się nie wykonywał (F-12).
-  const navigationType = useRealNavigationType();
   // Nawigacja „w przód" na listing (PUSH) zawsze startuje od góry strony —
   // bez tego SPA zachowuje scroll z poprzedniego widoku (np. przewiniętej home).
   const scrollKey = `ff:scroll:${location.pathname}?${new URLSearchParams(

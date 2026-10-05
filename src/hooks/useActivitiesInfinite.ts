@@ -61,6 +61,13 @@ export function useActivitiesInfinite(
    * F5) — zwykłe wejście z ?page=N to JEDNA strona N (paginacja SEO, K-03).
    */
   initialPageCount = 1,
+  /**
+   * FMN K3 (noc 06.10): strony listy dla NOWEGO klucza filtrów, gdy filtry
+   * zmieniła nawigacja po historii („wstecz"/„naprzód") na wpis z ?page=N.
+   * `null` = zwykła zmiana filtrów przez użytkownika: lista od strony 1.
+   * Czytane tylko w chwili zmiany klucza filtrów (montaż = `initialPage`).
+   */
+  wejscieDlaNowychFiltrow: { od: number; ostatnia: number } | null = null,
 ): UseActivitiesInfiniteResult {
   const { region, type, amenities, minRating, sort = "reviews", includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
   const amenitiesKey = amenities?.join(",") ?? "";
@@ -75,8 +82,8 @@ export function useActivitiesInfinite(
   const initialPageRef = useRef(Math.max(0, Math.floor(initialPage)));
   // Ostatnia strona, którą przynosi pierwsze zapytanie (= initialPage przy zwykłym wejściu).
   const initialLastPageRef = useRef(initialPageRef.current + Math.max(1, Math.floor(initialPageCount)) - 1);
-  // Klucz filtrów, dla którego strona startowa jeszcze obowiązuje.
-  const initialFilterKeyRef = useRef(filterKey);
+  // Klucz filtrów z poprzedniego resetu (montaż = klucz strony startowej).
+  const poprzedniKluczRef = useRef(filterKey);
   // Po pierwszej zmianie filtrów strona startowa jest „zużyta” — resety idą na 0.
   const startPageActiveRef = useRef(true);
   const [page, setPage] = useState(initialLastPageRef.current);
@@ -86,11 +93,26 @@ export function useActivitiesInfinite(
   const activeKey = useRef(filterKey);
   const [reloadToken, setReloadToken] = useState(0);
 
-  // Reset kiedy zmieniają się filtry
+  const wejscieRef = useRef(wejscieDlaNowychFiltrow);
+  wejscieRef.current = wejscieDlaNowychFiltrow;
+
+  // Reset kiedy zmieniają się filtry (montaż: strony startowe przyszły w
+  // `initialPage`/`initialPageCount`, klucz się nie zmienił).
   useEffect(() => {
     activeKey.current = filterKey;
-    if (filterKey !== initialFilterKeyRef.current) {
-      startPageActiveRef.current = false;
+    if (filterKey !== poprzedniKluczRef.current) {
+      poprzedniKluczRef.current = filterKey;
+      // FMN K3 (noc 06.10): „wstecz" po zmianie filtra wracał na wpis
+      // `?page=2` (lista po „Pokaż więcej"), a reset na stronę 0 + zapis
+      // adresu zdejmował `page` z tego wpisu: 48 kafli → 24. Strony z wpisu
+      // historii podaje strona (`wejscieDlaNowychFiltrow`); zmiana filtra
+      // przez użytkownika (bez nich) dalej zaczyna od strony 1.
+      const w = wejscieRef.current;
+      startPageActiveRef.current = w !== null;
+      if (w) {
+        initialPageRef.current = Math.max(0, Math.floor(w.od));
+        initialLastPageRef.current = Math.max(initialPageRef.current, Math.floor(w.ostatnia));
+      }
     }
     setPage(startPageActiveRef.current ? initialLastPageRef.current : 0);
     setData([]);
