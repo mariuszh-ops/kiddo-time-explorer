@@ -2,6 +2,7 @@ import { Suspense, lazy, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { trackEvent } from "@/lib/analytics";
 import ActivityCard from "@/components/ActivityCard";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { ActivityGridSkeleton } from "@/components/ActivityCardSkeleton";
 // Kafle w gridzie 2-kolumnowym na telefonie: ~45vw, na desktopie ~1/3 kontenera.
 const TWO_COL_SIZES = "(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 33vw";
@@ -199,9 +200,12 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
       {FEATURES.BLOG && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="📝" title="Z naszego bloga" subtitle="Porady i inspiracje dla rodziców" />
-          <Suspense fallback={<div className="h-48 rounded-xl bg-muted animate-pulse" />}>
-            <HomeBlogSection />
-          </Suspense>
+          {/* Własna granica: padnięty chunk bloga nie może zabrać całej strony głównej (GL-7-011). */}
+          <ErrorBoundary fallbackLevel="section">
+            <Suspense fallback={<div className="h-48 rounded-xl bg-muted animate-pulse" />}>
+              <HomeBlogSection />
+            </Suspense>
+          </ErrorBoundary>
         </section>
       )}
     </div>
