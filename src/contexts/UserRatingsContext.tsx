@@ -224,7 +224,6 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
               if (!slug) continue;
               rows.push({
                 user_id: user.id,
-                activity_id: r.activityId,
                 activity_slug: slug,
                 rating: r.rating,
                 review: r.review ?? null,
@@ -282,9 +281,6 @@ export function UserRatingsProvider({ children }: { children: ReactNode }) {
             .upsert(
               {
                 user_id: user.id,
-                // `activity_id` piszemy jeszcze przez okno migracji I-06 (kolumna
-                // jest NOT NULL do kroku 8, a stary front na produkcji z niej czyta).
-                activity_id: activityId,
                 activity_slug: slug,
                 rating: entry.rating,
                 review: entry.review ?? null,
