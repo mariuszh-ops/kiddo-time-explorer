@@ -108,8 +108,30 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       .range(from, to);
     const q = buildQuery(base).order("place_id", { ascending: true });
 
-    const { data, error, count } = await q;
+    const { data, error, count, status } = await q;
     if (requestId !== requestIdRef.current) return; // odrzuć wynik przestarzałego żądania
+
+    // GL-3-015: strona poza wynikami (`?p=9999`, albo akcja masowa oproznila ostatnia
+    // strone) — PostgREST odrzuca zakres kodem 416 / PGRST103. To nie blad uprawnien:
+    // liczymy rekordy dla tych samych filtrow i przenosimy na ostatnia istniejaca strone.
+    if (error && page > 1 && (status === 416 || error.code === "PGRST103")) {
+      const { count: all, error: countError } = await buildQuery(
+        catalogClient.from("public_activities").select("place_id", { count: "exact", head: true }),
+      );
+      if (requestId !== requestIdRef.current) return;
+      if (!countError && all != null) {
+        const last = Math.max(1, Math.ceil(all / PAGE_SIZE));
+        if (last < page) {
+          toast.info(`Brak wyników na stronie ${page}`, {
+            description: all > 0 ? `Pokazuję ostatnią stronę (${last}).` : "Dla tych filtrów nie ma rekordów.",
+          });
+          setTotal(all);
+          setLoadError(false);
+          setPage(last); // zmiana `page` sama wywoła ponowny odczyt (efekt nizej)
+          return;
+        }
+      }
+    }
 
     if (error) {
       console.error(error.message);
@@ -125,7 +147,7 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       setLoadError(false);
     }
     setLoading(false);
-  }, [buildQuery, page]);
+  }, [buildQuery, page, setPage]);
 
   // Refetch when reloadKey changes OR on page change. Zaznaczenie dotyczy
   // konkretnej strony wynikow, wiec przy zmianie strony/filtrow znika — ale po
