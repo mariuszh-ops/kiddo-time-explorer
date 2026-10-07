@@ -51,3 +51,44 @@ export function reportInvalidSession(reason: InvalidSessionReason = "token"): vo
 export function clearInvalidSessionFlag(): void {
   alreadyReported = false;
 }
+
+/* ------------------------------------------------------------------ *
+ * GL-1-005: odrzucone odswiezenie tokenu = ciche wylogowanie.
+ *
+ * Gdy GoTrue odrzuci refresh token (4xx, np. 400/401
+ * `refresh_token_not_found` po zmianie hasla na innym urzadzeniu), auth-js
+ * sam kasuje sesje i emituje `SIGNED_OUT`. Klient katalogu zglaszal martwa
+ * sesje tylko przy 401 z REST, wiec uzytkownik tracil logowanie bez slowa.
+ *
+ * Samo `SIGNED_OUT` nie wystarczy: to samo zdarzenie przychodzi przy zwyklym
+ * „Wyloguj sie”, po usunieciu konta i z innej karty (BroadcastChannel). Dlatego
+ * `catalogFetch` notuje chwile odrzucenia odswiezenia, a komunikat pokazujemy
+ * tylko wtedy, gdy `SIGNED_OUT` przyszlo tuz po nim. 5xx i bledy sieci auth-js
+ * traktuje jako przejsciowe i sesji nie rusza — tych nie notujemy.
+ * ------------------------------------------------------------------ */
+
+/** auth-js kasuje sesje w tym samym wywolaniu co odpowiedz — milisekundy. */
+const OKNO_WYLOGOWANIA_PO_ODRZUCENIU_MS = 5_000;
+
+const terazMonotonicznie = (): number =>
+  typeof performance !== "undefined" && typeof performance.now === "function"
+    ? performance.now()
+    : Date.now();
+
+let odrzucenieOdswiezeniaO: number | null = null;
+
+/** Zanotuj odpowiedz serwera na odswiezenie tokenu (woła `catalogFetch`). */
+export function noteRefreshResponse(status: number, teraz: number = terazMonotonicznie()): void {
+  odrzucenieOdswiezeniaO = status >= 400 && status < 500 ? teraz : null;
+}
+
+/**
+ * Czy wlasnie zakonczone `SIGNED_OUT` jest skutkiem odrzuconego odswiezenia?
+ * Zuzywa znacznik — kolejne `SIGNED_OUT` (np. nasze wlasne `signOut` lokalne)
+ * juz go nie zobacza.
+ */
+export function takeRefreshRejection(teraz: number = terazMonotonicznie()): boolean {
+  const t = odrzucenieOdswiezeniaO;
+  odrzucenieOdswiezeniaO = null;
+  return t !== null && teraz - t >= 0 && teraz - t < OKNO_WYLOGOWANIA_PO_ODRZUCENIU_MS;
+}

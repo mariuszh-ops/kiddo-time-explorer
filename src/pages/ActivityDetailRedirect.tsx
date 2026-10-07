@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate, useLocation, useParams } from "react-router-dom";
 import HomeSkeleton from "@/components/HomeSkeleton";
 import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { useDataStatus } from "@/hooks/useDataStatus";
@@ -10,6 +10,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 // więc dociągamy go tylko na tej (rzadkiej) ścieżce.
 const ActivityDetailRedirect = () => {
   const { id } = useParams<{ id: string }>();
+  const location = useLocation();
   const status = useDataStatus();
 
   useEffect(() => {
@@ -20,7 +21,13 @@ const ActivityDetailRedirect = () => {
 
   const activity = getActivities().find((a) => a.id === Number(id));
   if (activity) {
-    return <Navigate to={`/atrakcje/${activity.slug}`} replace />;
+    // Query i hash (utm_*, fbclid) idą dalej jak w RegionRouteResolver (GL-6-004).
+    return (
+      <Navigate
+        to={{ pathname: `/atrakcje/${activity.slug}`, search: location.search, hash: location.hash }}
+        replace
+      />
+    );
   }
 
   // Nieznane id: 404 zamiast cichego przekierowania na home — inaczej każdy

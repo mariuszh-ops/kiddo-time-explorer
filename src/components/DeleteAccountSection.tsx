@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { deleteAccountData } from "@/lib/deleteAccount";
+import { queueFlashToast } from "@/lib/flashToast";
 
 const CONFIRM_WORDS = ["USUWAM", "USUŃ", "USUN"];
 
@@ -43,6 +44,9 @@ const DeleteAccountSection = () => {
     }
 
     setIsOpen(false);
+    // GL-2-039: logout() kończy się pełnym przeładowaniem na „/”, które kasuje
+    // toast poniżej — odkładamy go, nowy dokument pokaże go raz (FlashToast).
+    queueFlashToast("Twoje konto zostało usunięte");
     logout();
     navigate("/");
     toast.success("Twoje konto zostało usunięte");

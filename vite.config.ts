@@ -1,8 +1,31 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
+
+// GL-6-028/029: od L-07 (04.09, 9ab8fad) `.env` jest poza gitem, a Lovable buduje
+// produkcje z repo — w buildzie prod nie ma VITE_SUPABASE_*. Generowany przez Lovable
+// `src/integrations/supabase/client.ts` (bez zapasu) wola wtedy createClient(undefined)
+// i /.lovable/oauth/consent pada na „supabaseUrl is required.” (chunk prod:
+// `const $=void 0,P=void 0`). Projekt Lovable Cloud (auth zgody OAuth/MCP) ma URL
+// i klucz typu publishable — publiczne z zalozenia, i tak laduja w bundlu, jak klucz
+// anon katalogu w `catalogClient.ts`. Wpisujemy je jako ZAPAS: tylko gdy zmiennej nie
+// dal ani `.env`, ani srodowisko buildu (te maja pierwszenstwo). NIGDY sb_secret_.
+const LOVABLE_CLOUD_PUBLIC_ENV = {
+  VITE_SUPABASE_PROJECT_ID: "lcplokzaosphgpwacahe",
+  VITE_SUPABASE_URL: "https://lcplokzaosphgpwacahe.supabase.co",
+  VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_jN3C6TxIa58KJHEn0XbHeg_o0CEdyR4",
+} as const;
+
+function zapasLovableCloud(mode: string): Record<string, string> {
+  const env = loadEnv(mode, process.cwd(), "VITE_");
+  const define: Record<string, string> = {};
+  for (const [key, value] of Object.entries(LOVABLE_CLOUD_PUBLIC_ENV)) {
+    if (!env[key]) define[`import.meta.env.${key}`] = JSON.stringify(value);
+  }
+  return define;
+}
 
 // Arkusz stylow blokuje render, a Vite wstawia go w <head> PO <script type="module">
 // i po piatce modulepreloadow. Na wolnym laczu CSS czeka wtedy w kolejce za ~1 MB
@@ -62,6 +85,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   plugins: [react(), mode === "development" && componentTagger(), mcpPlugin(), cssPrzedModulami()].filter(Boolean),
+  define: zapasLovableCloud(mode),
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

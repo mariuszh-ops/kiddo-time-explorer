@@ -3,12 +3,15 @@ import { toast } from "sonner";
 import {
   clearInvalidSessionFlag,
   onInvalidSession,
+  reportInvalidSession,
+  takeRefreshRejection,
   type InvalidSessionReason,
 } from "@/lib/sessionRecovery";
 import {
   catalogClient as supabase,
   CATALOG_AUTH_STORAGE_KEY,
   getClockSkewMs,
+  PROG_ODCHYLENIA_MS,
 } from "@/lib/catalogClient";
 import { pluralPl } from "@/lib/plural";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
@@ -56,6 +59,15 @@ const SessionExpiredHandler = () => {
     const { data: nasluch } = supabase.auth.onAuthStateChange((zdarzenie) => {
       if (zdarzenie === "SIGNED_IN" || zdarzenie === "TOKEN_REFRESHED") {
         clearInvalidSessionFlag();
+      }
+      // GL-1-005: serwer odrzucil refresh token i auth-js skasowal sesje.
+      // Zwykle „Wyloguj sie”, usuniecie konta i wylogowanie z innej karty
+      // tez daja SIGNED_OUT, ale bez odrzuconego odswiezenia — te mijamy.
+      if (zdarzenie === "SIGNED_OUT" && takeRefreshRejection()) {
+        const odchylenie = getClockSkewMs();
+        reportInvalidSession(
+          odchylenie !== null && Math.abs(odchylenie) > PROG_ODCHYLENIA_MS ? "zegar" : "token"
+        );
       }
     });
     return () => nasluch.subscription.unsubscribe();

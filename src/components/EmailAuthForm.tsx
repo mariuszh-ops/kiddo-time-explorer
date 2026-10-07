@@ -388,7 +388,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-primary hover:underline"
+              className="text-primary underline"
             >
               Regulamin
             </a>{" "}
@@ -398,7 +398,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
-              className="text-primary hover:underline"
+              className="text-primary underline"
             >
               Politykę prywatności
             </a>{" "}

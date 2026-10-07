@@ -168,18 +168,34 @@
 
          Warunek celowo lapie WYLACZNIE tokeny. Linki bledow (#error_code=...)
          i zmiany e-maila (#message=...) zostaja nietkniete, bo czytaja je
-         AuthLinkErrorHandler.tsx i AccountSettingsSection.tsx. -->
+         AuthLinkErrorHandler.tsx i AccountSettingsSection.tsx.
+
+         GL-5-076/077: to samo dla parametrow auth w query — `code` (powrot
+         PKCE), `token_hash` i `type=<typ linku auth>` (reset hasla, signup...).
+         Na czas pageview znikaja z adresu, a src/lib/authHashShield.ts oddaje
+         je 1:1 przed klientem Supabase i przed routerem. Filtr listingu
+         `?type=plac-zabaw` i `utm_*` zostaja nietkniete. -->
     <script>
       (function () {
         try {
-          var h = window.location.hash;
-          if (!h || !/[#&](access_token|refresh_token)=/.test(h)) return;
-          window.__ffAuthFragment = h;
-          window.history.replaceState(
-            null,
-            "",
-            window.location.pathname + window.location.search
-          );
+          var l = window.location;
+          var h = l.hash;
+          var s = l.search;
+          var hashTok = !!h && /[#&](access_token|refresh_token)=/.test(h);
+          var czysty = s;
+          if (s && /[?&](code|token_hash|type)=/.test(s)) {
+            czysty = s.slice(1).split("&").filter(function (p) {
+              var k = p.split("=")[0];
+              if (k === "code" || k === "token_hash") return false;
+              return !/^type=(recovery|signup|invite|magiclink|email_change|email)$/.test(p);
+            }).join("&");
+            czysty = czysty ? "?" + czysty : "";
+          }
+          var searchTok = czysty !== s;
+          if (!hashTok && !searchTok) return;
+          if (hashTok) window.__ffAuthFragment = h;
+          if (searchTok) window.__ffAuthSearch = s;
+          window.history.replaceState(null, "", l.pathname + czysty + (hashTok ? "" : h));
         } catch (e) {
           /* brak History API — zostawiamy adres w spokoju, logowanie wazniejsze */
         }

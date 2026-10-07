@@ -16,12 +16,28 @@ import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { FEATURES } from "@/lib/featureFlags";
-import { Heart, MapPin, Plus, Image, LogIn } from "lucide-react";
+import { Heart, MapPin, Plus, Image, LogIn, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import ActivityCardSkeleton from "@/components/ActivityCardSkeleton";
 import AuthRequiredModal from "@/components/AuthRequiredModal";
 
+// GL-7-029 / GL-2-010: odczyt zapisanych padł — listy nie są wiarygodne, więc
+// zamiast „Twoja lista ulubionych czeka” (fałszywa pustka) trwały stan błędu.
+const SavedLoadError = ({ onRetry }: { onRetry: () => void }) => (
+  <div className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-sm mx-auto px-4">
+    <h2 className="text-lg md:text-xl font-serif font-medium text-foreground mb-2">
+      Nie udało się wczytać zapisanych atrakcji
+    </h2>
+    <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
+      To problem z połączeniem, a nie pusta lista. Spróbuj ponownie za chwilę.
+    </p>
+    <Button onClick={onRetry}>
+      <RefreshCw className="w-4 h-4 mr-2" />
+      Spróbuj ponownie
+    </Button>
+  </div>
+);
 
 const CollectionsView = () => {
   const { favorites, wantToVisit, favoritesCount, wantToVisitCount } = useSavedActivities();
@@ -161,6 +177,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
     favoritesCount,
     wantToVisitCount,
     isLoading,
+    loadError,
+    retryLoadSaved,
   } = useSavedActivities();
 
   const { visitedActivities, visitedCount } = useUserRatings();
@@ -238,13 +256,13 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
               <TabsTrigger value="favorites" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Ulubione
                 <span className="ml-1.5 text-xs text-muted-foreground">
-                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${favoritesCount})`}
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : loadError ? null : `(${favoritesCount})`}
                 </span>
               </TabsTrigger>
               <TabsTrigger value="wantToVisit" className="min-h-11 py-2 px-3 text-sm md:text-base">
                 Chcę odwiedzić
                 <span className="ml-1.5 text-xs text-muted-foreground">
-                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : `(${wantToVisitCount})`}
+                  {isLoading ? <span className="inline-block w-4 h-3 rounded-sm bg-muted-foreground/20 animate-pulse" /> : loadError ? null : `(${wantToVisitCount})`}
                 </span>
               </TabsTrigger>
               <TabsTrigger value="visited" className="min-h-11 py-2 px-3 text-sm md:text-base">
@@ -262,6 +280,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                     <ActivityCardSkeleton key={i} />
                   ))}
                 </div>
+              ) : loadError ? (
+                <SavedLoadError onRetry={retryLoadSaved} />
               ) : favorites.length === 0 ? (
                 <SavedActivitiesEmptyState type="favorites" />
               ) : FEATURES.TRIP_PLANNER ? (
@@ -306,6 +326,8 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                     <ActivityCardSkeleton key={i} />
                   ))}
                 </div>
+              ) : loadError ? (
+                <SavedLoadError onRetry={retryLoadSaved} />
               ) : wantToVisit.length === 0 ? (
                 <SavedActivitiesEmptyState type="wantToVisit" />
               ) : (

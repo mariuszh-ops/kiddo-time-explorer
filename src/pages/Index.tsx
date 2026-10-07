@@ -35,6 +35,7 @@ import { ensureActivitiesLoaded } from "@/data/activities";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { czytajZapisListy, zapiszListe } from "@/lib/homeListReturn";
 import { listaZKadru, stanListyZKadru } from "@/lib/mapListReturn";
+import { LISTING_FILTER_PARAMS } from "@/lib/listingQuery";
 
 /**
  * Po "wstecz" z karty glowna jest ukryta, dopoki lista nie wroci do dawnej
@@ -121,6 +122,12 @@ const Index = () => {
     () => (frazaMapy ? { ...filters, search: frazaMapy } : filters),
     [filters, frazaMapy],
   );
+
+  // GL-5-033/034 (O-F-06 jak w CategoryPage): „/” z parametrem filtra to duplikat
+  // strony głównej → "noindex, follow", canonical `/` zostaje. Ten sam warunek
+  // co region i kategoria: OBECNOŚĆ klucza z LISTING_FILTER_PARAMS; `utm_*`,
+  // `all` i parametry widoku mapy nie wyłączają indeksowania.
+  const isFiltered = LISTING_FILTER_PARAMS.some((key) => searchParams.has(key));
 
   // Pełny listing całej Polski (link "Zobacz wszystkie atrakcje").
   const showAll = searchParams.get("all") === "1";
@@ -346,6 +353,7 @@ const Index = () => {
         title="Atrakcje dla dzieci — sprawdzone przez rodziców"
         description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
         path="/"
+        robots={isFiltered ? "noindex-follow" : "index"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "WebSite",

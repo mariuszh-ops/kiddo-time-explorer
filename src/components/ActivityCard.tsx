@@ -1,5 +1,5 @@
 import { trackEvent } from "@/lib/analytics";
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera, HelpCircle } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
@@ -106,6 +106,12 @@ const ActivityCard = ({
     : `${reviewBucket}${google_review_count != null ? " Google" : ""}`;
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [justToggled, setJustToggled] = useState(false);
+  // GL-1-029: jeden zapis serca naraz. Ref blokuje drugi klik synchronicznie
+  // (podwójny klik = POST, a drugi klik widział już optymistyczne „ulubione”
+  // i wysyłał DELETE). Bez natywnego `disabled`: przycisk siedzi w <Link>,
+  // a klik w zablokowany przycisk nie może przejść do linku karty.
+  const savingRef = useRef(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const isFav = checkIsFavorite(id);
 
@@ -134,11 +140,19 @@ const ActivityCard = ({
       return;
     }
 
-    const newState = await toggleFavorite(id, slug);
-    trackEvent("favorite_toggle", { activityId: id, state: newState ? "add" : "remove" });
-    if (newState) {
-      setJustToggled(true);
-      setTimeout(() => setJustToggled(false), 300);
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setIsSaving(true);
+    try {
+      const newState = await toggleFavorite(id, slug);
+      trackEvent("favorite_toggle", { activityId: id, state: newState ? "add" : "remove" });
+      if (newState) {
+        setJustToggled(true);
+        setTimeout(() => setJustToggled(false), 300);
+      }
+    } finally {
+      savingRef.current = false;
+      setIsSaving(false);
     }
   };
 
@@ -208,6 +222,8 @@ const ActivityCard = ({
               onClick={handleHeartClick}
               className="absolute top-2 right-2 z-10 min-h-11 min-w-11 h-11 w-11 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all hover:bg-black/50 active:scale-90 opacity-80 group-hover:opacity-100"
               aria-label={isFav ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+              aria-busy={isSaving || undefined}
+              aria-disabled={isSaving || undefined}
             >
               <Heart
                 className={cn(

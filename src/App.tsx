@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SavedActivitiesProvider } from "@/contexts/SavedActivitiesContext";
 import { UserRatingsProvider } from "@/contexts/UserRatingsContext";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import FlashToast from "@/components/FlashToast";
 import SubmitActivityFAB from "@/components/SubmitActivityFAB";
 import HomeSkeleton from "@/components/HomeSkeleton";
 import DataGate from "@/components/DataGate";
@@ -136,6 +137,7 @@ const App = () => {
                     <PendingIntentRunner />
                     <Toaster />
                     <Sonner />
+                    <FlashToast />
                     <OfflineIndicator />
                     <SessionExpiredHandler />
                     <AuthLinkErrorHandler />

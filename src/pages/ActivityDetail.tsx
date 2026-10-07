@@ -515,26 +515,27 @@ const ActivityDetail = () => {
         </div>
       </div>
 
-      {/* Mobile: Back & Share button overlay on gallery */}
-      <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4 flex justify-between">
-        <button
-          onClick={handleBack}
-          className="min-h-11 min-w-11 h-11 w-11 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
-          aria-label="Wróć"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </button>
-        <button
-          onClick={handleShare}
-          className="min-h-11 min-w-11 h-11 w-11 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
-          aria-label="Udostępnij"
-        >
-          <Share2 className="w-5 h-5 text-foreground" />
-        </button>
-      </div>
-
       {/* 1. Header section with gallery */}
       <section ref={galleryRef} className="relative">
+        {/* Mobile: Back & Share button overlay on gallery. Anchored to the gallery
+            section (relative), not to the page top — otherwise the sticky global
+            header (z-50) covers both buttons (GL-5-051). */}
+        <div className="md:hidden absolute top-0 left-0 right-0 z-20 p-4 flex justify-between">
+          <button
+            onClick={handleBack}
+            className="min-h-11 min-w-11 h-11 w-11 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+            aria-label="Wróć"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </button>
+          <button
+            onClick={handleShare}
+            className="min-h-11 min-w-11 h-11 w-11 bg-background/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-md active:scale-95 transition-transform"
+            aria-label="Udostępnij"
+          >
+            <Share2 className="w-5 h-5 text-foreground" />
+          </button>
+        </div>
         {/* Sentinel: gdy zniknie z widoku, odsłaniamy pasek szybkich akcji. */}
         <div ref={heroSentinelRef} aria-hidden="true" className="absolute top-40 left-0 h-1 w-1" />
         {/* Image gallery - swipeable carousel on mobile */}
