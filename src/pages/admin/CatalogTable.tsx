@@ -509,6 +509,12 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
           // Row may no longer match queue conditions — refetch to keep counts honest.
           fetchData();
         }}
+        // GOLIVE GL-3-027: rekord zapisany, notatka nie — wiersz w tabeli i liczniki
+        // jak po zapisie, ale drawer zostaje otwarty z wpisaną notatką.
+        onRecordSaved={(updated) => {
+          setRows((prev) => prev.map((r) => (r.place_id === updated.place_id ? updated : r)));
+          fetchData();
+        }}
       />
     </div>
   );
