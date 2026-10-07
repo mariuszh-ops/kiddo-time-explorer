@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AdminCatalogDrawer from "./AdminCatalogDrawer";
+import AdminLoadError from "./AdminLoadError";
 
 const PAGE_SIZE = 50;
 
@@ -84,6 +85,8 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  // Blad odczytu listy — trwaly stan zamiast „Brak rekordów” po zgasnieciu toasta (GL-3-018).
+  const [loadError, setLoadError] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<CatalogRow | null>(null);
 
@@ -115,9 +118,11 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       });
       setRows([]);
       setTotal(0);
+      setLoadError(true);
     } else {
       setRows((data as CatalogRow[]) ?? []);
       setTotal(count ?? 0);
+      setLoadError(false);
     }
     setLoading(false);
   }, [buildQuery, page]);
@@ -279,7 +284,7 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{loading ? "Ładowanie…" : `${total} rekordów`}</span>
+          <span>{loading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} rekordów`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
         <div className="overflow-x-auto">
@@ -423,7 +428,14 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
                   </TableRow>
                 );
               })}
-              {!loading && rows.length === 0 && (
+              {loadError && rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={10} className="p-0">
+                    <AdminLoadError what="danych" onRetry={() => fetchData()} retrying={loading} />
+                  </TableCell>
+                </TableRow>
+              )}
+              {!loading && !loadError && rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
                     Brak rekordów

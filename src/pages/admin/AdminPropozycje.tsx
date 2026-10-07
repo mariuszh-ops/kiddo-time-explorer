@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { Button } from "@/components/ui/button";
+import AdminLoadError from "./AdminLoadError";
 import { Badge } from "@/components/ui/badge";
 import { filterOptions } from "@/data/activities";
 import { REGIONS } from "@/data/regions";
@@ -94,6 +95,8 @@ const AdminPropozycje = () => {
   const [rows, setRows] = useState<Submission[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  // Blad odczytu listy — trwaly stan zamiast „Brak … w tej kolejce” po zgasnieciu toasta (GL-3-046/054/058).
+  const [loadError, setLoadError] = useState(false);
   const [counts, setCounts] = useState<Record<Status, number | null>>({
     "nowe": null,
     "w-toku": null,
@@ -143,9 +146,11 @@ const AdminPropozycje = () => {
       toast.error("Nie udało się pobrać propozycji", { description: error.message });
       setRows([]);
       setTotal(0);
+      setLoadError(true);
       setLoading(false);
       return;
     }
+    setLoadError(false);
     setRows((data ?? []) as Submission[]);
     setTotal(count ?? 0);
     setLoading(false);
@@ -211,11 +216,14 @@ const AdminPropozycje = () => {
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{nowLoading ? "Ładowanie…" : `${total} ${total === 1 ? "propozycja" : "propozycji"}`}</span>
+          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "propozycja" : "propozycji"}`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
 
-        {rows.length === 0 && !loading && (
+        {loadError && rows.length === 0 && (
+          <AdminLoadError what="propozycji" onRetry={() => loadRows()} retrying={loading} />
+        )}
+        {rows.length === 0 && !loading && !loadError && (
           <div className="py-16 text-center text-muted-foreground">Brak propozycji w tej kolejce</div>
         )}
 

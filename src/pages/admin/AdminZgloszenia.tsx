@@ -15,6 +15,7 @@ import {
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { catalogClient, type CatalogRow } from "@/lib/catalogClient";
 import { Button } from "@/components/ui/button";
+import AdminLoadError from "./AdminLoadError";
 import { Badge } from "@/components/ui/badge";
 import {
   AlertDialog,
@@ -74,6 +75,8 @@ const AdminZgloszenia = () => {
   const [rows, setRows] = useState<Report[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  // Blad odczytu listy — trwaly stan zamiast „Brak … w tej kolejce” po zgasnieciu toasta (GL-3-046/054/058).
+  const [loadError, setLoadError] = useState(false);
   const [counts, setCounts] = useState<Record<Status, number | null>>({
     "nowe": null,
     "w-toku": null,
@@ -127,9 +130,11 @@ const AdminZgloszenia = () => {
       toast.error("Nie udało się pobrać zgłoszeń", { description: error.message });
       setRows([]);
       setTotal(0);
+      setLoadError(true);
       setLoading(false);
       return;
     }
+    setLoadError(false);
     const list = (data ?? []) as Report[];
     setRows(list);
     setTotal(count ?? 0);
@@ -244,11 +249,14 @@ const AdminZgloszenia = () => {
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{nowLoading ? "Ładowanie…" : `${total} ${total === 1 ? "zgłoszenie" : "zgłoszeń"}`}</span>
+          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "zgłoszenie" : "zgłoszeń"}`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
 
-        {rows.length === 0 && !loading && (
+        {loadError && rows.length === 0 && (
+          <AdminLoadError what="zgłoszeń" onRetry={() => loadRows()} retrying={loading} />
+        )}
+        {rows.length === 0 && !loading && !loadError && (
           <div className="py-16 text-center text-muted-foreground">Brak zgłoszeń w tej kolejce</div>
         )}
 
