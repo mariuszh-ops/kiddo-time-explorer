@@ -135,14 +135,17 @@ const AdminLayout = () => {
           <header className="bg-card border-b border-border sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between gap-4">
               <h1 className="text-lg font-semibold">Panel FamilyFun</h1>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-muted-foreground truncate max-w-[240px]">
+              {/* GL-3-007: na telefonie e-mail (do 240 px) wypychal „Wyloguj” za prawa
+                  krawedz (koniec wiersza 397 px na 320 i 390). Ponizej `sm` e-mail ukryty,
+                  przycisk nie kurczy sie; od `sm` uklad jak wczesniej. */}
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="hidden sm:block text-sm text-muted-foreground truncate min-w-0 max-w-[240px]">
                   {user?.email}
                 </span>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="tap44"
+                  className="tap44 shrink-0"
                   onClick={async () => {
                     await signOut();
                     navigate("/", { replace: true });
