@@ -6,7 +6,7 @@
 // Klucz anon jest publiczny — może żyć w kodzie frontu.
 import { createClient } from "@supabase/supabase-js";
 import { displayLocation, formatAddress } from "@/lib/address";
-import { reportInvalidSession } from "@/lib/sessionRecovery";
+import { noteRefreshResponse, reportInvalidSession } from "@/lib/sessionRecovery";
 
 const CATALOG_URL = "https://zpqpgatnnbojgiejmtpt.supabase.co";
 const CATALOG_ANON_KEY =
@@ -125,7 +125,7 @@ async function zmierzOdchylenieSonda(): Promise<void> {
 }
 
 /** Powyzej tego odchylenia winimy zegar, a nie wygasniecie sesji. */
-const PROG_ODCHYLENIA_MS = 60_000;
+export const PROG_ODCHYLENIA_MS = 60_000;
 /** Ile odswiezen w oknie uznajemy jeszcze za normalne. */
 const LIMIT_REFRESHY = 3;
 const OKNO_REFRESHY_MS = 60_000;
@@ -198,7 +198,12 @@ const catalogFetch: typeof fetch = async (input, init) => {
 
   const response = await fetch(input, init);
   zapiszOdchylenieZegara(response);
-  if (jestOdswiezeniemTokenu(url)) odpowiedziNaRefresh += 1;
+  if (jestOdswiezeniemTokenu(url)) {
+    odpowiedziNaRefresh += 1;
+    // GL-1-005: 4xx = serwer odrzucil refresh token; jesli auth-js zaraz
+    // skasuje sesje, SessionExpiredHandler pokaze komunikat o wygasnieciu.
+    noteRefreshResponse(response.status);
+  }
   if (response.status !== 401 || isAuthEndpoint) return response;
 
   let code = "";
