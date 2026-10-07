@@ -1,8 +1,9 @@
 /**
  * A1000-T, druga polowa oslony zaczetej w index.html.
  *
- * index.html zdejmuje z adresu fragment z tokenami, zanim wykona sie skrypt
- * Plausible. Tutaj oddajemy go z powrotem — i MUSI sie to stac, zanim powstanie
+ * index.html zdejmuje z adresu fragment z tokenami (oraz, od GL-5-076/077,
+ * parametry query `code` / `token_hash` / `type=<typ linku auth>`), zanim
+ * wykona sie skrypt Plausible. Tutaj oddajemy je z powrotem — i MUSI sie to stac, zanim powstanie
  * klient Supabase, bo to jego `detectSessionInUrl` zaklada sesje z linku
  * potwierdzajacego, a potem sam czysci adres.
  *
@@ -18,18 +19,24 @@
 declare global {
   interface Window {
     __ffAuthFragment?: string;
+    /** GL-5-076/077: oryginalne query z `code` / `token_hash` / `type=recovery`. */
+    __ffAuthSearch?: string;
   }
 }
 
 if (typeof window !== "undefined") {
   const fragment = window.__ffAuthFragment;
-  if (fragment) {
+  const search = window.__ffAuthSearch;
+  if (fragment || search !== undefined) {
     delete window.__ffAuthFragment;
+    delete window.__ffAuthSearch;
     try {
       window.history.replaceState(
         null,
         "",
-        window.location.pathname + window.location.search + fragment
+        window.location.pathname +
+          (search ?? window.location.search) +
+          (fragment || window.location.hash)
       );
     } catch {
       // Brak History API — sesji z linku nie da sie wtedy zalozyc tak czy tak.
