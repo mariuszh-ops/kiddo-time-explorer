@@ -15,6 +15,12 @@ interface State {
 }
 
 class ErrorBoundary extends Component<Props, State> {
+  // Ekran „Coś poszło nie tak” idzie z HTTP 200 (SPA), więc bez noindex Google
+  // może go zindeksować zamiast karty (GOLIVE GL-7-004). Meta wstawiamy ręcznie,
+  // a nie przez <Helmet>: zewnętrzna granica w App.tsx leży NAD HelmetProvider.
+  // Helmet zarządza tylko tagami z `data-rh`, więc tego tagu nie skasuje.
+  private robotsMeta: HTMLMetaElement | null = null;
+
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };
@@ -24,9 +30,43 @@ class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
+  componentDidMount() {
+    this.syncRobotsMeta();
+  }
+
+  componentDidUpdate() {
+    this.syncRobotsMeta();
+  }
+
+  componentWillUnmount() {
+    this.removeRobotsMeta();
+  }
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("ErrorBoundary caught:", error, errorInfo);
     reportClientError("boundary", error, errorInfo.componentStack ?? undefined);
+  }
+
+  // Tylko pełnoekranowy fallback: padnięta sekcja (np. blog na „/”) nie może
+  // wyrzucić z indeksu całej, poza tym działającej strony.
+  private syncRobotsMeta() {
+    const showsPageFallback = this.state.hasError && this.props.fallbackLevel !== "section";
+    if (!showsPageFallback) {
+      this.removeRobotsMeta();
+      return;
+    }
+    if (this.robotsMeta || typeof document === "undefined") return;
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex, nofollow";
+    meta.setAttribute("data-error-boundary", "");
+    document.head.appendChild(meta);
+    this.robotsMeta = meta;
+  }
+
+  private removeRobotsMeta() {
+    this.robotsMeta?.remove();
+    this.robotsMeta = null;
   }
 
   handleReset = () => {
