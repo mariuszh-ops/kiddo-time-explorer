@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { ExternalLink, MapPin, X, Save, Loader2 } from "lucide-react";
 import {
   Sheet,
@@ -234,6 +235,12 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
       setNoteLoaded(true);
     })();
   }, [row]);
+
+  // GOLIVE GL-3-020: „wstecz" przy otwartym drawerze zamyka go i zostawia w
+  // panelu (wpis-atrapa w historii, jak dialogi w GL-4-056 i GL-2-037).
+  // Anuluj/X/Esc/zapis zamykają drawer przez `onClose`/`onSaved` → `row` null,
+  // a hook sam zdejmuje atrapę. Hook PRZED wczesnym returnem (reguły hooków).
+  useCloseOnBack(row !== null, onClose);
 
   if (!row || !form) {
     return (
