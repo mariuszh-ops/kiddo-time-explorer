@@ -346,10 +346,10 @@ const AdminZgloszenia = () => {
               : ""}
           </span>
           <div className="flex gap-1">
-            <Button variant="outline" size="sm" className="tap44" disabled={page <= 1} onClick={() => setPage(page - 1)}>
+            <Button variant="outline" size="sm" className="tap44" aria-label="Poprzednia strona" disabled={page <= 1} onClick={() => setPage(page - 1)}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button variant="outline" size="sm" className="tap44" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
+            <Button variant="outline" size="sm" className="tap44" aria-label="Następna strona" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
