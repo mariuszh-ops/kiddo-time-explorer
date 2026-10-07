@@ -267,16 +267,23 @@ const ActivityDetail = () => {
 
   const handleShare = async () => {
     if (!activity) return;
+    const url = window.location.href;
     const result = await share({
       title: activity.title,
       text: `Sprawdź "${activity.title}" na FamilyFun — ${activity.location}`,
-      url: window.location.href,
+      url,
     });
-    if (result) {
+    if (result === 'native' || result === 'clipboard') {
       trackEvent("share", { activityId: activity.id, channel: result });
     }
     if (result === 'clipboard') {
       toast.success("Link skopiowany do schowka", { duration: 2000 });
+    } else if (result === 'failed') {
+      // GL-4-024: no Web Share and the clipboard refused — never fail silently.
+      toast.error("Nie udało się skopiować linku", {
+        description: `Skopiuj adres ręcznie: ${url}`,
+        duration: 10000,
+      });
     }
   };
 
