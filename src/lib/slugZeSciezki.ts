@@ -52,3 +52,27 @@ export function kanonicznySlugKategorii(
   if (kategoria === categorySlug) return null;
   return znanaKategoria(kategoria) ? kategoria : null;
 }
+
+/**
+ * GL-6-012/013/016: ścieżka kanoniczna dla `/atrakcje/:slug` albo `null`, gdy
+ * slug już jest kanoniczny.
+ *
+ * Slug z wielkiej litery albo z polskimi znakami (/atrakcje/Mazowieckie,
+ * /atrakcje/Centrum-Nauki-Kopernik-Warszawa, /atrakcje/Łódź) składamy jak
+ * w `/:region`. Slugi atrakcji i województw w danych to zawsze małe litery
+ * ASCII, więc złożony slug trafia w istniejącą kartę albo region, a nieznany
+ * dalej kończy się 404. Stary slug miasta idzie od razu na województwo, także
+ * po złożeniu (/atrakcje/Łódź → /atrakcje/lodzkie jednym skokiem). Cel jest
+ * już złożony, a `zlozSlug` to punkt stały, więc przekierowanie się nie zapętla.
+ */
+export function kanonicznaSciezkaAtrakcji(
+  slug: string | undefined,
+  staryMiastoNaRegion: Record<string, string>,
+): string | null {
+  if (!slug) return null;
+  const zlozony = zlozSlug(slug);
+  const docelowy = Object.prototype.hasOwnProperty.call(staryMiastoNaRegion, zlozony)
+    ? staryMiastoNaRegion[zlozony]
+    : zlozony;
+  return docelowy === slug ? null : `/atrakcje/${docelowy}`;
+}
