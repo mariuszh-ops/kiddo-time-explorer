@@ -3,6 +3,8 @@ import { useSearchParams } from "react-router-dom";
 import { catalogClient } from "@/lib/catalogClient";
 import CatalogTable, { type CatalogQuery } from "./CatalogTable";
 import { cn } from "@/lib/utils";
+import { AlertTriangle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type QueueId =
   | "no-image"
@@ -67,15 +69,25 @@ const QUEUES: Queue[] = [
 const baseVisible = (q: CatalogQuery) =>
   q.eq("published", true).eq("admin_hidden", false);
 
+/** Licznik, ktorego odczyt sie nie udal (GL-3-041). Brak klucza = jeszcze sie liczy („…"). */
+const BLAD = "blad" as const;
+
+const ZnacznikBledu = () => (
+  <span className="text-destructive font-medium" data-licznik-blad title="Nie udało się policzyć">
+    błąd
+  </span>
+);
+
 const AdminDoPrzejrzenia = () => {
   const [sp, setSp] = useSearchParams();
   const active = (sp.get("q") as QueueId) || QUEUES[0].id;
-  const [counts, setCounts] = useState<Record<string, number | null>>({});
+  const [counts, setCounts] = useState<Record<string, number | typeof BLAD>>({});
   // Licznik „Sprawdzone": [ile ma reviewed_at, ile jest widocznych].
   // Obie liczby na TEJ SAMEJ populacji co kolejki wyzej (published
   // AND NOT admin_hidden) — mieszanie populacji w jednym boksie to dokladnie
   // blad, ktory ZA-I-08 znalazl w rpc/admin_stats (6086 vs widoczne).
-  const [reviewed, setReviewed] = useState<[number, number] | null>(null);
+  const [reviewed, setReviewed] = useState<[number, number] | typeof BLAD | null>(null);
+  const [retrying, setRetrying] = useState(false);
 
   const setActive = (id: QueueId) => {
     const next = new URLSearchParams(sp);
@@ -93,7 +105,7 @@ const AdminDoPrzejrzenia = () => {
         q = baseVisible(q);
         q = queue.apply(q);
         const { count, error } = await q;
-        return [queue.id, error ? null : count ?? 0] as const;
+        return [queue.id, error ? BLAD : count ?? 0] as const;
       }),
     );
     setCounts(Object.fromEntries(results));
@@ -110,8 +122,18 @@ const AdminDoPrzejrzenia = () => {
       return error ? null : count ?? 0;
     };
     const [sprawdzone, widoczne] = await Promise.all([licz(true), licz(false)]);
-    setReviewed(sprawdzone == null || widoczne == null ? null : [sprawdzone, widoczne]);
+    setReviewed(sprawdzone == null || widoczne == null ? BLAD : [sprawdzone, widoczne]);
   }, []);
+
+  // Ponowienie zostawia stare wartosci (takze „błąd") do konca odczytu — bez migania „…".
+  const retryCounts = async () => {
+    setRetrying(true);
+    try {
+      await Promise.all([loadCounts(), loadReviewed()]);
+    } finally {
+      setRetrying(false);
+    }
+  };
 
   useEffect(() => {
     loadCounts();
@@ -119,6 +141,8 @@ const AdminDoPrzejrzenia = () => {
   }, [loadCounts, loadReviewed]);
 
   const queue = QUEUES.find((q) => q.id === active) ?? QUEUES[0];
+  const countsFailed =
+    reviewed === BLAD || Object.values(counts).some((c) => c === BLAD);
 
   const buildQuery = useCallback(
     (q: CatalogQuery) => {
@@ -141,7 +165,7 @@ const AdminDoPrzejrzenia = () => {
           <div className="text-xs whitespace-nowrap">
             <span className="text-muted-foreground">Odwiedzone przez redakcję: </span>
             <strong className="tabular-nums">
-              {reviewed == null ? "…" : `${reviewed[0]} z ${reviewed[1]}`}
+              {reviewed == null ? "…" : reviewed === BLAD ? <ZnacznikBledu /> : `${reviewed[0]} z ${reviewed[1]}`}
             </strong>
           </div>
         </div>
@@ -167,12 +191,25 @@ const AdminDoPrzejrzenia = () => {
                     isActive ? "text-primary/80" : "text-muted-foreground",
                   )}
                 >
-                  {count == null ? "…" : count}
+                  {count === undefined ? "…" : count === BLAD ? <ZnacznikBledu /> : count}
                 </span>
               </button>
             );
           })}
         </div>
+        {countsFailed && (
+          <div
+            role="alert"
+            data-liczniki-blad
+            className="mt-2 flex flex-wrap items-center gap-2 text-sm text-destructive"
+          >
+            <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
+            <span>Nie udało się pobrać liczników — „błąd” to nie zero.</span>
+            <Button variant="outline" size="sm" className="tap44" onClick={retryCounts} disabled={retrying}>
+              {retrying ? "Liczę…" : "Policz ponownie"}
+            </Button>
+          </div>
+        )}
       </div>
 
       <CatalogTable
