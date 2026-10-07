@@ -4,6 +4,7 @@ import useEmblaCarousel from "embla-carousel-react";
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getReturnFocusTarget, restoreFocus } from "@/lib/returnFocus";
+import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 
 
 interface ImageLightboxProps {
@@ -34,6 +35,8 @@ const ImageLightbox = ({
     startIndex: initialIndex
   });
 
+  // GL-4-004/005: „wstecz" przy otwartej galerii zamyka galerie, karta zostaje.
+  useCloseOnBack(isOpen, onClose);
 
   // Update carousel when opening with different index
   useEffect(() => {
