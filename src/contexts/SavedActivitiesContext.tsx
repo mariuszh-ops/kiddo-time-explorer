@@ -25,6 +25,7 @@ import { toast } from "sonner";
 
 const SAVE_ERROR = "Nie udało się zapisać. Spróbuj ponownie.";
 const notifySaveError = () => toast.error(SAVE_ERROR);
+const LOAD_ERROR = "Nie udało się wczytać zapisanych atrakcji.";
 
 // U-B-01: PostgREST domyślnie tnie odpowiedź na 1000 wierszy, a płaski
 // `.select().eq()` nie miał ani `.range()`, ani informacji o obcięciu — konto
@@ -57,6 +58,18 @@ async function fetchAllSavedRows(userId: string): Promise<SavedRowsResult> {
     if (data.length < SAVED_PAGE_SIZE) break;
   }
   return { rows, error: null };
+}
+
+function splitSavedRows(rows: SavedRow[]): { fav: Set<number>; wtv: Set<number> } {
+  const fav = new Set<number>();
+  const wtv = new Set<number>();
+  for (const row of rows) {
+    const id = idFromSlug(row.activity_slug);
+    if (id == null) continue;
+    if (row.kind === "favorite") fav.add(id);
+    else if (row.kind === "want_to_visit") wtv.add(id);
+  }
+  return { fav, wtv };
 }
 
 // Przyszła struktura kolekcji (FEATURES.COLLECTIONS):
@@ -100,6 +113,14 @@ interface SavedActivitiesContextType {
   isLoading: boolean;
   /** Ponowne pobranie zapisanych list z serwera (np. po wykonaniu odroczonej intencji gościa). */
   refreshSaved: () => Promise<void>;
+  /**
+   * GL-7-029 / GL-2-010: odczyt zapisanych z serwera się nie udał. Listy i liczniki
+   * NIE są wtedy wiarygodne (zostaje lokalne lustro albo nic), więc UI pokazuje
+   * stan błędu zamiast „pustej listy”.
+   */
+  loadError: boolean;
+  /** Ponowna próba odczytu po błędzie (przycisk „Spróbuj ponownie”). */
+  retryLoadSaved: () => Promise<void>;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
@@ -110,6 +131,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   // re-render (favorites/wantToVisit liczone z getActivities()).
   const dataStatus = useDataStatus();
   const [isLoadingSaved, setIsLoadingSaved] = useState(false);
+  const [loadError, setLoadError] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
   );
@@ -192,6 +214,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         setFavoriteIds(new Set(justLoggedOut ? [] : getItem<number[]>(STORAGE_KEYS.FAVORITES, [])));
         setWantToVisitIds(new Set(justLoggedOut ? [] : getItem<number[]>(STORAGE_KEYS.WANT_TO_VISIT, [])));
         setIsLoadingSaved(false);
+        setLoadError(false);
         return;
       }
 
@@ -266,21 +289,16 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       const { rows, error } = await fetchAllSavedRows(user.id);
       if (cancelled) return;
       if (error || !rows) {
-        toast.error("Nie udało się wczytać zapisanych atrakcji.");
+        toast.error(LOAD_ERROR);
+        setLoadError(true);
         setIsLoadingSaved(false);
         return;
       }
 
-      const fav = new Set<number>();
-      const wtv = new Set<number>();
-      for (const row of rows) {
-        const id = idFromSlug(row.activity_slug);
-        if (id == null) continue;
-        if (row.kind === "favorite") fav.add(id);
-        else if (row.kind === "want_to_visit") wtv.add(id);
-      }
+      const { fav, wtv } = splitSavedRows(rows);
       setFavoriteIds(fav);
       setWantToVisitIds(wtv);
+      setLoadError(false);
       setIsLoadingSaved(false);
     };
 
@@ -475,6 +493,27 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
     // Nierozwiązane slugi (katalog niekompletny) — nie gubimy stanu optymistycznego.
     setFavoriteIds((prev) => (unresolved ? new Set([...prev, ...fav]) : fav));
     setWantToVisitIds((prev) => (unresolved ? new Set([...prev, ...wtv]) : wtv));
+    setLoadError(false);
+  }, [user]);
+
+  const retryLoadSaved = useCallback(async () => {
+    if (!user) return;
+    const requestedFor = user.id;
+    setLoadError(false);
+    setIsLoadingSaved(true);
+    const { rows, error } = await fetchAllSavedRows(requestedFor);
+    // Konto zmieniło się w trakcie — wynik dotyczy poprzedniego użytkownika.
+    if (previousUserIdRef.current !== requestedFor) return;
+    if (error || !rows) {
+      toast.error(LOAD_ERROR);
+      setLoadError(true);
+      setIsLoadingSaved(false);
+      return;
+    }
+    const { fav, wtv } = splitSavedRows(rows);
+    setFavoriteIds(fav);
+    setWantToVisitIds(wtv);
+    setIsLoadingSaved(false);
   }, [user]);
 
   return (
@@ -493,6 +532,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         wantToVisitCount: wantToVisit.length,
         isLoading: dataStatus !== "success" || isLoadingSaved,
         refreshSaved,
+        loadError,
+        retryLoadSaved,
       }}
     >
       {children}
