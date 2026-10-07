@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
 import { sanitizeSearchTerm } from "@/lib/searchConfig";
+import { readDeadline } from "@/lib/readDeadline";
 import type { Activity } from "@/data/activities";
 
 const QUERY_TIMEOUT_MS = 15000;
@@ -127,12 +128,21 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
  * komunikat o błędzie zamiast udawać 404 (audyt: J-02).
  */
 export async function fetchActivityBySlug(slug: string): Promise<Activity | null> {
-  const { data, error } = await catalogClient
-    .from("public_activities")
-    .select("*")
-    .eq("slug", slug)
-    .limit(1);
-  if (error) throw error;
+  // GL-7-026: zawieszony serwer = blad po 10 s zamiast szkieletu ok. 67 s.
+  const deadline = readDeadline();
+  let data: unknown;
+  try {
+    const res = await catalogClient
+      .from("public_activities")
+      .select("*")
+      .eq("slug", slug)
+      .limit(1)
+      .abortSignal(deadline.signal);
+    if (res.error) throw res.error;
+    data = res.data;
+  } finally {
+    deadline.clear();
+  }
   // Poprawna odpowiedź to zawsze tablica. Cokolwiek innego (np. body `null`
   // z uszkodzonej odpowiedzi 200) to awaria, nie brak atrakcji.
   if (!Array.isArray(data)) throw new Error("Nieprawidłowa odpowiedź serwera katalogu");

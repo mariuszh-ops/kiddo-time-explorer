@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { requestGuestMigrationConsent } from "@/lib/guestMigration";
 import { catalogClient as supabase } from "@/lib/catalogClient";
+import { readDeadline } from "@/lib/readDeadline";
 import { useAuth } from "@/contexts/AuthContext";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { toast } from "sonner";
@@ -45,13 +46,22 @@ type SavedRowsResult =
 async function fetchAllSavedRows(userId: string): Promise<SavedRowsResult> {
   const rows: SavedRow[] = [];
   for (let from = 0; ; from += SAVED_PAGE_SIZE) {
-    const { data, error } = await supabase
-      .from("saved_activities")
-      .select("activity_slug, kind")
-      .eq("user_id", userId)
-      .order("activity_slug", { ascending: true })
-      .order("kind", { ascending: true })
-      .range(from, from + SAVED_PAGE_SIZE - 1);
+    // GL-7-030: zawieszony serwer = blad po 10 s na strone zamiast ok. 68 s.
+    const deadline = readDeadline();
+    let page;
+    try {
+      page = await supabase
+        .from("saved_activities")
+        .select("activity_slug, kind")
+        .eq("user_id", userId)
+        .order("activity_slug", { ascending: true })
+        .order("kind", { ascending: true })
+        .range(from, from + SAVED_PAGE_SIZE - 1)
+        .abortSignal(deadline.signal);
+    } finally {
+      deadline.clear();
+    }
+    const { data, error } = page;
     if (error) return { rows: null, error };
     if (!data || data.length === 0) break;
     rows.push(...data);
