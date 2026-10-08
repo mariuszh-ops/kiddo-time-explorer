@@ -5,6 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 interface Props {
   currentCitySlug: string;
@@ -27,6 +28,11 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
     if (open) ensureActivitiesLoaded();
   }, [open]);
 
+  // AF-1-081: katalog dociąga się asynchronicznie PO otwarciu menu — bez
+  // subskrypcji statusu liczniki zostawały policzone z pustej tablicy, czyli "(0)".
+  const dataStatus = useDataStatus();
+  const countsReady = dataStatus === "success";
+
   const cityCounts = useMemo(() => {
     const all = getActivities().filter(a => FEATURES.EVENTS || !a.isEvent);
     const counts: Record<string, number> = {};
@@ -34,7 +40,7 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
       counts[slug] = all.filter(a => a.city === slug).length;
     }
     return counts;
-  }, [open]);
+  }, [open, dataStatus]);
 
   const currentLabel = cityLabels[currentCitySlug]?.nominative ?? currentCitySlug;
 
@@ -60,7 +66,7 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
             const label = cityLabels[slug]?.nominative ?? slug;
             const count = cityCounts[slug] ?? 0;
             const isActive = slug === currentCitySlug;
-            const isDimmed = count === 0;
+            const isDimmed = countsReady && count === 0;
 
             return (
               <Link
@@ -78,7 +84,7 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
                 }}
               >
                 <span>{label}</span>
-                <span className="text-muted-foreground text-xs ml-3">({count})</span>
+                {countsReady && <span className="text-muted-foreground text-xs ml-3">({count})</span>}
               </Link>
             );
           })}

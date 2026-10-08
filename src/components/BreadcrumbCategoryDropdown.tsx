@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { useDataStatus } from "@/hooks/useDataStatus";
 
 interface Props {
   citySlug: string;
@@ -27,11 +28,16 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
     if (open) ensureActivitiesLoaded();
   }, [open]);
 
+  // AF-1-081: katalog dociąga się asynchronicznie PO otwarciu menu — bez
+  // subskrypcji statusu liczniki zostawały policzone z pustej tablicy, czyli "(0)".
+  const dataStatus = useDataStatus();
+  const countsReady = dataStatus === "success";
+
   const cityActivities = useMemo(() => {
     return getActivities()
       .filter(a => FEATURES.EVENTS || !a.isEvent)
       .filter(a => a.city === citySlug);
-  }, [citySlug, open]);
+  }, [citySlug, open, dataStatus]);
 
   const typeOptions = filterOptions.type;
   const allCount = cityActivities.length;
@@ -65,7 +71,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
             }}
           >
             <span>Wszystkie</span>
-            <span className="text-muted-foreground text-xs ml-3">({allCount})</span>
+            {countsReady && <span className="text-muted-foreground text-xs ml-3">({allCount})</span>}
           </Link>
 
           {/* Separator */}
@@ -84,11 +90,11 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
                 style={{
                   color: isActive ? "#2F6B4F" : undefined,
                   fontWeight: isActive ? 600 : 400,
-                  opacity: count === 0 ? 0.5 : 1,
+                  opacity: countsReady && count === 0 ? 0.5 : 1,
                 }}
               >
                 <span>{opt.label}</span>
-                <span className="text-muted-foreground text-xs ml-3">({count})</span>
+                {countsReady && <span className="text-muted-foreground text-xs ml-3">({count})</span>}
               </Link>
             );
           })}
