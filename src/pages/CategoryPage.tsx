@@ -13,7 +13,7 @@ import SEOHead from "@/components/SEOHead";
 import SeoPagination from "@/components/SeoPagination";
 import { filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
-import { activityWord } from "@/lib/plural";
+import { activityWord, formatCountPl } from "@/lib/plural";
 import { LEGACY_CITY_TO_REGION, REGION_BY_SLUG, REGION_SLUGS } from "@/data/regions";
 import { REGION_SEO_DESCRIPTIONS } from "@/data/regionSeo";
 import {
@@ -539,7 +539,7 @@ const CategoryPage = () => {
 
   const combinedJsonLd = [itemListJsonLd, breadcrumbJsonLd];
 
-  const countLabel = `${total} ${pluralizeActivities(total)} w ${capitalize(effectiveCityLabel.locative)}`;
+  const countLabel = `${formatCountPl(total)} ${pluralizeActivities(total)} w ${capitalize(effectiveCityLabel.locative)}`;
 
   // Kontekst wyszukiwania: chipy do usunięcia + wyjście na wyniki ogólnopolskie.
   // FMN-B52: każdy link zdejmuje tylko swój filtr — wiek, kategoria i sort zostają
@@ -829,7 +829,7 @@ const CategoryPage = () => {
                 variant="outline"
                 size="lg"
               >
-                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${Math.max(0, total - firstPage * 24 - activities.length)})`}
+                {loadingMore ? "Wczytywanie…" : `Pokaż więcej (${formatCountPl(Math.max(0, total - firstPage * 24 - activities.length))})`}
               </Button>
             </div>
           )}

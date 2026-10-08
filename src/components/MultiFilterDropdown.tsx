@@ -3,6 +3,7 @@ import { useFilterListbox } from "@/hooks/useFilterListbox";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatCountPl } from "@/lib/plural";
 
 interface FilterOption {
   value: string;
@@ -124,7 +125,7 @@ const MultiFilterDropdown = ({
               <span>{option.label}</span>
               <div className="flex items-center gap-2">
                 {option.count != null && (
-                  <span className="text-xs text-muted-foreground">({option.count})</span>
+                  <span className="text-xs text-muted-foreground">({formatCountPl(option.count)})</span>
                 )}
                 {isSelected && <Check className="w-4 h-4 text-primary" />}
               </div>

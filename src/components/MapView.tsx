@@ -38,7 +38,7 @@ import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } f
 import { formatRatingPl } from "@/lib/formatRating";
 import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
-import { activityCount } from "@/lib/plural";
+import { activityCount, formatCountPl } from "@/lib/plural";
 
 /** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
 const PORCJA_LISTY = 30;
@@ -1683,7 +1683,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           className="absolute top-3 left-3 z-[1000] bg-background/95 hover:bg-background shadow-lg rounded-full px-3.5 py-2 flex items-center gap-2 border border-border text-sm font-medium cursor-pointer"
         >
           <LayoutGrid className="w-4 h-4" />
-          {mapPinsFailed || wczytuje ? "Lista" : `Lista · ${displayedActivities.length}`}
+          {mapPinsFailed || wczytuje ? "Lista" : `Lista · ${formatCountPl(displayedActivities.length)}`}
         </button>
 
         {/* Draggable bottom sheet */}
@@ -1802,7 +1802,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
                       onClick={() => setListLimit((n) => n + PORCJA_LISTY)}
                       className="w-full py-2.5 rounded-xl border border-border bg-background hover:bg-muted text-sm font-medium text-foreground cursor-pointer"
                     >
-                      Pokaż więcej ({zostaloWLiscie})
+                      Pokaż więcej ({formatCountPl(zostaloWLiscie)})
                     </button>
                   )}
                 </>

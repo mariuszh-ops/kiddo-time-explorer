@@ -9,6 +9,7 @@ import SearchAutocomplete from "@/components/SearchAutocomplete";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
+import { formatCountPl } from "@/lib/plural";
 
 interface FilterOption {
   value: string;
@@ -63,7 +64,7 @@ const FilterOptionRow = ({
     type="button"
     role="checkbox"
     aria-checked={checked}
-    aria-label={count != null ? `${label} (${count})` : label}
+    aria-label={count != null ? `${label} (${formatCountPl(count)})` : label}
     onClick={onToggle}
     className="flex items-center justify-between w-full min-h-11 py-2.5 px-3 rounded-lg hover:bg-muted/50 active:bg-muted transition-colors"
   >
@@ -79,7 +80,7 @@ const FilterOptionRow = ({
       </span>
       <span className="text-sm text-foreground">{label}</span>
     </span>
-    {count != null && <span className="text-xs text-muted-foreground">({count})</span>}
+    {count != null && <span className="text-xs text-muted-foreground">({formatCountPl(count)})</span>}
   </button>
 );
 
@@ -374,7 +375,7 @@ const MobileFilterSheet = ({
               onClick={handleApply}
               className="flex-1"
             >
-              {filterCounts.filtered != null ? `Pokaż wyniki (${filterCounts.filtered})` : "Pokaż wyniki"}
+              {filterCounts.filtered != null ? `Pokaż wyniki (${formatCountPl(filterCounts.filtered)})` : "Pokaż wyniki"}
             </Button>
           </div>
         </div>

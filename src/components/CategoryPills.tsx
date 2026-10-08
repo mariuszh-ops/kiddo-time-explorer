@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { categoryConfigs, getCategoryCount } from "@/data/categoryPages";
 import { getActivities } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
+import { formatCountPl } from "@/lib/plural";
 
 interface Props {
   citySlug: string;
@@ -30,7 +31,7 @@ const CategoryPills = ({ citySlug, activeCategorySlug }: Props) => {
             : { background: "#F3F7F2", color: "#5F6F66", border: "1px solid #DCE6DA", fontWeight: 400 }
         }
       >
-        Wszystkie ({allCount})
+        Wszystkie ({formatCountPl(allCount)})
       </Link>
 
       {subCategories.map(cat => {
@@ -54,7 +55,7 @@ const CategoryPills = ({ citySlug, activeCategorySlug }: Props) => {
                   }
             }
           >
-            {cat.emoji} {cat.label} ({count})
+            {cat.emoji} {cat.label} ({formatCountPl(count)})
           </Link>
         );
       })}

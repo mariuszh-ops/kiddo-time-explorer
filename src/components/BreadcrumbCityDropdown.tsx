@@ -6,6 +6,7 @@ import { getActivities, ensureActivitiesLoaded } from "@/data/activities";
 import { cityLabels } from "@/data/categoryPages";
 import { FEATURES } from "@/lib/featureFlags";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { formatCountPl } from "@/lib/plural";
 
 interface Props {
   currentCitySlug: string;
@@ -84,7 +85,7 @@ const BreadcrumbCityDropdown = ({ currentCitySlug }: Props) => {
                 }}
               >
                 <span>{label}</span>
-                {countsReady && <span className="text-muted-foreground text-xs ml-3">({count})</span>}
+                {countsReady && <span className="text-muted-foreground text-xs ml-3">({formatCountPl(count)})</span>}
               </Link>
             );
           })}

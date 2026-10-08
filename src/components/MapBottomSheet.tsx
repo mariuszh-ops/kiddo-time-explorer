@@ -9,7 +9,7 @@ import MapCategoryChips from "./MapCategoryChips";
 import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
-import { activityCount } from "@/lib/plural";
+import { activityCount, formatCountPl } from "@/lib/plural";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -495,7 +495,7 @@ export default function MapBottomSheet({
                   onClick={() => setListLimit((n) => n + PORCJA_LISTY)}
                   className="w-full py-2.5 rounded-xl border border-border bg-background hover:bg-muted text-sm font-medium text-foreground cursor-pointer"
                 >
-                  Pokaż więcej ({zostalo})
+                  Pokaż więcej ({formatCountPl(zostalo)})
                 </button>
               )}
             </div>

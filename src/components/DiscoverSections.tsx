@@ -36,7 +36,7 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
   </div>
 );
 
-import { activityWord as pluralize } from "@/lib/plural";
+import { activityWord as pluralize, formatCountPl } from "@/lib/plural";
 
 const DiscoverSections = (_props: DiscoverSectionsProps) => {
   const { counts: homeCounts } = useHomeCounts();
@@ -129,7 +129,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
                     <span aria-hidden="true" className="text-3xl mb-2 block">{city.emoji}</span>
                     <h3 className="font-semibold text-gray-800 break-words">{city.label}</h3>
                     <p className="text-xs text-muted-foreground mt-0.5">
-                      {city.subtitle} · {count} {pluralize(count)}
+                      {city.subtitle} · {formatCountPl(count)} {pluralize(count)}
                     </p>
                   </Link>
                 );
@@ -188,7 +188,7 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
               >
                 <h3 className="font-semibold text-gray-800 text-sm break-words">{opt.label}</h3>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {count} {pluralize(count)}
+                  {formatCountPl(count)} {pluralize(count)}
                 </p>
               </Link>
             );

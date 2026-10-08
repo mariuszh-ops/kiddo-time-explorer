@@ -37,6 +37,7 @@ import { useRealNavigationType } from "@/lib/navigationType";
 import { czytajZapisListy, zapiszListe } from "@/lib/homeListReturn";
 import { listaZKadru, stanListyZKadru } from "@/lib/mapListReturn";
 import { LISTING_FILTER_PARAMS } from "@/lib/listingQuery";
+import { formatCountPl } from "@/lib/plural";
 
 /**
  * Po "wstecz" z karty glowna jest ukryta, dopoki lista nie wroci do dawnej
@@ -488,7 +489,7 @@ const Index = () => {
               <Button onClick={pokazWiecej} disabled={home.loadingMore} variant="outline" size="lg">
                 {home.loadingMore
                   ? "Wczytywanie…"
-                  : `Pokaż więcej (${Math.max(0, home.filterCounts.filtered - home.activities.length)})`}
+                  : `Pokaż więcej (${formatCountPl(Math.max(0, home.filterCounts.filtered - home.activities.length))})`}
               </Button>
             </div>
           )}

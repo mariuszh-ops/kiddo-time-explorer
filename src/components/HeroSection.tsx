@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { FEATURES } from "@/lib/featureFlags";
 import { useCatalogTotal } from "@/hooks/useTopActivities";
 import { cn } from "@/lib/utils";
+import { formatCountPl } from "@/lib/plural";
 
 interface HeroSectionProps {
   onExplore: () => void;
@@ -12,7 +13,7 @@ const HeroSection = ({ onExplore }: HeroSectionProps) => {
   // Licznik z jednego zapytania count(head:true) — bez pobierania katalogu.
   const totalCount = useCatalogTotal();
   const roundedCount = Math.floor(totalCount / 50) * 50;
-  const displayCount = roundedCount >= 50 ? `${roundedCount}+` : totalCount;
+  const displayCount = roundedCount >= 50 ? `${formatCountPl(roundedCount)}+` : formatCountPl(totalCount);
 
   return (
     <section className="md:container md:px-4 md:pt-4">

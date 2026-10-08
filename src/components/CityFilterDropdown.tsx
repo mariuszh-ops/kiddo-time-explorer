@@ -4,6 +4,7 @@ import { createPortal } from "react-dom";
 import { ChevronDown, X, Check, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
+import { activityWord, formatCountPl } from "@/lib/plural";
 
 interface FilterOption {
   value: string;
@@ -176,7 +177,7 @@ const CityFilterDropdown = ({
                 <div className="flex items-center gap-2">
                   {option.count != null && (
                     <span className="text-xs text-muted-foreground">
-                      {isEmpty ? "(wkrótce)" : `(${option.count})`}
+                      {isEmpty ? "(wkrótce)" : `(${formatCountPl(option.count)})`}
                     </span>
                   )}
                   {option.value === selectedCity && !isEmpty && (
@@ -222,7 +223,7 @@ const CityFilterDropdown = ({
               {filteredCount != null && (
                 <div className="mt-4 pt-3 border-t border-border/50 text-center">
                   <span className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">{filteredCount}</span> atrakcji
+                    <span className="font-medium text-foreground">{formatCountPl(filteredCount)}</span> {activityWord(filteredCount)}
                   </span>
                 </div>
               )}

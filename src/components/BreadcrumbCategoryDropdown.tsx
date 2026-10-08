@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { getActivities, filterOptions, ensureActivitiesLoaded } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { useDataStatus } from "@/hooks/useDataStatus";
+import { formatCountPl } from "@/lib/plural";
 
 interface Props {
   citySlug: string;
@@ -71,7 +72,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
             }}
           >
             <span>Wszystkie</span>
-            {countsReady && <span className="text-muted-foreground text-xs ml-3">({allCount})</span>}
+            {countsReady && <span className="text-muted-foreground text-xs ml-3">({formatCountPl(allCount)})</span>}
           </Link>
 
           {/* Separator */}
@@ -94,7 +95,7 @@ const BreadcrumbCategoryDropdown = ({ citySlug, activeCategorySlug, currentLabel
                 }}
               >
                 <span>{opt.label}</span>
-                {countsReady && <span className="text-muted-foreground text-xs ml-3">({count})</span>}
+                {countsReady && <span className="text-muted-foreground text-xs ml-3">({formatCountPl(count)})</span>}
               </Link>
             );
           })}

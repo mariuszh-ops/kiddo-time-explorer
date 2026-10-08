@@ -2,7 +2,7 @@ import ActivityGrid from "@/components/ActivityGrid";
 import ActivityLoadError from "@/components/ActivityLoadError";
 import { Button } from "@/components/ui/button";
 import { useActivitiesInfinite } from "@/hooks/useActivitiesInfinite";
-import { activityWord } from "@/lib/plural";
+import { activityCount, formatCountPl } from "@/lib/plural";
 
 const PAGE_SIZE = 24;
 
@@ -42,7 +42,7 @@ const AllActivitiesListing = () => {
             Wszystkie atrakcje w Polsce
           </h2>
           <p className="text-sm text-muted-foreground mt-1.5" role="status" aria-live="polite">
-            {loading && total === 0 ? "Wczytywanie…" : `${total} ${activityWord(total)}`}
+            {loading && total === 0 ? "Wczytywanie…" : activityCount(total)}
           </p>
         </div>
       </section>
@@ -54,7 +54,7 @@ const AllActivitiesListing = () => {
           <Button onClick={loadMore} disabled={loadingMore} variant="outline" size="lg">
             {loadingMore
               ? "Wczytywanie…"
-              : `Pokaż więcej (${Math.max(0, total - activities.length)})`}
+              : `Pokaż więcej (${formatCountPl(Math.max(0, total - activities.length))})`}
           </Button>
         </div>
       )}
