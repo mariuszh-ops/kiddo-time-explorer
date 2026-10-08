@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -154,6 +154,7 @@ const MobileFilterSheet = ({
 }: MobileFilterSheetProps) => {
   const [localSearch, setLocalSearch] = useState(searchQuery);
   const [localDistance, setLocalDistance] = useState(filters.distance ?? 0);
+  const sortHeadingId = useId();
   // Q-E-10b: arkusz nie dotyka juz pelnego katalogu. Jedyne, co go tu
   // potrzebowalo, to podpowiedzi wyszukiwarki — te bierze teraz z serwera sam
   // SearchAutocomplete. Otwarcie arkusza na telefonie kosztowalo wczesniej
@@ -320,10 +321,13 @@ const MobileFilterSheet = ({
           />
           */}
 
-          {/* Sorting section */}
+          {/* Sorting section
+              AF-6-060 (WCAG 4.1.2): wybrany sposób sortowania był widać tylko
+              po kolorze — czytnik czytał 6 zwykłych przycisków bez stanu.
+              Teraz to grupa przycisków-przełączników z aria-pressed. */}
           <div className="py-4 border-b border-border last:border-b-0">
-            <h3 className="text-base font-semibold text-foreground mb-3">Sortowanie</h3>
-            <div className="grid grid-cols-2 gap-2">
+            <h3 id={sortHeadingId} className="text-base font-semibold text-foreground mb-3">Sortowanie</h3>
+            <div role="group" aria-labelledby={sortHeadingId} className="grid grid-cols-2 gap-2">
               {[
                 { value: "rating", label: "Najlepiej oceniane" },
                 { value: "most_reviewed", label: "Najwięcej ocen" },
@@ -331,20 +335,25 @@ const MobileFilterSheet = ({
                 { value: "google_popular", label: "Najpopularniejsze (Google)" },
                 { value: "distance-from-center", label: "Najbliżej centrum" },
                 { value: "name", label: "Nazwa A–Z" },
-              ].map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => ustawFiltr("sort", option.value)}
-                  className={cn(
-                    "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                    (filters.sort || "rating") === option.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-secondary text-secondary-foreground"
-                  )}
-                >
-                  {option.label}
-                </button>
-              ))}
+              ].map((option) => {
+                const wybrane = (filters.sort || "rating") === option.value;
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    aria-pressed={wybrane}
+                    onClick={() => ustawFiltr("sort", option.value)}
+                    className={cn(
+                      "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                      wybrane
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-secondary-foreground"
+                    )}
+                  >
+                    {option.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </ScrollArea>
