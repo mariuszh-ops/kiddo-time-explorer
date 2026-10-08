@@ -305,6 +305,7 @@ const Profile = () => {
                           <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
+                              locale={pl}
                               selected={newChildDate}
                               onSelect={setNewChildDate}
                               disabled={(date) => date > new Date() || date < new Date("2005-01-01")}
