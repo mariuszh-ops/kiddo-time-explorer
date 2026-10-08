@@ -27,6 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import AdminCatalogDrawer from "./AdminCatalogDrawer";
+import AdminLoadError from "./AdminLoadError";
 
 const PAGE_SIZE = 50;
 
@@ -84,6 +85,8 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
   const [rows, setRows] = useState<CatalogRow[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  // Blad odczytu listy — trwaly stan zamiast „Brak rekordów” po zgasnieciu toasta (GL-3-018).
+  const [loadError, setLoadError] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<CatalogRow | null>(null);
 
@@ -105,8 +108,30 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       .range(from, to);
     const q = buildQuery(base).order("place_id", { ascending: true });
 
-    const { data, error, count } = await q;
+    const { data, error, count, status } = await q;
     if (requestId !== requestIdRef.current) return; // odrzuć wynik przestarzałego żądania
+
+    // GL-3-015: strona poza wynikami (`?p=9999`, albo akcja masowa oproznila ostatnia
+    // strone) — PostgREST odrzuca zakres kodem 416 / PGRST103. To nie blad uprawnien:
+    // liczymy rekordy dla tych samych filtrow i przenosimy na ostatnia istniejaca strone.
+    if (error && page > 1 && (status === 416 || error.code === "PGRST103")) {
+      const { count: all, error: countError } = await buildQuery(
+        catalogClient.from("public_activities").select("place_id", { count: "exact", head: true }),
+      );
+      if (requestId !== requestIdRef.current) return;
+      if (!countError && all != null) {
+        const last = Math.max(1, Math.ceil(all / PAGE_SIZE));
+        if (last < page) {
+          toast.info(`Brak wyników na stronie ${page}`, {
+            description: all > 0 ? `Pokazuję ostatnią stronę (${last}).` : "Dla tych filtrów nie ma rekordów.",
+          });
+          setTotal(all);
+          setLoadError(false);
+          setPage(last); // zmiana `page` sama wywoła ponowny odczyt (efekt nizej)
+          return;
+        }
+      }
+    }
 
     if (error) {
       console.error(error.message);
@@ -115,12 +140,14 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
       });
       setRows([]);
       setTotal(0);
+      setLoadError(true);
     } else {
       setRows((data as CatalogRow[]) ?? []);
       setTotal(count ?? 0);
+      setLoadError(false);
     }
     setLoading(false);
-  }, [buildQuery, page]);
+  }, [buildQuery, page, setPage]);
 
   // Refetch when reloadKey changes OR on page change. Zaznaczenie dotyczy
   // konkretnej strony wynikow, wiec przy zmianie strony/filtrow znika — ale po
@@ -279,7 +306,7 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{loading ? "Ładowanie…" : `${total} rekordów`}</span>
+          <span>{loading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} rekordów`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
         <div className="overflow-x-auto">
@@ -423,7 +450,14 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
                   </TableRow>
                 );
               })}
-              {!loading && rows.length === 0 && (
+              {loadError && rows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={10} className="p-0">
+                    <AdminLoadError what="danych" onRetry={() => fetchData()} retrying={loading} />
+                  </TableCell>
+                </TableRow>
+              )}
+              {!loading && !loadError && rows.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={10} className="text-center text-muted-foreground py-10">
                     Brak rekordów
@@ -473,6 +507,12 @@ const CatalogTable = ({ buildQuery, reloadKey, onReviewedChange }: CatalogTableP
           setRows((prev) => prev.map((r) => (r.place_id === updated.place_id ? updated : r)));
           setEditing(null);
           // Row may no longer match queue conditions — refetch to keep counts honest.
+          fetchData();
+        }}
+        // GOLIVE GL-3-027: rekord zapisany, notatka nie — wiersz w tabeli i liczniki
+        // jak po zapisie, ale drawer zostaje otwarty z wpisaną notatką.
+        onRecordSaved={(updated) => {
+          setRows((prev) => prev.map((r) => (r.place_id === updated.place_id ? updated : r)));
           fetchData();
         }}
       />

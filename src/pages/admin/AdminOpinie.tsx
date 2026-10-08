@@ -5,6 +5,7 @@ import { Check, ChevronLeft, ChevronRight, ExternalLink, RotateCcw, Star, Trash2
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { catalogClient } from "@/lib/catalogClient";
 import { Button } from "@/components/ui/button";
+import AdminLoadError from "./AdminLoadError";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   AlertDialog,
@@ -69,6 +70,8 @@ const AdminOpinie = () => {
   const [rows, setRows] = useState<Review[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  // Blad odczytu listy — trwaly stan zamiast „Brak … w tej kolejce” po zgasnieciu toasta (GL-3-046/054/058).
+  const [loadError, setLoadError] = useState(false);
   const [counts, setCounts] = useState<Record<Status, number | null>>({
     pending: null,
     approved: null,
@@ -121,9 +124,11 @@ const AdminOpinie = () => {
       toast.error("Nie udało się pobrać opinii", { description: error.message });
       setRows([]);
       setTotal(0);
+      setLoadError(true);
       setLoading(false);
       return;
     }
+    setLoadError(false);
     const list = (data ?? []) as Review[];
     setRows(list);
     setTotal(count ?? 0);
@@ -286,12 +291,15 @@ const AdminOpinie = () => {
               checked={rows.length > 0 && selected.size === rows.length}
               onCheckedChange={toggleSelectAll}
             />
-            {loading ? "Ładowanie…" : `${total} ${total === 1 ? "opinia" : "opinii"}`}
+            {loading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "opinia" : "opinii"}`}
           </label>
           <span>Strona {page} / {totalPages}</span>
         </div>
 
-        {rows.length === 0 && !loading && (
+        {loadError && rows.length === 0 && (
+          <AdminLoadError what="opinii" onRetry={() => loadRows()} retrying={loading} />
+        )}
+        {rows.length === 0 && !loading && !loadError && (
           <div className="py-16 text-center text-muted-foreground">Brak opinii w tej kolejce</div>
         )}
 

@@ -1,6 +1,8 @@
 import { trackEvent } from "@/lib/analytics";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useMemo } from "react";
+import { useRealNavigationType } from "@/lib/navigationType";
+import { czytajPrzewiniecieKarty, zapiszPrzewiniecieKarty } from "@/lib/cardScrollReturn";
 import { cityLabels } from "@/data/categoryPages";
 import {
   Heart,
@@ -131,6 +133,9 @@ const ActivityDetail = () => {
   const [activity, setActivity] = useState<Activity | null>(null);
   const [detailStatus, setDetailStatus] = useState<"loading" | "success" | "not-found" | "error">("loading");
   const [reloadKey, setReloadKey] = useState(0);
+  // GL-4-057/058: pełny wiersz dociągnięty (albo odczyt się skończył) — dopiero
+  // wtedy karta ma docelową wysokość i można przywrócić przewinięcie.
+  const [odczytSkonczony, setOdczytSkonczony] = useState(false);
 
   const refetch = () => setReloadKey((k) => k + 1);
 
@@ -138,6 +143,7 @@ const ActivityDetail = () => {
     if (!slug) { setDetailStatus("not-found"); return; }
     let cancelled = false;
     setDetailStatus("loading");
+    setOdczytSkonczony(false);
     setActivity(null);
     (async () => {
       // 1) Natychmiastowy paint z cache (lekki rekord — bez reviews/opisu).
@@ -157,6 +163,8 @@ const ActivityDetail = () => {
       } catch (e) {
         if (cancelled) return;
         if (!cached) setDetailStatus("error");
+      } finally {
+        if (!cancelled) setOdczytSkonczony(true);
       }
     })();
     return () => { cancelled = true; };
@@ -173,6 +181,60 @@ const ActivityDetail = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [slug]);
+
+  // GL-4-057/058: „wstecz” na kartę (np. z „Podobne”) wraca na pozycję, z której
+  // ją opuszczono. Pozycję zapisujemy w wpisie historii przy wyjściu linkiem
+  // (faza przechwytywania — zanim router dopisze nowy wpis), wzorzec FMN-B03.
+  const location = useLocation();
+  const realNavigationType = useRealNavigationType();
+  const przywracanieY = useMemo(
+    () => (realNavigationType === "POP" ? czytajPrzewiniecieKarty(location.key) : null),
+    // Odczyt raz na wpis historii; późniejszy zapis przy wyjściu nie ma przewijać.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.key],
+  );
+
+  useEffect(() => {
+    const przyWyjsciu = (e: MouseEvent) => {
+      if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const cel = e.target instanceof Element ? e.target : null;
+      const link = cel?.closest("a[href]");
+      // Tylko nawigacja w aplikacji; serce w kafelku „Podobne” nie wyprowadza z karty.
+      if (!link || link.getAttribute("target") === "_blank" || cel?.closest("button")) return;
+      if (!(link.getAttribute("href") ?? "").startsWith("/")) return;
+      zapiszPrzewiniecieKarty(location.key, window.scrollY);
+    };
+    document.addEventListener("click", przyWyjsciu, true);
+    return () => document.removeEventListener("click", przyWyjsciu, true);
+  }, [location.key]);
+
+  // Przywracamy po dociągnięciu pełnego wiersza. Sekcja „Podobne” ładuje się
+  // dopiero przy zbliżeniu do ekranu, więc strona bywa za krótka: przewijamy
+  // na min(cel, dół) co klatkę, aż strona urośnie albo minie limit. Ruch
+  // użytkownika (kółko, dotyk, klawisz, klik) albo zmiana adresu przerywa.
+  useEffect(() => {
+    if (przywracanieY == null || !odczytSkonczony || detailStatus !== "success") return;
+    const sciezka = window.location.pathname;
+    const koniec = performance.now() + 4000;
+    let przerwane = false;
+    let ramka = 0;
+    const przerwij = () => { przerwane = true; };
+    const zdarzenia = ["wheel", "touchstart", "keydown", "pointerdown"] as const;
+    zdarzenia.forEach((z) => window.addEventListener(z, przerwij, { passive: true }));
+    const krok = () => {
+      if (przerwane || window.location.pathname !== sciezka) return;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      window.scrollTo(0, Math.min(przywracanieY, Math.max(0, max)));
+      if (max >= przywracanieY || performance.now() >= koniec) return;
+      ramka = window.requestAnimationFrame(krok);
+    };
+    krok();
+    return () => {
+      przerwane = true;
+      window.cancelAnimationFrame(ramka);
+      zdarzenia.forEach((z) => window.removeEventListener(z, przerwij));
+    };
+  }, [przywracanieY, odczytSkonczony, detailStatus]);
 
   // Pasek szybkich akcji pojawia się, gdy sentinel w sekcji hero wyjdzie z
   // widoku. Efekt musi poczekać na wyrenderowanie karty (wcześniej ref był
@@ -267,16 +329,23 @@ const ActivityDetail = () => {
 
   const handleShare = async () => {
     if (!activity) return;
+    const url = window.location.href;
     const result = await share({
       title: activity.title,
       text: `Sprawdź "${activity.title}" na FamilyFun — ${activity.location}`,
-      url: window.location.href,
+      url,
     });
-    if (result) {
+    if (result === 'native' || result === 'clipboard') {
       trackEvent("share", { activityId: activity.id, channel: result });
     }
     if (result === 'clipboard') {
       toast.success("Link skopiowany do schowka", { duration: 2000 });
+    } else if (result === 'failed') {
+      // GL-4-024: no Web Share and the clipboard refused — never fail silently.
+      toast.error("Nie udało się skopiować linku", {
+        description: `Skopiuj adres ręcznie: ${url}`,
+        duration: 10000,
+      });
     }
   };
 

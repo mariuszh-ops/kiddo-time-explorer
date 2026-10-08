@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { ExternalLink, MapPin, X, Save, Loader2 } from "lucide-react";
 import {
   Sheet,
@@ -185,12 +186,21 @@ interface Props {
   row: CatalogRow | null;
   onClose: () => void;
   onSaved: (updated: CatalogRow) => void;
+  /**
+   * Rekord zapisany, ale notatka nie (GL-3-027): tabela ma zobaczyć zapisany
+   * wiersz, a drawer zostaje otwarty z wpisaną notatką — `onSaved` by go zamknął.
+   */
+  onRecordSaved?: (updated: CatalogRow) => void;
   /** Po zamknieciu drawera fokus wraca na wiersz, z ktorego go otwarto (K-14). */
   onReturnFocus?: () => void;
 }
 
-const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => {
+const AdminCatalogDrawer = ({ row, onClose, onSaved, onRecordSaved, onReturnFocus }: Props) => {
   const [form, setForm] = useState<EditForm | null>(null);
+  // Wiersz, wzgledem ktorego liczymy zmiany. Zwykle = `row`; po zapisie rekordu
+  // z nieudana notatka (GL-3-027) = zapisany wiersz, wiec ponowne „Zapisz"
+  // wysyla juz tylko notatke, a nie drugi raz ten sam PATCH.
+  const [base, setBase] = useState<CatalogRow | null>(null);
   const [locked, setLocked] = useState<string[]>([]);
   // Pola odblokowane RECZNIE w tej sesji drawera nie wracaja do locked_fields,
   // nawet gdy ich wartosc sie zmienila (N-08).
@@ -209,6 +219,7 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
     setErrors({});
     setUnlocked(new Set());
     pendingFixRef.current = false;
+    setBase(row);
     if (!row) {
       setForm(null);
       setLocked([]);
@@ -234,6 +245,12 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
       setNoteLoaded(true);
     })();
   }, [row]);
+
+  // GOLIVE GL-3-020: „wstecz" przy otwartym drawerze zamyka go i zostawia w
+  // panelu (wpis-atrapa w historii, jak dialogi w GL-4-056 i GL-2-037).
+  // Anuluj/X/Esc/zapis zamykają drawer przez `onClose`/`onSaved` → `row` null,
+  // a hook sam zdejmuje atrapę. Hook PRZED wczesnym returnem (reguły hooków).
+  useCloseOnBack(row !== null, onClose);
 
   if (!row || !form) {
     return (
@@ -339,18 +356,19 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
     setErrors({});
 
     // 2. Co faktycznie zmieniono (N-07: bez zmian = zero żądań).
-    const changed = changedFields(row, fixed);
+    const ref = base ?? row;
+    const changed = changedFields(ref, fixed);
     const nextLocked = Array.from(
       new Set([...locked, ...changed.filter((f) => !unlocked.has(f))]),
     );
-    const prevLocked = row.locked_fields ?? [];
+    const prevLocked = ref.locked_fields ?? [];
     const locksChanged =
       nextLocked.length !== prevLocked.length || nextLocked.some((f) => !prevLocked.includes(f));
 
     const patch: Record<string, unknown> = {};
     for (const f of changed) patch[f] = dbValue(fixed, f);
-    if (fixed.admin_hidden !== (row.admin_hidden === true)) patch.admin_hidden = fixed.admin_hidden;
-    if (fixed.featured !== (row.featured === true)) patch.featured = fixed.featured;
+    if (fixed.admin_hidden !== (ref.admin_hidden === true)) patch.admin_hidden = fixed.admin_hidden;
+    if (fixed.featured !== (ref.featured === true)) patch.featured = fixed.featured;
     if (locksChanged) patch.locked_fields = nextLocked;
 
     const noteChanged = noteLoaded && note !== originalNote;
@@ -416,15 +434,22 @@ const AdminCatalogDrawer = ({ row, onClose, onSaved, onReturnFocus }: Props) => 
     // to dokładnie ten fałszywy sukces, który usuwa A1000-S (A1000-S2).
     if (noteFailed) {
       setSaving(false);
-      // Rekord poszedł do bazy naprawdę, więc tabela musi to zobaczyć. Gdy zapisywana
-      // była sama notatka, szuflada zostaje otwarta — treść notatki nie przepada.
-      if (saved) onSaved(saved);
+      // GOLIVE GL-3-027: szuflada zostaje otwarta także po zapisanym rekordzie —
+      // `onSaved` ją zamykał i wpisana notatka przepadała. Rekord poszedł do bazy
+      // naprawdę, więc tabela dostaje go przez `onRecordSaved`, a zapisany wiersz
+      // staje się punktem odniesienia: ponowne „Zapisz” wyśle już tylko notatkę.
+      if (saved) {
+        const merged = { ...ref, ...patch, ...saved } as CatalogRow;
+        setBase(merged);
+        setLocked(merged.locked_fields ?? []);
+        onRecordSaved?.(merged);
+      }
       return;
     }
 
     toast.success("Zapisano zmiany");
     setSaving(false);
-    onSaved(saved ?? { ...row, ...patch });
+    onSaved(saved ?? { ...ref, ...patch });
   };
 
   const publicUrl = `/atrakcje/${row.slug}`;

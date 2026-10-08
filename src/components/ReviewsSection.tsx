@@ -485,34 +485,41 @@ const ReviewsSection = ({
             <p className="text-xs font-medium text-foreground mb-1">
               Wybierz ocenę (wymagane)
             </p>
-            <div className="flex items-center gap-1 mb-3">
-              {Array.from({ length: 5 }).map((_, i) => {
-                const v = i + 1;
-                const filled = v <= (hoveredStar || rating);
-                return (
-                  <button
-                    key={i}
-                    type="button"
-                    onClick={() => handleStarClick(v)}
-                    onMouseEnter={() => setHoveredStar(v)}
-                    onMouseLeave={() => setHoveredStar(0)}
-                    className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
-                    aria-label={`Oceń ${v} z 5 gwiazdek — formularz opinii`}
-                    aria-pressed={v === rating}
-                  >
-                    <Star
-                      className={cn(
-                        "w-7 h-7 transition-colors",
-                        filled
-                          ? "fill-primary text-primary"
-                          : "text-muted-foreground/40 hover:text-muted-foreground/60",
-                      )}
-                    />
-                  </button>
-                );
-              })}
+            {/* GOLIVE GL-1-049: 5 x 44 px + gaps + "5/5" did not fit the form on phones
+                narrower than ~375 px (320: 5th star over the frame, "5/5" off screen).
+                Below xs the stars lose the gap and pull 8 px into the form padding
+                (44 px targets kept, first star icon aligns with the text), and the
+                label wraps under the stars instead of overflowing. */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-3">
+              <div className="flex items-center -ml-2 xs:ml-0 xs:gap-1">
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const v = i + 1;
+                  const filled = v <= (hoveredStar || rating);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleStarClick(v)}
+                      onMouseEnter={() => setHoveredStar(v)}
+                      onMouseLeave={() => setHoveredStar(0)}
+                      className="min-h-11 min-w-11 h-11 w-11 p-0 flex items-center justify-center transition-transform hover:scale-110 active:scale-95"
+                      aria-label={`Oceń ${v} z 5 gwiazdek — formularz opinii`}
+                      aria-pressed={v === rating}
+                    >
+                      <Star
+                        className={cn(
+                          "w-7 h-7 transition-colors",
+                          filled
+                            ? "fill-primary text-primary"
+                            : "text-muted-foreground/40 hover:text-muted-foreground/60",
+                        )}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
               {rating > 0 && (
-                <span className="ml-2 text-sm text-muted-foreground">{rating}/5</span>
+                <span className="text-sm text-muted-foreground">{rating}/5</span>
               )}
             </div>
             {rating < 1 && (

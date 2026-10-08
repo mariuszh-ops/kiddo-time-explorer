@@ -403,7 +403,10 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     description: row.description ?? undefined,
     phone: row.phone ?? undefined,
     priceNote: row.price_note ?? undefined,
-    google_rating: rating,
+    // GOLIVE GL-4-017: brak oceny w Google (rating null) zostaje brakiem, nie zerem —
+    // inaczej karta i kafelek pokazują „0,0 w Google”. `rating` (wyżej) zostaje 0 dla
+    // sortowania; UI liczy ocenę jako `google_rating ?? (rating > 0 ? rating : null)`.
+    google_rating: row.rating ?? undefined,
     google_review_count: reviewCount,
     coordinates: row.lat != null && row.lng != null ? { lat: row.lat, lng: row.lng } : undefined,
     uncertain: row.uncertain ?? false,

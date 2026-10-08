@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { deleteAccountData } from "@/lib/deleteAccount";
 import { queueFlashToast } from "@/lib/flashToast";
 
@@ -29,6 +30,11 @@ const DeleteAccountSection = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // GOLIVE GL-2-037: „wstecz" przy otwartym dialogu zamyka go i zostawia na
+  // /profile (wpis-atrapa w historii, jak galeria w GL-4-004/005). Po udanym
+  // usunięciu `navigate("/")` zmienia wpis, więc atrapa nie cofa użytkownika.
+  useCloseOnBack(isOpen, () => setIsOpen(false));
 
   const canConfirm = CONFIRM_WORDS.includes(confirmText.trim().toUpperCase());
 

@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { trackEvent } from "@/lib/analytics";
+import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -71,6 +72,11 @@ const ReportIssueButton = ({ placeId }: Props) => {
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // GOLIVE GL-4-056: „wstecz" przy otwartym dialogu zamyka go i zostawia na
+  // karcie (wpis-atrapa w historii, jak galeria w GL-4-004/005). Wpisany tekst
+  // zostaje w stanie komponentu — po ponownym otwarciu jest na miejscu.
+  useCloseOnBack(open, () => setOpen(false));
 
   const openModal = () => {
     if (readReported().includes(placeId)) {

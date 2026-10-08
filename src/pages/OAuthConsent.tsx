@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { bezpieczneWyjscie } from "@/lib/safeRedirect";
+import SEOHead from "@/components/SEOHead";
 
 type OAuthNamespace = {
   getAuthorizationDetails: (id: string) => Promise<{ data: any; error: { message: string } | null }>;
@@ -80,15 +81,24 @@ export default function OAuthConsent() {
 
   return (
     <main id="main-content" className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-6 py-12">
+      {/* Trasa techniczna OAuth: noindex + og:url tej ścieżki zamiast statycznego "/" z index.html
+          (GL-5-022). Stała ścieżka, żeby authorization_id z query nie trafiał do og:url. */}
+      <SEOHead
+        title="Zgoda na dostęp aplikacji"
+        description="Ekran zgody na połączenie aplikacji z kontem FamilyFun."
+        path="/.lovable/oauth/consent"
+        noindex
+      />
+      {/* Jeden h1 w każdym stanie (ładowanie, błąd, zgoda), nie tylko po wczytaniu szczegółów. */}
+      <h1 className="font-serif text-2xl">
+        Połącz {details?.client?.name ?? "aplikację"} ze swoim kontem FamilyFun
+      </h1>
       {error ? (
         <p className="text-sm text-destructive">Nie udało się obsłużyć tej prośby o dostęp: {error}</p>
       ) : !details ? (
         <p className="text-sm text-muted-foreground">Ładowanie…</p>
       ) : (
         <>
-          <h1 className="font-serif text-2xl">
-            Połącz {details.client?.name ?? "aplikację"} ze swoim kontem FamilyFun
-          </h1>
           <p className="text-sm text-muted-foreground">
             {details.client?.name ?? "Ta aplikacja"} będzie mogła korzystać z narzędzi FamilyFun jako Ty.
           </p>
