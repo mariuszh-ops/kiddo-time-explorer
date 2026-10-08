@@ -9,6 +9,7 @@ import MapCategoryChips from "./MapCategoryChips";
 import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
+import { activityCount } from "@/lib/plural";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -68,7 +69,7 @@ function distanceKm(lat1: number, lng1: number, lat2: number, lng2: number): num
 
 function formatDistance(km: number): string {
   if (km < 1) return `${Math.round(km * 1000)} m`;
-  return `${km.toFixed(1)} km`;
+  return `${km.toFixed(1).replace(".", ",")} km`;
 }
 
 export default function MapBottomSheet({
@@ -307,7 +308,7 @@ export default function MapBottomSheet({
       ? "Wczytuję…"
       : searchQuery.trim()
       ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
-      : `${visibleActivities.length} atrakcji w widoku`;
+      : `${activityCount(visibleActivities.length)} w widoku`;
 
   const showList = sheetState !== "peek";
 

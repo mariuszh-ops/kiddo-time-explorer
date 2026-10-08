@@ -294,7 +294,7 @@ const ActivityCard = ({
               {distanceKm != null && (
                 <span className="flex items-center gap-0.5 text-xs text-muted-foreground whitespace-nowrap">
                   <Navigation className="w-3 h-3" />
-                  ~{distanceKm.toFixed(1)} km
+                  ~{distanceKm.toFixed(1).replace(".", ",")} km
                 </span>
               )}
             </div>

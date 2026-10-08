@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Activity, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
+import { activityCount } from "@/lib/plural";
 
 export interface ActivityGridProps {
   activities: Activity[];
@@ -225,7 +226,7 @@ const ActivityGrid = ({ activities, hasActiveFilters, onClearFilters, onClearFil
         {mapReturnAction && (
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm text-muted-foreground font-medium">
-              {activities.length} atrakcji z widoku mapy
+              {activityCount(activities.length)} z widoku mapy
             </span>
             <Button variant="outline" size="sm" onClick={mapReturnAction} className="gap-2">
               <Map className="w-4 h-4" />

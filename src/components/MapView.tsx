@@ -38,6 +38,7 @@ import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } f
 import { formatRatingPl } from "@/lib/formatRating";
 import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
+import { activityCount } from "@/lib/plural";
 
 /** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
 const PORCJA_LISTY = 30;
@@ -1744,7 +1745,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
                 aria-atomic="true"
                 className="text-sm text-muted-foreground font-medium"
               >
-                {wczytuje ? "Wczytuję…" : `${displayedActivities.length} atrakcji w widoku`}
+                {wczytuje ? "Wczytuję…" : `${activityCount(displayedActivities.length)} w widoku`}
               </p>
               <MapCategoryChips selected={selectedCategories} onToggle={handleCategoryToggle} showCategories={pokazChipyKategorii} />
             </div>
@@ -1862,7 +1863,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             ? "Nie udało się wczytać mapy"
             : wczytuje
               ? "Wczytuję atrakcje…"
-              : `${displayedActivities.length} atrakcji w widoku`}
+              : `${activityCount(displayedActivities.length)} w widoku`}
         </div>
 
       </div>
