@@ -5,6 +5,7 @@ import { z } from "zod";
 import { MapPin, Send, CheckCircle2, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { catalogClient } from "@/lib/catalogClient";
+import { RATE_LIMIT_MESSAGE, userFacingError } from "@/lib/userFacingError";
 import {
   Dialog,
   DialogContent,
@@ -82,17 +83,19 @@ const amenityOptions = [
 const formSchema = z.object({
   name: z.string().trim().min(1, "Podaj nazwę miejsca").max(100, "Nazwa jest za długa"),
   city: z.string().min(1, "Wybierz województwo"),
-  customCity: z.string().max(50).optional(),
-  address: z.string().max(200).optional(),
+  // AF-10-039: każda reguła długości z polskim komunikatem — domyślny zod jest angielski
+  // („String must contain at most 50 character(s)”).
+  customCity: z.string().max(50, "Maksymalnie 50 znaków").optional(),
+  address: z.string().max(200, "Maksymalnie 200 znaków").optional(),
   activityType: z.string().min(1, "Wybierz typ aktywności"),
   type: z.enum(["place", "event"], { required_error: "Wybierz typ" }),
-  eventDate: z.string().max(50).optional(),
+  eventDate: z.string().max(50, "Maksymalnie 50 znaków").optional(),
   ageGroups: z.array(z.string()).min(1, "Wybierz przynajmniej jedną grupę wiekową"),
   indoorOutdoor: z.enum(["indoor", "outdoor", "both"], {
     required_error: "Wybierz lokalizację",
   }),
   priceLevel: z.number().min(0).max(3).optional(),
-  priceNote: z.string().max(200).optional(),
+  priceNote: z.string().max(200, "Maksymalnie 200 znaków").optional(),
   description: z.string().max(500, "Opis może mieć maksymalnie 500 znaków").optional(),
   link: z
     .string()
@@ -346,23 +349,15 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     setIsSubmitting(false);
 
     if (error) {
-      const msg = (error.message || "").toLowerCase();
-      const isRateLimit =
-        error.code === "P0001" ||
-        error.code === "PT429" ||
-        (error as { status?: number }).status === 429 ||
-        msg.includes("rate") ||
-        msg.includes("too many") ||
-        msg.includes("zbyt wiele");
-      if (isRateLimit) {
-        toast.error(
-          error.message?.trim()
-            ? error.message
-            : "Wysłano zbyt wiele zgłoszeń z tego urządzenia — spróbuj ponownie za godzinę",
-        );
-      } else {
-        toast.error("Nie udało się wysłać zgłoszenia", { description: error.message });
-      }
+      // AF-10-005/036: bez surowego error.message (bywa angielski, np. „Failed to fetch”)
+      // i z krokiem do wykonania. Polski tekst limitu z triggera (PT429) przechodzi.
+      toast.error(
+        userFacingError(
+          error,
+          "Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo napisz na kontakt@familyfun.pl.",
+          RATE_LIMIT_MESSAGE,
+        ),
+      );
       // Nieudana wysyłka NIE kasuje wersji roboczej.
       return;
     }

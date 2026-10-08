@@ -4,6 +4,7 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { trackEvent } from "@/lib/analytics";
+import { RATE_LIMIT_MESSAGE, userFacingError } from "@/lib/userFacingError";
 import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +37,7 @@ const schema = z.object({
   contact_email: z
     .string()
     .trim()
-    .max(255)
+    .max(255, "Maksymalnie 255 znaków")
     .email("Nieprawidłowy adres email")
     .optional()
     .or(z.literal("")),
@@ -106,7 +107,15 @@ const ReportIssueButton = ({ placeId }: Props) => {
     });
     setSubmitting(false);
     if (error) {
-      toast.error("Nie udało się wysłać", { description: error.message });
+      // AF-10-005/036: bez surowego error.message i z krokiem do wykonania; polski tekst
+      // limitu z triggera issue_reports_rate_limit (PT429) przechodzi. Dialog zostaje otwarty.
+      toast.error(
+        userFacingError(
+          error,
+          "Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo napisz na kontakt@familyfun.pl.",
+          RATE_LIMIT_MESSAGE,
+        ),
+      );
       return;
     }
     markReported(placeId);

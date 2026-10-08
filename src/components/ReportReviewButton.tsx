@@ -3,6 +3,7 @@ import { Flag } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
+import { RATE_LIMIT_MESSAGE, userFacingError } from "@/lib/userFacingError";
 import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +53,7 @@ const schema = z.object({
   contact_email: z
     .string()
     .trim()
-    .max(255)
+    .max(255, "Maksymalnie 255 znaków")
     .email("Nieprawidłowy adres e-mail")
     .optional()
     .or(z.literal("")),
@@ -134,11 +135,14 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
     setSubmitting(false);
     if (error) {
       // Limit zgłoszeń pilnuje trigger i to on niesie treść dla użytkownika (wzorzec N-06).
-      const err = error as { code?: string; message?: string };
+      // Trigger issue_reports_rate_limit zgłasza sqlstate PT429 (nie P0001) — userFacingError
+      // przepuszcza jego polski tekst, a surowy angielski błąd zastępuje (AF-10-005).
       toast.error(
-        err.code === "P0001" && err.message?.trim()
-          ? err.message
-          : "Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo napisz na kontakt@familyfun.pl.",
+        userFacingError(
+          error,
+          "Nie udało się wysłać zgłoszenia. Spróbuj ponownie albo napisz na kontakt@familyfun.pl.",
+          RATE_LIMIT_MESSAGE,
+        ),
       );
       return;
     }

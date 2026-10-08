@@ -26,7 +26,8 @@ import { toast } from "sonner";
 
 const SAVE_ERROR = "Nie udało się zapisać. Spróbuj ponownie.";
 const notifySaveError = () => toast.error(SAVE_ERROR);
-const LOAD_ERROR = "Nie udało się wczytać zapisanych atrakcji.";
+// AF-10-036: komunikat błędu mówi, co zrobić (jak SAVE_ERROR).
+const LOAD_ERROR = "Nie udało się wczytać zapisanych atrakcji. Odśwież stronę i spróbuj ponownie.";
 
 // U-B-01: PostgREST domyślnie tnie odpowiedź na 1000 wierszy, a płaski
 // `.select().eq()` nie miał ani `.range()`, ani informacji o obcięciu — konto
@@ -242,7 +243,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         try {
           await loadActivities();
         } catch {
-          toast.error("Nie udało się wczytać zapisanych atrakcji.");
+          toast.error(LOAD_ERROR);
           setIsLoadingSaved(false);
           return;
         }

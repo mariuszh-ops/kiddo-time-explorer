@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { useAuth } from "@/contexts/AuthContext";
 import { trackEvent } from "@/lib/analytics";
+import { userFacingError } from "@/lib/userFacingError";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
 import { formatRatingPl } from "@/lib/formatRating";
@@ -305,22 +306,9 @@ const ReviewsSection = ({
       console.error(e);
       // Limit „5 opinii na godzinę" pilnuje trigger i to on niesie treść dla
       // użytkownika — komunikat ogólny sugerowałby awarię i kolejne próby
-      // (audyt: N-06). Ten sam wzorzec co formularz zgłoszeń.
-      const err = e as { code?: string; message?: string; status?: number };
-      const msg = (err?.message || "").toLowerCase();
-      const isRateLimit =
-        err?.code === "P0001" ||
-        err?.code === "PT429" ||
-        err?.status === 429 ||
-        msg.includes("na godzinę") ||
-        msg.includes("rate") ||
-        msg.includes("too many") ||
-        msg.includes("zbyt wiele");
-      if (isRateLimit && err?.message?.trim()) {
-        toast.error(err.message);
-      } else {
-        toast.error("Nie udało się zapisać opinii. Spróbuj ponownie.");
-      }
+      // (audyt: N-06). Ten sam wzorzec co formularz zgłoszeń: polski tekst triggera
+      // (PT429/P0001) przechodzi, surowy angielski błąd już nie (AF-10-005).
+      toast.error(userFacingError(e, "Nie udało się zapisać opinii. Spróbuj ponownie."));
     } finally {
       setSubmitting(false);
     }
