@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId } from "react";
 import { Loader2, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { hasAcceptedTerms, recordTermsAccepted, TERMS_ERROR_MESSAGE } from "@/lib/termsConsent";
+import { isInAppBrowser } from "@/lib/inAppBrowser";
 import EmailAuthForm from "@/components/EmailAuthForm";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
 import {
@@ -47,6 +48,11 @@ const AuthRequiredModal = ({
   const [needsTerms, setNeedsTerms] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const { markAuthAttempt } = usePendingIntent();
+  // AF-7-059…062: w przeglądarce wbudowanej w aplikację (FB, IG, Messenger,
+  // TikTok) Google odrzuca OAuth — zamiast ślepej uliczki podpowiedź i wyłączony
+  // przycisk Google; logowanie e-mailem działa normalnie.
+  const inAppBrowser = isInAppBrowser();
+  const inAppHintId = useId();
 
   // A) „Wstecz" zamyka wyłącznie modal, strona zostaje (F-16).
   // Przy otwarciu dokładamy wpis-atrapę (ten sam URL, znacznik w `history.state`),
@@ -182,6 +188,8 @@ const AuthRequiredModal = ({
    * `signInWithOAuth` opuszcza strone i nic po nim juz sie nie wykona.
    */
   const handleGoogleClick = () => {
+    // Jak przy zgodzie: warunek w handlerze, nie tylko `disabled` przycisku.
+    if (inAppBrowser) return;
     if (needsTerms && !termsAccepted) {
       setError(TERMS_ERROR_MESSAGE);
       return;
@@ -235,6 +243,19 @@ const AuthRequiredModal = ({
         </AnimatePresence>
 
         <div className="flex flex-col gap-3 pt-2">
+          {/* AF-7-059…062: podpowiedź stoi PRZED zgodą i przyciskiem Google,
+              żeby była widoczna, zanim ktoś spróbuje się zalogować. */}
+          {inAppBrowser && (
+            <p
+              id={inAppHintId}
+              className="px-3 py-2.5 bg-muted/60 border border-border rounded-lg text-sm text-muted-foreground"
+            >
+              Logowanie przez Google nie działa w przeglądarce wbudowanej w aplikację (Facebook, Instagram, Messenger, TikTok).
+              W menu aplikacji (trzy kropki) wybierz „Otwórz w przeglądarce” i zaloguj się w Chrome lub Safari.
+              {!googleOnly && " Możesz też zalogować się e-mailem poniżej."}
+            </p>
+          )}
+
           {/* I-07b: zgoda STOI PRZED przyciskiem — warunek widac, zanim sie klika,
               a Tab prowadzi checkbox → „Kontynuuj z Google".
               Y-H-02: ten sam checkbox niesie oswiadczenie o pelnoletnosci
@@ -280,7 +301,8 @@ const AuthRequiredModal = ({
             onClick={handleGoogleClick}
             className="w-full"
             variant="default"
-            disabled={isLoading !== null || (needsTerms && !termsAccepted)}
+            disabled={inAppBrowser || isLoading !== null || (needsTerms && !termsAccepted)}
+            aria-describedby={inAppBrowser ? inAppHintId : undefined}
           >
             {isLoading === 'google' ? (
               <>
