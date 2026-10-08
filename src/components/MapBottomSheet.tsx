@@ -251,6 +251,22 @@ export default function MapBottomSheet({
     updateState(ordered[(idx + 1) % 3]);
   }, [sheetState, isDragging, updateState]);
 
+  // WCAG 2.5.7 / 2.1.1 (audyt AF-6-013/067): przeciąganie ma odpowiednik jednym
+  // klawiszem — Enter albo Spacja na uchwycie cyklicznie peek → half → full → peek, jak tap.
+  const handleHandleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "Enter" && e.key !== " ") return;
+    e.preventDefault();
+    if (e.repeat) return;
+    handleHandleTap();
+  }, [handleHandleTap]);
+
+  const handleLabel =
+    sheetState === "peek"
+      ? "Rozwiń listę atrakcji"
+      : sheetState === "half"
+        ? "Powiększ listę atrakcji"
+        : "Zwiń listę atrakcji";
+
   useEffect(() => {
     if (listRef.current && sheetState !== "peek") {
       listRef.current.scrollTop = 0;
@@ -324,16 +340,28 @@ export default function MapBottomSheet({
         boxShadow: "0 -2px 10px rgba(0,0,0,0.1)",
       }}
     >
-      {/* Handle bar area — draggable */}
-      <div
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onMouseDown={handleMouseDown}
-        onClick={handleHandleTap}
-        className="flex flex-col items-center pt-2 pb-2 cursor-grab active:cursor-grabbing shrink-0 select-none"
-      >
-        <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" />
+      {/* Handle bar area — draggable. Uchwyt to przezroczysta nakładka role="button"
+          na całym pasku (przeciąganie, tap, Enter/Spacja). Licznik i „sortuj” są jej
+          rodzeństwem, nie dziećmi — przycisk w przycisku łamie axe nested-interactive.
+          Pasek ma pointer-events-none, więc palec/mysz na liczniku trafia w uchwyt jak
+          dotąd; sortowanie i „Spróbuj ponownie” wracają do pointer-events-auto. */}
+      <div className="relative shrink-0">
+        <div
+          role="button"
+          tabIndex={0}
+          aria-label={handleLabel}
+          aria-expanded={sheetState !== "peek"}
+          onKeyDown={handleHandleKeyDown}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleMouseDown}
+          onClick={handleHandleTap}
+          className="absolute inset-0 rounded-t-2xl cursor-grab active:cursor-grabbing select-none"
+          style={{ outlineOffset: -4 }}
+        />
+      <div className="flex flex-col items-center pt-2 pb-2 select-none pointer-events-none">
+        <div className="w-10 h-1 rounded-full bg-muted-foreground/30 mb-2" aria-hidden="true" />
         <div className="flex items-center justify-between w-full px-3">
           <span
             role="status"
@@ -352,7 +380,7 @@ export default function MapBottomSheet({
             onRetry && (
               <button
                 onClick={(e) => { e.stopPropagation(); onRetry(); }}
-                className="shrink-0 flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-accent"
+                className="relative pointer-events-auto shrink-0 flex items-center gap-1 text-xs font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer px-1.5 py-0.5 rounded-md hover:bg-accent"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 Spróbuj ponownie
@@ -361,7 +389,7 @@ export default function MapBottomSheet({
           ) : (
           <div
             ref={sortRef}
-            className="relative shrink-0"
+            className="relative shrink-0 pointer-events-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -396,6 +424,7 @@ export default function MapBottomSheet({
           </div>
           )}
         </div>
+      </div>
       </div>
 
 
