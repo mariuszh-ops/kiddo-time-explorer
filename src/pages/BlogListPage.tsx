@@ -10,7 +10,7 @@ const BlogListPage = () => {
     <PageTransition>
       <SEOHead
         title="Inspiracje — porady i pomysły dla rodziców"
-        description="Porady, rankingi i pomysły na czas z dzieckiem. Blog FamilyFun."
+        description="Porady, rankingi i pomysły na czas z dzieckiem: przewodniki po miastach, plany na weekend i deszczowe dni. Blog FamilyFun."
         path="/inspiracje"
       />
       <div className="min-h-screen bg-background pb-20 md:pb-0">

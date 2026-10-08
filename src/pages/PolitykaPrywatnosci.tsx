@@ -13,7 +13,7 @@ const WERSJA = 3;
 const PolitykaPrywatnosci = () => {
   return (
     <PageTransition>
-      <SEOHead title="Polityka prywatności" description="Informacje o przetwarzaniu danych osobowych w FamilyFun." path="/polityka-prywatnosci" />
+      <SEOHead title="Polityka prywatności" description="Informacje o przetwarzaniu danych osobowych w FamilyFun: administrator, cel i podstawa prawna (RODO), okres przechowywania, cookies i Twoje prawa." path="/polityka-prywatnosci" />
       <div className="min-h-screen bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">

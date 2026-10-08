@@ -9,7 +9,7 @@ const IndexDirectory = () => {
   return (
     <>
       <SEOHead
-        title="Indeks atrakcji"
+        title="Indeks atrakcji — wszystkie województwa"
         description="Pełny indeks atrakcji dla rodzin z dziećmi w Polsce — lista wszystkich województw i atrakcji w serwisie FamilyFun."
         path="/indeks"
       />

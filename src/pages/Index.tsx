@@ -24,6 +24,7 @@ import { useScrollPosition, type TrybPrzewiniecia } from "@/hooks/useScrollPosit
 import { useMapUrlState } from "@/hooks/useMapUrlState";
 import { useDataStatus } from "@/hooks/useDataStatus";
 import { FEATURES } from "@/lib/featureFlags";
+import { buildOrganizationJsonLd } from "@/lib/organizationJsonLd";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
@@ -354,7 +355,7 @@ const Index = () => {
         description="Odkryj najlepsze atrakcje dla rodzin z dziećmi w 16 województwach Polski. Opinie i oceny od rodziców."
         path="/"
         robots={isFiltered ? "noindex-follow" : "index"}
-        jsonLd={{
+        jsonLd={[{
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "FamilyFun",
@@ -365,7 +366,7 @@ const Index = () => {
             "target": "https://familyfun.pl/?search={search_term_string}",
             "query-input": "required name=search_term_string"
           }
-        }}
+        }, buildOrganizationJsonLd()]}
       />
       {/* Global header with navigation — landmark banner MUSI byc poza <main> (K-02) */}
       <Header />
