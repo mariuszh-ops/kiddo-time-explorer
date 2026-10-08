@@ -80,10 +80,16 @@ const ResetPassword = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder={PASSWORD_HINT}
+                  aria-invalid={error ? true : undefined}
+                  aria-describedby={error ? "reset-password-error" : undefined}
                 />
                 <PasswordRequirements password={password} />
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
+              {error && (
+                <p id="reset-password-error" role="alert" className="text-sm text-destructive">
+                  {error}
+                </p>
+              )}
               <Button type="submit" disabled={busy || !checkPassword(password).ok} className="w-full">
                 {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : "Zapisz nowe hasło"}
               </Button>

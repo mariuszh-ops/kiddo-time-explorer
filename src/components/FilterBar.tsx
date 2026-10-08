@@ -328,13 +328,15 @@ const FilterBar = ({
                     </div>
                     {searchQuery && (
                       <button
+                        type="button"
                         onClick={() => {
                           onSearchChange("");
                           setIsSearchExpanded(false);
                         }}
                         className="p-1.5 rounded-full hover:bg-muted transition-colors"
+                        aria-label="Wyczyść wyszukiwanie"
                       >
-                        <X className="w-4 h-4 text-muted-foreground" />
+                        <X className="w-4 h-4 text-muted-foreground" aria-hidden="true" />
                       </button>
                     )}
                   </div>

@@ -16,6 +16,7 @@ import HomeSkeleton from "@/components/HomeSkeleton";
 import DataGate from "@/components/DataGate";
 import { FEATURES } from "@/lib/featureFlags";
 import SkipLink from "./components/SkipLink";
+import RouteAnnouncer from "./components/RouteAnnouncer";
 // NIE leniwy, choc to trasa: /{wojewodztwo} to najczestsze wejscie z Google, a
 // resolver renderuje dopiero leniwy CategoryPage. Jako osobny chunk ustawial
 // dwa zapytania szeregowo (chunk resolvera -> chunk CategoryPage, zmierzone
@@ -144,6 +145,7 @@ const App = () => {
                     <GuestDataMigrationDialog />
                     <BrowserRouter>
                       <SkipLink />
+                      <RouteAnnouncer />
                       <AuthReturnHandler />
                       <AnimatedRoutes />
                       <BottomNav />
