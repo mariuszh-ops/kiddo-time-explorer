@@ -844,6 +844,21 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   )}
                 />
 
+                {/* AF-8-043 (RODO art. 13): formularz zbiera e-mail — klauzula i link do polityki. */}
+                <p className="text-xs text-muted-foreground">
+                  Administratorem danych jest Softline sp. z o.o. E-mail wykorzystamy tylko do kontaktu
+                  w sprawie tego zgłoszenia. Szczegóły i Twoje prawa:{" "}
+                  <a
+                    href="/polityka-prywatnosci"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline"
+                  >
+                    Polityka prywatności
+                  </a>
+                  .
+                </p>
+
                 <div className="sticky bottom-0 bg-background pt-3 pb-1 border-t border-border/50 -mx-6 px-6 mt-4">
                   <div className="flex gap-3">
                     <Button type="button" variant="outline" onClick={handleClose} className="flex-1">

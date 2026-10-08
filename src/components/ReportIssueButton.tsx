@@ -185,6 +185,21 @@ const ReportIssueButton = ({ placeId }: Props) => {
                 maxLength={255}
               />
             </div>
+
+            {/* AF-8-042 (RODO art. 13): formularz zbiera e-mail — klauzula i link do polityki. */}
+            <p className="text-xs text-muted-foreground">
+              Administratorem danych jest Softline sp. z o.o. E-mail wykorzystamy tylko do odpowiedzi
+              na to zgłoszenie. Szczegóły i Twoje prawa:{" "}
+              <a
+                href="/polityka-prywatnosci"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline"
+              >
+                Polityka prywatności
+              </a>
+              .
+            </p>
           </div>
 
           <DialogFooter>

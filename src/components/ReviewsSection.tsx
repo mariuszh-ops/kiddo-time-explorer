@@ -22,6 +22,8 @@ import { useUserRatings } from "@/contexts/UserRatingsContext";
 import { cn } from "@/lib/utils";
 import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
+// AF-8-008/063 (DSA art. 16): przy każdej opinii przycisk zgłoszenia treści.
+import ReportReviewButton from "@/components/ReportReviewButton";
 
 interface GoogleReview {
   author: string;
@@ -645,6 +647,15 @@ const ReviewsSection = ({
                   <StarRow rating={r.rating} />
                 </div>
                 {r.text && <ExpandableText text={r.text} mapsUrl={mapsUrl} />}
+                {placeId && (
+                  <div className="mt-1 flex justify-end">
+                    <ReportReviewButton
+                      placeId={placeId}
+                      authorLabel={`Rodzic, ocena ${r.rating} na 5`}
+                      reviewLocator={`opinia rodzica (FamilyFun), id ${r.id}`}
+                    />
+                  </div>
+                )}
               </li>
             ))}
             {[...googleReviews]
@@ -668,6 +679,15 @@ const ReviewsSection = ({
                   <StarRow rating={r.rating} />
                 </div>
                 {r.text && <ExpandableText text={r.text} mapsUrl={mapsUrl} />}
+                {placeId && (
+                  <div className="mt-1 flex justify-end">
+                    <ReportReviewButton
+                      placeId={placeId}
+                      authorLabel={`${anonymizeAuthor(r.author)}, opinia z Google`}
+                      reviewLocator={`opinia z Google: ${anonymizeAuthor(r.author)}, ocena ${r.rating}/5, początek: „${(r.text || "").slice(0, 80)}”`}
+                    />
+                  </div>
+                )}
               </li>
             ))}
           </ul>
