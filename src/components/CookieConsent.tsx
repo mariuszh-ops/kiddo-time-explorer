@@ -34,6 +34,8 @@ const CookieConsent = () => {
           exit={{ y: 100, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="fixed bottom-16 sm:bottom-0 left-0 right-0 z-[60] p-4"
+          role="region"
+          aria-label="Pliki cookies"
         >
           <div className="container max-w-2xl mx-auto bg-card border border-border rounded-xl shadow-soft p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
             <p className="text-sm text-muted-foreground flex-1">

@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import PageTransition from "@/components/PageTransition";
 import SEOHead from "@/components/SEOHead";
@@ -283,12 +284,15 @@ const Profile = () => {
 
                     {showAddForm ? (
                       <div className="space-y-3 p-3 bg-accent/30 rounded-lg">
-                        <Input
-                          placeholder="Imię dziecka"
-                          value={newChildName}
-                          onChange={(e) => setNewChildName(e.target.value)}
-                          maxLength={30}
-                        />
+                        <div className="space-y-2">
+                          <Label htmlFor="child-name">Imię dziecka</Label>
+                          <Input
+                            id="child-name"
+                            value={newChildName}
+                            onChange={(e) => setNewChildName(e.target.value)}
+                            maxLength={30}
+                          />
+                        </div>
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button

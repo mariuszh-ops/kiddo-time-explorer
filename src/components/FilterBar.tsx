@@ -12,6 +12,7 @@ import { X, Search, SlidersHorizontal, LayoutGrid, Map } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { FEATURES } from "@/lib/featureFlags";
+import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 
 interface FilterBarProps {
   filters: Filters;
@@ -317,6 +318,7 @@ const FilterBar = ({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         placeholder="Szukaj…"
+                        aria-label={SEARCH_PLACEHOLDER}
                         autoFocus
                         className="pl-8 pr-3 py-2 w-40 md:w-48 rounded-full text-sm bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                         onBlur={() => {
