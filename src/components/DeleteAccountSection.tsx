@@ -86,7 +86,7 @@ const DeleteAccountSection = () => {
                 <p>Tej operacji nie można cofnąć. Usuniemy bezpowrotnie:</p>
                 <ul className="list-disc pl-5 space-y-1">
                   <li>Twoje ulubione miejsca,</li>
-                  <li>listę „chcę odwiedzić",</li>
+                  <li>listę „chcę odwiedzić”,</li>
                   <li>Twoje oceny gwiazdkowe,</li>
                   <li>dane profilu rodziny zapisane w przeglądarce.</li>
                 </ul>

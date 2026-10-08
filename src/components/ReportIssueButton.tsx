@@ -38,7 +38,7 @@ const schema = z.object({
     .string()
     .trim()
     .max(255, "Maksymalnie 255 znaków")
-    .email("Nieprawidłowy adres email")
+    .email("Nieprawidłowy adres e-mail")
     .optional()
     .or(z.literal("")),
 });
@@ -182,7 +182,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
 
             <div>
               <Label htmlFor="issue-email" className="text-sm mb-1 block">
-                Twój email (jeśli mamy odpisać)
+                Twój e-mail (jeśli mamy odpisać)
               </Label>
               <Input
                 id="issue-email"

@@ -579,7 +579,7 @@ const ReviewsSection = ({
                   className="min-h-[40px] md:min-h-0"
                 >
                   {submitting ? (
-                    "Wysyłam..."
+                    "Wysyłam…"
                   ) : (
                     <>
                       {myReview ? (
@@ -619,7 +619,7 @@ const ReviewsSection = ({
         {/* Lista opinii: najpierw FamilyFun (approved), potem Google */}
         {loading ? (
           <div className="py-6 text-center text-sm text-muted-foreground">
-            Wczytuję opinie...
+            Wczytuję opinie…
           </div>
         ) : hasAnyReview ? (
           <ul className="divide-y divide-border">
@@ -672,7 +672,7 @@ const ReviewsSection = ({
                     <ReportReviewButton
                       placeId={placeId}
                       authorLabel={`${anonymizeAuthor(r.author)}, opinia z Google`}
-                      reviewLocator={`opinia z Google: ${anonymizeAuthor(r.author)}, ocena ${r.rating}/5, początek: „${(r.text || "").slice(0, 80)}”`}
+                      reviewLocator={`opinia z Google: ${anonymizeAuthor(r.author)}, ocena ${r.rating}/5, początek: „${(r.text || '').slice(0, 80)}”`}
                     />
                   </div>
                 )}

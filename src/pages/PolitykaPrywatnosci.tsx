@@ -38,7 +38,7 @@ const PolitykaPrywatnosci = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Administrator danych</h2>
                 <p className="mb-4">
                   Administratorem danych osobowych przetwarzanych w serwisie FamilyFun
-                  (dalej: „Serwis") jest Softline sp. z o.o., z siedzibą w Bołtucia 2, 05-827 Grodzisk Mazowiecki,
+                  (dalej: „Serwis”) jest Softline sp. z o.o., z siedzibą w Bołtucia 2, 05-827 Grodzisk Mazowiecki,
                   NIP: 5342202117, REGON: 016450950.
                   W sprawach dotyczących ochrony danych osobowych można kontaktować się pod adresem
                   e-mail: <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.
@@ -118,7 +118,7 @@ const PolitykaPrywatnosci = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Zgłaszanie nowych atrakcji</h2>
                 <p className="mb-4">
                   Każdy — także osoba niezalogowana — może zaproponować dodanie nowej atrakcji do
-                  katalogu („Zgłoś atrakcję"). Formularz zbiera dane dotyczące samego obiektu
+                  katalogu („Zgłoś atrakcję”). Formularz zbiera dane dotyczące samego obiektu
                   (nazwa, adres, miejscowość, region, typ, przedział wieku, opis, strona
                   internetowa, udogodnienia). Zgłoszenie trafia do weryfikacji i nie jest
                   publikowane automatycznie.
@@ -135,7 +135,7 @@ const PolitykaPrywatnosci = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">Zabezpieczenie formularzy przed nadużyciami (adres IP)</h2>
                 <p className="mb-4">
-                  Formularze dostępne bez logowania — „Zgłoś atrakcję" oraz „Zgłoś błąd w danych"
+                  Formularze dostępne bez logowania — „Zgłoś atrakcję” oraz „Zgłoś błąd w danych”
                   — są zabezpieczone przed masowym wysyłaniem zgłoszeń (spamem). W tym celu w
                   momencie wysłania formularza odczytujemy adres IP, z którego nadeszło
                   zgłoszenie, i zapisujemy wyłącznie jego <strong>nieodwracalny skrót kryptograficzny
@@ -175,8 +175,8 @@ const PolitykaPrywatnosci = () => {
                 </p>
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Opinie odrzucone przez moderację</strong> — 90 dni od momentu odrzucenia.</li>
-                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia. Zgłoszenie, którego jeszcze nie rozpatrzyliśmy, czeka do czasu rozpatrzenia.</li>
-                  <li><strong>Skrót (hash) adresu IP z formularzy „Zgłoś atrakcję" i „Zgłoś błąd w danych"</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie.</li>
+                  <li><strong>Zgłoszenia z formularzy „Zgłoś atrakcję” i „Zgłoś błąd w danych”</strong> — 12 miesięcy od momentu rozpatrzenia zgłoszenia. Zgłoszenie, którego jeszcze nie rozpatrzyliśmy, czeka do czasu rozpatrzenia.</li>
+                  <li><strong>Skrót (hash) adresu IP z formularzy „Zgłoś atrakcję” i „Zgłoś błąd w danych”</strong> — zapisywany razem ze zgłoszeniem, wyłącznie po to, by ograniczyć liczbę zgłoszeń z jednego urządzenia. Kasujemy go razem ze zgłoszeniem, w tym samym terminie.</li>
                   <li><strong>Zapisy o błędach aplikacji w przeglądarce</strong> (treść komunikatu, adres podstrony, wersja przeglądarki) — 30 dni od ostatniego wystąpienia danego błędu. Jeśli błąd wystąpił u zalogowanego użytkownika, identyfikator konta usuwamy z takiego zapisu w ciągu doby od usunięcia konta.</li>
                 </ul>
 
@@ -237,7 +237,7 @@ const PolitykaPrywatnosci = () => {
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li>prawo dostępu do danych oraz otrzymania ich kopii;</li>
                   <li>prawo do sprostowania danych;</li>
-                  <li>prawo do usunięcia danych („prawo do bycia zapomnianym");</li>
+                  <li>prawo do usunięcia danych („prawo do bycia zapomnianym”);</li>
                   <li>prawo do ograniczenia przetwarzania;</li>
                   <li>prawo do przenoszenia danych;</li>
                   <li>prawo do wniesienia sprzeciwu wobec przetwarzania opartego na uzasadnionym interesie;</li>
@@ -259,8 +259,8 @@ const PolitykaPrywatnosci = () => {
                 <p className="mb-4">
                   <strong>Usunięcie konta:</strong> zalogowany użytkownik usuwa konto samodzielnie
                   w zakładce <a className="text-primary underline" href="/profile">Profil</a> →
-                  sekcja „Ustawienia" → pozycja „Usuń konto" (potwierdzenie słowem USUWAM).
-                  Usuwamy wtedy ulubione miejsca, listę „chcę odwiedzić", wystawione oceny
+                  sekcja „Ustawienia” → pozycja „Usuń konto” (potwierdzenie słowem USUWAM).
+                  Usuwamy wtedy ulubione miejsca, listę „chcę odwiedzić”, wystawione oceny
                   gwiazdkowe oraz dane profilu rodziny zapisane w przeglądarce, a wpis logowania
                   kasujemy w ramach tej samej operacji; opublikowane opinie pozostają dostępne dla innych
                   rodziców w formie zanonimizowanej (bez powiązania z Twoim kontem).

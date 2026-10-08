@@ -221,7 +221,7 @@ const HomeSearch = () => {
             {total === 0 ? (
               <div className="p-4 text-center">
                 <p className="text-sm text-muted-foreground">
-                  Nie znaleziono dopasowań dla „{debounced.trim()}"
+                  Nie znaleziono dopasowań dla „{debounced.trim()}”
                 </p>
               </div>
             ) : (

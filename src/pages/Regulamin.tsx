@@ -38,10 +38,10 @@ const Regulamin = () => {
                 <h2 className="text-xl font-semibold mt-8 mb-3 text-foreground">§1 Postanowienia ogólne</h2>
                 <p className="mb-4">
                   Niniejszy regulamin określa zasady korzystania z serwisu internetowego FamilyFun
-                  dostępnego pod adresem familyfun.pl (dalej: „Serwis"). Właścicielem i operatorem
+                  dostępnego pod adresem familyfun.pl (dalej: „Serwis”). Właścicielem i operatorem
                   Serwisu jest Softline sp. z o.o., z siedzibą w Bołtucia 2, 05-827 Grodzisk Mazowiecki,
                   NIP: 5342202117, REGON: 016450950
-                  (dalej: „Operator").
+                  (dalej: „Operator”).
                 </p>
                 <p className="mb-4">
                   Kontakt z Operatorem możliwy jest pod adresem:{" "}
@@ -65,7 +65,7 @@ const Regulamin = () => {
                 <p className="mb-4">
                   Korzystanie z Serwisu jest bezpłatne. Przeglądanie Katalogu nie wymaga rejestracji.
                   Zgłoszenie nowej atrakcji oraz zgłoszenie błędu w danych są dostępne bez logowania.
-                  Logowania wymagają wyłącznie: zapisywanie miejsc, listy „Chcę odwiedzić", oceny i opinie.
+                  Logowania wymagają wyłącznie: zapisywanie miejsc, listy „Chcę odwiedzić”, oceny i opinie.
                 </p>
                 <p className="mb-4">
                   Użytkownik zobowiązany jest do korzystania z Serwisu w sposób zgodny z prawem,
@@ -90,20 +90,20 @@ const Regulamin = () => {
                   automatycznie po pierwszym zalogowaniu, albo (b) rejestrując się adresem e-mail i hasłem
                   (min. 8 znaków, mała i wielka litera, cyfra, znak specjalny). W przypadku rejestracji e-mailem na podany adres wysyłamy wiadomość
                   z linkiem potwierdzającym — konto staje się aktywne po jego kliknięciu. Użytkownik, który
-                  zapomni hasła, może je zmienić korzystając z funkcji resetu hasła („Nie pamiętam hasła"),
+                  zapomni hasła, może je zmienić korzystając z funkcji resetu hasła („Nie pamiętam hasła”),
                   która wysyła link do ustawienia nowego hasła.
                 </p>
                 <p className="mb-4">
                   Użytkownik może w każdej chwili usunąć konto samodzielnie — w zakładce{" "}
                   <Link to="/profile" className="text-primary underline">Profil</Link>, w sekcji
-                  „Ustawienia", przyciskiem „Usuń konto". Konto usuwamy niezwłocznie po potwierdzeniu
+                  „Ustawienia”, przyciskiem „Usuń konto”. Konto usuwamy niezwłocznie po potwierdzeniu
                   operacji, bez dodatkowego okresu oczekiwania. Wraz z kontem trwale usuwane są:
-                  adres e-mail i dane logowania, lista zapisanych atrakcji, lista „Chcę odwiedzić",
+                  adres e-mail i dane logowania, lista zapisanych atrakcji, lista „Chcę odwiedzić”,
                   wystawione oceny gwiazdkowe oraz dane profilu rodziny zapisane w przeglądarce.
                 </p>
                 <p className="mb-4">
                   Opinie opublikowane w Serwisie pozostają widoczne bez powiązania z kontem,
-                  podpisane jako „Rodzic (konto usunięte)" — stanowią treść Serwisu i po anonimizacji
+                  podpisane jako „Rodzic (konto usunięte)” — stanowią treść Serwisu i po anonimizacji
                   nie identyfikują Użytkownika. Usunięcie konta jest nieodwracalne. Użytkownik, który
                   nie może zalogować się do Serwisu, może zgłosić żądanie usunięcia konta na adres{" "}
                   <a className="text-primary underline" href="mailto:kontakt@familyfun.pl">kontakt@familyfun.pl</a>.

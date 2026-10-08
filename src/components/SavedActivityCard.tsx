@@ -153,7 +153,7 @@ const SavedActivityCard = ({
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 disabled={isRemoving}
               >
-                {isRemoving ? "Usuwanie..." : "Usuń"}
+                {isRemoving ? "Usuwanie…" : "Usuń"}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

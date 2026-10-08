@@ -748,7 +748,7 @@ const ActivityDetail = () => {
                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                             className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full"
                           />
-                          Zapisuję...
+                          Zapisuję…
                         </>
                       ) : (
                         <>
@@ -782,7 +782,7 @@ const ActivityDetail = () => {
                             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                             className="w-4 h-4 mr-2 border-2 border-current border-t-transparent rounded-full"
                           />
-                          Zapisuję...
+                          Zapisuję…
                         </>
                       ) : (
                         <>

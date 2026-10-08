@@ -31,7 +31,7 @@ const Kontakt = () => {
 
             <div className="space-y-6">
               <section>
-                <h2 className="text-xl font-semibold mt-8 mb-3">Email</h2>
+                <h2 className="text-xl font-semibold mt-8 mb-3">E-mail</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
                   <a href="mailto:kontakt@familyfun.pl" className="text-primary underline hover:underline">kontakt@familyfun.pl</a>
                 </p>

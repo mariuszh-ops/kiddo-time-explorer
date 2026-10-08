@@ -110,8 +110,8 @@ const formSchema = z.object({
   contactEmail: z
     .string()
     .trim()
-    .email("Podaj prawidłowy adres email")
-    .max(255, "Email jest za długi")
+    .email("Podaj prawidłowy adres e-mail")
+    .max(255, "E-mail jest za długi")
     .optional()
     .or(z.literal("")),
 });
@@ -825,7 +825,7 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   name="contactEmail"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Twój email (jeśli mamy odpisać)</FormLabel>
+                      <FormLabel>Twój e-mail (jeśli mamy odpisać)</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="np. jan@example.com" {...field} />
                       </FormControl>

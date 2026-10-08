@@ -323,7 +323,7 @@ export default function MapBottomSheet({
     : loading
       ? "Wczytuję…"
       : searchQuery.trim()
-      ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}"`
+      ? `${visibleActivities.length} wyników dla „${searchQuery.trim()}”`
       : `${activityCount(visibleActivities.length)} w widoku`;
 
   const showList = sheetState !== "peek";

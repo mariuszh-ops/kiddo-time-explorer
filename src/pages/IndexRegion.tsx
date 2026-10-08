@@ -93,7 +93,7 @@ const IndexRegion = () => {
             Wszystkie atrakcje — {region.label}
           </h1>
 
-          {loading && <p className="text-muted-foreground">Ładowanie listy…</p>}
+          {loading && <p className="text-muted-foreground">Wczytywanie listy…</p>}
           {error && <p className="text-destructive">Nie udało się pobrać listy atrakcji.</p>}
           {!loading && !error && rows.length === 0 && (
             <p className="text-muted-foreground">Brak atrakcji w tym województwie.</p>

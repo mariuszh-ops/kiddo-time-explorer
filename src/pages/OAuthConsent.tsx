@@ -96,7 +96,7 @@ export default function OAuthConsent() {
       {error ? (
         <p className="text-sm text-destructive">Nie udało się obsłużyć tej prośby o dostęp: {error}</p>
       ) : !details ? (
-        <p className="text-sm text-muted-foreground">Ładowanie…</p>
+        <p className="text-sm text-muted-foreground">Wczytywanie…</p>
       ) : (
         <>
           <p className="text-sm text-muted-foreground">

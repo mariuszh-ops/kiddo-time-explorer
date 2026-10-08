@@ -52,7 +52,7 @@ const ActivityLoadError = ({
                 >
                   <RefreshCw className="w-4 h-4" />
                 </motion.span>
-                Ładowanie...
+                Wczytywanie…
               </span>
             ) : (
               <span className="flex items-center gap-2">

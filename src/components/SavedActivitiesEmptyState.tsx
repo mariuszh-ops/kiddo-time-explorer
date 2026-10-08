@@ -18,7 +18,7 @@ const emptyStateContent: Record<string, { icon: LucideIcon; title: string; hint:
   wantToVisit: {
     icon: MapPin,
     title: "Zaplanuj następne wyjście",
-    hint: "Zapisuj atrakcje, do których chcesz zabrać dzieci. Twoja rodzinna bucket lista!",
+    hint: "Zapisuj atrakcje, do których chcesz zabrać dzieci. Twoja rodzinna lista miejsc do odwiedzenia!",
     ctaText: "Znajdź coś fajnego",
     ctaIcon: Search,
   },
