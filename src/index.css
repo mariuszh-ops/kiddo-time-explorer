@@ -136,6 +136,16 @@
     @apply bg-background;
   }
 
+  /* AF-6-064 (WCAG 2.4.11): przewijanie do fokusu (Tab), kotwic i scrollIntoView
+     omija sticky naglowek i staly BottomNav. Bez tego Tab na 390 chowal przycisk
+     „Ulubione” na karcie atrakcji calkowicie pod dolnym paskiem. Zmienne ustawiaja
+     Header/BottomNav przez ResizeObserver (desktop: --bottom-nav-h = 0).
+     Osobna regula: test hero-shell pilnuje dokladnego `html { @apply bg-background; }`. */
+  html {
+    scroll-padding-top: var(--header-h, 72px);
+    scroll-padding-bottom: var(--bottom-nav-h, 64px);
+  }
+
   body {
     @apply text-foreground antialiased;
     font-family: 'DM Sans', sans-serif;
