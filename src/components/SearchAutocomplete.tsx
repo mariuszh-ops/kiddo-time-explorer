@@ -11,6 +11,7 @@ import { useActivitySuggestions } from "@/hooks/useActivitySuggestions";
 import { FEATURES } from "@/lib/featureFlags";
 import { cn } from "@/lib/utils";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
+import { scrollBehavior } from "@/lib/reducedMotion";
 
 interface SearchAutocompleteProps {
   /**
@@ -232,7 +233,7 @@ const SearchAutocomplete = ({
                 onClick={() => {
                   setIsOpen(false);
                   const cta = document.querySelector('[data-submit-cta]');
-                  if (cta) cta.scrollIntoView({ behavior: 'smooth' });
+                  if (cta) cta.scrollIntoView({ behavior: scrollBehavior() });
                 }}
                 className="mt-2 inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
               >

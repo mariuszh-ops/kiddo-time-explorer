@@ -10,6 +10,7 @@ import { formatRatingPl } from "@/lib/formatRating";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { activityCount, formatCountPl } from "@/lib/plural";
+import { scrollBehavior } from "@/lib/reducedMotion";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -277,7 +278,7 @@ export default function MapBottomSheet({
     if (highlightedId && listRef.current && sheetState !== "peek") {
       const card = listRef.current.querySelector(`[data-activity-id="${highlightedId}"]`);
       if (card) {
-        card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        card.scrollIntoView({ behavior: scrollBehavior(), block: "nearest" });
       }
     }
   }, [highlightedId, sheetState]);

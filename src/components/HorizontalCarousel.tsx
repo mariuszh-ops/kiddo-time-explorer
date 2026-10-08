@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect, useCallback, ReactNode, useId } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { scrollBehavior } from "@/lib/reducedMotion";
 
 interface HorizontalCarouselProps {
   children: ReactNode[];
@@ -40,7 +41,7 @@ const HorizontalCarousel = ({
     if (!el) return;
     const cardEl = el.querySelector<HTMLElement>(":scope > *");
     const cardWidth = cardEl?.offsetWidth || 300;
-    el.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+    el.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: scrollBehavior() });
   };
 
   if (children.length === 0) return null;

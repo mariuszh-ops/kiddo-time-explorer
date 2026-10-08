@@ -7,6 +7,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { getPlaceholderImage } from "@/data/placeholders";
 import { buildHeroSrcSet, HERO_SIZES } from "@/lib/imageVariants";
 import ImageErrorPlaceholder from "./ImageErrorPlaceholder";
+import { prefersReducedMotion } from "@/lib/reducedMotion";
 
 
 interface ImageGalleryProps {
@@ -155,8 +156,9 @@ const CarouselGallery = ({
 }: CarouselGalleryProps) => {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false });
 
-  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  // AF-6-036: przy „ogranicz ruch” zdjecie zmienia sie skokiem (jump), bez przewijania.
+  const scrollPrev = useCallback(() => emblaApi?.scrollPrev(prefersReducedMotion()), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi?.scrollNext(prefersReducedMotion()), [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -167,7 +169,7 @@ const CarouselGallery = ({
   }, [emblaApi, setSelectedIndex]);
 
   const scrollTo = useCallback((index: number) => {
-    emblaApi?.scrollTo(index);
+    emblaApi?.scrollTo(index, prefersReducedMotion());
     setSelectedIndex(index);
   }, [emblaApi, setSelectedIndex]);
 

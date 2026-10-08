@@ -5,6 +5,7 @@ import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getReturnFocusTarget, restoreFocus } from "@/lib/returnFocus";
 import { useCloseOnBack } from "@/hooks/useCloseOnBack";
+import { prefersReducedMotion } from "@/lib/reducedMotion";
 
 
 interface ImageLightboxProps {
@@ -47,11 +48,12 @@ const ImageLightbox = ({
   }, [isOpen, initialIndex, emblaApi]);
 
   const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
+    // AF-6-036: przy „ogranicz ruch” zdjecie zmienia sie skokiem (jump), bez przewijania.
+    if (emblaApi) emblaApi.scrollPrev(prefersReducedMotion());
   }, [emblaApi]);
 
   const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
+    if (emblaApi) emblaApi.scrollNext(prefersReducedMotion());
   }, [emblaApi]);
 
   const onSelect = useCallback(() => {
@@ -198,7 +200,7 @@ const ImageLightbox = ({
               {images.map((image, index) => (
                 <button
                   key={index}
-                  onClick={() => emblaApi?.scrollTo(index)}
+                  onClick={() => emblaApi?.scrollTo(index, prefersReducedMotion())}
                   className={cn(
                     "flex-none w-14 h-10 md:w-16 md:h-12 rounded overflow-hidden border-2 transition-all",
                     currentIndex === index

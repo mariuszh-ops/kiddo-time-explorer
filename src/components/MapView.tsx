@@ -39,6 +39,7 @@ import { formatRatingPl } from "@/lib/formatRating";
 import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { activityCount, formatCountPl } from "@/lib/plural";
+import { prefersReducedMotion, scrollBehavior } from "@/lib/reducedMotion";
 
 /** Ile kafli lista pod mapa renderuje na raz („Pokaz wiecej" dokleja kolejna porcje). */
 const PORCJA_LISTY = 30;
@@ -371,7 +372,8 @@ function ClusteredMarkers({
       iconCreateFunction: createClusterIcon,
       spiderfyOnMaxZoom: true,
       showCoverageOnHover: false,
-      animate: true,
+      // W-C-04 / AF-6-036: rozpad klastra i „pajak” bez animacji przy „ogranicz ruch” (czytane raz, przy tworzeniu grupy).
+      animate: !prefersReducedMotion(),
     });
     map.addLayer(group);
     clusterGroupRef.current = group;
@@ -786,7 +788,10 @@ function FlyToHandler({
     if (!targetActivity) return;
     const currentZoom = map.getZoom();
     const targetZoom = Math.max(currentZoom, 13);
-    map.flyTo([targetActivity.latitude, targetActivity.longitude], targetZoom, { duration: 0.5 });
+    const cel: L.LatLngExpression = [targetActivity.latitude, targetActivity.longitude];
+    // AF-6-036: flyTo to animacja JS (klatka po klatce) — regula CSS „ogranicz ruch” jej nie zatrzyma.
+    if (prefersReducedMotion()) map.setView(cel, targetZoom, { animate: false });
+    else map.flyTo(cel, targetZoom, { duration: 0.5 });
     const marker = markersRef.current[targetActivity.id];
     if (marker) {
       setTimeout(() => otworzDymekBezFokusu(marker), 400);
@@ -985,10 +990,12 @@ function MapFitBounds({
       map.invalidateSize();
       // Po invalidateSize: zmiana rozmiaru wysyła własny moveend, jeszcze na starym kadrze.
       map.once("moveend", zakoncz);
+      // AF-6-036: bez animacji przy „ogranicz ruch”; moveend przychodzi wtedy od razu (once wyzej).
+      const animuj = !prefersReducedMotion();
       if (activities.length === 1 || allSame) {
-        map.setView(coords[0], 13, { animate: true });
+        map.setView(coords[0], 13, { animate: animuj });
       } else {
-        map.fitBounds(L.latLngBounds(coords), { padding: [50, 50], maxZoom: 14, animate: true });
+        map.fitBounds(L.latLngBounds(coords), { padding: [50, 50], maxZoom: 14, animate: animuj });
       }
     }, 150);
 
@@ -1045,7 +1052,7 @@ function LocateButton({
           color: "#fff",
           weight: 3,
         }).addTo(map);
-        map.setView([latitude, longitude], 13, { animate: true });
+        map.setView([latitude, longitude], 13, { animate: !prefersReducedMotion() });
         setLocating(false);
       },
       (err) => {
@@ -1541,7 +1548,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     setHighlightedId(id);
     const card = cardRefs.current[id];
     if (card) {
-      card.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      card.scrollIntoView({ behavior: scrollBehavior(), block: "nearest", inline: "center" });
     }
   }, []);
 
@@ -1646,6 +1653,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
           attributionControl={true}
+          zoomAnimation={!prefersReducedMotion()}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
@@ -1823,6 +1831,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
           attributionControl={true}
+          zoomAnimation={!prefersReducedMotion()}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'

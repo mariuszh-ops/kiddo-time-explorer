@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef, useState, useEffect, useCallback } from "react";
 import { CATEGORY_ORDER, CATEGORY_LABELS, CATEGORY_EMOJI } from "@/data/categoryLabels";
+import { scrollBehavior } from "@/lib/reducedMotion";
 
 export const FAVORITES_CHIP_KEY = "_favorites";
 
@@ -52,7 +53,7 @@ export default function MapCategoryChips({ selected, onToggle, showCategories = 
   }, [updateScrollState]);
 
   const scroll = (dir: number) => {
-    scrollRef.current?.scrollBy({ left: dir * 200, behavior: "smooth" });
+    scrollRef.current?.scrollBy({ left: dir * 200, behavior: scrollBehavior() });
   };
 
   return (

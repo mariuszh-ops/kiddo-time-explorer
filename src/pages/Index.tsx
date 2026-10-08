@@ -28,6 +28,7 @@ import { buildOrganizationJsonLd } from "@/lib/organizationJsonLd";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingModal from "@/components/OnboardingModal";
+import { scrollBehavior } from "@/lib/reducedMotion";
 const MapView = lazy(() => import("@/components/MapView"));
 import { getRawItem, setRawItem, STORAGE_KEYS } from "@/lib/storage";
 import HomeSearch from "@/components/HomeSearch";
@@ -269,7 +270,7 @@ const Index = () => {
           const elementPosition = rect.top + window.scrollY;
           window.scrollTo({
             top: elementPosition - headerHeight,
-            behavior: "smooth",
+            behavior: scrollBehavior(),
           });
         }
       }
@@ -318,7 +319,7 @@ const Index = () => {
         if (listingRef.current) {
           const headerHeight = 56;
           const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-          window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+          window.scrollTo({ top: elementPosition - headerHeight, behavior: scrollBehavior() });
         }
       }, 100);
     }
@@ -336,7 +337,7 @@ const Index = () => {
     if (listingRef.current) {
       const headerHeight = 56;
       const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+      window.scrollTo({ top: elementPosition - headerHeight, behavior: scrollBehavior() });
     }
   }, []);
 
@@ -559,7 +560,7 @@ const Index = () => {
               if (listingRef.current) {
                 const headerHeight = 56;
                 const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-                window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+                window.scrollTo({ top: elementPosition - headerHeight, behavior: scrollBehavior() });
               }
             }}
             onSelectCategory={(type) => {
@@ -568,7 +569,7 @@ const Index = () => {
               if (listingRef.current) {
                 const headerHeight = 56;
                 const elementPosition = listingRef.current.getBoundingClientRect().top + window.scrollY;
-                window.scrollTo({ top: elementPosition - headerHeight, behavior: "smooth" });
+                window.scrollTo({ top: elementPosition - headerHeight, behavior: scrollBehavior() });
               }
             }}
           />

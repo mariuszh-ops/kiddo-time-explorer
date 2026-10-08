@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { prefersReducedMotion } from "@/lib/reducedMotion";
 
 interface NearbyActivity {
   id: number;
@@ -114,6 +115,7 @@ const NearbyMiniMap = ({ currentActivity, nearbyActivities, mapaHref }: NearbyMi
         dragging={true}
         zoomControl={false}
         attributionControl={true}
+        zoomAnimation={!prefersReducedMotion()}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'

@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route, useLocation, useNavigationType } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, MotionConfig } from "framer-motion";
 import { Suspense, lazy } from "react";
 import { RealNavigationTypeContext } from "@/lib/navigationType";
 import { HelmetProvider } from "react-helmet-async";
@@ -127,8 +127,11 @@ const App = () => {
   // z zapytań punktowych (count head:true, SELECT z limitem), a pełny zbiór
   // dociąga się leniwie przez ensureActivitiesLoaded() tylko tam, gdzie
   // naprawdę jest potrzebny (filtry, mapa, ulubione).
+  // AF-7-028: framer-motion domyślnie ignoruje systemowe „ogranicz ruch” (reducedMotion="never").
+  // "user" = przy tej preferencji przesunięcia i skalowanie są natychmiastowe, zanikanie zostaje.
   return (
     <ErrorBoundary fallbackLevel="page">
+      <MotionConfig reducedMotion="user">
       <HelmetProvider>
           <AuthProvider>
             <PendingIntentProvider>
@@ -159,6 +162,7 @@ const App = () => {
             </PendingIntentProvider>
           </AuthProvider>
       </HelmetProvider>
+      </MotionConfig>
     </ErrorBoundary>
   );
 };
