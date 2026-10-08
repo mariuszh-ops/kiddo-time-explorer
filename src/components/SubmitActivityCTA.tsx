@@ -30,7 +30,7 @@ const SubmitActivityCTA = ({ variant = "default", className }: SubmitActivityCTA
               Znasz fajne miejsce dla dzieci?
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Podziel się z innymi rodzicami! Dodaj miejsce, które warto odwiedzić.
+              Podziel się z innymi rodzicami miejscem, które warto odwiedzić.
             </p>
             <Button 
               variant="outline" 
@@ -38,7 +38,7 @@ const SubmitActivityCTA = ({ variant = "default", className }: SubmitActivityCTA
               className="gap-2"
             >
               <PlusCircle className="w-4 h-4" />
-              Dodaj nowe miejsce
+              Zgłoś atrakcję
             </Button>
           </div>
         </div>
@@ -59,7 +59,7 @@ const SubmitActivityCTA = ({ variant = "default", className }: SubmitActivityCTA
           )}
         >
           <PlusCircle className="w-4 h-4" />
-          <span>Dodaj nowe miejsce</span>
+          <span>Zgłoś atrakcję</span>
         </button>
         <SubmitActivityModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       </>
@@ -75,7 +75,7 @@ const SubmitActivityCTA = ({ variant = "default", className }: SubmitActivityCTA
         className={cn("gap-2", className)}
       >
         <PlusCircle className="w-4 h-4" />
-        Dodaj nowe miejsce
+        Zgłoś atrakcję
       </Button>
       <SubmitActivityModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>

@@ -27,7 +27,7 @@ import AuthRequiredModal from "@/components/AuthRequiredModal";
 const SavedLoadError = ({ onRetry }: { onRetry: () => void }) => (
   <div className="flex flex-col items-center justify-center py-16 md:py-24 text-center max-w-sm mx-auto px-4">
     <h2 className="text-lg md:text-xl font-serif font-medium text-foreground mb-2">
-      Nie udało się wczytać zapisanych atrakcji
+      Nie udało się wczytać listy
     </h2>
     <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
       To problem z połączeniem, a nie pusta lista. Spróbuj ponownie za chwilę.
@@ -130,7 +130,7 @@ const MyPlaces = () => {
   if (!isLoggedIn) {
     return (
       <PageTransition>
-        <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
+        <SEOHead title="Moje miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
         <div className="min-h-screen bg-background">
           <Header />
           <main id="main-content" className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
@@ -138,7 +138,7 @@ const MyPlaces = () => {
               <Heart className="w-7 h-7 text-accent-foreground" />
             </div>
             <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2">
-              Twoje ulubione miejsca
+              Moje miejsca
             </h1>
             <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
               Zaloguj się, aby zapisywać atrakcje i planować wizyty z rodziną.
@@ -155,7 +155,7 @@ const MyPlaces = () => {
         <AuthRequiredModal
           isOpen={isAuthModalOpen}
           onClose={() => setIsAuthModalOpen(false)}
-          title="Zaloguj się, aby zobaczyć zapisane miejsca"
+          title="Zaloguj się, aby zobaczyć swoje miejsca"
           description="Twoje ulubione atrakcje i plany wizyt są dostępne po zalogowaniu."
           onGoogleClick={handleGoogleSignIn}
         />
@@ -189,7 +189,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
 
   return (
     <PageTransition>
-      <SEOHead title="Moje zapisane miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
+      <SEOHead title="Moje miejsca" description="Twoje ulubione atrakcje i lista miejsc do odwiedzenia." path="/my-places" noindex />
       <div className="min-h-screen bg-background">
       <Header />
 
@@ -201,7 +201,7 @@ const MyPlacesContent = ({ defaultTab }: { defaultTab: string }) => {
                 Moje miejsca
               </h1>
               <p className="text-muted-foreground mt-1 text-sm">
-                Twoje zapisane atrakcje w jednym miejscu
+                Twoje ulubione atrakcje i lista miejsc do odwiedzenia
               </p>
             </div>
             {FEATURES.SUBMIT_ACTIVITY && <SubmitActivityCTA className="self-start" />}

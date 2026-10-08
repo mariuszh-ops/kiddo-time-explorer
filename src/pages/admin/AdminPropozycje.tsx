@@ -23,7 +23,7 @@ const PAGE_SIZE = 50;
 type Status = "nowe" | "w-toku" | "zalatwione" | "odrzucone";
 
 // Kolumny tabeli activity_submissions (projekt zpqp). Wiersze wstawia
-// SubmitActivityModal — formularz „Dodaj atrakcję" ze stopki i z profilu.
+// SubmitActivityModal — formularz „Zgłoś atrakcję” ze stopki, z profilu i z „Moich miejsc”.
 interface Submission {
   id: string;
   created_at: string;
@@ -186,7 +186,7 @@ const AdminPropozycje = () => {
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        Propozycje z formularza „Dodaj atrakcję". Nie trafiają na żadną skrzynkę —
+        Propozycje z formularza „Zgłoś atrakcję”. Nie trafiają na żadną skrzynkę —
         ta zakładka jest jedynym miejscem, w którym ktokolwiek je zobaczy.
       </p>
 

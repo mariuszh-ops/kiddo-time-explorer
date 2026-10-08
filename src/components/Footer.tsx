@@ -38,7 +38,7 @@ const Footer = () => {
                   onClick={() => { trackEvent("submit_open", { source: "footer" }); setSubmitOpen(true); }}
                   className="hover:text-foreground transition-colors"
                 >
-                  Dodaj atrakcję
+                  Zgłoś atrakcję
                 </button>
               )}
               {FEATURES.BLOG && (
