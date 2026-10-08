@@ -39,6 +39,13 @@ const toTime24 = (raw: string): string | undefined => {
   return `${String(h).padStart(2, "0")}:${min}`;
 };
 
+/**
+ * Dzień otwarty przez całą dobę. Google Places po polsku zapisuje to jako
+ * „Czynne całą dobę” (538 rekordów katalogu, AF-2-057), stąd „całą dobę”
+ * obok „całodobowo”, „24h” i angielskiego „Open 24 hours”.
+ */
+const ALL_DAY_RE = /24\s*h|ca[łl]odobow|ca[łl][aą]\s+dob[eę]|open 24/i;
+
 /** Pojedynczy zakres godzin w obrebie dnia. Flaga /g – dzien moze miec kilka zakresow. */
 const RANGE_RE =
   /(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)\s*(?:[–—-]|do)\s*(\d{1,2}(?::\d{2})?\s*(?:AM|PM|am|pm)?)/g;
@@ -66,7 +73,7 @@ export function buildOpeningHoursSpecification(hours?: string | null): OpeningHo
     const time = entry.slice(idx + 1).trim();
     // Zamknięte / brak godzin → dzień pomijamy (Google traktuje brak wpisu jako zamknięte).
     if (!time || /zamk|closed/i.test(time)) continue;
-    if (/24\s*h|całodobow|open 24/i.test(time)) {
+    if (ALL_DAY_RE.test(time)) {
       out.push({ "@type": "OpeningHoursSpecification", dayOfWeek, opens: "00:00", closes: "23:59" });
       continue;
     }

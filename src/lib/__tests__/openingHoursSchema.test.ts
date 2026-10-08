@@ -55,6 +55,31 @@ describe("buildOpeningHoursSpecification — przerwa w ciagu dnia (V-E-02)", () 
     ]);
   });
 
+  it("AF-2-057: realny rekord active-paintball-krakow-prusy — 7 x „Czynne całą dobę” daje 7 wpisow", () => {
+    const dni = ["poniedziałek", "wtorek", "środa", "czwartek", "piątek", "sobota", "niedziela"];
+    const out = buildOpeningHoursSpecification(dni.map((d) => `${d}: Czynne całą dobę`).join(" | "));
+    expect(out).toEqual(
+      ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((d) =>
+        spec(d, "00:00", "23:59"),
+      ),
+    );
+  });
+
+  it("AF-2-057: cala doba obok zwyklych godzin i dnia zamknietego, takze bez diakrytykow", () => {
+    const out = buildOpeningHoursSpecification(
+      "poniedziałek: 10:00–18:00 | wtorek: Czynne całą dobę | środa: Zamknięte | czwartek: czynne cala dobe",
+    );
+    expect(out).toEqual([
+      spec("Monday", "10:00", "18:00"),
+      spec("Tuesday", "00:00", "23:59"),
+      spec("Thursday", "00:00", "23:59"),
+    ]);
+  });
+
+  it("AF-2-057 kontrola: tekst bez godzin i bez calej doby dalej pomijany (bez wymyslania godzin)", () => {
+    expect(buildOpeningHoursSpecification("poniedziałek: wg ustaleń telefonicznych")).toEqual([]);
+  });
+
   it("kontrola: dwa wywolania z rzedu daja ten sam wynik (regex /g nie trzyma lastIndex)", () => {
     const wej = "poniedziałek: 10:00–14:00, 16:00–20:00";
     expect(buildOpeningHoursSpecification(wej)).toEqual(buildOpeningHoursSpecification(wej));
