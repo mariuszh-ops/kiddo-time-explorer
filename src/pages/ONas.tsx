@@ -9,7 +9,7 @@ const ONas = () => {
   return (
     <PageTransition>
       <SEOHead
-        title="O nas"
+        title="O nas — portal rodziców dla rodziców"
         description="FamilyFun to portal stworzony przez rodziców dla rodziców. Pomagamy znaleźć najlepsze atrakcje dla dzieci w 16 województwach Polski."
         path="/o-nas"
       />

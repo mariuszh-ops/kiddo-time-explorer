@@ -8,6 +8,7 @@ import BlogListPage from "@/pages/BlogListPage";
 import Kontakt from "@/pages/Kontakt";
 import Regulamin from "@/pages/Regulamin";
 import PolitykaPrywatnosci from "@/pages/PolitykaPrywatnosci";
+import ONas from "@/pages/ONas";
 
 // Nagłówek i stopka wymagają AuthProvider i katalogu — nie są przedmiotem testu.
 vi.mock("@/components/Header", () => ({ default: () => null }));
@@ -19,6 +20,7 @@ vi.mock("@/components/Footer", () => ({ default: () => null }));
  * description 63 (/inspiracje) i 56 (/polityka-prywatnosci). Progi jak w audycie:
  * title 30–65, dokładnie 1 description 70–160, canonical == https://familyfun.pl + ścieżka,
  * bez meta robots.
+ * Domknięcie 09.10 (DK-3-044, P3): /o-nas miało tytuł „O nas | FamilyFun” (17 znaków).
  */
 const STRONY: Array<[string, ComponentType]> = [
   ["/indeks", IndexDirectory],
@@ -26,6 +28,7 @@ const STRONY: Array<[string, ComponentType]> = [
   ["/kontakt", Kontakt],
   ["/regulamin", Regulamin],
   ["/polityka-prywatnosci", PolitykaPrywatnosci],
+  ["/o-nas", ONas],
 ];
 
 const opisy = () =>
