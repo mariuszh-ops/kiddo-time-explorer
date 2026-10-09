@@ -80,7 +80,7 @@ export default function OAuthConsent() {
   }
 
   return (
-    <main id="main-content" className="mx-auto flex min-h-screen max-w-md flex-col justify-center gap-4 px-6 py-12">
+    <main id="main-content" className="mx-auto flex min-h-svh max-w-md flex-col justify-center gap-4 px-6 py-12">
       {/* Trasa techniczna OAuth: noindex + og:url tej ścieżki zamiast statycznego "/" z index.html
           (GL-5-022). Stała ścieżka, żeby authorization_id z query nie trafiał do og:url. */}
       <SEOHead

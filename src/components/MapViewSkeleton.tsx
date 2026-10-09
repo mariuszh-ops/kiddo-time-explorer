@@ -1,6 +1,6 @@
 const MapViewSkeleton = () => {
   return (
-    <div className="relative w-full" style={{ height: "calc(100vh - 56px)" }}>
+    <div className="relative w-full" style={{ height: "calc(100dvh - 56px)" }}>
       {/* Map area skeleton */}
       <div className="absolute inset-0 bg-muted animate-pulse">
         {/* Fake map grid lines */}

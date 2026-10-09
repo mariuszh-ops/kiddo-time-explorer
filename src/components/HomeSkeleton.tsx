@@ -3,7 +3,7 @@ const Block = ({ className }: { className?: string }) => (
 );
 
 const HomeSkeleton = () => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-svh bg-background">
     {/* Header */}
     <div className="h-14 border-b border-border flex items-center px-4 gap-4">
       <Block className="h-8 w-32" />

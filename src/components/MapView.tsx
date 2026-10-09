@@ -1720,7 +1720,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
 
   // Desktop: sidebar left + map right
   return (
-    <div className="flex relative" style={{ height: "calc(100vh - 64px - 52px)" }}>
+    <div className="flex relative" style={{ height: "calc(100dvh - 64px - 52px)" }}>
       {/* K-05: kontrolki mapy w DOM PRZED lista boczna (Tab trafia w nie od razu) */}
       <MapControls mapRef={mapInstanceRef} granicaZoomu={granicaZoomu} />
 

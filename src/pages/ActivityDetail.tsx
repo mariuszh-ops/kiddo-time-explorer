@@ -362,7 +362,7 @@ const ActivityDetail = () => {
     return (
       <PageTransition>
         <Header />
-        <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
+        <main id="main-content" className="min-h-svh bg-background pb-24 md:pb-8">
           <ActivityLoadError
             onRetry={refetch}
             message="Sprawdź połączenie i spróbuj ponownie."
@@ -513,7 +513,7 @@ const ActivityDetail = () => {
       />
       {/* Global header — same on mobile and desktop; landmark banner poza <main> (K-02) */}
       <Header />
-      <main id="main-content" className="min-h-screen bg-background pb-24 md:pb-8">
+      <main id="main-content" className="min-h-svh bg-background pb-24 md:pb-8">
 
       {/* Sticky header on scroll past gallery */}
       <div

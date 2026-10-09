@@ -54,7 +54,7 @@ const ResetPassword = () => {
   return (
     <>
       <SEOHead title="Ustaw nowe hasło" description="Ustaw nowe hasło do konta FamilyFun." path="/reset-password" noindex />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="max-w-sm mx-auto px-4 py-20 md:py-28">
           <h1 className="text-xl md:text-2xl font-serif font-semibold text-foreground mb-2">

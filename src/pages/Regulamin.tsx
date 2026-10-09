@@ -14,7 +14,7 @@ const Regulamin = () => {
   return (
     <PageTransition>
       <SEOHead title="Regulamin serwisu — zasady korzystania" description="Zasady korzystania z serwisu FamilyFun: konto rodzica, dodawanie opinii i ocen, zgłaszanie atrakcji, prawa i obowiązki użytkownika oraz kontakt." path="/regulamin" />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <div className="max-w-2xl mx-auto">

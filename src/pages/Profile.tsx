@@ -96,7 +96,7 @@ const Profile = () => {
     return (
       <PageTransition>
         <SEOHead title="Profil" description="Profil FamilyFun." path="/profile" noindex />
-        <div className="min-h-screen bg-background">
+        <div className="min-h-svh bg-background">
           <Header />
           <main
             id="main-content"
@@ -124,7 +124,7 @@ const Profile = () => {
     return (
       <PageTransition>
         <SEOHead title="Profil" description="Zaloguj się do swojego profilu FamilyFun." path="/profile" noindex />
-        <div className="min-h-screen bg-background">
+        <div className="min-h-svh bg-background">
           <Header />
           <main id="main-content" className="flex flex-col items-center justify-center py-24 md:py-32 text-center max-w-sm mx-auto px-4">
             <div className="w-14 h-14 rounded-full bg-accent flex items-center justify-center mb-4">
@@ -159,7 +159,7 @@ const Profile = () => {
   return (
     <PageTransition>
       <SEOHead title="Profil" description="Zarządzaj swoim profilem FamilyFun." path="/profile" noindex />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
 
         <section aria-labelledby="profil-tytul" className="border-b border-border/50">

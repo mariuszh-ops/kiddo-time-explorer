@@ -8,7 +8,7 @@ const Block = ({ className = "" }: { className?: string }) => (
  */
 const ActivityDetailSkeleton = () => {
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-svh bg-background">
       {/* Header / breadcrumbs strip */}
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-3">
         <Block className="h-6 w-32" />

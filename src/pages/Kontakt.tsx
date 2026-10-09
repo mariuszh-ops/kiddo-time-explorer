@@ -9,7 +9,7 @@ const Kontakt = () => {
   return (
     <PageTransition>
       <SEOHead title="Kontakt — napisz do nas" description="Masz pytanie o atrakcję, chcesz zgłosić błąd w danych albo dodać nowe miejsce? Napisz do zespołu FamilyFun — odpowiadamy na każdą wiadomość." path="/kontakt" />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <div className="max-w-2xl mx-auto">

@@ -13,7 +13,7 @@ const ONas = () => {
         description="FamilyFun to portal stworzony przez rodziców dla rodziców. Pomagamy znaleźć najlepsze atrakcje dla dzieci w 16 województwach Polski."
         path="/o-nas"
       />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <div className="max-w-3xl mx-auto">

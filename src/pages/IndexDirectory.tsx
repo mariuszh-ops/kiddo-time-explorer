@@ -13,7 +13,7 @@ const IndexDirectory = () => {
         description="Pełny indeks atrakcji dla rodzin z dziećmi w Polsce — lista wszystkich województw i atrakcji w serwisie FamilyFun."
         path="/indeks"
       />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <h1 className="text-3xl font-bold text-foreground mb-6">Indeks atrakcji</h1>

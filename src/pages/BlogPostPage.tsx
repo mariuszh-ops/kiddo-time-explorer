@@ -225,7 +225,7 @@ const BlogPostPage = () => {
         publishedTime={post.publishedAt}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
-      <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="min-h-svh bg-background pb-20 md:pb-0">
         <Header />
         <main id="main-content" className="container py-6 md:py-10">
           <div className="max-w-2xl mx-auto">

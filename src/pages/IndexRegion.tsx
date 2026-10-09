@@ -78,7 +78,7 @@ const IndexRegion = () => {
         description={`Pełna lista atrakcji dla dzieci w województwie ${region.label.toLowerCase()} — ${region.subtitle} i cały region.`}
         path={`/indeks/${region.slug}`}
       />
-      <div className="min-h-screen bg-background">
+      <div className="min-h-svh bg-background">
         <Header />
         <main id="main-content" className="container py-8 pb-20 sm:pb-8">
           <nav aria-label="Ścieżka" className="text-sm text-muted-foreground mb-4">

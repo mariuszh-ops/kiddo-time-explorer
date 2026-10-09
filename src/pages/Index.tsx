@@ -379,8 +379,10 @@ const Index = () => {
           isMobile && viewMode === 'map'
             // Header jest teraz rodzenstwem main, wiec wysokosc liczymy bez niego,
             // inaczej strona w trybie mapy urosla by o pasek naglowka.
-            ? "h-[calc(100vh-var(--header-h,72px))] overflow-hidden pb-0"
-            : "min-h-[calc(100vh-var(--header-h,72px))]"
+            // AF-7-008: dvh/svh, bo vh na telefonie to wysokosc ekranu przy SCHOWANYM
+            // pasku adresu (iOS/Android) - przy widocznym pasku dol strony byl pod nim.
+            ? "h-[calc(100dvh-var(--header-h,72px))] overflow-hidden pb-0"
+            : "min-h-[calc(100svh-var(--header-h,72px))]"
         )}
         style={{ 
           opacity: isScrollRestored && !ukryjDoPrzewiniecia ? 1 : 0
