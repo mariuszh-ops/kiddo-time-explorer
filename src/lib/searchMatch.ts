@@ -1,5 +1,6 @@
 import { Activity, filterOptions } from "@/data/activities";
 import { REGION_BY_SLUG } from "@/data/regions";
+import { regionFallbackLabel } from "@/lib/address";
 
 /** Małe litery + usunięcie polskich znaków diakrytycznych. */
 export function normalizeSearchText(text: string): string {
@@ -26,12 +27,27 @@ function regionLabel(citySlug: string): string {
   return REGION_BY_SLUG[citySlug]?.label ?? citySlug;
 }
 
-/** Połączony tekst atrakcji: nazwa + lokalizacja + miasto + region + kategoria + tagi. */
+/**
+ * Miejscowość do stogu. Gdy miasto jest puste, mapCatalogRow wstawia do `location`
+ * etykietę zastępczą „woj. <województwo>” — to tekst ekranu, nie dana. Serwerowe
+ * ff_home_match szuka w surowym `city` (wtedy pustym), więc fraza „woj” dawała na mapie
+ * 98 wyników, a na liście 49 (M-4-F01, domknięcie 09.10). Etykiety do stogu nie bierzemy.
+ */
+function searchLocation(activity: Activity): string {
+  const loc = activity.location?.trim() ?? "";
+  const fallback = regionFallbackLabel(activity.city);
+  return fallback && loc === fallback ? "" : loc;
+}
+
+/**
+ * Połączony tekst atrakcji: nazwa + miejscowość + region + kategoria + tagi.
+ * Ma być jeden do jednego ze stogiem ff_home_match (lista), bo mapa filtruje tym na kliencie.
+ */
 export function activitySearchHaystack(activity: Activity): string {
   return normalizeSearchText(
     [
       activity.title,
-      activity.location,
+      searchLocation(activity),
       activity.city,
       regionLabel(activity.city),
       activity.type,
