@@ -65,6 +65,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, formatReviewCountGoogle, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 import { buildActivityTitle, fitsSeoTitle } from "@/lib/seoTitle";
+import { safeHref } from "@/lib/safeUrl";
 
 const anonymizeAuthor = (name: string): string => {
   const parts = name.trim().split(/\s+/);
@@ -383,7 +384,8 @@ const ActivityDetail = () => {
     experiencePoints: activity.experiencePoints ?? [],
     openingHours: activity.openingHours,
     address: activity.address,
-    website: activity.website,
+    // public_activities.website nie ma CHECK — do href trafia tylko http/https (DK-4-053).
+    website: safeHref(activity.website),
     reviews: activity.reviews || [],
   };
   const openingHoursSpec = buildOpeningHoursSpecification(activity.openingHours);
