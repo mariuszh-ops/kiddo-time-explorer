@@ -365,6 +365,16 @@ export function formatAgeRange(min: number | null | undefined, max: number | nul
   return `${min}–${max} ${word}`;
 }
 
+/**
+ * Notatka o cenie do UI. M1-R12 (domknięcie masowe 09.10): część rekordów ma w price_note
+ * sam symbol poziomu cen Google („$”, „$$”) — na karcie „Cennik orientacyjny” to nic
+ * nie mówi. Notatka złożona wyłącznie z „$” i spacji (albo pusta) = brak notatki.
+ */
+export function cleanPriceNote(raw: string | null | undefined): string | undefined {
+  if (raw == null) return undefined;
+  return /^[\s$]*$/.test(raw) ? undefined : raw;
+}
+
 /** Zamień wiersz katalogu na kształt oczekiwany przez UI (Activity). */
 export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
   const rating = row.rating ?? 0;
@@ -395,14 +405,14 @@ export function mapCatalogRow(row: CatalogRow, index = 0): Activity {
     type: row.type,
     address: formatAddress(row.address, displayLocation(row.city, row.region)),
     openingHours: row.opening_hours ?? undefined,
-    priceRange: row.price_note ?? undefined,
+    priceRange: cleanPriceNote(row.price_note),
     website: row.website ?? undefined,
     latitude: row.lat ?? 0,
     longitude: row.lng ?? 0,
     amenities: row.amenities ?? [],
     description: row.description ?? undefined,
     phone: row.phone ?? undefined,
-    priceNote: row.price_note ?? undefined,
+    priceNote: cleanPriceNote(row.price_note),
     // GOLIVE GL-4-017: brak oceny w Google (rating null) zostaje brakiem, nie zerem —
     // inaczej karta i kafelek pokazują „0,0 w Google”. `rating` (wyżej) zostaje 0 dla
     // sortowania; UI liczy ocenę jako `google_rating ?? (rating > 0 ? rating : null)`.
