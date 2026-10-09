@@ -67,12 +67,6 @@ import { formatReviewCount, formatReviewCountGoogle, NO_REVIEWS_LABEL } from "@/
 import { buildActivityTitle, fitsSeoTitle } from "@/lib/seoTitle";
 import { safeHref } from "@/lib/safeUrl";
 
-const anonymizeAuthor = (name: string): string => {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0];
-  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
-};
-
 const TYPE_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
   "plac-zabaw": "Plac zabaw",

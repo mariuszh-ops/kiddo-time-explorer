@@ -25,6 +25,7 @@ import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
 // AF-8-008/063 (DSA art. 16): przy każdej opinii przycisk zgłoszenia treści.
 import ReportReviewButton from "@/components/ReportReviewButton";
+import { anonymizeAuthor } from "@/lib/anonymizeAuthor";
 
 interface GoogleReview {
   author: string;
@@ -66,12 +67,6 @@ interface ReviewsSectionProps {
 }
 
 const REVIEW_MAX = 500;
-
-const anonymizeAuthor = (name: string): string => {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return parts[0];
-  return `${parts[0]} ${parts[parts.length - 1].charAt(0)}.`;
-};
 
 const isTruncatedAtSource = (text: string): boolean =>
   /(…|\.\.\.)\s*$/.test(text.trim());
