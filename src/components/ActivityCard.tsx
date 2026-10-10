@@ -13,8 +13,8 @@ import { getAmenityById } from "@/data/amenities";
 import AmenityIcon from "@/components/AmenityIcon";
 import { PRICE_LEVELS } from "@/data/activities";
 import { cn } from "@/lib/utils";
-import AuthRequiredModal from "@/components/AuthRequiredModal";
 import { usePendingIntent } from "@/contexts/PendingIntentContext";
+import { useOpenCardAuthModal } from "@/contexts/CardAuthModalContext";
 import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
 import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
@@ -87,10 +87,12 @@ const ActivityCard = ({
   isFree = false,
   imageSizes,
 }: ActivityCardProps) => {
-  const { isLoggedIn, signInWithGoogle } = useAuth();
+  const { isLoggedIn } = useAuth();
   const hasPreferences = useFamilyPreferences();
   const { isFavorite: checkIsFavorite, toggleFavorite } = useSavedActivities();
-  const { setPendingIntent, cancelPendingIntent } = usePendingIntent();
+  const { setPendingIntent } = usePendingIntent();
+  // Jeden wspólny modal logowania dla wszystkich kart (CardAuthModalContext).
+  const otworzModalLogowania = useOpenCardAuthModal();
   
   const [imgSrc, setImgSrc] = useState(imageUrl);
   const [imgError, setImgError] = useState(false);
@@ -104,7 +106,6 @@ const ActivityCard = ({
   const reviewCountLabel = reviewBucket === null
     ? NO_REVIEWS_LABEL
     : `${reviewBucket}${google_review_count != null ? " Google" : ""}`;
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [justToggled, setJustToggled] = useState(false);
   // GL-1-029: jeden zapis serca naraz. Ref blokuje drugi klik synchronicznie
   // (podwójny klik = POST, a drugi klik widział już optymistyczne „ulubione”
@@ -136,7 +137,7 @@ const ActivityCard = ({
     if (!isLoggedIn) {
       // Zapamiętaj intencję gościa — wykonamy ją po zalogowaniu.
       setPendingIntent({ kind: "favorite", activityId: id, slug });
-      setIsAuthModalOpen(true);
+      otworzModalLogowania();
       return;
     }
 
@@ -156,17 +157,7 @@ const ActivityCard = ({
     }
   };
 
-  const handleAuthAction = async () => {
-    // NIE zamykamy modalu po starcie logowania Google. `signInWithOAuth` robi
-    // `location.assign(...)` na Supabase i wraca od razu; zamkniecie modalu
-    // odpalilo by efekt `window.history.back()` (wstecz zamyka modal), a to
-    // przerywa trwajaca nawigacje (net::ERR_ABORTED) i uzytkownik zostaje na
-    // stronie — klikniecie "Kontynuuj z Google" nie robi nic.
-    await signInWithGoogle();
-  };
-
   return (
-    <>
       <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
         <article className="group cursor-pointer rounded-xl transition-all duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] active:opacity-90 active:duration-150">
           {/* Image */}
@@ -345,19 +336,6 @@ const ActivityCard = ({
           </div>
         </article>
       </Link>
-
-      <AuthRequiredModal
-        isOpen={isAuthModalOpen}
-        onClose={() => {
-          setIsAuthModalOpen(false);
-          // Anulowane bez próby logowania — intencja przepada.
-          cancelPendingIntent();
-        }}
-        onGoogleClick={handleAuthAction}
-        onEmailClick={handleAuthAction}
-        onLoginClick={handleAuthAction}
-      />
-    </>
   );
 };
 

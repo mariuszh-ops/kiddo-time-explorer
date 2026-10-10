@@ -56,6 +56,7 @@ import AuthReturnHandler from "./components/AuthReturnHandler";
 import AuthLinkErrorHandler from "./components/AuthLinkErrorHandler";
 import { PendingIntentProvider } from "./contexts/PendingIntentContext";
 import PendingIntentRunner from "./components/PendingIntentRunner";
+import { CardAuthModalProvider } from "./contexts/CardAuthModalContext";
 import SessionExpiredHandler from "./components/SessionExpiredHandler";
 import GuestDataMigrationDialog from "./components/GuestDataMigrationDialog";
 
@@ -147,6 +148,8 @@ const App = () => {
                     <AuthLinkErrorHandler />
                     <GuestDataMigrationDialog />
                     <BrowserRouter>
+                      {/* Jeden modal logowania dla wszystkich kart atrakcji (INP). */}
+                      <CardAuthModalProvider>
                       <SkipLink />
                       <RouteAnnouncer />
                       <AuthReturnHandler />
@@ -155,6 +158,7 @@ const App = () => {
                       {FEATURES.SUBMIT_ACTIVITY && FEATURES.SUBMIT_ACTIVITY_FAB && <SubmitActivityFAB />}
                       {FEATURES.COOKIE_CONSENT && <CookieConsent />}
                       <LayoutDiagnostics />
+                      </CardAuthModalProvider>
                     </BrowserRouter>
                 </TooltipProvider>
               </UserRatingsProvider>
