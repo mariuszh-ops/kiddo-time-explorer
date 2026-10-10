@@ -4,11 +4,14 @@ import { Search, X } from "lucide-react";
 import { REGION_SLUGS } from "@/data/regions";
 import { trackEvent } from "@/lib/analytics";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
+import { adresSzukaniaZKarty, filtryZeStanuKarty } from "@/lib/kontekstListy";
 
 /**
  * Kompaktowa wyszukiwarka w headerze na stronach listingowych.
  * Zachowuje kontekst: na stronie województwa/kategorii Enter zawęża wyniki
  * do tej strony (`/malopolskie?search=zoo`), poza nią szuka ogólnopolsko.
+ * FMN-B54: na karcie atrakcji otwartej z kafla listy szuka z wiekiem
+ * i województwem tej listy (stan wpisu historii, lib/kontekstListy.ts).
  */
 const HeaderSearch = () => {
   const navigate = useNavigate();
@@ -30,6 +33,9 @@ const HeaderSearch = () => {
 
   /** Usuwa wyłącznie parametr `search`, zachowując pozostałe filtry i trasę. */
   const clearSearchParam = () => {
+    // Nie ma czego zdejmować (np. karta atrakcji): bez nawigacji. Zapis tego samego
+    // adresu kasowałby stan wpisu, w którym karta trzyma filtry listy (FMN-B54).
+    if (!searchParams.has("search")) return;
     const next = new URLSearchParams(searchParams);
     next.delete("search");
     const qs = next.toString();
@@ -51,7 +57,7 @@ const HeaderSearch = () => {
       navigate(`${location.pathname}?${next.toString()}`);
       return;
     }
-    navigate(`/?search=${encodeURIComponent(q)}`);
+    navigate(adresSzukaniaZKarty(q, filtryZeStanuKarty(location.state)));
   };
 
   const handleClear = () => {
