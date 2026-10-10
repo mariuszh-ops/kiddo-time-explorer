@@ -47,6 +47,12 @@ import { formatCountPl } from "@/lib/plural";
  */
 const LIMIT_UKRYCIA_PRZY_POWROCIE_MS = 1500;
 
+/**
+ * Linia pod naglowkiem (px od gory okna), na ktora wraca poczatek listy po zmianie
+ * filtra, jesli uzytkownik byl juz za nim (efekt `filtersKey` nizej).
+ */
+const LINIA_LISTY_PX = 56;
+
 const Index = () => {
   const listingRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -251,6 +257,32 @@ const Index = () => {
   }, [showAll, realNavigationType]);
 
   // Scroll listing into view when filters change (not on mount, not on back-navigation)
+  //
+  // AF-5-065: efekt pytal `getBoundingClientRect()` listy zaraz po podmianie kart,
+  // czyli wymuszal synchroniczny layout calej strony przy KAZDEJ zmianie filtra
+  // (108-243 ms przy CPU 4x w profilu kliku opcji „Kategorii”), takze gdy nic nie
+  // trzeba bylo przewijac. Teraz to, czy uzytkownik jest za poczatkiem listy, trzyma
+  // IntersectionObserver na zerowym wartowniku na poczatku listy (odczyt po
+  // malowaniu, bez wymuszania layoutu). Przewija `scrollIntoView`; `scroll-margin-top`
+  // na liscie odejmuje scroll-padding-top z <html> (--header-h), wiec poczatek listy
+  // staje na LINIA_LISTY_PX od gory okna — tak jak wczesniej `scrollTo`.
+  const wartownikListyRef = useRef<HTMLDivElement>(null);
+  const listaNadLinia = useRef(false);
+  useEffect(() => {
+    const wartownik = wartownikListyRef.current;
+    if (!wartownik || typeof IntersectionObserver === "undefined") return;
+    const obserwator = new IntersectionObserver(
+      (wpisy) => {
+        const wpis = wpisy[wpisy.length - 1];
+        const linia = wpis.rootBounds?.top ?? LINIA_LISTY_PX;
+        listaNadLinia.current = !wpis.isIntersecting && wpis.boundingClientRect.top < linia;
+      },
+      { rootMargin: `-${LINIA_LISTY_PX}px 0px 0px 0px` },
+    );
+    obserwator.observe(wartownik);
+    return () => obserwator.disconnect();
+  }, []);
+
   const filtersKey = JSON.stringify({ ...filters, search: searchQuery });
   const prevFiltersKey = useRef<string | null>(null);
   useEffect(() => {
@@ -262,17 +294,8 @@ const Index = () => {
     if (prevFiltersKey.current !== filtersKey) {
       prevFiltersKey.current = filtersKey;
       // Only scroll if user is already past the listing (avoid scrolling when near top)
-      if (listingRef.current) {
-        const headerHeight = 56;
-        const rect = listingRef.current.getBoundingClientRect();
-        // If listing is already above viewport, or user scrolled past it
-        if (rect.top < headerHeight) {
-          const elementPosition = rect.top + window.scrollY;
-          window.scrollTo({
-            top: elementPosition - headerHeight,
-            behavior: scrollBehavior(),
-          });
-        }
+      if (listaNadLinia.current) {
+        listingRef.current?.scrollIntoView({ block: "start", behavior: scrollBehavior() });
       }
     }
   }, [filtersKey]);
@@ -418,7 +441,13 @@ const Index = () => {
       )}
 
       {/* Sticky filter bar + content wrapper — hidden on mobile map view */}
-      <div ref={listingRef} className={viewMode === 'map' ? 'hidden sm:block' : ''}>
+      <div
+        ref={listingRef}
+        className={viewMode === 'map' ? 'hidden sm:block' : ''}
+        style={{ scrollMarginTop: `calc(${LINIA_LISTY_PX}px - var(--header-h, 72px))` }}
+      >
+        {/* AF-5-065: wartownik poczatku listy dla IntersectionObservera (efekt filtersKey). */}
+        <div ref={wartownikListyRef} aria-hidden="true" />
         {/* W-E-01: pasek filtrow ma wlasna granice bledu — crash w jednym
             dropdownie nie moze zdejmowac calej strony glownej. */}
         <ErrorBoundary fallbackLevel="section">
