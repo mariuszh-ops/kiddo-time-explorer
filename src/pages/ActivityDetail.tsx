@@ -690,41 +690,8 @@ const ActivityDetail = () => {
               <span className="line-clamp-1">{activity.location}</span>
             </p>
 
-            {/* Description (fallback z typu + miasta gdy null) */}
-            <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-3">
-              {activityDescription}
-            </p>
-
-            {activity.uncertain && (
-              <div
-                role="note"
-                className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2 mb-3"
-              >
-                <Info className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
-                <span>
-                  Ta atrakcja została zaklasyfikowana automatycznie — daj znać, jeśli coś się nie zgadza.
-                </span>
-              </div>
-            )}
-
-            {/* Rating action — directly under address */}
-            <InlineRatingAction 
-              activityId={activityId} 
-              slug={activity?.slug}
-              contextLabel="sekcja Oceny rodziców"
-              onAuthRequired={(value) => {
-                setAuthContext("rate");
-                if (value) {
-                  setPendingIntent({ kind: "rating", activityId, slug: activity?.slug, value });
-                }
-                setIsAuthModalOpen(true);
-              }}
-            />
-
-            {/* Separator between rating and action buttons */}
-            <div className="border-t border-border/40 my-1" />
-
-            {/* Action buttons - prominent placement */}
+            {/* Action buttons - prominent placement: above the description, so they fit
+                the first phone screen even with a long name or description (GL-4-063/064/065) */}
             <div className="flex flex-col gap-3">
               {/* Stack vertically on mobile, side-by-side on desktop */}
               <div className="flex flex-col sm:flex-row gap-3">
@@ -854,6 +821,40 @@ const ActivityDetail = () => {
 
               {/* Rating action moved to dual-column section above */}
             </div>
+
+            {/* Separator between action buttons and description */}
+            <div className="border-t border-border/40 my-3" />
+
+            {/* Description (fallback z typu + miasta gdy null) */}
+            <p className="text-sm md:text-base text-foreground/80 leading-relaxed mb-3">
+              {activityDescription}
+            </p>
+
+            {activity.uncertain && (
+              <div
+                role="note"
+                className="flex items-start gap-2 text-xs md:text-sm text-muted-foreground bg-muted/50 border border-border rounded-lg px-3 py-2 mb-3"
+              >
+                <Info className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+                <span>
+                  Ta atrakcja została zaklasyfikowana automatycznie — daj znać, jeśli coś się nie zgadza.
+                </span>
+              </div>
+            )}
+
+            {/* Rating action — directly under address */}
+            <InlineRatingAction 
+              activityId={activityId} 
+              slug={activity?.slug}
+              contextLabel="sekcja Oceny rodziców"
+              onAuthRequired={(value) => {
+                setAuthContext("rate");
+                if (value) {
+                  setPendingIntent({ kind: "rating", activityId, slug: activity?.slug, value });
+                }
+                setIsAuthModalOpen(true);
+              }}
+            />
           </div>
         </div>
       </section>
