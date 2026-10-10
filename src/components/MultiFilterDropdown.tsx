@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useLayoutEffect, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useTransition } from "react";
 import { useFilterListbox } from "@/hooks/useFilterListbox";
 import { createPortal } from "react-dom";
 import { ChevronDown, X, Check } from "lucide-react";
@@ -30,19 +30,37 @@ const MultiFilterDropdown = ({
   onClear,
 }: MultiFilterDropdownProps) => {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, openUpward: false });
-  const firstSelectedIndex = Math.max(options.findIndex((o) => selectedValues.includes(o.value)), 0);
+
+  // AF-5-065: klik opcji zapisuje filtr w adresie jako PRZEJŚCIE (startTransition).
+  // Wcześniej klik synchronicznie renderował całą stronę główną (montaż 48 kart
+  // z modalami, efekty) przed pierwszym malowaniem: INP ok. 400 ms przy CPU 4x.
+  // Router oddaje nowy adres dopiero po commicie przejścia, więc do tego czasu
+  // opcja i etykieta pokazują wybór OPTYMISTYCZNY — zmieniają się w klatce
+  // kliknięcia. Po commicie (czekaNaAdres = false) prawdą znów jest
+  // `selectedValues` z adresu, także gdy w międzyczasie adres zmieniło coś
+  // innego („wstecz”, „wyczyść”): optymizm nie może rozjechać się z adresem
+  // na stałe. Bezpiecznik zapisów adresu w tym oknie: useBazaZapisuAdresu.
+  const [czekaNaAdres, startPrzejscia] = useTransition();
+  const [optymistyczne, setOptymistyczne] = useState<string[] | null>(null);
+  const wybrane = czekaNaAdres && optymistyczne ? optymistyczne : selectedValues;
+  const przelacz = (value: string) => {
+    setOptymistyczne(wybrane.includes(value) ? wybrane.filter((v) => v !== value) : [...wybrane, value]);
+    startPrzejscia(() => onToggle(value));
+  };
+
+  const firstSelectedIndex = Math.max(options.findIndex((o) => wybrane.includes(o.value)), 0);
   const {
     listboxId, isOpen, open, close, activeIndex, setActiveIndex,
     buttonRef, listRef, setOptionRef, handleTriggerKeyDown, handleListKeyDown, triggerAria,
   } = useFilterListbox(options.length, firstSelectedIndex);
   const dropdownRef = listRef;
 
-  const hasSelection = selectedValues.length > 0;
+  const hasSelection = wybrane.length > 0;
 
   const displayLabel = hasSelection
-    ? selectedValues.length === 1
-      ? options.find(o => o.value === selectedValues[0])?.label || label
-      : `${options.find(o => o.value === selectedValues[0])?.label || label} +${selectedValues.length - 1}`
+    ? wybrane.length === 1
+      ? options.find(o => o.value === wybrane[0])?.label || label
+      : `${options.find(o => o.value === wybrane[0])?.label || label} +${wybrane.length - 1}`
     : label;
 
   const updatePosition = useCallback(() => {
@@ -107,7 +125,7 @@ const MultiFilterDropdown = ({
     >
       <div className="py-1 max-h-[300px] overflow-y-auto">
         {options.map((option, index) => {
-          const isSelected = selectedValues.includes(option.value);
+          const isSelected = wybrane.includes(option.value);
           return (
             <button
               key={option.value}
@@ -116,7 +134,7 @@ const MultiFilterDropdown = ({
               aria-selected={isSelected}
               tabIndex={index === activeIndex ? 0 : -1}
               onFocus={() => setActiveIndex(index)}
-              onClick={() => onToggle(option.value)}
+              onClick={() => przelacz(option.value)}
               className={cn(
                 "w-full flex items-center justify-between px-4 py-2.5 text-sm transition-colors",
                 isSelected ? "bg-accent text-accent-foreground" : "hover:bg-muted"
@@ -157,6 +175,8 @@ const MultiFilterDropdown = ({
             className="w-3.5 h-3.5 ml-0.5 hover:scale-110 transition-transform"
             onClick={(e) => {
               e.stopPropagation();
+              // „Wyczyść” idzie od razu (bez przejścia): optymizm nie może go przykryć.
+              setOptymistyczne(null);
               onClear();
               close(false);
             }}
