@@ -13,8 +13,9 @@
 // Reacta; `useActivitiesInfinite` odbiera stąd gotowy wynik zamiast wysyłać drugi.
 // Żeby te dwie drogi nie mogły się rozjechać, obie budują zapytanie i klucz
 // filtrów TĄ SAMĄ funkcją — nie kopiuj tej logiki z powrotem do hooka.
-import { catalogClient, CARD_COLUMNS, ageRangeOrFilter } from "@/lib/catalogClient";
-import { sanitizeSearchTerm } from "@/lib/searchConfig";
+import { CARD_COLUMNS, ageRangeOrFilter } from "@/lib/catalogClient";
+import { katalogZFraza } from "@/lib/frazaKatalogu";
+import { tokenizeQuery } from "@/lib/searchTokens";
 import { REGION_SLUGS } from "@/data/regions";
 import { getCategoryConfig } from "@/data/categoryPages";
 import type { UseActivitiesFilters } from "@/hooks/useActivities";
@@ -68,7 +69,9 @@ export function listingFilterKey(filters: ListingFilters): string {
     ageMin,
     ageMax,
     onlyFree,
-    searchTerm: sanitizeSearchTerm(search ?? ""),
+    // FMN-B92: fraza idzie do bazy jako słowa (tokenizeQuery) — klucz liczymy
+    // z tych samych słów, żeby „Zoo” i „zoo” były jednym zapytaniem.
+    searchTokens: tokenizeQuery(search ?? "").join(" "),
   });
 }
 
@@ -93,24 +96,18 @@ export function buildListingQuery(
     onlyFree,
     search,
   } = filters;
-  const searchTerm = sanitizeSearchTerm(search ?? "");
-
-  let q = catalogClient
-    .from("public_activities")
-    .select(
-      headOnly ? "place_id" : CARD_COLUMNS,
-      headOnly ? { count: "exact", head: true } : withCount ? { count: "exact" } : {},
-    )
-    .eq("published", true);
+  // FMN-B92: przy frazie bazą jest rpc('ff_home_match') — ta sama reguła co „/”.
+  let q = katalogZFraza(
+    headOnly ? "place_id" : CARD_COLUMNS,
+    { region, type, search },
+    headOnly ? { count: "exact", head: true } : withCount ? { count: "exact" } : {},
+  ).eq("published", true);
   if (region) q = q.eq("region", region);
   if (type) q = q.eq("type", type);
   if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
   if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
   if (!includeUncertain) q = q.eq("uncertain", false);
   if (onlyFree) q = q.eq("is_free", true);
-  if (searchTerm.length >= 2) {
-    q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
-  }
   // Zakres wieku [ageMin, ageMax] — przecinanie przedziałów. Rekordy z
   // age_min/age_max=null są WYŁĄCZONE z filtra (przechodzą zawsze) — M-07.
   if (typeof ageMin === "number" && typeof ageMax === "number") {

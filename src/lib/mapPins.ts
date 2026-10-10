@@ -9,6 +9,7 @@
 // 4892 piny / 924 KiB na KAŻDE otwarcie mapy, niezależnie od kadru i regionu.
 import { catalogClient, mapCatalogRow, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
 import { displayLocation } from "@/lib/address";
+import { katalogZFraza } from "@/lib/frazaKatalogu";
 import type { Activity } from "@/data/activities";
 
 /**
@@ -273,16 +274,16 @@ export interface MapSlugFilters {
 /**
  * Zbiór slugów spełniających KOMPLET filtrów listingu — używany tylko wtedy,
  * gdy aktywny jest filtr, którego nie ma w tuplach get_map_pins
- * (min / auto=0 / amenities). Jedno lekkie zapytanie (same slugi), stronicowane
- * paczkami po 1000, bo PostgREST zwraca maksymalnie tyle wierszy naraz.
+ * (min / auto=0 / amenities / fraza). Jedno lekkie zapytanie (same slugi),
+ * stronicowane paczkami po 1000, bo PostgREST zwraca maksymalnie tyle wierszy naraz.
+ * FMN-B92: fraza idzie przez rpc('ff_home_match'), czyli tą samą regułą co lista
+ * i strona główna (`katalogZFraza`).
  */
 export async function fetchFilteredSlugs(f: MapSlugFilters): Promise<Set<string>> {
   const CHUNK = 1000;
   const out = new Set<string>();
   for (let page = 0; page < 20; page++) {
-    let q = catalogClient
-      .from("public_activities")
-      .select("slug")
+    let q = katalogZFraza("slug", { region: f.region, type: f.type, search: f.search })
       .eq("published", true);
     if (f.region) q = q.eq("region", f.region);
     if (f.type) q = q.eq("type", f.type);
@@ -291,8 +292,6 @@ export async function fetchFilteredSlugs(f: MapSlugFilters): Promise<Set<string>
     if (typeof f.minRating === "number" && f.minRating > 0) q = q.gte("rating", f.minRating);
     if (f.includeUncertain === false) q = q.eq("uncertain", false);
     if (f.onlyFree) q = q.eq("is_free", true);
-    const term = (f.search ?? "").trim();
-    if (term.length >= 2) q = q.or(`name.ilike.%${term}%,city.ilike.%${term}%`);
     // Rekordy z age_min/age_max=null są WYŁĄCZONE z filtra wieku (M-07).
     if (typeof f.ageMin === "number" && typeof f.ageMax === "number")
       q = q.or(ageRangeOrFilter(f.ageMin, f.ageMax));

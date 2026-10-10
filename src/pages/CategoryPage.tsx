@@ -49,6 +49,7 @@ import { useRealNavigationType } from "@/lib/navigationType";
 import { pierwszaStronaListy, stanListy } from "@/lib/categoryListReturn";
 import { regionExitLinks } from "@/lib/regionExitLinks";
 import { frazaZAdresu } from "@/lib/searchConfig";
+import { tokenizeQuery } from "@/lib/searchTokens";
 import { trackEvent } from "@/lib/analytics";
 
 
@@ -226,11 +227,14 @@ const CategoryPage = () => {
   const mapQuery = useMemo(() => ({ region: citySlug ?? null }), [citySlug]);
   const { pins, loading: pinsLoading, error: pinsError, refetch: refetchPins } = useMapPins(mapEnabled, mapQuery);
 
-  // Filtry, których NIE ma w tuplach get_map_pins (min / auto=0 / amenities).
+  // Filtry, których NIE ma w tuplach get_map_pins (min / auto=0 / amenities / fraza).
   // Dla nich dociągamy z katalogu same slugi spełniające komplet warunków.
+  // FMN-B92: fraza też — mapa liczy ją w bazie tą samą regułą co lista i „/”
+  // (rpc ff_home_match), a nie własnym `tytuł + miejscowość`.includes().
   const amenitiesKey = urlAmenities.join(",");
+  const zFraza = tokenizeQuery(urlSearch).length > 0;
   const needsSlugFilter =
-    urlMinRating > 0 || !includeUncertain || urlAmenities.length > 0;
+    urlMinRating > 0 || !includeUncertain || urlAmenities.length > 0 || zFraza;
   const [allowedSlugs, setAllowedSlugs] = useState<Set<string> | null>(null);
 
   useEffect(() => {
@@ -279,7 +283,6 @@ const CategoryPage = () => {
     if (!mapEnabled) return [];
     // Dopóki zbiór slugów się nie wczyta, nie pokazujemy nadmiaru pinów.
     if (needsSlugFilter && !allowedSlugs) return [];
-    const term = urlSearch.length >= 2 ? urlSearch.toLowerCase() : "";
     return pins.filter((p) => {
       if (needsSlugFilter && !allowedSlugs!.has(p.slug)) return false;
       if (citySlug && p.city !== citySlug) return false;
@@ -291,13 +294,9 @@ const CategoryPage = () => {
         // `!p.hasAgeInfo -> false` gasilo je na mapie przy kazdym ustawieniu filtra.
         if (p.hasAgeInfo && (p.ageMin > ageOption.max || p.ageMax < ageOption.min)) return false;
       }
-      if (term) {
-        const haystack = `${p.title} ${p.location}`.toLowerCase();
-        if (!haystack.includes(term)) return false;
-      }
       return true;
     });
-  }, [mapEnabled, pins, citySlug, effectiveType, onlyFree, ageOption, urlSearch, needsSlugFilter, allowedSlugs]);
+  }, [mapEnabled, pins, citySlug, effectiveType, onlyFree, ageOption, needsSlugFilter, allowedSlugs]);
 
 
 

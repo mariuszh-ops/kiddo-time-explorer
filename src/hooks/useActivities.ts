@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { catalogClient, mapCatalogRow, CARD_COLUMNS, ageRangeOrFilter, type CatalogRow } from "@/lib/catalogClient";
-import { sanitizeSearchTerm } from "@/lib/searchConfig";
+import { catalogClient, mapCatalogRow, type CatalogRow } from "@/lib/catalogClient";
+import { buildListingQuery, listingFilterKey } from "@/lib/listingQuery";
 import { readDeadline } from "@/lib/readDeadline";
 import type { Activity } from "@/data/activities";
 
@@ -23,7 +23,7 @@ export interface UseActivitiesFilters {
   ageMax?: number;
   /** Gdy true, zawężaj do atrakcji z is_free=true. */
   onlyFree?: boolean;
-  /** Fraza wyszukiwania (nazwa lub miasto). */
+  /** Fraza wyszukiwania — słowa AND, ta sama reguła co „/” (rpc ff_home_match, FMN-B92). */
   search?: string;
 }
 
@@ -40,9 +40,10 @@ export interface UseActivitiesResult {
  * Domyślny page size: 24. Licznik przez `count: 'exact', head: true`.
  */
 export function useActivities(filters: UseActivitiesFilters = {}): UseActivitiesResult {
-  const { region, type, amenities, minRating, sort = "reviews", page = 0, pageSize = 24, includeUncertain = true, ageMin, ageMax, onlyFree, search } = filters;
-  const amenitiesKey = amenities?.join(",") ?? "";
-  const searchTerm = sanitizeSearchTerm(search ?? "");
+  const { page = 0, pageSize = 24 } = filters;
+  // FMN-B92: zapytanie i klucz z `listingQuery.ts` — wcześniej ten hook miał
+  // własną (czwartą) kopię reguły frazy `name/city ilike`.
+  const filterKey = listingFilterKey(filters);
   const [data, setData] = useState<Activity[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -64,35 +65,10 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
     (async () => {
       try {
         timeoutId = setTimeout(failWithTimeout, QUERY_TIMEOUT_MS);
-        let q = catalogClient
-          .from("public_activities")
-          .select(CARD_COLUMNS, { count: "exact" })
-          .eq("published", true);
-        if (region) q = q.eq("region", region);
-        if (type) q = q.eq("type", type);
-        if (amenities && amenities.length > 0) q = q.contains("amenities", JSON.stringify(amenities));
-        if (typeof minRating === "number" && minRating > 0) q = q.gte("rating", minRating);
-        if (!includeUncertain) q = q.eq("uncertain", false);
-        if (onlyFree) q = q.eq("is_free", true);
-        if (searchTerm.length >= 2) {
-          q = q.or(`name.ilike.%${searchTerm}%,city.ilike.%${searchTerm}%`);
-        }
-        // Zakres wieku [ageMin, ageMax] — przepuszczamy, gdy przedziały się przecinają.
-        // Rekordy z age_min/age_max=null są WYŁĄCZONE z filtra (przechodzą zawsze) — M-07.
-        if (typeof ageMin === "number" && typeof ageMax === "number") {
-          q = q.or(ageRangeOrFilter(ageMin, ageMax));
-        }
-        if (sort === "name") {
-          q = q.order("name", { ascending: true });
-        } else if (sort === "reviews") {
-          q = q.order("reviews_count", { ascending: false, nullsFirst: false })
-               .order("rating", { ascending: false, nullsFirst: false });
-        } else {
-          q = q.order("rating", { ascending: false, nullsFirst: false })
-               .order("reviews_count", { ascending: false, nullsFirst: false });
-        }
-        q = q.range(page * pageSize, page * pageSize + pageSize - 1);
-        const { data: rows, count, error: err } = await q;
+        const { data: rows, count, error: err } = await buildListingQuery(filters, { withCount: true }).range(
+          page * pageSize,
+          page * pageSize + pageSize - 1,
+        );
         if (timeoutId) {
           clearTimeout(timeoutId);
           timeoutId = null;
@@ -116,7 +92,9 @@ export function useActivities(filters: UseActivitiesFilters = {}): UseActivities
       cancelled = true;
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, [region, type, amenitiesKey, minRating, sort, page, pageSize, includeUncertain, ageMin, ageMax, onlyFree, searchTerm]);
+    // `filters` czytamy przez klucz — obiekt bywa nowy przy każdym renderze.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterKey, page, pageSize]);
 
   return { data, total, loading, error };
 }

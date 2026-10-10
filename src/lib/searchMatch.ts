@@ -1,23 +1,11 @@
 import { Activity, filterOptions } from "@/data/activities";
 import { REGION_BY_SLUG } from "@/data/regions";
 import { regionFallbackLabel } from "@/lib/address";
+import { normalizeSearchText, tokenizeQuery } from "@/lib/searchTokens";
 
-/** Małe litery + usunięcie polskich znaków diakrytycznych. */
-export function normalizeSearchText(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/ł/g, "l");
-}
-
-/** Rozbija zapytanie na tokeny (po białych znakach) i normalizuje każdy z nich. */
-export function tokenizeQuery(query: string): string[] {
-  return normalizeSearchText(query)
-    .split(/\s+/)
-    .map((t) => t.trim())
-    .filter(Boolean);
-}
+// Normalizacja mieszka w `searchTokens.ts` (bez zależności od danych, bo
+// potrzebuje jej też wczesny start listingu). Tu tylko ją udostępniamy dalej.
+export { normalizeSearchText, tokenizeQuery };
 
 function categoryLabel(typeValue: string): string {
   return filterOptions.type.find((o) => o.value === typeValue)?.label ?? typeValue;
