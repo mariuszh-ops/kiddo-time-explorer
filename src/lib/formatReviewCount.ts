@@ -4,6 +4,8 @@
 // który przy starzejących się danych pozostaje prawdziwy (audyt: A-14, 03.09.2026).
 const NB = "\u00A0"; // twarda spacja: „268 tys.+ opinii" nie łamie się w karcie
 const plural = (n: number) => (n === 1 ? "opinia" : n <= 4 ? "opinie" : "opinii");
+// AF-5-065: jeden formater na moduł zamiast `toLocaleString("pl-PL")` na każdej karcie.
+const FORMAT_TYS = new Intl.NumberFormat("pl-PL");
 
 /** Liczba opinii Google jako kubełek zaokrąglony W DÓŁ z plusem. null = brak opinii. */
 export const formatReviewCount = (count?: number | null): string | null => {
@@ -12,7 +14,7 @@ export const formatReviewCount = (count?: number | null): string | null => {
   if (count < 100) return `${Math.floor(count / 10) * 10}+${NB}opinii`;    // 47 -> 40+ opinii
   if (count < 1000) return `${Math.floor(count / 100) * 100}+${NB}opinii`; // 523 -> 500+ opinii
   const step = count < 10000 ? 500 : 1000;             // 1 730 -> 1,5 tys.+ ; 268 833 -> 268 tys.+
-  const tys = ((Math.floor(count / step) * step) / 1000).toLocaleString("pl-PL");
+  const tys = FORMAT_TYS.format((Math.floor(count / step) * step) / 1000);
   return `${tys}${NB}tys.+${NB}opinii`;
 };
 
