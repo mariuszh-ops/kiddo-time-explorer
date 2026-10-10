@@ -543,7 +543,8 @@ const CategoryPage = () => {
   // Kontekst wyszukiwania: chipy do usunięcia + wyjście na wyniki ogólnopolskie.
   // FMN-B52: każdy link zdejmuje tylko swój filtr — wiek, kategoria i sort zostają
   // (wcześniej niosły samą frazę i gubiły resztę).
-  const { removeRegionTo, removeCategoryTo, wholePolandTo } = regionExitLinks(citySlug, categorySlug, {
+  // FMN-B54: okruszek „Strona główna” niesie województwo, wiek i kategorię tej strony (homeTo).
+  const { removeRegionTo, removeCategoryTo, wholePolandTo, homeTo } = regionExitLinks(citySlug, categorySlug, {
     age: urlAge,
     type: categorySlug ? undefined : urlType,
     sort: rawSort === "rating" || rawSort === "reviews" || rawSort === "name" ? rawSort : undefined,
@@ -586,7 +587,7 @@ const CategoryPage = () => {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link to="/">Strona główna</Link>
+                  <Link to={homeTo}>Strona główna</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

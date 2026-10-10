@@ -61,3 +61,34 @@ describe("regionExitLinks — linki wyjścia ze strony województwa", () => {
     expect(new URLSearchParams(l.removeRegionTo.split("?")[1]).get("search")).toBe("park linowy");
   });
 });
+
+/**
+ * FMN-B54 (R2 = A): okruszek „Strona główna” na stronie województwa/kategorii
+ * prowadzi na „/” z województwem, wiekiem i kategorią. Zmierzone 26.09: 7/7 bez filtrów.
+ */
+describe("regionExitLinks — homeTo (okruszek „Strona główna”)", () => {
+  it("/<woj>?type=: region, wiek i kategoria z ?type=; sort, min i fraza nie przechodzą", () => {
+    const l = regionExitLinks("mazowieckie", undefined, {
+      age: "6-9",
+      type: "zoo",
+      sort: "rating",
+      minRating: 4.5,
+      search: "zoo",
+    });
+    expect(l.homeTo).toBe("/?region=mazowieckie&age=6-9&type=zoo");
+  });
+
+  it("/<woj>/<kat>: kategoria ze ścieżki", () => {
+    expect(regionExitLinks("mazowieckie", "sala-zabaw", { age: "3-5", sort: "name", onlyFree: true }).homeTo).toBe(
+      "/?region=mazowieckie&age=3-5&type=sala-zabaw",
+    );
+  });
+
+  it("/kategoria/<kat>: bez województwa", () => {
+    expect(regionExitLinks(undefined, "zoo", { age: "3-5" }).homeTo).toBe("/?age=3-5&type=zoo");
+  });
+
+  it("strona województwa bez filtrów: „/” z samym województwem", () => {
+    expect(regionExitLinks("slaskie", undefined, {}).homeTo).toBe("/?region=slaskie");
+  });
+});

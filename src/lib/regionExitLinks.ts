@@ -14,6 +14,9 @@
  * Przy przejściu na „/” sort tłumaczymy jawną mapą, a czego „/” nie zna (min, free,
  * amenities, auto) nie wysyłamy. Parametry widoku mapy (view/lat/lng/zoom/cats)
  * i `page` nie przechodzą: kadr i strona listy należą do starej strony.
+ *
+ * FMN-B54 (R2 = A): okruszek „Strona główna” (`homeTo`) prowadzi na „/” z
+ * województwem, wiekiem i kategorią tej strony — wcześniej był gołym „/”.
  */
 
 export type RegionPageSort = "rating" | "reviews" | "name";
@@ -37,16 +40,19 @@ export interface RegionExitLinks {
   removeRegionTo: string;
   removeCategoryTo: string;
   wholePolandTo: string;
+  /** Okruszek „Strona główna”: „/” z województwem, wiekiem i kategorią (FMN-B54). */
+  homeTo: string;
 }
 
 /** Sort strony regionu -> sort strony głównej. `reviews` na „/” nazywa się `most_reviewed`. */
-const SORT_NA_GLOWNA: Record<RegionPageSort, string> = {
+export const SORT_NA_GLOWNA: Record<RegionPageSort, string> = {
   rating: "rating",
   reviews: "most_reviewed",
   name: "name",
 };
 
-function zParametrami(sciezka: string, pary: Array<[string, string | undefined]>): string {
+/** Ścieżka + niepuste parametry w podanej kolejności (bez pustego „?”). FMN-B54 używa tego samego. */
+export function zParametrami(sciezka: string, pary: Array<[string, string | undefined]>): string {
   const qs = new URLSearchParams();
   for (const [k, v] of pary) if (v) qs.set(k, v);
   const s = qs.toString();
@@ -93,5 +99,12 @@ export function regionExitLinks(
   // „Szukaj w całej Polsce” = zdjęcie województwa. Na /kategoria/<kat> (już cała
   // Polska) link jak dotąd prowadzi na „/” bez kategorii, ale z wiekiem i sortem.
   const wholePolandTo = citySlug ? removeRegionTo : adresStronyGlownej(filters, undefined);
-  return { removeRegionTo, removeCategoryTo, wholePolandTo };
+  // „Strona główna” to ten sam wybór rodzica na „/”: województwo, wiek, kategoria
+  // (ze ścieżki albo z ?type=). Sort, fraza i filtry, których „/” nie zna, nie przechodzą.
+  const homeTo = zParametrami("/", [
+    ["region", citySlug],
+    ["age", filters.age],
+    ["type", categorySlug ?? filters.type],
+  ]);
+  return { removeRegionTo, removeCategoryTo, wholePolandTo, homeTo };
 }
