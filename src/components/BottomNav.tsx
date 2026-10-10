@@ -34,26 +34,41 @@ const BottomNav = () => {
 
   useEffect(() => {
     const vv = window.visualViewport;
+    const desktop = window.matchMedia("(min-width: 768px)");
+    /**
+     * INP (A1000-P): geometrie (`visualViewport.height`, `innerHeight`) czytamy
+     * TYLKO przy montazu i w zdarzeniach `resize` — a `shrunk` zmienia sie
+     * wylacznie razem z tymi zdarzeniami. Wczesniej odczyt szedl przy KAZDYM
+     * `focusin`/`focusout`; otwarcie modala (autofocus Radixa) wymuszalo przez
+     * to synchroniczny layout calej strony w zadaniu kliku (28–56 ms przy CPU 4x).
+     * `focusin`/`focusout` biora teraz zapamietany `shrunk` + typ pola z fokusem.
+     */
+    let shrunk = false;
+    const zmierz = () => {
+      shrunk = vv ? vv.height < window.innerHeight - 150 : false;
+    };
     const check = () => {
       // Pasek i tak nie istnieje od md w gore — nie ma po co przeliczac i re-renderowac.
-      if (window.matchMedia("(min-width: 768px)").matches) {
+      if (desktop.matches) {
         setKeyboardOpen(false);
         return;
       }
-      const typing = isTypingElement(document.activeElement);
-      const shrunk = vv ? vv.height < window.innerHeight - 150 : false;
-      setKeyboardOpen(typing || shrunk);
+      setKeyboardOpen(isTypingElement(document.activeElement) || shrunk);
     };
-    check();
+    const poResize = () => {
+      if (!desktop.matches) zmierz();
+      check();
+    };
+    poResize();
     document.addEventListener("focusin", check);
     document.addEventListener("focusout", check);
-    vv?.addEventListener("resize", check);
-    window.addEventListener("resize", check);
+    vv?.addEventListener("resize", poResize);
+    window.addEventListener("resize", poResize);
     return () => {
       document.removeEventListener("focusin", check);
       document.removeEventListener("focusout", check);
-      vv?.removeEventListener("resize", check);
-      window.removeEventListener("resize", check);
+      vv?.removeEventListener("resize", poResize);
+      window.removeEventListener("resize", poResize);
     };
   }, []);
 
