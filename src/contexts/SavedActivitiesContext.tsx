@@ -132,6 +132,12 @@ interface SavedActivitiesContextType {
   loadError: boolean;
   /** Ponowna próba odczytu po błędzie (przycisk „Spróbuj ponownie”). */
   retryLoadSaved: () => Promise<void>;
+  /**
+   * FMN-B84: false, dopóki pierwszy odczyt zapisanych zalogowanego z serwera się nie
+   * skończył (sukcesem albo błędem). Do tego czasu ulubione to lokalne lustro, na nowym
+   * urządzeniu puste. Gość: zawsze true (jego ulubione są lokalne).
+   */
+  ulubioneWczytane: boolean;
 }
 
 const SavedActivitiesContext = createContext<SavedActivitiesContextType | undefined>(undefined);
@@ -143,6 +149,8 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
   const dataStatus = useDataStatus();
   const [isLoadingSaved, setIsLoadingSaved] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  // FMN-B84: konto, dla którego skończył się pierwszy odczyt zapisanych (ulubioneWczytane).
+  const [odczytZakonczonyDla, setOdczytZakonczonyDla] = useState<string | null>(null);
   const [favoriteIds, setFavoriteIds] = useState<Set<number>>(
     () => new Set(getItem<number[]>(STORAGE_KEYS.FAVORITES, []))
   );
@@ -245,6 +253,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         } catch {
           toast.error(LOAD_ERROR);
           setIsLoadingSaved(false);
+          setOdczytZakonczonyDla(user.id);
           return;
         }
         if (cancelled) return;
@@ -303,6 +312,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         toast.error(LOAD_ERROR);
         setLoadError(true);
         setIsLoadingSaved(false);
+        setOdczytZakonczonyDla(user.id);
         return;
       }
 
@@ -311,6 +321,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
       setWantToVisitIds(wtv);
       setLoadError(false);
       setIsLoadingSaved(false);
+      setOdczytZakonczonyDla(user.id);
     };
 
     hydrateFromServer();
@@ -545,6 +556,7 @@ export function SavedActivitiesProvider({ children }: { children: ReactNode }) {
         refreshSaved,
         loadError,
         retryLoadSaved,
+        ulubioneWczytane: !user || odczytZakonczonyDla === user.id,
       }}
     >
       {children}

@@ -14,6 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   ignorujUlubioneZAdresu,
   pustaMapaBezUlubionych,
+  ulubioneZalogowanegoWDrodze,
   KOMUNIKAT_BRAK_ULUBIONYCH,
   PRZYCISK_WYLACZ_ULUBIONE,
 } from "@/lib/ulubioneNaMapie";
@@ -1220,7 +1221,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const isMobile = useIsMobile();
   // W-I-01: nazwa mapy idzie za H1 strony; na home (brak H1 obszaru) zostaje ogólna.
   const etykietaMapy = nazwaObszaru ? `Mapa: ${nazwaObszaru}` : "Mapa atrakcji dla dzieci";
-  const { isFavorite, toggleFavorite, favoriteIdsCount } = useSavedActivities();
+  const { isFavorite, toggleFavorite, favoriteIdsCount, ulubioneWczytane } = useSavedActivities();
   const { isLoggedIn, isReady: authGotowy } = useAuth();
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
   const [flyTarget, setFlyTarget] = useState<Activity | null>(null);
@@ -1284,7 +1285,18 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       pinyKadruWDrodze({ piny: pins, kadr: kadrWidoczny, wczytuje: ownPinsLoading, blad: ownPinsError != null }),
     [pins, kadrWidoczny, ownPinsLoading, ownPinsError],
   );
-  const daneWDrodze = hasCatalogFilters ? Boolean(wczytujeDane) : pinyWDrodze;
+  // FMN-B02: chip kategorii jest aktywny <=> kategoria jest w `filters.type`.
+  // Wczesniej chipy mialy wlasny zbior (w adresie ?cats=), nakladany na piny
+  // juz przyciete do `type` warunkiem AND: chip „Zoo" przy type=plac-zabaw nie
+  // dodawal zoo, a odklik „Place zabaw" dawal 0 pinow przy type=plac-zabaw
+  // w adresie. Jedyny chip z wlasnym stanem to „Ulubione" — nie jest kategoria.
+  const [tylkoUlubione, setTylkoUlubione] = useState(() => savedMapState?.favoritesOnly ?? false);
+  // FMN-B84 (S5 10.10): przy chipie „Ulubione" ulubione zalogowanego to też dane
+  // w drodze — przychodzą z serwera po katalogu. Wcześniej link z `fav=1` na nowym
+  // urządzeniu pokazywał przez chwilę „0 atrakcji" i „Nie masz jeszcze ulubionych".
+  // Gość (ulubione lokalne) i zalogowany bez chipa: bez zmian.
+  const ulubioneWDrodze = ulubioneZalogowanegoWDrodze({ tylkoUlubione, zalogowany: isLoggedIn, ulubioneWczytane });
+  const daneWDrodze = (hasCatalogFilters ? Boolean(wczytujeDane) : pinyWDrodze) || ulubioneWDrodze;
   // Numer najnowszego przeliczenia listy kadru (handleVisibleChange).
   const nrPrzeliczeniaRef = useRef(0);
   // Po dojściu danych lista kadru liczy się jeszcze chwilę (ViewportFilter +
@@ -1353,12 +1365,6 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
   const [mobileSheetState, setMobileSheetState] = useState<"peek" | "half" | "full">("peek");
-  // FMN-B02: chip kategorii jest aktywny <=> kategoria jest w `filters.type`.
-  // Wczesniej chipy mialy wlasny zbior (w adresie ?cats=), nakladany na piny
-  // juz przyciete do `type` warunkiem AND: chip „Zoo" przy type=plac-zabaw nie
-  // dodawal zoo, a odklik „Place zabaw" dawal 0 pinow przy type=plac-zabaw
-  // w adresie. Jedyny chip z wlasnym stanem to „Ulubione" — nie jest kategoria.
-  const [tylkoUlubione, setTylkoUlubione] = useState(() => savedMapState?.favoritesOnly ?? false);
   // FMN-B84: `fav=1` z adresu (link od innego rodzica, stary `cats=_favorites`)
   // u gościa bez żadnego ulubionego nic by nie pokazał: chip zostaje wyłączony,
   // a `fav` znika z adresu jednym `replace` (efekt chipa niżej). Decyzja raz,

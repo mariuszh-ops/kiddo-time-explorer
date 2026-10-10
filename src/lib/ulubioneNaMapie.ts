@@ -5,6 +5,10 @@
  * zapisanych ulubionych dawał aktywny chip, „0 atrakcji w widoku" i radę
  * „oddal mapę lub przesuń", która nic nie da — lista obok mówiła 302
  * (FMN-8-025, 4/4). Taki link dostaje np. drugi rodzic od zalogowanego.
+ *
+ * Decyzja CC 10.10 (DECYZJE.md, „FMN-B84 fav=1"): `fav=1` i stary `_favorites` działają
+ * tylko razem z kadrem (lat/lng/zoom). Bez kadru filtr znika dla każdego — aplikacja
+ * sama nigdy takiego linku nie tworzy, a stara mapa też go ignorowała.
  */
 
 export interface StanUlubionych {
@@ -30,6 +34,28 @@ export function ignorujUlubioneZAdresu(s: StanUlubionych): boolean {
  */
 export function pustaMapaBezUlubionych(tylkoUlubione: boolean, liczbaUlubionych: number): boolean {
   return tylkoUlubione && liczbaUlubionych === 0;
+}
+
+export interface UlubioneZalogowanego {
+  /** Chip „Ulubione" aktywny. */
+  tylkoUlubione: boolean;
+  zalogowany: boolean;
+  /** SavedActivitiesContext.ulubioneWczytane: pierwszy odczyt zapisanych z serwera skończony. */
+  ulubioneWczytane: boolean;
+}
+
+/**
+ * Czy ulubione zalogowanego są dla mapy jeszcze „danymi w drodze" („Wczytuję").
+ *
+ * Zalogowany dostaje ulubione z serwera dopiero po katalogu (mapa id↔slug) i odczycie
+ * zapisanych; do tego czasu liczba to lokalne lustro, na nowym urządzeniu 0. Link z `fav=1`
+ * pokazywał wtedy „0 atrakcji w widoku" i „Nie masz jeszcze ulubionych atrakcji" z przyciskiem,
+ * który zdejmuje filtr (prod 10.10: 3/3, ok. 0,4–0,7 s przy szybkiej sieci, dłużej na wolnej).
+ * Odczyt zakończony błędem też kończy czekanie, żeby nie zostało wieczne „Wczytuję".
+ * Gość ma ulubione w localStorage od pierwszego renderu — nie czeka.
+ */
+export function ulubioneZalogowanegoWDrodze(s: UlubioneZalogowanego): boolean {
+  return s.tylkoUlubione && s.zalogowany && !s.ulubioneWczytane;
 }
 
 export const KOMUNIKAT_BRAK_ULUBIONYCH =
