@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import { useMemo } from "react";
 import { useRealNavigationType } from "@/lib/navigationType";
 import { czytajPrzewiniecieKarty, zapiszPrzewiniecieKarty } from "@/lib/cardScrollReturn";
+import { filtryZeStanuKarty, okruszkiKarty } from "@/lib/kontekstListy";
 import { cityLabels } from "@/data/categoryPages";
 import {
   Heart,
@@ -406,6 +407,12 @@ const ActivityDetail = () => {
   const categoryHref = categoryConfig
     ? `/${regionSlug}/${categoryConfig.slug}`
     : `/kategoria/${activity.type}`;
+  // FMN-B54 (R2 = A): przy wejściu z kafla listy okruszki niosą jej województwo,
+  // kategorię, wiek i sort. JSON-LD zostaje przy kanonicznych adresach bez parametrów.
+  const okruszki = okruszkiKarty(filtryZeStanuKarty(location.state), {
+    wojewodztwo: regionHref,
+    kategoria: categoryHref,
+  });
   const cityLabel = cityLabels[activity.city]?.nominative || activity.city;
   const cityLocativeRaw = cityLabels[activity.city]?.locative || cityLabel;
   const cityLocative = `w ${cityLocativeRaw}`;
@@ -617,10 +624,10 @@ const ActivityDetail = () => {
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
             {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
             <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0 overflow-hidden [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="breadcrumb">
-              <Link to="/" className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
+              <Link to={okruszki.glowna} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
               <Link
-                to={regionHref}
+                to={okruszki.wojewodztwo}
                 title={regionLabel}
                 aria-label={regionLabel}
                 className="shrink-0 max-w-[10ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
@@ -629,7 +636,7 @@ const ActivityDetail = () => {
               </Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
               <Link
-                to={categoryHref}
+                to={okruszki.kategoria}
                 title={typeLabel}
                 aria-label={typeLabel}
                 className="shrink-0 max-w-[12ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"

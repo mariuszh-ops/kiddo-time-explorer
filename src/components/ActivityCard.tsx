@@ -1,6 +1,6 @@
 import { trackEvent } from "@/lib/analytics";
 import React, { useState, useCallback, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, type LinkProps } from "react-router-dom";
 import { Star, Calendar, MapPinned, Navigation, Heart, Camera, HelpCircle } from "lucide-react";
 import LazyImage, { getCategoryPlaceholderColor } from "@/components/LazyImage";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +18,7 @@ import { useOpenCardAuthModal } from "@/contexts/CardAuthModalContext";
 import { useFamilyPreferences } from "@/hooks/useFamilyPreferences";
 import { formatRatingPl } from "@/lib/formatRating";
 import { formatReviewCount, NO_REVIEWS_LABEL } from "@/lib/formatReviewCount";
+import { stanLinkuKarty } from "@/lib/kontekstListy";
 
 const CATEGORY_LABELS: Record<string, string> = {
   "sala-zabaw": "Sala zabaw",
@@ -32,6 +33,18 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const HIDDEN_TAGS = new Set(["W pomieszczeniu", "Na zewnątrz"]);
+
+/**
+ * FMN-B54: link kafla niesie adres listy w stanie wpisu historii, z którego
+ * karta buduje okruszki i wyszukiwarkę z filtrami listy (lib/kontekstListy.ts).
+ * Osobny komponent, bo `useLocation` w samym kaflu przerysowywałby całą kartę
+ * przy każdej zmianie adresu; tu przerysowuje się tylko link (sam <Link> i tak
+ * subskrybuje adres), a treść kafla (`children`) zostaje nietknięta.
+ */
+const LinkDoKarty = ({ slug, ...rest }: Omit<LinkProps, "to" | "state"> & { slug: string }) => {
+  const { pathname, search } = useLocation();
+  return <Link to={`/atrakcje/${slug}`} state={stanLinkuKarty(pathname, search)} {...rest} />;
+};
 
 interface ActivityCardProps {
   id: number;
@@ -158,7 +171,7 @@ const ActivityCard = ({
   };
 
   return (
-      <Link to={`/atrakcje/${slug}`} onClick={handleClick}>
+      <LinkDoKarty slug={slug} onClick={handleClick}>
         <article className="group cursor-pointer rounded-xl transition-all duration-200 ease-out [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] active:opacity-90 active:duration-150">
           {/* Image */}
           <div
@@ -335,7 +348,7 @@ const ActivityCard = ({
             )}
           </div>
         </article>
-      </Link>
+      </LinkDoKarty>
   );
 };
 
