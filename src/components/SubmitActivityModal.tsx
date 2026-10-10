@@ -39,7 +39,7 @@ import { FEATURES } from "@/lib/featureFlags";
 import { filterOptions } from "@/data/activities";
 import { useAuth } from "@/contexts/AuthContext";
 import { normalizeUrlInput, isHttpUrl } from "@/lib/safeUrl";
-import { PASMA_WIEKU, zakresWiekuZPasm } from "@/lib/pasmaWieku";
+import { PASMA_WIEKU, pasmaZWersjiRoboczej, zakresWiekuZPasm } from "@/lib/pasmaWieku";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -244,7 +244,12 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
     const draft = readDraft();
     if (draft && hasAnyContent(draft)) {
       const { savedAt: _savedAt, ...values } = draft;
-      form.reset({ ...(emptyValues.current as FormData), ...values });
+      form.reset({
+        ...(emptyValues.current as FormData),
+        ...values,
+        // Wersja robocza sprzed AF-10-017 może mieć stare pasma („4-6”, „15+”).
+        ageGroups: pasmaZWersjiRoboczej(values.ageGroups),
+      });
       setDraftRestored(true);
     } else if (user?.email) {
       form.setValue("contactEmail", user.email);

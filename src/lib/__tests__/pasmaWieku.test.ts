@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { filterOptions } from "@/data/activities";
 import { AGE_RANGES } from "@/components/CategoryFilterBar";
-import { PASMA_WIEKU, zakresWiekuZPasm } from "@/lib/pasmaWieku";
+import { PASMA_WIEKU, pasmaZWersjiRoboczej, zakresWiekuZPasm } from "@/lib/pasmaWieku";
 
 /**
  * AF-10-017 (D5 = A): formularz „Zgłoś atrakcję” ma te same pasma wieku co filtr.
@@ -45,5 +45,29 @@ describe("zakresWiekuZPasm — age_min/age_max zgłoszenia", () => {
     expect(zakresWiekuZPasm([])).toBeNull();
     expect(zakresWiekuZPasm(["4-6", "15+"])).toBeNull();
     expect(zakresWiekuZPasm(["4-6", "6-9"])).toEqual({ ageMin: 6, ageMax: 9 });
+  });
+});
+
+describe("pasmaZWersjiRoboczej — wersja robocza sprzed zmiany pasm", () => {
+  it.each([
+    [["0-3"], ["0-2", "3-5"]],
+    [["4-6"], ["3-5", "6-9"]],
+    [["7-10"], ["6-9", "10-13"]],
+    [["11-14"], ["10-13", "14-16"]],
+    [["15+"], ["14-16"]],
+    [["15+", "0-3"], ["0-2", "3-5", "14-16"]],
+  ])("stare %j -> pasma filtra %j", (stare, nowe) => {
+    expect(pasmaZWersjiRoboczej(stare)).toEqual(nowe);
+  });
+
+  it("nowe pasma przechodzą bez zmian (także „14-16”, który wygląda jak zakres)", () => {
+    for (const p of filterOptions.age) expect(pasmaZWersjiRoboczej([p.value])).toEqual([p.value]);
+    expect(pasmaZWersjiRoboczej(["6-9", "0-2"])).toEqual(["0-2", "6-9"]);
+  });
+
+  it("śmieci i brak pola -> pusta lista (formularz poprosi o wybór)", () => {
+    expect(pasmaZWersjiRoboczej(undefined)).toEqual([]);
+    expect(pasmaZWersjiRoboczej("0-3")).toEqual([]);
+    expect(pasmaZWersjiRoboczej([1, null, "abc", "x-y"])).toEqual([]);
   });
 });

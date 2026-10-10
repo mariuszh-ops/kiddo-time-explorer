@@ -87,4 +87,22 @@ describe("AF-10-017 — pasma wieku w „Zgłoś atrakcję”", () => {
     await within(dlg).findByText(/Przywróciliśmy Twój niedokończony formularz/);
     expect(await wyslij(dlg)).toMatchObject({ age_min: 14, age_max: 16 });
   });
+
+  it("stara wersja robocza „15+” -> widoczne „14+”, zapis 14..16 (stary kod: 0..16)", async () => {
+    draft(["15+"]);
+    render(<SubmitActivityModal isOpen onClose={() => undefined} />);
+    const dlg = await screen.findByRole("dialog");
+    await within(dlg).findByText(/Przywróciliśmy Twój niedokończony formularz/);
+    expect(pasmaFormularza(dlg).filter(([, z]) => z).map(([l]) => l)).toEqual(["14+"]);
+    expect(await wyslij(dlg)).toMatchObject({ age_min: 14, age_max: 16 });
+  });
+
+  it("stara wersja robocza „4-6” -> zaznaczone 3–5 i 6–9, zapis 3..9", async () => {
+    draft(["4-6"]);
+    render(<SubmitActivityModal isOpen onClose={() => undefined} />);
+    const dlg = await screen.findByRole("dialog");
+    await within(dlg).findByText(/Przywróciliśmy Twój niedokończony formularz/);
+    expect(pasmaFormularza(dlg).filter(([, z]) => z).map(([l]) => l)).toEqual(["3–5 lat", "6–9 lat"]);
+    expect(await wyslij(dlg)).toMatchObject({ age_min: 3, age_max: 9 });
+  });
 });
