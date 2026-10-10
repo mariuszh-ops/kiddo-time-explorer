@@ -3,6 +3,7 @@ import type { SetURLSearchParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import type { SavedMapState } from "@/components/MapView";
 import { CATEGORY_ORDER } from "@/data/categoryLabels";
+import { useBazaZapisuAdresu } from "@/hooks/useBazaZapisuAdresu";
 
 /**
  * Zakres zoomu, który adres odtwarza (F5, link, „wstecz”). 19 zostaje jako zapas
@@ -148,6 +149,11 @@ export function useMapUrlState(
     () => typeof window === "undefined" || window.location.pathname === pathnameRef.current,
     [],
   );
+  // `prev` z react-routera to adres z ostatniego renderu. Filtr „Kategorii” idzie
+  // przejściem (AF-5-065): ruch mapy przed jego commitem liczony od `prev`
+  // zdejmował świeżą kategorię. Każdy zapis startuje od adresu z historii,
+  // jeśli router go jeszcze nie oddał (useBazaZapisuAdresu).
+  const bazaZapisu = useBazaZapisuAdresu();
 
   const viewMode: "grid" | "map" = searchParams.get("view") === "map" ? "map" : "grid";
 
@@ -172,8 +178,9 @@ export function useMapUrlState(
     if (!maStareCats || !isStillOnThisRoute()) return;
     setSearchParams(
       (prev) => {
-        przepiszStareCats(prev, kategorieWAdresie);
-        return prev;
+        const p = bazaZapisu(prev);
+        przepiszStareCats(p, kategorieWAdresie);
+        return p;
       },
       { replace: true },
     );
@@ -190,20 +197,21 @@ export function useMapUrlState(
       if (!isStillOnThisRoute()) return;
       const opcje = stanWpisu ? { state: stanWpisu } : undefined;
       setSearchParams((prev) => {
+        const p = bazaZapisu(prev);
         if (mode === "map") {
-          prev.set("view", "map");
+          p.set("view", "map");
         } else {
-          prev.delete("view");
-          prev.delete("lat");
-          prev.delete("lng");
-          prev.delete("zoom");
-          prev.delete("fav");
-          prev.delete("cats");
+          p.delete("view");
+          p.delete("lat");
+          p.delete("lng");
+          p.delete("zoom");
+          p.delete("fav");
+          p.delete("cats");
         }
-        return prev;
+        return p;
       }, opcje);
     },
-    [setSearchParams, isStillOnThisRoute],
+    [setSearchParams, isStillOnThisRoute, bazaZapisu],
   );
 
   const handleSaveMapState = useCallback(
@@ -231,19 +239,20 @@ export function useMapUrlState(
       }
       setSearchParams(
         (prev) => {
-          if (prev.get("view") !== "map") return prev;
-          zdejmijStareCatsBezKadru(prev);
-          prev.set("lat", latDoAdresu(state.center[0]));
-          prev.set("lng", lngDoAdresu(state.center[1]));
-          prev.set("zoom", zoomDoAdresu(state.zoom));
-          if (state.favoritesOnly) prev.set("fav", "1");
-          else prev.delete("fav");
-          return prev;
+          const p = bazaZapisu(prev);
+          if (p.get("view") !== "map") return p;
+          zdejmijStareCatsBezKadru(p);
+          p.set("lat", latDoAdresu(state.center[0]));
+          p.set("lng", lngDoAdresu(state.center[1]));
+          p.set("zoom", zoomDoAdresu(state.zoom));
+          if (state.favoritesOnly) p.set("fav", "1");
+          else p.delete("fav");
+          return p;
         },
         { replace: true },
       );
     },
-    [setSearchParams, isStillOnThisRoute],
+    [setSearchParams, isStillOnThisRoute, bazaZapisu],
   );
 
   return { viewMode, setViewMode, savedMapState, handleSaveMapState };

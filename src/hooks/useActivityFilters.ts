@@ -1,5 +1,6 @@
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useBazaZapisuAdresu } from "@/hooks/useBazaZapisuAdresu";
 import { getActivities, filterOptions, Activity, cityCenters } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { getDistanceFromRegionCenter } from "@/lib/geoDistance";
@@ -133,33 +134,28 @@ export function useActivityFilters() {
   // w arkuszu na telefonie zapisuje promień przy każdym wybranym regionie, więc
   // arkusz zamknięty bez zmian dokładał pusty wpis i „wstecz" nic nie zmieniało.
   // Identyczny adres = żaden zapis (w arkuszu atrapa zostaje wtedy na wierzchu,
-  // patrz useFilterSheetHistory). Porównujemy z `searchParams` z routera, bo
-  // to ten sam obiekt, który react-router podaje jako `prev` poniżej.
+  // patrz useFilterSheetHistory). Porównujemy z adresem, od którego liczymy zapis.
   //
   // FMN-B23: `prev` w setSearchParams to `searchParams` z DOMKNIĘCIA
   // (react-router 6.30), nie świeży adres. Dwa zapisy w tym samym takcie
   // (fraza + promień w „Pokaż wyniki”, fraza + filtry w „wyczyść poza
   // województwem”) startowały od tego samego starego adresu i drugi gubił
-  // pierwszy. Drugi zapis startuje więc od wyniku pierwszego, dopóki router
-  // nie odda nowego adresu (wtedy efekt niżej kasuje notatkę).
-  const zapisWToku = useRef<{ baza: string; wynik: string } | null>(null);
-  useEffect(() => {
-    zapisWToku.current = null;
-  }, [searchParams]);
+  // pierwszy. AF-5-065: opcja „Kategorii” zapisuje filtr w startTransition,
+  // więc to okno trwa do commitu przejścia. Zapis startuje od adresu z historii,
+  // gdy router jeszcze go nie oddał (useBazaZapisuAdresu) — ten sam bezpiecznik
+  // co w zapisach mapy (useMapUrlState).
+  const bazaZapisu = useBazaZapisuAdresu();
   const zapiszFiltrDoUrl = useCallback(
     (mutuj: (params: URLSearchParams) => void, opcje?: FilterWriteOptions) => {
-      const teraz = searchParams.toString();
-      const wToku = zapisWToku.current;
-      const baza = wToku && wToku.baza === teraz ? wToku.wynik : teraz;
+      const baza = bazaZapisu(searchParams).toString();
       const docelowe = new URLSearchParams(baza);
       mutuj(docelowe);
       if (docelowe.toString() === baza) return;
-      zapisWToku.current = { baza: teraz, wynik: docelowe.toString() };
       setSearchParams(docelowe, opcje?.replace ? { replace: true } : undefined);
     },
     // `searchParams` nie pogarsza stabilności: `setSearchParams` i tak zmienia
     // tożsamość po każdym zapisie adresu (react-router: [navigate, searchParams]).
-    [searchParams, setSearchParams],
+    [bazaZapisu, searchParams, setSearchParams],
   );
 
   // FMN-B23: fraza idzie do adresu OD RAZU (replace), w tym samym takcie co
