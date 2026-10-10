@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useRef, useState, ReactNode } from "react";
+import { createContext, useCallback, useContext, useMemo, useRef, useState, ReactNode } from "react";
 
 /**
  * „Intencja przed logowaniem" — akcja, którą gość próbował wykonać przed
@@ -45,8 +45,7 @@ function writeStored(intent: PendingIntent | null) {
   }
 }
 
-interface PendingIntentContextType {
-  pendingIntent: PendingIntent | null;
+interface PendingIntentActions {
   setPendingIntent: (intent: PendingIntent) => void;
   /** Bezwarunkowe czyszczenie (po wykonaniu intencji). */
   clearPendingIntent: () => void;
@@ -56,7 +55,18 @@ interface PendingIntentContextType {
   cancelPendingIntent: () => void;
 }
 
-const PendingIntentContext = createContext<PendingIntentContextType | undefined>(undefined);
+/**
+ * INP (A1000-P, serce / gwiazdka): akcje i stan to DWA konteksty.
+ * Wcześniej był jeden, z `value={{ pendingIntent, ...akcje }}` — nowy obiekt
+ * przy każdym renderze providera. `setPendingIntent` (klik serca jako gość)
+ * renderował więc KAŻDEGO konsumenta: każdą kartę na liście (24 na
+ * /malopolskie) razem z jej modalem logowania, mimo `React.memo`. Karty i modale
+ * potrzebują tylko akcji, a te mają stałą tożsamość (`useCallback` z `[]`),
+ * więc kontekst akcji nie zmienia się nigdy. Stan czyta tylko
+ * `PendingIntentRunner` (`usePendingIntentValue`).
+ */
+const PendingIntentActionsContext = createContext<PendingIntentActions | undefined>(undefined);
+const PendingIntentValueContext = createContext<{ pendingIntent: PendingIntent | null } | undefined>(undefined);
 
 export function PendingIntentProvider({ children }: { children: ReactNode }) {
   const [pendingIntent, setIntent] = useState<PendingIntent | null>(() => readStored());
@@ -84,17 +94,29 @@ export function PendingIntentProvider({ children }: { children: ReactNode }) {
     setIntent(null);
   }, []);
 
+  const akcje = useMemo(
+    () => ({ setPendingIntent, clearPendingIntent, markAuthAttempt, cancelPendingIntent }),
+    [setPendingIntent, clearPendingIntent, markAuthAttempt, cancelPendingIntent],
+  );
+  const stan = useMemo(() => ({ pendingIntent }), [pendingIntent]);
+
   return (
-    <PendingIntentContext.Provider
-      value={{ pendingIntent, setPendingIntent, clearPendingIntent, markAuthAttempt, cancelPendingIntent }}
-    >
-      {children}
-    </PendingIntentContext.Provider>
+    <PendingIntentActionsContext.Provider value={akcje}>
+      <PendingIntentValueContext.Provider value={stan}>{children}</PendingIntentValueContext.Provider>
+    </PendingIntentActionsContext.Provider>
   );
 }
 
+/** Akcje intencji (stała tożsamość — konsument nie renderuje się przy zmianie intencji). */
 export function usePendingIntent() {
-  const ctx = useContext(PendingIntentContext);
+  const ctx = useContext(PendingIntentActionsContext);
   if (!ctx) throw new Error("usePendingIntent must be used within a PendingIntentProvider");
   return ctx;
+}
+
+/** Bieżąca intencja — tylko dla tego, kto ją wykonuje (PendingIntentRunner). */
+export function usePendingIntentValue() {
+  const ctx = useContext(PendingIntentValueContext);
+  if (!ctx) throw new Error("usePendingIntentValue must be used within a PendingIntentProvider");
+  return ctx.pendingIntent;
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
-import { usePendingIntent } from "@/contexts/PendingIntentContext";
+import { usePendingIntent, usePendingIntentValue } from "@/contexts/PendingIntentContext";
 import { useSavedActivities } from "@/contexts/SavedActivitiesContext";
 import { useUserRatings } from "@/contexts/UserRatingsContext";
 
@@ -11,7 +11,8 @@ import { useUserRatings } from "@/contexts/UserRatingsContext";
  */
 const PendingIntentRunner = () => {
   const { isLoggedIn } = useAuth();
-  const { pendingIntent, clearPendingIntent } = usePendingIntent();
+  const pendingIntent = usePendingIntentValue();
+  const { clearPendingIntent } = usePendingIntent();
   const {
     isFavorite,
     isWantToVisit,
