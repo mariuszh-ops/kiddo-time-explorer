@@ -39,6 +39,7 @@ import { FEATURES } from "@/lib/featureFlags";
 import { filterOptions } from "@/data/activities";
 import { useAuth } from "@/contexts/AuthContext";
 import { normalizeUrlInput, isHttpUrl } from "@/lib/safeUrl";
+import { PASMA_WIEKU, zakresWiekuZPasm } from "@/lib/pasmaWieku";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,13 +51,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-const ageGroups = [
-  { id: "0-3", label: "0–3 lata" },
-  { id: "4-6", label: "4–6 lat" },
-  { id: "7-10", label: "7–10 lat" },
-  { id: "11-14", label: "11–14 lat" },
-  { id: "15+", label: "15+ lat" },
-];
+// AF-10-017 (D5 = A): te same pasma co filtr wieku (jedno źródło w src/lib/pasmaWieku.ts).
+const ageGroups = PASMA_WIEKU.map((p) => ({ id: p.value, label: p.label }));
 
 const allCityOptions = [
   ...filterOptions.city,
@@ -302,12 +298,9 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   };
 
   const handleSubmit = async (data: FormData) => {
-    const ageRanges = data.ageGroups.map((g) => {
-      const parts = g.split("-").map(Number);
-      return { min: parts[0] || 0, max: parts[1] || 16 };
-    });
-    const ageMin = Math.min(...ageRanges.map((r) => r.min));
-    const ageMax = Math.max(...ageRanges.map((r) => r.max));
+    // Granice wieku z definicji pasm, nie z parsowania identyfikatora (stare „15+”
+    // dawało NaN → age_min 0).
+    const wiek = zakresWiekuZPasm(data.ageGroups);
 
     const cityValue = data.city === "inne" ? (data.customCity || "inne") : data.city;
     const payload = {
@@ -316,8 +309,8 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
       city: cityValue,
       address: data.address || null,
       type: data.activityType,
-      age_min: ageMin,
-      age_max: ageMax,
+      age_min: wiek?.ageMin ?? null,
+      age_max: wiek?.ageMax ?? null,
       is_indoor: data.indoorOutdoor === "indoor" || data.indoorOutdoor === "both",
       price_level: data.priceLevel ?? null,
       description: data.description || null,
