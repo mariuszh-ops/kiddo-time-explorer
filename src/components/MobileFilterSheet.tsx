@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useId } from "react";
+import { useState, useEffect, useRef, useId, useTransition } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -160,14 +160,42 @@ const MobileFilterSheet = ({
   // potrzebowalo, to podpowiedzi wyszukiwarki — te bierze teraz z serwera sam
   // SearchAutocomplete. Otwarcie arkusza na telefonie kosztowalo wczesniej
   // 4892 wiersze (534 kB po sieci).
-  const hasActiveFilters = Object.entries(filters).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
-  const hasCitySelected = Boolean(filters.city);
+  // INP (A1000-P, chip wieku P-C-03): klik opcji w arkuszu (województwo, wiek,
+  // kategoria, sortowanie) zapisuje filtr jako PRZEJŚCIE (startTransition), jak
+  // opcja „Kategorii” w MultiFilterDropdown (AF-5-065). Wcześniej pierwszy filtr
+  // na „/” synchronicznie przełączał stronę z sekcji na siatkę (montaż 48 kart,
+  // efekty, styl i layout) przed pierwszym malowaniem: INP ok. 500 ms przy CPU 4x.
+  // Do commitu przejścia router oddaje stary adres, więc opcje pokazują wybór
+  // OPTYMISTYCZNY (zmiana w klatce kliknięcia). Po commicie (czekaNaAdres = false)
+  // prawdą znów jest `filters` z adresu. Historia zmienia się od razu
+  // (zapiszWArkuszu działa synchronicznie wewnątrz startTransition), a kolejne
+  // zapisy w tym oknie liczą od historii (useBazaZapisuAdresu).
+  const [czekaNaAdres, startPrzejscia] = useTransition();
+  const [optymistyczne, setOptymistyczne] = useState<Partial<Filters> | null>(null);
+  const widoczne: Filters = czekaNaAdres && optymistyczne ? { ...filters, ...optymistyczne } : filters;
+
+  const hasActiveFilters = Object.entries(widoczne).filter(([k, v]) => k !== "sort" && (Array.isArray(v) ? v.length > 0 : Boolean(v))).length > 0 || searchQuery.trim().length > 0;
+  const hasCitySelected = Boolean(widoczne.city);
 
   // FMN-B05 (R3): „wstecz" przy otwartym arkuszu zamyka arkusz, filtry zostają.
   // Każdy zapis filtra z arkusza idzie przez `zapiszWArkuszu` — patrz hook.
   const { zapiszWArkuszu } = useFilterSheetHistory(isOpen, onClose);
   const ustawFiltr = (key: keyof Filters, value: string | string[] | number | undefined) =>
     zapiszWArkuszu((opcje) => onUpdateFilter(key, value, opcje));
+  /** Klik opcji: wybór widać od razu, zapis adresu i wyniki idą przejściem. */
+  const wPrzejsciu = (zmiana: Partial<Filters>, zapisz: (opcje?: FilterWriteOptions) => void) => {
+    setOptymistyczne({ ...(czekaNaAdres && optymistyczne ? optymistyczne : {}), ...zmiana });
+    startPrzejscia(() => zapiszWArkuszu(zapisz));
+  };
+  const ustawFiltrPrzejsciem = (key: "city" | "age" | "sort", value: string | undefined) =>
+    wPrzejsciu({ [key]: value }, (opcje) => onUpdateFilter(key, value, opcje));
+  const przelaczTyp = (value: string) => {
+    const typy = widoczne.type || [];
+    wPrzejsciu(
+      { type: typy.includes(value) ? typy.filter((t) => t !== value) : [...typy, value] },
+      (opcje) => onToggleTypeFilter(value, opcje),
+    );
+  };
 
   // FMN-B71: arkusz żyje cały czas (Sheet tylko chowa treść), więc kopie frazy
   // i odległości ustawione raz przy montażu rozjeżdżały się z adresem: fraza
@@ -200,6 +228,8 @@ const MobileFilterSheet = ({
   };
 
   const handleClearAll = () => {
+    // „Wyczyść” idzie od razu (bez przejścia): optymizm nie może go przykryć.
+    setOptymistyczne(null);
     zapiszWArkuszu((opcje) => onClearAll(opcje));
     setLocalSearch("");
     // Stan bez filtra odległości to 0 km, nie 5.
@@ -241,8 +271,8 @@ const MobileFilterSheet = ({
               <FilterSection
                 title="Województwo"
                 options={filterCounts.city}
-                selectedValue={filters.city}
-                onSelect={(value) => ustawFiltr("city", value)}
+                selectedValue={widoczne.city}
+                onSelect={(value) => ustawFiltrPrzejsciem("city", value)}
               />
               
               {/* Distance slider - shown when city selected */}
@@ -282,15 +312,15 @@ const MobileFilterSheet = ({
           <FilterSection
             title="Wiek dziecka"
             options={filterCounts.age}
-            selectedValue={filters.age}
-            onSelect={(value) => ustawFiltr("age", value)}
+            selectedValue={widoczne.age}
+            onSelect={(value) => ustawFiltrPrzejsciem("age", value)}
           />
           
           <MultiFilterSection
             title="Kategoria"
             options={filterCounts.type}
-            selectedValues={filters.type || []}
-            onToggle={(value) => zapiszWArkuszu((opcje) => onToggleTypeFilter(value, opcje))}
+            selectedValues={widoczne.type || []}
+            onToggle={przelaczTyp}
           />
           
           {/* Sekcja „Pod dachem / Na zewnątrz" ukryta — isIndoor twardo false (0 wyników). Logika zostaje.
@@ -337,13 +367,13 @@ const MobileFilterSheet = ({
                 { value: "distance-from-center", label: "Najbliżej centrum" },
                 { value: "name", label: "Nazwa A–Z" },
               ].map((option) => {
-                const wybrane = (filters.sort || "rating") === option.value;
+                const wybrane = (widoczne.sort || "rating") === option.value;
                 return (
                   <button
                     key={option.value}
                     type="button"
                     aria-pressed={wybrane}
-                    onClick={() => ustawFiltr("sort", option.value)}
+                    onClick={() => ustawFiltrPrzejsciem("sort", option.value)}
                     className={cn(
                       "px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                       wybrane
