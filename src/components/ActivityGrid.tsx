@@ -10,6 +10,7 @@ import { Activity, filterOptions } from "@/data/activities";
 import { FEATURES } from "@/lib/featureFlags";
 import { Filters, getActivityDistance } from "@/hooks/useActivityFilters";
 import { activityCount } from "@/lib/plural";
+import { useGridCols } from "@/hooks/useGridCols";
 
 export interface ActivityGridProps {
   activities: Activity[];
@@ -29,21 +30,6 @@ export interface ActivityGridProps {
 }
 
 const ITEMS_PER_PAGE = 20;
-
-/** Return current grid column count based on Tailwind breakpoints */
-const useGridCols = () => {
-  const [cols, setCols] = useState(4);
-  useEffect(() => {
-    const update = () => {
-      const w = window.innerWidth;
-      setCols(w >= 1024 ? 4 : w >= 768 ? 3 : w >= 640 ? 2 : 1);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-  return cols;
-};
 
 /** Round n up to the nearest multiple of cols, clamped to max */
 const roundUp = (n: number, cols: number, max: number) =>
