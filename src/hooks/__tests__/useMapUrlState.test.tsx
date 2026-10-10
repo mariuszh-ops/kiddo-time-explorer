@@ -168,6 +168,35 @@ describe("useMapUrlState — chipy kategorii to filtr `type`, nie `cats`", () =>
     expect(po.toString()).toBe("view=map&region=podlaskie&lat=53.13250&lng=23.16880&zoom=11");
   });
 
+  // FMN-B84, decyzja CC 10.10 (wariant 1): „Ulubione" z adresu działają tylko razem z kadrem.
+  // Aplikacja zawsze zapisuje `fav` obok lat/lng/zoom; bez kadru filtr znika dla każdej roli.
+  it("fav=1 z kadrem: stan mapy z adresu ma „Ulubione”", () => {
+    ustawAdres("?view=map&fav=1&lat=52.00000&lng=19.00000&zoom=6");
+    const { result } = zamontuj(vi.fn() as unknown as SetURLSearchParams);
+    expect(result.current.savedMapState).toEqual({ center: [52, 19], zoom: 6, favoritesOnly: true });
+  });
+
+  it("fav=1 bez kadru: brak stanu mapy z adresu, pierwszy zapis kadru zdejmuje `fav`", () => {
+    ustawAdres("?view=map&fav=1");
+    const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
+    const { result } = zamontuj(setSearchParams);
+
+    expect(result.current.savedMapState).toBeNull();
+    expect(setSearchParams).not.toHaveBeenCalled();
+
+    // MapView startuje bez „Ulubionych" (savedMapState = null), więc zapisuje favoritesOnly: false.
+    act(() => result.current.handleSaveMapState({ center: [52.2297, 21.0122], zoom: 11, favoritesOnly: false }));
+
+    expect(setSearchParams).toHaveBeenCalledTimes(1);
+    const [updater, opcje] = vi.mocked(setSearchParams).mock.calls[0] as unknown as [
+      (p: URLSearchParams) => URLSearchParams,
+      { replace?: boolean },
+    ];
+    expect(opcje).toEqual({ replace: true });
+    const po = updater(new URLSearchParams(window.location.search));
+    expect(po.toString()).toBe("view=map&lat=52.22970&lng=21.01220&zoom=11");
+  });
+
   it("bez ?cats= przy wejściu nie ma żadnego zapisu", () => {
     ustawAdres("?view=map&type=zoo&lat=52.22970&lng=21.01220&zoom=11");
     const setSearchParams = vi.fn() as unknown as SetURLSearchParams;
