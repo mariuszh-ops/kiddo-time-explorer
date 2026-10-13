@@ -159,3 +159,5 @@ ${urls.map(u => `  <url>
 }
 
 main();
+
+// 13.10.2026: rebuild sitemap after hiding 126 attractions (prebuild regenerates it on every Publish).
