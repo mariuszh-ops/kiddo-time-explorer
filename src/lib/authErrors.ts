@@ -1,4 +1,5 @@
 // Tłumaczenie komunikatów błędów autoryzacji na polski.
+import { PASSWORD_MIN_LENGTH } from "@/lib/passwordPolicy";
 
 /**
  * Znacznik: adres ma już konto, ale GoTrue nie powie tego wprost.
@@ -38,7 +39,7 @@ export const translateAuthError = (error: unknown): string => {
     return "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.";
   }
   if (msg.includes("password should be at least") || msg.includes("weak password")) {
-    return "Hasło jest za słabe — potrzeba min. 8 znaków, małej i wielkiej litery, cyfry oraz znaku specjalnego.";
+    return `Hasło jest za słabe — potrzeba min. ${PASSWORD_MIN_LENGTH} znaków, małej i wielkiej litery, cyfry oraz znaku specjalnego.`;
   }
   if (msg.includes("invalid login credentials")) {
     // Nie zdradzamy, czy konto istnieje — ale najczęstsza przyczyna tego błędu

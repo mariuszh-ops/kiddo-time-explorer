@@ -42,7 +42,7 @@ describe("ResetPassword — błąd pola powiązany z polem (AF-6-024)", () => {
   it("błąd z serwera: aria-invalid=true i aria-describedby wskazuje komunikat (role=alert)", async () => {
     renderuj();
     const pole = await screen.findByLabelText("Nowe hasło");
-    fireEvent.change(pole, { target: { value: "Haslo!2026x" } });
+    fireEvent.change(pole, { target: { value: "Haslo!2026xy" } });
     fireEvent.click(screen.getByRole("button", { name: "Zapisz nowe hasło" }));
 
     const komunikat = await screen.findByRole("alert");

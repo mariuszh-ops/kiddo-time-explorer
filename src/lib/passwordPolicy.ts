@@ -1,6 +1,12 @@
 // Jedyne źródło prawdy dla wymagań hasła — musi odpowiadać polityce serwera (Supabase Auth).
+//
+// AN-5-135 (ASVS V2.1.1): minimum 12 znaków dla NOWYCH haseł — rejestracja, reset i zmiana
+// hasła. Logowanie NIE sprawdza tych reguł (EmailAuthForm waliduje tylko tryb signup), więc
+// stare konta z hasłem 8–11 znaków logują się dalej. Serwer (Supabase Auth
+// `password_min_length`) ustawia właściciel w panelu — do tego czasu front jest ostrzejszy
+// od serwera, nigdy łagodniejszy.
 
-export const PASSWORD_MIN_LENGTH = 8;
+export const PASSWORD_MIN_LENGTH = 12;
 
 export type PasswordCheck = {
   ok: boolean;
@@ -22,7 +28,7 @@ export const checkPassword = (pwd: string): PasswordCheck => {
   return { ok: minLength && lower && upper && digit && special, minLength, lower, upper, digit, special };
 };
 
-export const PASSWORD_HINT = "min. 8 znaków, mała i wielka litera, cyfra, znak specjalny";
+export const PASSWORD_HINT = `min. ${PASSWORD_MIN_LENGTH} znaków, mała i wielka litera, cyfra, znak specjalny`;
 
 /** Pierwszy brakujący warunek jako komunikat dla użytkownika. */
 export const passwordErrorMessage = (pwd: string): string | null => {

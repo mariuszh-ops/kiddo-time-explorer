@@ -51,7 +51,8 @@ vi.mock("@/contexts/AuthContext", () => ({
   useAuth: () => ({ signUpWithEmail, signInWithEmail, resendConfirmation, resetPassword }),
 }));
 
-const VALID_PASSWORD = "Abcdef1!";
+// AN-5-135: rejestracja wymaga min. 12 znaków.
+const VALID_PASSWORD = "Abcdefgh1!xy";
 
 const fillSignupForm = () => {
   fireEvent.change(screen.getByLabelText("E-mail"), {

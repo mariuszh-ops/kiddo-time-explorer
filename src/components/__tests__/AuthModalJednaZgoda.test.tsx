@@ -67,7 +67,7 @@ const openSignup = async () => {
   fireEvent.click(screen.getByRole("button", { name: /Nie mam konta/ }));
   await screen.findByRole("heading", { name: "Załóż konto" });
   fireEvent.change(screen.getByLabelText("E-mail"), { target: { value: "rodzina@example.com" } });
-  fireEvent.change(screen.getByLabelText("Hasło"), { target: { value: "Abcdef1!" } });
+  fireEvent.change(screen.getByLabelText("Hasło"), { target: { value: "Abcdefgh1!xy" } });
 };
 
 describe("AN-12-084: jedna zgoda w modalu rejestracji", () => {
