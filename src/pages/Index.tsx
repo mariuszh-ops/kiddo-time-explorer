@@ -486,21 +486,28 @@ const Index = () => {
           wtedy false, wiec `home.activities` zostaje puste i na desktopie
           (wrapper `hidden sm:block`) pod pelna mapa pinow wyswietlal sie
           EmptyFilterState "Nic nie pasuje do filtrow". */}
+      {/* AN-6-007 (WCAG 1.3.1): tytuły kart to h3, więc przed siatką wyników stoi
+          sr-only h2 — bez niego „/” z filtrami skacze h1 → h3. Ten sam wzorzec co
+          „Lista atrakcji” w CategoryPage; AllActivitiesListing ma własny widoczny h2. */}
       {viewMode === "map" ? null : mapVisibleActivities ? (
-        <ActivityGrid 
-          activities={mapVisibleActivities} 
-          hasActiveFilters={true}
-          onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
-          searchQuery={searchQuery}
-          onClearSearch={() => setSearchQuery("")}
-          filters={filters}
-          mapReturnAction={() => handleViewModeChange("map")}
-          isLoading={katalogSieLaduje}
-        />
+        <>
+          <h2 className="sr-only">Wyniki</h2>
+          <ActivityGrid
+            activities={mapVisibleActivities}
+            hasActiveFilters={true}
+            onClearFilters={() => { setMapVisibleActivities(null); clearAllFilters(); }}
+            searchQuery={searchQuery}
+            onClearSearch={() => setSearchQuery("")}
+            filters={filters}
+            mapReturnAction={() => handleViewModeChange("map")}
+            isLoading={katalogSieLaduje}
+          />
+        </>
       ) : listingSerwerowy ? (
         <AllActivitiesListing />
       ) : hasActiveFilters ? (
         <>
+          <h2 className="sr-only">Wyniki</h2>
           {/* Q-E-10b: wyniki filtrów idą serwerową paginacją (porcje po
               HOME_PAGE_SIZE), nie filtrowaniem całego katalogu w pamięci. */}
           <ActivityGrid

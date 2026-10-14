@@ -292,8 +292,8 @@ const BlogPostPage = () => {
             {/* Content */}
             <article className="prose-sm">{renderContent(post.content)}</article>
 
-            {/* Tags */}
-            <div className="flex items-center gap-2 mt-8 pt-6 border-t border-border">
+            {/* Tags — flex-wrap: przy 320 px piąty tag nie wychodzi za krawędź (AN-6-136, WCAG 1.4.10) */}
+            <div className="flex flex-wrap items-center gap-2 mt-8 pt-6 border-t border-border">
               <Tag className="w-4 h-4 text-muted-foreground" />
               {post.tags.map((tag) => (
                 <Badge key={tag} variant="outline" className="text-xs">
