@@ -1,8 +1,9 @@
 // Zapytania punktowe zastępujące dawne czytanie całego katalogu z pamięci.
 // - useTopActivities(limit): jeden SELECT z limitem (lekkie kolumny karty),
 // - useCatalogTotal(): jeden count z head:true (zero transferu wierszy).
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { catalogClient, mapCatalogRow, CARD_COLUMNS, type CatalogRow } from "@/lib/catalogClient";
+import { readDeadline } from "@/lib/readDeadline";
 import { useHomeCounts } from "@/hooks/useHomeCounts";
 import type { Activity } from "@/data/activities";
 
@@ -15,16 +16,24 @@ async function fetchTop(): Promise<Activity[]> {
   if (TOP_CACHE) return TOP_CACHE;
   if (TOP_INFLIGHT) return TOP_INFLIGHT;
   TOP_INFLIGHT = (async () => {
-    const { data, error } = await catalogClient
-      .from("public_activities")
-      .select(CARD_COLUMNS)
-      .eq("published", true)
-      .order("rating", { ascending: false })
-      .order("reviews_count", { ascending: false })
-      .limit(MAX_TOP);
-    if (error) throw error;
-    TOP_CACHE = ((data ?? []) as unknown as CatalogRow[]).map((row, i) => mapCatalogRow(row, i));
-    return TOP_CACHE;
+    // AN-9-038: zawieszony serwer = blad po 10 s (jak karta, GL-7-026),
+    // a nie szkielet "Polecanych" przez ok. 67 s (ponowienia postgrest-js).
+    const deadline = readDeadline();
+    try {
+      const { data, error } = await catalogClient
+        .from("public_activities")
+        .select(CARD_COLUMNS)
+        .eq("published", true)
+        .order("rating", { ascending: false })
+        .order("reviews_count", { ascending: false })
+        .limit(MAX_TOP)
+        .abortSignal(deadline.signal);
+      if (error) throw error;
+      TOP_CACHE = ((data ?? []) as unknown as CatalogRow[]).map((row, i) => mapCatalogRow(row, i));
+      return TOP_CACHE;
+    } finally {
+      deadline.clear();
+    }
   })();
   try {
     return await TOP_INFLIGHT;
@@ -33,20 +42,40 @@ async function fetchTop(): Promise<Activity[]> {
   }
 }
 
-export function useTopActivities(limit = MAX_TOP): { activities: Activity[]; loading: boolean } {
+export interface TopActivitiesState {
+  activities: Activity[];
+  loading: boolean;
+  /** AN-9-033: odczyt padl (5xx, siec, limit czasu) — to awaria, nie pusta lista. */
+  error: boolean;
+  /** Ponowna proba odczytu (przycisk „Spróbuj ponownie”). */
+  retry: () => void;
+}
+
+export function useTopActivities(limit = MAX_TOP): TopActivitiesState {
   const [activities, setActivities] = useState<Activity[]>(TOP_CACHE ?? []);
   const [loading, setLoading] = useState(!TOP_CACHE);
+  const [error, setError] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (TOP_CACHE) return;
+    if (TOP_CACHE) {
+      setActivities(TOP_CACHE);
+      setLoading(false);
+      setError(false);
+      return;
+    }
     let cancelled = false;
+    setLoading(true);
+    setError(false);
     fetchTop()
       .then((rows) => { if (!cancelled) { setActivities(rows); setLoading(false); } })
-      .catch(() => { if (!cancelled) setLoading(false); });
+      .catch(() => { if (!cancelled) { setLoading(false); setError(true); } });
     return () => { cancelled = true; };
-  }, []);
+  }, [attempt]);
 
-  return { activities: activities.slice(0, limit), loading };
+  const retry = useCallback(() => setAttempt((n) => n + 1), []);
+
+  return { activities: activities.slice(0, limit), loading, error, retry };
 }
 
 /**

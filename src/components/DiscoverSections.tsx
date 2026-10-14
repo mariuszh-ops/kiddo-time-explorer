@@ -1,5 +1,7 @@
 import { Suspense, lazy, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/analytics";
 import ActivityCard from "@/components/ActivityCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -38,12 +40,29 @@ const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: strin
 
 import { activityWord as pluralize, formatCountPl } from "@/lib/plural";
 
+// AN-9-033/038: odczyt "Polecanych" padl (5xx albo zawieszony serwer) — komunikat
+// z ponowieniem zamiast cichego znikniecia sekcji (wzor: karta i /my-places).
+const TopLoadError = ({ onRetry }: { onRetry: () => void }) => (
+  <div role="status" className="flex flex-col items-center justify-center py-10 md:py-12 text-center max-w-sm mx-auto px-4">
+    <p className="text-base md:text-lg font-serif font-medium text-foreground mb-2">
+      Nie udało się wczytać polecanych miejsc
+    </p>
+    <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
+      To problem z połączeniem. Spróbuj ponownie za chwilę.
+    </p>
+    <Button onClick={onRetry} variant="outline">
+      <RefreshCw aria-hidden="true" className="w-4 h-4 mr-2" />
+      Spróbuj ponownie
+    </Button>
+  </div>
+);
+
 const DiscoverSections = (_props: DiscoverSectionsProps) => {
   const { counts: homeCounts } = useHomeCounts();
   const regionCounts = homeCounts.regions;
   const typeCounts = homeCounts.types;
   // Jedno zapytanie z limitem zamiast filtrowania całego katalogu w pamięci.
-  const { activities, loading: topLoading } = useTopActivities(12);
+  const { activities, loading: topLoading, error: topError, retry: retryTop } = useTopActivities(12);
 
   const topRated = useMemo(() => {
     return activities
@@ -64,11 +83,13 @@ const DiscoverSections = (_props: DiscoverSectionsProps) => {
       {/* Sekcja rezerwuje wysokosc juz w czasie ladowania (szkielet 1:1 z karta).
           Wczesniej montowala sie dopiero po danych i spychala wszystko nizej
           o ~4000 px — stad CLS 0,40 na home (N-03). */}
-      {(topLoading || featuredActivities.length > 0) && (
+      {(topLoading || topError || featuredActivities.length > 0) && (
         <section className="container py-6 md:py-8 border-b border-border/30">
           <SectionHeader emoji="🏆" title="Polecane miejsca" subtitle="Najlepiej oceniane atrakcje przez rodziców" />
           {topLoading ? (
             <ActivityGridSkeleton count={10} />
+          ) : topError ? (
+            <TopLoadError onRetry={retryTop} />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {featuredActivities.map((activity) => (
