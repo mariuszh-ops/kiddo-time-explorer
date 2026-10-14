@@ -483,6 +483,11 @@ const CategoryPage = () => {
 
   const isError = Boolean(error) && !loading;
   const isEmpty = !loading && !isError && activities.length === 0;
+  // AN-15-023 / AN-10-014: lista bez ani jednej karty (np. /opolskie/centra-rozrywki)
+  // to dla Google „thin content". Dostaje "noindex, follow" (canonical zostaje),
+  // a generate-sitemap.js jej nie zglasza. Tylko po wczytaniu i bez bledu —
+  // chwilowe 0 w trakcie ladowania albo przy awarii nie zdejmuje strony z indeksu.
+  const pustaLista = isEmpty && total === 0;
 
   const resolvedTitle = resolveCityText(effectiveConfig.seoTitle, citySlug || "");
   const resolvedDescription = resolveCityText(effectiveConfig.seoDescription, citySlug || "");
@@ -576,7 +581,7 @@ const CategoryPage = () => {
         title={pageParam > 1 ? `${pagedTitle} — strona ${pageParam}` : resolvedTitle.replace(" | FamilyFun", "")}
         description={dynamicMetaDescription}
         path={pageParam > 1 ? `${path}?page=${pageParam}` : path}
-        robots={isFiltered ? "noindex-follow" : "index"}
+        robots={isFiltered || pustaLista ? "noindex-follow" : "index"}
         jsonLd={combinedJsonLd as unknown as Record<string, unknown>}
       />
       <Header />

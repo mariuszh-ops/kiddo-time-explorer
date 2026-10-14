@@ -30,7 +30,7 @@ async function fetchAllActivities() {
     // published=true oraz karta nieukryta przez admina.
     const url =
       `${CATALOG_URL}/rest/v1/public_activities` +
-      `?select=slug,updated_at&published=eq.true` +
+      `?select=slug,updated_at,region,type&published=eq.true` +
       `&or=(admin_hidden.is.null,admin_hidden.eq.false)` +
       `&order=slug.asc&limit=${PAGE}&offset=${from}`;
     const res = await fetch(url, {
@@ -91,16 +91,42 @@ async function main() {
   //      /{region}, /{region}/{kategoria}, /kategoria/{kategoria}
   const categorySlugs = categoryConfigs.map((c) => c.slug).filter(Boolean);
 
+  // AN-15-023 / AN-10-014: lista z 0 kart (np. /opolskie/centra-rozrywki) to
+  // „thin content" — nie zglaszamy jej (strona sama dostaje "noindex, follow").
+  // Liczymy karty z tego samego zbioru co lista (region + type, published,
+  // nieukryte). Pusty katalog = blad odczytu, nie brak atrakcji: wtedy listy
+  // zostaja jak dawniej, zeby jedna zla odpowiedz nie wyciela wszystkich stron.
+  const kartyListy = new Map();
+  const dolicz = (loc) => kartyListy.set(loc, (kartyListy.get(loc) || 0) + 1);
+  for (const a of activities) {
+    if (a.region) dolicz(`/${a.region}`);
+    if (a.type) dolicz(`/kategoria/${a.type}`);
+    if (a.region && a.type) dolicz(`/${a.region}/${a.type}`);
+  }
+  const pominietePuste = [];
+  const pushListing = (u) => {
+    if (activities.length > 0 && !kartyListy.get(u.loc)) {
+      pominietePuste.push(u.loc);
+      return;
+    }
+    urls.push(u);
+  };
+
   for (const region of REGION_SLUGS) {
-    urls.push({ loc: `/${region}`, changefreq: 'weekly', priority: '0.9' });
+    pushListing({ loc: `/${region}`, changefreq: 'weekly', priority: '0.9' });
     for (const cat of categorySlugs) {
-      urls.push({ loc: `/${region}/${cat}`, changefreq: 'weekly', priority: '0.8' });
+      pushListing({ loc: `/${region}/${cat}`, changefreq: 'weekly', priority: '0.8' });
     }
   }
 
   // Kategorie w skali całej Polski
   for (const cat of categorySlugs) {
-    urls.push({ loc: `/kategoria/${cat}`, changefreq: 'weekly', priority: '0.8' });
+    pushListing({ loc: `/kategoria/${cat}`, changefreq: 'weekly', priority: '0.8' });
+  }
+  if (activities.length === 0) {
+    console.warn('⚠️ Katalog pusty — listy regionów i kategorii bez sprawdzania liczby kart.');
+  } else if (pominietePuste.length) {
+    console.log(`ℹ️ Pominięte puste listy (0 kart): ${pominietePuste.join(', ')}`);
   }
 
   // 2b. Strony indeksu (HTML sitemap) — linki wewnętrzne do każdej karty
