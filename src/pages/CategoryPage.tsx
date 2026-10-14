@@ -519,10 +519,13 @@ const CategoryPage = () => {
     })),
   };
 
-  const breadcrumbItems = [
-    { name: "Strona główna", url: `${BASE_URL}/` },
-    { name: effectiveCityLabel.nominative, url: `${BASE_URL}/atrakcje/${citySlug}` },
-  ];
+  // AN-10-091/092/093: okruszki w JSON-LD = widoczne okruszki i adresy kanoniczne.
+  // Region wskazuje /{region} (nie alias /atrakcje/{region}); na /kategoria/* nie ma
+  // regionu, wiec nie ma tej pozycji (wczesniej „Polska” -> /atrakcje/undefined = 404).
+  const breadcrumbItems = [{ name: "Strona główna", url: `${BASE_URL}/` }];
+  if (citySlug) {
+    breadcrumbItems.push({ name: effectiveCityLabel.nominative, url: `${BASE_URL}/${citySlug}` });
+  }
   if (categorySlug && effectiveConfig.slug) {
     breadcrumbItems.push({
       name: effectiveConfig.label,
