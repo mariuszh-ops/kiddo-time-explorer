@@ -48,7 +48,7 @@ const Kontakt = () => {
               <section>
                 <h2 className="text-xl font-semibold mt-8 mb-3">Zgłoś problem</h2>
                 <p className="text-muted-foreground leading-relaxed mb-4">
-                  Znalazłeś błąd lub nieaktualną informację? Napisz na:{" "}
+                  Widzisz błąd lub nieaktualną informację? Napisz na:{" "}
                   <a href="mailto:bugs@familyfun.pl" className="text-primary underline hover:underline">bugs@familyfun.pl</a>
                 </p>
               </section>

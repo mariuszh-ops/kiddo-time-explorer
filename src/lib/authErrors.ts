@@ -32,7 +32,7 @@ export const translateAuthError = (error: unknown): string => {
     return "Poczekaj minutę przed kolejną próbą — wiadomość już wysłaliśmy.";
   }
   if (msg.includes(EXISTING_ACCOUNT_ERROR)) {
-    return "Ten adres ma już u nas konto. Zaloguj się — a jeśli zakładałeś je przez Google, użyj przycisku „Kontynuuj z Google”.";
+    return "Ten adres ma już u nas konto. Zaloguj się — a jeśli konto powstało przez Google, użyj przycisku „Kontynuuj z Google”.";
   }
   if (msg.includes("user already registered") || msg.includes("already been registered")) {
     return "Ten e-mail jest już zajęty. Zaloguj się lub odzyskaj hasło.";
@@ -43,7 +43,7 @@ export const translateAuthError = (error: unknown): string => {
   if (msg.includes("invalid login credentials")) {
     // Nie zdradzamy, czy konto istnieje — ale najczęstsza przyczyna tego błędu
     // to konto założone przez Google, które w ogóle nie ma hasła.
-    return "Nieprawidłowy e-mail lub hasło. Jeśli zakładałeś konto przez Google, zaloguj się przyciskiem „Kontynuuj z Google”.";
+    return "Nieprawidłowy e-mail lub hasło. Jeśli konto powstało przez Google, zaloguj się przyciskiem „Kontynuuj z Google”.";
   }
   if (msg.includes("email not confirmed")) {
     return "Konto nie jest jeszcze potwierdzone. Sprawdź skrzynkę i kliknij link w wiadomości.";

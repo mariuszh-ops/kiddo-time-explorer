@@ -328,7 +328,7 @@ const ActivityDetail = () => {
     const url = window.location.href;
     const result = await share({
       title: activity.title,
-      text: `Sprawdź "${activity.title}" na FamilyFun — ${activity.location}`,
+      text: `Sprawdź „${activity.title}” na FamilyFun — ${activity.location}`,
       url,
     });
     if (result === 'native' || result === 'clipboard') {
@@ -1081,7 +1081,7 @@ const ActivityDetail = () => {
                 <Camera className="w-6 h-6 text-accent-foreground" />
               </div>
               <p className="text-foreground font-medium mb-1">
-                Byłeś tu z dzieckiem?
+                Byliście tu z dzieckiem?
               </p>
               <p className="text-sm text-muted-foreground mb-4">
                 Podziel się zdjęciem z wizyty — pomóż innym rodzicom!

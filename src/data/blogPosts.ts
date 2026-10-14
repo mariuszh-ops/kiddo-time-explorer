@@ -125,10 +125,10 @@ Dane: katalog FamilyFun, oceny i liczby opinii pochodzą z Google, stan na sierp
   {
     id: 2,
     slug: "co-robic-z-dzieckiem-w-deszczu-warszawa",
-    title: "Pada deszcz? 8 sprawdzonych miejsc indoor w Warszawie",
+    title: "Pada deszcz? 8 miejsc pod dachem w Warszawie",
     excerpt:
       "Deszczowy weekend nie musi oznaczać siedzenia w domu. Osiem konkretnych atrakcji pod dachem, z adresami, godzinami otwarcia i przedziałem wiekowym.",
-    content: `# Pada deszcz? 8 sprawdzonych miejsc indoor w Warszawie
+    content: `# Pada deszcz? 8 miejsc pod dachem w Warszawie
 
 Prognoza mówi deszcz, a dziecko już od rana chodzi po ścianach. Zamiast szukać w panice, weź jedną z tych ośmiu propozycji — wszystkie są pod dachem i wszystkie mają w katalogu FamilyFun potwierdzony adres oraz godziny otwarcia.
 
@@ -170,7 +170,7 @@ Uwaga na godziny: w dni powszednie otwarte dopiero od 13:00.
 
 ## 6. Kolejkowo — dla 3–12 lat
 
-[Kolejkowo Warszawa](/atrakcje/kolejkowo-warszawa) — Sienna 39, Warsaw Towers, I piętro. Ocena **4,9** przy 5541 opiniach — najwyżej oceniana atrakcja indoor na tej liście.
+[Kolejkowo Warszawa](/atrakcje/kolejkowo-warszawa) — Sienna 39, Warsaw Towers, I piętro. Ocena **4,9** przy 5541 opiniach — najwyżej oceniana atrakcja pod dachem na tej liście.
 
 Ogromna makieta kolejowa: kilkanaście pociągów i tramwajów krąży wśród ponad 5000 miniaturowych figurek, a scenografia zmienia się jak w prawdziwym cyklu dnia i pogody, z burzą i deszczem włącznie. Idealne, gdy dziecko potrzebuje ochłonąć, a nie się wyszaleć.
 
@@ -196,7 +196,7 @@ Dane: katalog FamilyFun, oceny i godziny otwarcia z Google, stan na sierpień 20
     imageUrl: "/blog/rainy-indoor.webp",
     category: "Przewodnik",
     city: "mazowieckie",
-    tags: ["Warszawa", "indoor", "deszcz", "sale zabaw"],
+    tags: ["Warszawa", "pod dachem", "deszcz", "sale zabaw"],
     publishedAt: "2026-08-03",
     readTimeMinutes: 6,
   },
@@ -709,7 +709,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026. Godzi
     imageUrl: "/blog/rainy-week.webp",
     category: "Plan",
     city: "mazowieckie",
-    tags: ["Warszawa", "indoor", "deszcz", "plan"],
+    tags: ["Warszawa", "pod dachem", "deszcz", "plan"],
     publishedAt: "2026-08-03",
     readTimeMinutes: 7,
   },
@@ -798,7 +798,7 @@ Dane: katalog FamilyFun, oceny z Google, udogodnienia z kart atrakcji, stan na s
     slug: "muzea-interaktywne-dzieci-warszawa",
     title: "Muzea interaktywne dla dzieci w Warszawie — gdzie wolno dotykać",
     excerpt:
-      "Miejsca, w których dziecko nie usłyszy nie dotykaj. Osiem warszawskich muzeów i wystaw z eksponatami do ruszania, z ocenami i godzinami.",
+      "Miejsca, w których dziecko nie usłyszy „nie dotykaj”. Osiem warszawskich muzeów i wystaw z eksponatami do ruszania, z ocenami i godzinami.",
     content: `# Muzea interaktywne dla dzieci w Warszawie
 
 Klasyczne muzeum z dzieckiem to ciągłe "nie dotykaj, nie biegaj, ciszej". Na szczęście w Warszawie jest kilka miejsc zbudowanych dokładnie odwrotnie — tam eksponatów trzeba dotykać, bo inaczej nic się nie wydarzy.

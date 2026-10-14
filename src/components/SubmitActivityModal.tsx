@@ -90,7 +90,7 @@ const formSchema = z.object({
   // („String must contain at most 50 character(s)”).
   customCity: z.string().max(50, "Maksymalnie 50 znaków").optional(),
   address: z.string().max(200, "Maksymalnie 200 znaków").optional(),
-  activityType: z.string().min(1, "Wybierz typ aktywności"),
+  activityType: z.string().min(1, "Wybierz kategorię"),
   type: z.enum(["place", "event"], { required_error: "Wybierz typ" }),
   eventDate: z.string().max(50, "Maksymalnie 50 znaków").optional(),
   ageGroups: z.array(z.string()).min(1, "Wybierz przynajmniej jedną grupę wiekową"),
@@ -532,11 +532,11 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   name="activityType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Typ aktywności *</FormLabel>
+                      <FormLabel>Kategoria *</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Wybierz typ" />
+                            <SelectValue placeholder="Wybierz kategorię" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -651,13 +651,13 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                   )}
                 />
 
-                {/* Indoor / Outdoor */}
+                {/* Pod dachem / na zewnątrz (AN-12-082: etykieta po polsku, jak filtr) */}
                 <FormField
                   control={form.control}
                   name="indoorOutdoor"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Indoor / outdoor *</FormLabel>
+                      <FormLabel>Pod dachem czy na zewnątrz? *</FormLabel>
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
@@ -665,8 +665,8 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                           className="flex flex-wrap gap-x-3 gap-y-1"
                         >
                           <Label htmlFor="io-indoor" className={OPTION_ROW_CLASS}>
-                            <RadioGroupItem value="indoor" id="io-indoor" aria-label="W pomieszczeniu" />
-                            W pomieszczeniu
+                            <RadioGroupItem value="indoor" id="io-indoor" aria-label="Pod dachem" />
+                            Pod dachem
                           </Label>
                           <Label htmlFor="io-outdoor" className={OPTION_ROW_CLASS}>
                             <RadioGroupItem value="outdoor" id="io-outdoor" aria-label="Na zewnątrz" />

@@ -463,7 +463,7 @@ const ReviewsSection = ({
             </h3>
             {!hasAnyReview && !myReview && (
               <p className="text-xs text-muted-foreground mb-3">
-                Byłeś tu z dzieckiem? Podziel się opinią jako pierwszy.
+                Byliście tu z dzieckiem? Podzielcie się pierwszą opinią.
               </p>
             )}
 

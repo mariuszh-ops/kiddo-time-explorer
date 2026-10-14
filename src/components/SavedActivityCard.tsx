@@ -141,8 +141,8 @@ const SavedActivityCard = ({
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {listType === "favorites" 
-                  ? `"${title}" zostanie usunięte z Twoich ulubionych.`
-                  : `"${title}" zostanie usunięte z listy miejsc do odwiedzenia.`
+                  ? `„${title}” zostanie usunięte z Twoich ulubionych.`
+                  : `„${title}” zostanie usunięte z listy miejsc do odwiedzenia.`
                 }
               </AlertDialogDescription>
             </AlertDialogHeader>
