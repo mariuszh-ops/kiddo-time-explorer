@@ -695,11 +695,14 @@ const ActivityDetail = () => {
             <div className="flex flex-col gap-3">
               {/* Stack vertically on mobile, side-by-side on desktop */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button 
+                {/* AN-12-077: "not saved" must look different from "W ulubionych" (outline vs filled)
+                    and expose the toggle state to assistive tech via aria-pressed. */}
+                <Button
                   onClick={handleFavoriteClick}
-                  variant={isFavorite ? "default" : "default"}
+                  variant={isFavorite ? "default" : "outline"}
+                  aria-pressed={isFavorite}
                   size={isMobile ? "lg" : "default"}
-                  className={`flex-1 min-h-[44px] md:min-h-0 transition-all duration-200 ${isFavorite ? "bg-primary" : ""}`}
+                  className="flex-1 min-h-[44px] md:min-h-0 transition-all duration-200"
                   disabled={isProcessing !== null}
                 >
                   <AnimatePresence mode="wait">
