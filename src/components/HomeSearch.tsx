@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { MapPin, Search, X } from "lucide-react";
 import { filterOptions } from "@/data/activities";
 import { categoryConfigs, cityLabels } from "@/data/categoryPages";
+import { REGION_BY_SLUG } from "@/data/regions";
 import { FEATURES } from "@/lib/featureFlags";
 import { SEARCH_PLACEHOLDER } from "@/lib/searchConfig";
 import { persistSearchInHistory } from "@/lib/searchHistory";
@@ -24,6 +25,12 @@ function fuzzy(text: string, q: string): boolean {
 
 function getCategoryLabel(typeValue: string): string {
   return filterOptions.type.find((o) => o.value === typeValue)?.label || typeValue;
+}
+
+// AN-12-073: podpowiedź pokazywała surowy slug regionu („malopolskie”).
+// Ta sama zamiana co getRegionLabel w SearchAutocomplete.
+function getRegionLabel(regionSlug: string): string {
+  return REGION_BY_SLUG[regionSlug]?.label ?? regionSlug;
 }
 
 interface CategoryMatch {
@@ -256,7 +263,7 @@ const HomeSearch = () => {
                             {a.title}
                           </span>
                           <span className="text-xs text-muted-foreground truncate block">
-                            {a.city} · {getCategoryLabel(a.type)}
+                            {getRegionLabel(a.city)} · {getCategoryLabel(a.type)}
                           </span>
                         </div>
                       </button>
