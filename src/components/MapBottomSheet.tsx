@@ -11,6 +11,7 @@ import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { activityCount, formatCountPl } from "@/lib/plural";
 import { scrollBehavior } from "@/lib/reducedMotion";
+import { ARKUSZ_PEEK_PX } from "@/lib/arkuszMapy";
 
 type SheetState = "peek" | "half" | "full";
 type SortMode = "rating" | "nearest";
@@ -43,7 +44,8 @@ interface MapBottomSheetProps {
 const HEADER_HEIGHT = 56;
 const BOTTOM_NAV_HEIGHT = 64;
 
-const PEEK_HEIGHT = 140;
+// AN-12-085: wspólna z przyciskiem „Moja lokalizacja” w MapView (stoi nad arkuszem).
+const PEEK_HEIGHT = ARKUSZ_PEEK_PX;
 /** Ile kafli lista w szufladzie renderuje na raz (A-10 — reszta po „Pokaż więcej"). */
 const PORCJA_LISTY = 30;
 const getHalfHeight = () => (window.innerHeight - HEADER_HEIGHT - BOTTOM_NAV_HEIGHT) * 0.5;

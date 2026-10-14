@@ -38,6 +38,7 @@ import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
 import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
+import { dolPrzyciskuLokalizacji } from "@/lib/arkuszMapy";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { activityCount, formatCountPl } from "@/lib/plural";
 import { prefersReducedMotion, scrollBehavior } from "@/lib/reducedMotion";
@@ -1676,8 +1677,9 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   }, [filteredActivities, trybKadru]);
 
   if (isMobile) {
-    // Adjust locate button offset based on sheet state
-    const locateBottomOffset = mobileSheetState === "peek" ? "96px" : mobileSheetState === "half" ? "54%" : "92%";
+    // Adjust locate button offset based on sheet state — zawsze nad arkuszem
+    // (AN-12-085: przy peek 96 px przycisk zasłaniał „Ocena ↓” na pasku arkusza).
+    const locateBottomOffset = dolPrzyciskuLokalizacji(mobileSheetState);
 
     return (
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
