@@ -37,8 +37,9 @@ describe("katalogZFraza — skąd bierze wiersze", () => {
     expect(z.method).toBe("POST");
     expect(z.headers.get("Prefer")).toContain("count=exact");
     expect(z.url.searchParams.get("limit")).toBe("1");
-    // przecinek zostaje w JEDNYM słowie — tak samo jak w ciele żądania z „/”
-    expect((z.body as { p_tokens: string[] }).p_tokens).toEqual(["zoo,park"]);
+    // AN-4-029: przecinek dzieli słowa — tak samo jak w ciele żądania z „/” (tokenizeQuery)
+    expect((z.body as { p_tokens: string[] }).p_tokens).toEqual(["zoo", "park"]);
+    expect((z.body as { p_tokens: string[] }).p_tokens).toEqual(tokenizeQuery("zoo,park"));
   });
 });
 

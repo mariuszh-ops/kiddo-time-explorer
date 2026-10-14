@@ -18,10 +18,20 @@ export function normalizeSearchText(text: string): string {
     .replace(/ł/g, "l");
 }
 
-/** Rozbija zapytanie na tokeny (po białych znakach) i normalizuje każdy z nich. */
+/**
+ * Granica słów: białe znaki ORAZ interpunkcja Unicode (`\p{P}`: , . ; : ! ? ( ) " „ ” ' / & % _ …)
+ * — z wyjątkiem łącznika `-` (U+002D), który zostaje w słowie („Bielsko-Biała”,
+ * „Rabka-Zdrój” mają go też w danych). Symbole spoza `\p{P}` (emoji, `+`) bez zmian.
+ *
+ * AN-4-029: przy cięciu tylko po spacjach „zoo.” i „Kraków, zoo” dawały 0 wyników,
+ * bo `ff_home_match` szuka każdego słowa jako podciągu (LIKE '%zoo.%').
+ */
+const GRANICA_SLOWA = /(?:\s|(?!-)\p{P})+/u;
+
+/** Rozbija zapytanie na tokeny (po białych znakach i interpunkcji) i normalizuje każdy z nich. */
 export function tokenizeQuery(query: string): string[] {
   return normalizeSearchText(query)
-    .split(/\s+/)
+    .split(GRANICA_SLOWA)
     .map((t) => t.trim())
     .filter(Boolean);
 }
