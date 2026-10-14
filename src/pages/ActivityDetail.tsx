@@ -622,15 +622,18 @@ const ActivityDetail = () => {
         {/* Content overlay */}
         <div className="container relative z-10">
           <div id="activity-title-card" className="relative bg-background rounded-t-2xl md:rounded-2xl p-5 md:p-8 shadow-soft">
-            {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa */}
-            <nav className="flex items-center gap-1.5 text-xs md:text-sm mb-3 md:mb-4 min-w-0 overflow-hidden [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="Ścieżka">
+            {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa.
+                AN-6-081: flex-wrap zamiast overflow-hidden — przy odstępach tekstu (WCAG 1.4.12) okruszek, który się
+                nie mieści, przechodzi do następnego rzędu zamiast wyjść poza nav; region i kategoria bez obcinania
+                (linki inline-flex nie pokazują wielokropka), nazwa bieżącej strony ucinana wielokropkiem na szerokości nav. */}
+            <nav className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs md:text-sm mb-3 md:mb-4 min-w-0 [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="Ścieżka">
               <Link to={okruszki.glowna} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
               <Link
                 to={okruszki.wojewodztwo}
                 title={regionLabel}
                 aria-label={regionLabel}
-                className="shrink-0 max-w-[10ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+                className="min-w-0 max-w-full text-muted-foreground hover:text-foreground transition-colors"
               >
                 {regionLabel}
               </Link>
@@ -639,7 +642,7 @@ const ActivityDetail = () => {
                 to={okruszki.kategoria}
                 title={typeLabel}
                 aria-label={typeLabel}
-                className="shrink-0 max-w-[12ch] md:max-w-none truncate text-muted-foreground hover:text-foreground transition-colors"
+                className="min-w-0 max-w-full text-muted-foreground hover:text-foreground transition-colors"
               >
                 {typeLabel}
               </Link>
@@ -648,7 +651,7 @@ const ActivityDetail = () => {
                 aria-current="page"
                 title={activity.title}
                 aria-label={activity.title}
-                className="min-w-0 truncate text-foreground font-medium md:max-w-[300px]"
+                className="min-w-0 max-w-full truncate text-foreground font-medium md:max-w-[300px]"
               >
                 {activity.title}
               </span>
