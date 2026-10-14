@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { AlertTriangle } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -68,12 +69,20 @@ interface Props {
   placeId: string;
 }
 
+type FieldErrors = Partial<Record<"message" | "contact_email", string>>;
+
+const MESSAGE_ERROR_ID = "issue-message-error";
+const EMAIL_ERROR_ID = "issue-email-error";
+
 const ReportIssueButton = ({ placeId }: Props) => {
   const [open, setOpen] = useState(false);
   const [category, setCategory] = useState<(typeof CATEGORIES)[number]["value"]>("nieaktualne-dane");
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   // GOLIVE GL-4-056: „wstecz" przy otwartym dialogu zamyka go i zostawia na
   // karcie (wpis-atrapa w historii, jak galeria w GL-4-004/005). Wpisany tekst
@@ -85,6 +94,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
       toast.info("To zgłoszenie już do nas dotarło — dziękujemy!");
       return;
     }
+    setErrors({});
     setOpen(true);
   };
 
@@ -95,9 +105,23 @@ const ReportIssueButton = ({ placeId }: Props) => {
       contact_email: email,
     });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Sprawdź pola formularza");
+      // AN-12-079 (WCAG 3.3.1): błąd przy polu (aria-invalid + aria-describedby) i fokus na
+      // pierwszym błędnym polu, jak w „Zgłoś atrakcję”, zamiast samego znikającego toastu.
+      const next: FieldErrors = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0];
+        if ((key === "message" || key === "contact_email") && !next[key]) next[key] = issue.message;
+      }
+      if (!next.message && !next.contact_email) {
+        toast.error(parsed.error.issues[0]?.message ?? "Sprawdź pola formularza");
+        return;
+      }
+      // flushSync: atrybuty błędu są w DOM, zanim fokus trafi na pole (czytnik odczyta komunikat).
+      flushSync(() => setErrors(next));
+      (next.message ? messageRef.current : emailRef.current)?.focus();
       return;
     }
+    setErrors({});
     setSubmitting(true);
     const { error } = await supabase.from("issue_reports").insert({
       place_id: placeId,
@@ -171,13 +195,24 @@ const ReportIssueButton = ({ placeId }: Props) => {
                 Opisz krótko
               </Label>
               <Textarea
+                ref={messageRef}
                 id="issue-message"
                 value={message}
-                onChange={(e) => setMessage(e.target.value.slice(0, 2000))}
+                onChange={(e) => {
+                  setMessage(e.target.value.slice(0, 2000));
+                  if (errors.message) setErrors((prev) => ({ ...prev, message: undefined }));
+                }}
                 placeholder="np. Miejsce jest zamknięte od czerwca 2026…"
                 rows={4}
                 maxLength={2000}
+                aria-invalid={errors.message ? true : undefined}
+                aria-describedby={errors.message ? MESSAGE_ERROR_ID : undefined}
               />
+              {errors.message && (
+                <p id={MESSAGE_ERROR_ID} className="text-sm font-medium text-destructive mt-1">
+                  {errors.message}
+                </p>
+              )}
               <div className="text-xs text-muted-foreground mt-1">{message.length}/2000</div>
             </div>
 
@@ -186,14 +221,25 @@ const ReportIssueButton = ({ placeId }: Props) => {
                 Twój e-mail (jeśli mamy odpisać)
               </Label>
               <Input
+                ref={emailRef}
                 id="issue-email"
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.contact_email) setErrors((prev) => ({ ...prev, contact_email: undefined }));
+                }}
                 placeholder="opcjonalnie"
                 maxLength={CONTACT_EMAIL_MAX}
+                aria-invalid={errors.contact_email ? true : undefined}
+                aria-describedby={errors.contact_email ? EMAIL_ERROR_ID : undefined}
               />
+              {errors.contact_email && (
+                <p id={EMAIL_ERROR_ID} className="text-sm font-medium text-destructive mt-1">
+                  {errors.contact_email}
+                </p>
+              )}
             </div>
 
             {/* AF-8-042 (RODO art. 13): formularz zbiera e-mail — klauzula i link do polityki. */}
