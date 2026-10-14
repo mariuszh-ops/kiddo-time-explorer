@@ -27,6 +27,9 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
   const kluczWidoku = useMemo(() => mapPinsKey({ region, bbox: visible }), [region, visible]);
 
   const [pins, setPins] = useState<Activity[]>([]);
+  // AN-3-620: kadry, dla których `pins` są kompletne — ustawiane razem z `pins`
+  // (ten sam render), żeby mapa wiedziała, czy przelicza kadr na pełnym zbiorze.
+  const [pobraneKadry, setPobraneKadry] = useState<MapBbox[]>([]);
   const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<Error | null>(null);
   const [retryKey, setRetryKey] = useState(0);
@@ -63,6 +66,7 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
     // To, co widać, mieści się w już pobranym kadrze — zero zapytań.
     if (visible && stan.kadry.some((k) => bboxContains(k, visible))) {
       setPins(Array.from(stan.bySlug.values()));
+      setPobraneKadry([...stan.kadry]);
       setLoading(false);
       return;
     }
@@ -76,6 +80,7 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
         // Bez kadru odpowiedź jest kompletna dla tego regionu.
         stan.kadry.push(bbox ?? CALY_SWIAT);
         setPins(Array.from(stan.bySlug.values()));
+        setPobraneKadry([...stan.kadry]);
         setError(null);
       })
       .catch((e) => {
@@ -106,5 +111,5 @@ export function useMapPins(enabled = true, query?: MapPinsQuery) {
     loadingTeraz = enabled && !pokryty;
   }
 
-  return { pins, loading: loadingTeraz, error, refetch };
+  return { pins, pobraneKadry, loading: loadingTeraz, error, refetch };
 }

@@ -14,6 +14,39 @@
 // przeliczenie po moveend dopasowania. Bezpiecznik oddaje odłożone piny,
 // gdyby dopasowanie nigdy się nie skończyło — mapa nie zostaje z martwymi pinami.
 
+// AN-3-620 (14.10): ta sama bramka dla oddalenia i przeciągnięcia mapy w trybie
+// kadrowym (bez filtrów katalogu). Kadr przelicza się 200 ms po moveend, a piny
+// nowego kadru przychodzą dopiero po zapytaniu (debounce 300 ms + RPC). Liczony
+// w tym czasie zbiór był niepełny — same piny starego kadru — i licznik po
+// „Oddal mapę" pokazywał „947 → 1 762 → 3 302 atrakcji w widoku" (sonda 3/3).
+// Przeliczenie kadru, którego baza jeszcze nie oddała, czeka teraz w bramce
+// (stare piny zostają, licznik mówi „Wczytuję"), a pokazuje je przeliczenie po
+// dojściu pinów.
+
+/** Kadr w stopniach (jak MapBbox z `@/lib/mapPins`). */
+export interface KadrPinow {
+  minLat: number;
+  maxLat: number;
+  minLng: number;
+  maxLng: number;
+}
+
+/**
+ * Czy piny widocznego kadru są już kompletne: kadr (przycięty do granic świata,
+ * tak jak kadr zapytania) mieści się w którymś z kadrów pobranych z bazy.
+ */
+export function kadrPobrany(kadr: KadrPinow, pobrane: ReadonlyArray<KadrPinow>): boolean {
+  const k = {
+    minLat: Math.max(-90, kadr.minLat),
+    maxLat: Math.min(90, kadr.maxLat),
+    minLng: Math.max(-180, kadr.minLng),
+    maxLng: Math.min(180, kadr.maxLng),
+  };
+  return pobrane.some(
+    (p) => p.minLat <= k.minLat && p.maxLat >= k.maxLat && p.minLng <= k.minLng && p.maxLng >= k.maxLng,
+  );
+}
+
 export interface BramkaPinow<T> {
   /**
    * Wynik przeliczenia kadru. Zwraca zbiór do pokazania albo `null`

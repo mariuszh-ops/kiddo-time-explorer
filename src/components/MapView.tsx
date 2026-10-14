@@ -29,7 +29,7 @@ import MapBottomSheet from "./MapBottomSheet";
 import MapCategoryChips, { FAVORITES_CHIP_KEY } from "./MapCategoryChips";
 import { useMapPins } from "@/hooks/useMapPins";
 import { pinyKadruWDrodze } from "@/lib/mapKadrWDrodze";
-import { utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
+import { kadrPobrany, utworzBramkePinow } from "@/lib/mapPinyPoDopasowaniu";
 import { utworzBezpiecznikDanychMapy, utworzBezpiecznikDopasowania } from "@/lib/bezpiecznikDanychMapy";
 import { przesunieciaPinow } from "@/lib/pinyWspolnejPozycji";
 import { pinyPrzywroconegoKadru } from "@/lib/pinyPrzywroconegoKadru";
@@ -679,14 +679,18 @@ function ViewportFilter({
   onCenterChange,
   onViewportSave,
   onBoundsChange,
+  pobraneKadry,
 }: {
   activities: Activity[];
-  onVisibleChange: (visible: Activity[]) => void;
+  /** `kompletny=false`: piny tego kadru jeszcze nie przyszły z bazy (AN-3-620). */
+  onVisibleChange: (visible: Activity[], kompletny: boolean) => void;
   onCenterChange?: (center: [number, number]) => void;
   onViewportSave?: () => void;
   /** F-17: kadry do pobrania pinów z bazy. Pierwsze zgłoszenie natychmiast,
       kolejne z debounce — przeciąganie myszą ma dać JEDNO zapytanie. */
   onBoundsChange?: (kadry: KadryMapy) => void;
+  /** AN-3-620: tryb kadrowy — kadry, dla których `activities` są kompletne (z tego samego renderu). */
+  pobraneKadry?: MapBbox[] | null;
 }) {
   const map = useMap();
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
@@ -697,10 +701,18 @@ function ViewportFilter({
     const visible = activities.filter((a) =>
       bounds.contains([a.latitude, a.longitude])
     );
-    onVisibleChange(visible);
+    // AN-3-620: po oddaleniu/przeciągnięciu kadr liczy się 200 ms po moveend,
+    // a jego piny przychodzą później — zbiór ze starego kadru jest niepełny.
+    const kompletny =
+      pobraneKadry == null ||
+      kadrPobrany(
+        { minLat: bounds.getSouth(), maxLat: bounds.getNorth(), minLng: bounds.getWest(), maxLng: bounds.getEast() },
+        pobraneKadry,
+      );
+    onVisibleChange(visible, kompletny);
     const c = map.getCenter();
     onCenterChange?.([c.lat, c.lng]);
-  }, [map, activities, onVisibleChange, onCenterChange]);
+  }, [map, activities, onVisibleChange, onCenterChange, pobraneKadry]);
 
   // Zapis kadru do URL — NATYCHMIAST przy moveend/zoomend (bez debounce),
   // z odczytem getCenter()/getZoom() w momencie zapisu. Debounce 400 ms
@@ -1257,10 +1269,13 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   );
   const {
     pins,
+    pobraneKadry,
     loading: ownPinsLoading,
     error: ownPinsError,
     refetch: refetchOwnPins,
   } = useMapPins(trybKadru && kadry != null, zapytanieOPiny);
+  const ownPinsLoadingRef = useRef(ownPinsLoading);
+  ownPinsLoadingRef.current = ownPinsLoading;
   // Awaria pinów przychodzi z dwóch stron: z własnego hooka (mapa bez filtrów
   // katalogu) albo od rodzica, który sam woła useMapPins (CategoryPage z filtrem
   // regionu/kategorii). Bez tej drugiej ścieżki mapa regionu przy 500/429 udawała
@@ -1354,13 +1369,30 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       () => daneWDrodzeRef.current,
     ),
   );
+  // AN-3-620: bezpiecznik kadru czekającego na piny (oddalenie / przeciągnięcie
+  // w trybie kadrowym). Zwykle „Wczytuję" zdejmuje przeliczenie po dojściu pinów;
+  // gdyby kadr mimo to nie uznał się za pobrany, po 2 s oddajemy odłożone piny.
+  // W trakcie pobierania, dopasowania albo danych w drodze nic nie robi
+  // (każde kolejne odłożenie uzbraja go od nowa).
+  const [bezpiecznikKadru] = useState(() =>
+    utworzBezpiecznikDopasowania(
+      () => {
+        const odlozone = bramkaPinow.bezpiecznik();
+        if (odlozone) setVisibleActivities(odlozone);
+        setKadrNaDanych(true);
+      },
+      () => ownPinsLoadingRef.current || daneWDrodzeRef.current || dopasowanieWDrodzeRef.current,
+    ),
+  );
   const handleDopasowanieStart = useCallback(() => {
     // Dopasowanie ma własny bezpiecznik (niżej), który oddaje też odłożone piny.
     bezpiecznikDanych.rozbroj();
+    bezpiecznikKadru.rozbroj();
     setKadrNaDanych(false);
     bezpiecznikDopasowania.uzbroj();
-  }, [bezpiecznikDanych, bezpiecznikDopasowania]);
+  }, [bezpiecznikDanych, bezpiecznikDopasowania, bezpiecznikKadru]);
   useEffect(() => () => bezpiecznikDopasowania.rozbroj(), [bezpiecznikDopasowania]);
+  useEffect(() => () => bezpiecznikKadru.rozbroj(), [bezpiecznikKadru]);
 
   const [visibleActivities, setVisibleActivities] = useState<Activity[]>([]);
   const [fading, setFading] = useState(false);
@@ -1567,7 +1599,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
     setHighlightedId(null);
   }, []);
 
-  const handleVisibleChange = useCallback((visible: Activity[]) => {
+  const handleVisibleChange = useCallback((visible: Activity[], kompletny: boolean) => {
     // FMN-B01: przeliczenie na zbiorze sprzed dojścia danych nie zdejmuje „wczytuję",
     // tak samo przeliczenie kadru, który jeszcze jedzie do pinów. Dopasowanie
     // sprawdzamy dwa razy: przed nim (efekt MapFitBounds mógł jeszcze nie ruszyć)
@@ -1585,11 +1617,18 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       if (nr !== nrPrzeliczeniaRef.current) return;
       // FMN-B65: nowe piny w STARYM kadrze (dopasowanie w drodze) nie trafiają
       // do markerów ani listy — pokaże je przeliczenie po moveend dopasowania.
-      const doPokazania = bramkaPinow.przeliczenie(visible, kadrWDrodze, dopasowanieWDrodzeRef.current);
+      // AN-3-620: tak samo kadr po oddaleniu/przeciągnięciu, którego piny jeszcze
+      // nie przyszły — zbiór niepełny, licznik mówi „Wczytuję", nie liczbę pośrednią.
+      const doPokazania = bramkaPinow.przeliczenie(visible, kadrWDrodze || !kompletny, dopasowanieWDrodzeRef.current);
       if (doPokazania === null) {
+        if (!kompletny) {
+          setKadrNaDanych(false);
+          bezpiecznikKadru.uzbroj();
+        }
         setFading(false);
         return;
       }
+      bezpiecznikKadru.rozbroj();
       setVisibleActivities(doPokazania);
       // Dane mogły wejść „w drogę" w trakcie tych 100 ms (nowy kadr trybu kadrowego).
       if (naDanych && !daneWDrodzeRef.current && !dopasowanieWDrodzeRef.current) {
@@ -1599,7 +1638,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
       }
       setFading(false);
     }, 100);
-  }, [bramkaPinow, bezpiecznikDanych, bezpiecznikDopasowania]);
+  }, [bramkaPinow, bezpiecznikDanych, bezpiecznikDopasowania, bezpiecznikKadru]);
 
   // FMN-B65 (reszta, „wstecz"): piny przywróconego kadru od razu, w tym samym
   // zadaniu co setView — markercluster nie rysuje starego zbioru w nowym kadrze.
@@ -1687,7 +1726,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
 
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} pobraneKadry={trybKadru ? pobraneKadry : null} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
         </MapContainer>
 
@@ -1864,7 +1903,7 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
             onKadrPrzywrocony={handleKadrPrzywrocony}
           />
           <ClusteredMarkers activities={displayedActivities} onMarkerClick={handleMarkerClick} markersRef={markersRef} highlightedId={highlightedId} onMapClick={handleMapClick} isFavorite={isFavorite} toggleFavorite={toggleFavorite} onBeforePopupNavigate={zapiszStanMapy} />
-          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} />
+          <ViewportFilter activities={filteredActivities} onVisibleChange={handleVisibleChange} onCenterChange={setLiveMapCenter} onViewportSave={handleViewportSave} onBoundsChange={trybKadru ? handleBoundsChange : undefined} pobraneKadry={trybKadru ? pobraneKadry : null} />
           <FlyToHandler targetActivity={flyTarget} markersRef={markersRef} />
         </MapContainer>
         
