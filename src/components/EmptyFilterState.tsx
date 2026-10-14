@@ -27,7 +27,10 @@ const EmptyFilterState = ({ onClearFilters, searchQuery, onClearSearch }: EmptyF
         <SearchX aria-hidden="true" className="w-7 h-7 text-accent-foreground" />
       </div>
 
-      <h2 className="text-lg md:text-xl font-serif font-medium text-foreground mb-2">
+      {/* AN-9-109: fraza bez spacji (np. 200 znaków) wychodziła poza ekran — w kolumnie
+          z items-center szerokość h2 = min-content, a `break-words` jej nie zmniejsza;
+          `overflow-wrap: anywhere` tak (ten sam wzorzec co pusty wynik w CategoryPage). */}
+      <h2 className="max-w-full text-lg md:text-xl font-serif font-medium text-foreground mb-2 [overflow-wrap:anywhere]">
         {isSearch ? `Nie znaleźliśmy „${phrase}”` : "Nic nie pasuje do filtrów"}
       </h2>
 

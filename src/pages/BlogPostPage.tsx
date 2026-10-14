@@ -1,4 +1,5 @@
 import { buildSrcSet } from "@/lib/imageSrcSet";
+import { formatBlogDate } from "@/lib/blogDate";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, Clock, Tag, ChevronRight } from "lucide-react";
 import Header from "@/components/Header";
@@ -279,11 +280,7 @@ const BlogPostPage = () => {
                 {post.readTimeMinutes} min czytania
               </span>
               <span className="text-sm text-muted-foreground">
-                {new Date(post.publishedAt).toLocaleDateString("pl-PL", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
+                {formatBlogDate(post.publishedAt)}
               </span>
             </div>
 

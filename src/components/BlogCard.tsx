@@ -3,6 +3,7 @@ import { Clock, Tag } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { BlogPost } from "@/data/blogPosts";
 import { buildSrcSet, CAROUSEL_SIZES } from "@/lib/imageSrcSet";
+import { formatBlogDate } from "@/lib/blogDate";
 
 interface BlogCardProps {
   post: BlogPost;
@@ -52,7 +53,7 @@ const BlogCard = ({ post }: BlogCardProps) => {
             {post.excerpt}
           </p>
           <p className="text-xs text-muted-foreground">
-            {new Date(post.publishedAt).toLocaleDateString("pl-PL", { day: "numeric", month: "long", year: "numeric" })}
+            {formatBlogDate(post.publishedAt)}
           </p>
         </div>
       </article>
