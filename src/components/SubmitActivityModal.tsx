@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -196,6 +196,11 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
   const { user } = useAuth();
   const pushedHistoryRef = useRef(false);
   const closingFromPopRef = useRef(false);
+  // AN-6-192: id grupy „Wiek dzieci” (etykieta, podpowiedź, komunikat błędu) dla role="group".
+  const ageGroupIdBase = useId();
+  const ageLabelId = `${ageGroupIdBase}-age-label`;
+  const ageHintId = `${ageGroupIdBase}-age-hint`;
+  const ageErrorId = `${ageGroupIdBase}-age-error`;
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -607,48 +612,51 @@ const SubmitActivityModal = ({ isOpen, onClose }: SubmitActivityModalProps) => {
                 {/* ═══ SEKCJA 2: Dla kogo i jak ═══ */}
                 <SectionHeader title="Dla kogo i jak" />
 
-                {/* Age Groups */}
+                {/* Age Groups — AN-6-192: jedna grupa (role="group") nazwana etykietą i opisana podpowiedzią
+                    oraz komunikatem błędu; checkboxy bez zagnieżdżonych FormItem/FormControl, które dawały
+                    aria-describedby na nieistniejące id. */}
                 <FormField
                   control={form.control}
                   name="ageGroups"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Wiek dzieci *</FormLabel>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        Dla jakich grup wiekowych polecasz to miejsce?
-                      </p>
-                      <div className="flex flex-wrap gap-x-3 gap-y-1">
-                        {ageGroups.map((age) => (
-                          <FormField
-                            key={age.id}
-                            control={form.control}
-                            name="ageGroups"
-                            render={({ field }) => (
-                              <FormItem className="space-y-0">
-                                <Label htmlFor={`age-${age.id}`} className={OPTION_ROW_CLASS}>
-                                  <FormControl>
-                                    <Checkbox
-                                      id={`age-${age.id}`}
-                                      aria-label={age.label}
-                                      checked={field.value?.includes(age.id)}
-                                      onCheckedChange={(checked) => {
-                                        const newValue = checked
-                                          ? [...field.value, age.id]
-                                          : field.value.filter((v) => v !== age.id);
-                                        field.onChange(newValue);
-                                      }}
-                                    />
-                                  </FormControl>
-                                  {age.label}
-                                </Label>
-                              </FormItem>
-                            )}
-                          />
-                        ))}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field, fieldState }) => {
+                    const ageError = !!fieldState.error;
+                    return (
+                      <FormItem>
+                        <FormLabel id={ageLabelId} htmlFor={undefined}>
+                          Wiek dzieci *
+                        </FormLabel>
+                        <p id={ageHintId} className="text-xs text-muted-foreground mb-2">
+                          Dla jakich grup wiekowych polecasz to miejsce?
+                        </p>
+                        <div
+                          role="group"
+                          aria-labelledby={ageLabelId}
+                          aria-describedby={ageError ? `${ageHintId} ${ageErrorId}` : ageHintId}
+                          className="flex flex-wrap gap-x-3 gap-y-1"
+                        >
+                          {ageGroups.map((age) => (
+                            <Label key={age.id} htmlFor={`age-${age.id}`} className={OPTION_ROW_CLASS}>
+                              <Checkbox
+                                id={`age-${age.id}`}
+                                aria-label={age.label}
+                                aria-invalid={ageError || undefined}
+                                aria-describedby={ageError ? ageErrorId : undefined}
+                                checked={field.value?.includes(age.id)}
+                                onCheckedChange={(checked) => {
+                                  const newValue = checked
+                                    ? [...field.value, age.id]
+                                    : field.value.filter((v) => v !== age.id);
+                                  field.onChange(newValue);
+                                }}
+                              />
+                              {age.label}
+                            </Label>
+                          ))}
+                        </div>
+                        <FormMessage id={ageErrorId} />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 {/* Pod dachem / na zewnątrz (AN-12-082: etykieta po polsku, jak filtr) */}
