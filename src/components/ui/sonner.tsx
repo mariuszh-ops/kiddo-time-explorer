@@ -10,15 +10,23 @@ type ToasterProps = React.ComponentProps<typeof Sonner>;
  * Region ma `aria-live="polite"`, ale sam komunikat nie jest niczym dla czytnika.
  * Dostawiamy `role="status"` i polską nazwę zamykania obserwatorem, zamiast
  * podnosić wersję biblioteki pod całą aplikacją.
+ *
+ * AN-6-197: rola idzie na treść toasta (`[data-content]`: tytuł + opis), NIE na
+ * `<li>` — `<li role="status">` przestaje być elementem listy i `<ol>` toastów
+ * ma wtedy dziecko niebędące listitem (WCAG 1.3.1, axe `list`). Toast bez
+ * `[data-content]` (toast.custom / JSX w tytule — w aplikacji nieużywane) roli
+ * nie dostaje; ogłasza go i tak region `aria-live="polite"`.
  */
 const useToastRoles = (host: React.RefObject<HTMLElement>) => {
   useEffect(() => {
     const root = host.current;
     if (!root || typeof MutationObserver === "undefined") return;
     const stamp = () => {
-      root.querySelectorAll<HTMLElement>("[data-sonner-toast]:not([role])").forEach((el) => {
-        el.setAttribute("role", "status");
-      });
+      root
+        .querySelectorAll<HTMLElement>("[data-sonner-toast] > [data-content]:not([role])")
+        .forEach((el) => {
+          el.setAttribute("role", "status");
+        });
       root.querySelectorAll<HTMLElement>("[data-close-button]").forEach((el) => {
         el.setAttribute("aria-label", "Zamknij powiadomienie");
       });
