@@ -32,6 +32,17 @@ interface EmailAuthFormProps {
   initialEmail?: string;
   /** Startowy tryb formularza. */
   initialMode?: Mode;
+  /**
+   * AN-12-084: zgoda prowadzona przez rodzica (modal logowania) — JEDNA nad
+   * sciezka Google i e-mailem. Formularz nie rysuje wtedy wlasnego checkboxa,
+   * tylko czyta `accepted`; przy brakujacej zgodzie wola `onMissing` (rodzic
+   * oznacza swoj checkbox jako bledny i przenosi na niego fokus).
+   * Bez tego propsa formularz dziala samodzielnie, z wlasnym checkboxem.
+   */
+  externalTerms?: {
+    accepted: boolean;
+    onMissing: () => void;
+  };
 }
 
 // M-14: serwer (GoTrue smtp_max_frequency) nie wyśle drugiego maila przez 60 s —
@@ -45,7 +56,7 @@ const TURNSTILE_TIMEOUT_MS = 15000;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 
-const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin" }: EmailAuthFormProps) => {
+const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode = "signin", externalTerms }: EmailAuthFormProps) => {
   const { signInWithEmail, signUpWithEmail, resendConfirmation, resetPassword } = useAuth();
   const [mode, setModeState] = useState<Mode>(initialMode);
   const [email, setEmail] = useState(initialEmail);
@@ -62,7 +73,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   const [cooldown, setCooldown] = useState(0);
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaError, setCaptchaError] = useState(false);
-  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [ownTermsAccepted, setTermsAccepted] = useState(false);
+  const termsAccepted = externalTerms ? externalTerms.accepted : ownTermsAccepted;
   const turnstileRef = useRef<TurnstileInstance | null>(null);
   const captchaTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   /** D-15: widget stoi na stronie i czeka na kliknięcie — to NIE jest awaria. */
@@ -104,6 +116,16 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     onModeChange?.(initialMode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // AN-12-084: zaznaczenie zgody u rodzica zdejmuje blad zgody tak samo jak
+  // zaznaczenie wlasnego checkboxa (K-13: natychmiastowy feedback).
+  const externalAccepted = externalTerms?.accepted;
+  useEffect(() => {
+    if (externalAccepted && errorField === "terms") {
+      setError(null);
+      setErrorField(null);
+    }
+  }, [externalAccepted, errorField]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
@@ -173,7 +195,8 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     if (mode === "signup" && !termsAccepted) {
       setError(TERMS_ERROR_MESSAGE);
       setErrorField("terms");
-      termsRef.current?.focus();
+      if (externalTerms) externalTerms.onMissing();
+      else termsRef.current?.focus();
       return;
     }
     // Bez tokenu nie wysyłamy nic — także wtedy, gdy widget zgłosił awarię
@@ -360,7 +383,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         </p>
       )}
 
-      {mode === "signup" && (
+      {mode === "signup" && !externalTerms && (
         <div className="flex items-start gap-2">
           <Checkbox
             id="terms-accept"

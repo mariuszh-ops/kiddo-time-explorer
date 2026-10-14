@@ -47,6 +47,10 @@ const AuthRequiredModal = ({
   // zgode juz udzielilo, loguje sie bez dodatkowego pytania.
   const [needsTerms, setNeedsTerms] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  // AN-12-084: formularz e-mail zglosil brak zgody — checkbox nad Google jest
+  // jedyna zgoda w modalu, wiec to on dostaje aria-invalid i fokus.
+  const [termsInvalid, setTermsInvalid] = useState(false);
+  const termsRef = useRef<HTMLButtonElement>(null);
   const { markAuthAttempt } = usePendingIntent();
   // AF-7-059…062: w przeglądarce wbudowanej w aplikację (FB, IG, Messenger,
   // TikTok) Google odrzuca OAuth — zamiast ślepej uliczki podpowiedź i wyłączony
@@ -154,6 +158,7 @@ const AuthRequiredModal = ({
       setError(null);
       setEmailMode('signin');
       setTermsAccepted(false);
+      setTermsInvalid(false);
       return;
     }
     // Czytamy przy KAZDYM otwarciu, nie raz przy montowaniu — modal zyje w
@@ -201,6 +206,14 @@ const AuthRequiredModal = ({
   const dismissError = () => setError(null);
 
   const isSignup = !googleOnly && emailMode === 'signup';
+  // AN-12-084: przy rejestracji zgoda jest wymagana zawsze (I-07), takze gdy to
+  // urzadzenie juz ja zna — ale pytamy o nia RAZ, nad obiema sciezkami. Wczesniej
+  // formularz e-mail mial drugi, niezalezny checkbox z tym samym tekstem.
+  const showTerms = needsTerms || isSignup;
+  const handleEmailTermsMissing = () => {
+    setTermsInvalid(true);
+    termsRef.current?.focus();
+  };
   const shownTitle = isSignup ? "Załóż konto" : title;
   const shownDescription = isSignup
     ? "Załóż darmowe konto, aby zapisywać ulubione atrakcje, planować wizyty i oceniać miejsca."
@@ -259,15 +272,23 @@ const AuthRequiredModal = ({
           {/* I-07b: zgoda STOI PRZED przyciskiem — warunek widac, zanim sie klika,
               a Tab prowadzi checkbox → „Kontynuuj z Google".
               Y-H-02: ten sam checkbox niesie oswiadczenie o pelnoletnosci
-              (Regulamin par. 4), zeby nie mnozyc pol w bramce logowania. */}
-          {needsTerms && (
+              (Regulamin par. 4), zeby nie mnozyc pol w bramce logowania.
+              AN-12-084: ten sam checkbox obsluguje tez rejestracje e-mailem. */}
+          {showTerms && (
             <div className="flex items-start gap-2">
               <Checkbox
                 id="google-terms-accept"
+                ref={termsRef}
                 checked={termsAccepted}
-                onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                onCheckedChange={(checked) => {
+                  const isChecked = checked === true;
+                  setTermsAccepted(isChecked);
+                  if (isChecked) setTermsInvalid(false);
+                }}
                 tabIndex={0}
                 aria-required="true"
+                aria-invalid={termsInvalid || undefined}
+                aria-describedby={termsInvalid ? "auth-error" : undefined}
                 className="mt-0.5 h-6 w-6 shrink-0"
               />
               <Label htmlFor="google-terms-accept" className="text-sm text-muted-foreground cursor-pointer">
@@ -337,7 +358,7 @@ const AuthRequiredModal = ({
           {/* I-07b: „Kontynuując, akceptujesz…" bylo domniemaniem zgody — dokladnie
               tym, co zglaszal I-07. Gdy zgody brak, pyta o nia checkbox wyzej;
               gdy jest, zostaje sam dostep do obu dokumentow. */}
-          {!needsTerms && (
+          {!showTerms && (
             <p className="text-xs text-muted-foreground text-center leading-relaxed">
               Obowiązują{" "}
               <a href="/regulamin" target="_blank" rel="noopener noreferrer" className="text-primary underline">
@@ -363,7 +384,11 @@ const AuthRequiredModal = ({
                   markAuthAttempt();
                   onClose();
                 }}
-                onModeChange={setEmailMode}
+                onModeChange={(mode) => {
+                  setEmailMode(mode);
+                  setTermsInvalid(false);
+                }}
+                externalTerms={{ accepted: termsAccepted, onMissing: handleEmailTermsMissing }}
               />
             </>
           )}
