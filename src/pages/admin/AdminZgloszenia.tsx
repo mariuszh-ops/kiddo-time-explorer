@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import AdminCatalogDrawer from "./AdminCatalogDrawer";
 import { cn } from "@/lib/utils";
+import { pluralPl } from "@/lib/plural";
 
 const PAGE_SIZE = 50;
 
@@ -249,7 +250,7 @@ const AdminZgloszenia = () => {
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "zgłoszenie" : "zgłoszeń"}`}</span>
+          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${pluralPl(total, "zgłoszenie", "zgłoszenia", "zgłoszeń")}`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
 

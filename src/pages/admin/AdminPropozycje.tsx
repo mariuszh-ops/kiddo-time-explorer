@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { filterOptions } from "@/data/activities";
 import { REGIONS } from "@/data/regions";
 import { cn } from "@/lib/utils";
+import { pluralPl } from "@/lib/plural";
 
 const PAGE_SIZE = 50;
 
@@ -216,7 +217,7 @@ const AdminPropozycje = () => {
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 border-b border-border text-sm text-muted-foreground flex justify-between items-center">
-          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "propozycja" : "propozycji"}`}</span>
+          <span>{nowLoading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${pluralPl(total, "propozycja", "propozycje", "propozycji")}`}</span>
           <span>Strona {page} / {totalPages}</span>
         </div>
 

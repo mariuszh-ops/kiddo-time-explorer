@@ -246,14 +246,6 @@ const createPopupContent = (activity: Activity, isFav: boolean) => {
   `;
 };
 
-// W-I-02: odmiana po polsku — 2-4 (poza 12-14) to „atrakcje", reszta „atrakcji".
-const odmianaAtrakcji = (ile: number): string => {
-  const reszta10 = ile % 10;
-  const reszta100 = ile % 100;
-  const mnoga = reszta10 >= 2 && reszta10 <= 4 && (reszta100 < 12 || reszta100 > 14);
-  return mnoga ? "atrakcje" : "atrakcji";
-};
-
 // Cluster icon creator
 const createClusterIcon = (cluster: L.MarkerCluster) => {
   const count = cluster.getChildCount();
@@ -278,7 +270,9 @@ const createClusterIcon = (cluster: L.MarkerCluster) => {
   // Nie uzywamy tez `cluster.once("add")`: markercluster przy zmianie licznika wola
   // `setIcon(this)` i buduje element od nowa BEZ zdarzenia „add" — etykieta by wtedy
   // znikala. Opakowanie `createIcon` trafia w kazdy element, ktory Leaflet utworzy.
-  const etykieta = `Grupa ${count} ${odmianaAtrakcji(count)} — kliknij, aby przybliżyć`;
+  // AN-12-017: po „Grupa” liczebnik stoi w dopełniaczu („grupa dwóch atrakcji”), więc słowo jest
+  // zawsze „atrakcji” — także dla 2–4 (wcześniej odmiana mianownikowa dawała „Grupa 2 atrakcje”).
+  const etykieta = `Grupa ${count} atrakcji — kliknij, aby przybliżyć`;
   const zrobIkone = ikona.createIcon.bind(ikona);
   ikona.createIcon = (stara?: HTMLElement) => {
     const el = zrobIkone(stara);

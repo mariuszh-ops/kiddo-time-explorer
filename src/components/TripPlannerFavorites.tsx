@@ -84,7 +84,7 @@ const TripPlannerFavorites: React.FC<TripPlannerFavoritesProps> = ({
   const handleNavigate = (activities: Activity[]) => {
     const sorted = nearestNeighborSort(activities);
     const url = buildGoogleMapsUrl(sorted);
-    window.open(url, "_blank");
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   return (

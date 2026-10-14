@@ -18,6 +18,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { pluralPl } from "@/lib/plural";
 
 const PAGE_SIZE = 50;
 
@@ -184,7 +185,7 @@ const AdminOpinie = () => {
       return;
     }
     toast.success(
-      `${data.length} ${data.length === 1 ? "opinia" : "opinii"} → ${
+      `${data.length} ${pluralPl(data.length, "opinia", "opinie", "opinii")} → ${
         newStatus === "approved" ? "zatwierdzone" : newStatus === "rejected" ? "odrzucone" : "oczekujące"
       }`,
     );
@@ -291,7 +292,7 @@ const AdminOpinie = () => {
               checked={rows.length > 0 && selected.size === rows.length}
               onCheckedChange={toggleSelectAll}
             />
-            {loading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${total === 1 ? "opinia" : "opinii"}`}
+            {loading ? "Ładowanie…" : loadError ? "Błąd odczytu" : `${total} ${pluralPl(total, "opinia", "opinie", "opinii")}`}
           </label>
           <span>Strona {page} / {totalPages}</span>
         </div>

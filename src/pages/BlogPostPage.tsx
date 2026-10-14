@@ -230,7 +230,7 @@ const BlogPostPage = () => {
         <main id="main-content" className="container py-6 md:py-10">
           <div className="max-w-2xl mx-auto">
             {/* Breadcrumbs - desktop */}
-            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-6" aria-label="breadcrumb">
+            <nav className="hidden md:flex items-center gap-1.5 text-sm mb-6" aria-label="Ścieżka">
               <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
               <Link to="/inspiracje" className="text-muted-foreground hover:text-foreground transition-colors">Inspiracje</Link>
