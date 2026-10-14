@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { catalogClient as supabase } from "@/lib/catalogClient";
 import { trackEvent } from "@/lib/analytics";
 import { RATE_LIMIT_MESSAGE, userFacingError } from "@/lib/userFacingError";
+import { CONTACT_EMAIL_MAX } from "@/lib/formLimits";
 import { useCloseOnBack } from "@/hooks/useCloseOnBack";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,7 +38,7 @@ const schema = z.object({
   contact_email: z
     .string()
     .trim()
-    .max(255, "Maksymalnie 255 znaków")
+    .max(CONTACT_EMAIL_MAX, `Maksymalnie ${CONTACT_EMAIL_MAX} znaków`)
     .email("Nieprawidłowy adres e-mail")
     .optional()
     .or(z.literal("")),
@@ -191,7 +192,7 @@ const ReportIssueButton = ({ placeId }: Props) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="opcjonalnie"
-                maxLength={255}
+                maxLength={CONTACT_EMAIL_MAX}
               />
             </div>
 

@@ -77,7 +77,14 @@ const amenityOptions = [
 ];
 
 const formSchema = z.object({
-  name: z.string().trim().min(1, "Podaj nazwę miejsca").max(100, "Nazwa jest za długa"),
+  // AN-8-015: CHECK activity_submissions_name_len wymaga length(btrim(name)) >= 2 — 1 znak to komunikat
+  // przy polu, a nie odrzucony INSERT z ogólnym toastem. Pusta nazwa dalej „Podaj nazwę miejsca” (pierwszy błąd).
+  name: z
+    .string()
+    .trim()
+    .min(1, "Podaj nazwę miejsca")
+    .min(2, "Nazwa musi mieć co najmniej 2 znaki")
+    .max(100, "Nazwa jest za długa"),
   city: z.string().min(1, "Wybierz województwo"),
   // AF-10-039: każda reguła długości z polskim komunikatem — domyślny zod jest angielski
   // („String must contain at most 50 character(s)”).
