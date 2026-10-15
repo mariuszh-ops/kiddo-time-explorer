@@ -630,7 +630,10 @@ const ActivityDetail = () => {
             {/* Breadcrumbs: Strona główna > Region > Kategoria > Nazwa.
                 AN-6-081: flex-wrap zamiast overflow-hidden — przy odstępach tekstu (WCAG 1.4.12) okruszek, który się
                 nie mieści, przechodzi do następnego rzędu zamiast wyjść poza nav; region i kategoria bez obcinania
-                (linki inline-flex nie pokazują wielokropka), nazwa bieżącej strony ucinana wielokropkiem na szerokości nav. */}
+                (linki inline-flex nie pokazują wielokropka), nazwa bieżącej strony ucinana wielokropkiem na szerokości nav.
+                Below md the last crumb repeats the h1 right under it, so it is hidden visually (sr-only: screen readers
+                still get the full trail with aria-current="page") together with the chevron before it (no dangling
+                separator). From md up nothing changes. The BreadcrumbList JSON-LD keeps all 4 items. */}
             <nav className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-xs md:text-sm mb-3 md:mb-4 min-w-0 [&>a]:inline-flex [&>a]:items-center [&>a]:min-h-[40px] md:[&>a]:min-h-0" aria-label="Ścieżka">
               <Link to={okruszki.glowna} className="shrink-0 text-muted-foreground hover:text-foreground transition-colors">Strona główna</Link>
               <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
@@ -651,12 +654,12 @@ const ActivityDetail = () => {
               >
                 {typeLabel}
               </Link>
-              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground max-md:hidden" aria-hidden="true" />
               <span
                 aria-current="page"
                 title={activity.title}
                 aria-label={activity.title}
-                className="min-w-0 max-w-full truncate text-foreground font-medium md:max-w-[300px]"
+                className="min-w-0 max-w-full truncate text-foreground font-medium md:max-w-[300px] max-md:sr-only"
               >
                 {activity.title}
               </span>
