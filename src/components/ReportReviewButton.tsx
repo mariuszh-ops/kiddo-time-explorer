@@ -1,4 +1,5 @@
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 import { Flag } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -40,6 +41,7 @@ const REASONS = [
 ] as const;
 
 type Reason = (typeof REASONS)[number]["value"];
+type FieldErrors = Partial<Record<"explanation" | "name" | "contact_email", string>>;
 
 export const REPORT_REVIEW_PREFIX = "[Zgłoszenie opinii — DSA art. 16]";
 const EXPLANATION_MAX = 1000;
@@ -97,6 +99,10 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
   const [email, setEmail] = useState("");
   const [goodFaith, setGoodFaith] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<FieldErrors>({});
+  const explanationRef = useRef<HTMLTextAreaElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   // „wstecz” przy otwartym dialogu zamyka go i zostawia na karcie (jak GL-4-056).
   useCloseOnBack(open, () => setOpen(false));
@@ -107,15 +113,32 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
     setName("");
     setEmail("");
     setGoodFaith(false);
+    setErrors({});
   };
 
   const submit = async () => {
     if (!goodFaith) return;
     const parsed = schema.safeParse({ explanation, name, contact_email: email });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "Sprawdź pola formularza");
+      // AN-PO-NOCY F2 (WCAG 3.3.1, wzór AN-12-079 w „Zgłoś błąd w danych”): błąd przy polu
+      // (aria-invalid + aria-describedby) i fokus na pierwszym błędnym polu zamiast samego toastu.
+      const next: FieldErrors = {};
+      for (const issue of parsed.error.issues) {
+        const key = issue.path[0];
+        if ((key === "explanation" || key === "name" || key === "contact_email") && !next[key]) {
+          next[key] = issue.message;
+        }
+      }
+      if (!next.explanation && !next.name && !next.contact_email) {
+        toast.error(parsed.error.issues[0]?.message ?? "Sprawdź pola formularza");
+        return;
+      }
+      // flushSync: atrybuty błędu są w DOM, zanim fokus trafi na pole (czytnik odczyta komunikat).
+      flushSync(() => setErrors(next));
+      (next.explanation ? explanationRef.current : next.name ? nameRef.current : emailRef.current)?.focus();
       return;
     }
+    setErrors({});
     const reasonLabel = REASONS.find((r) => r.value === reason)?.label ?? reason;
     const pageUrl =
       typeof window !== "undefined" ? `${window.location.origin}${window.location.pathname}` : "";
@@ -161,13 +184,19 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
     name: `${uid}-name`,
     email: `${uid}-email`,
     goodFaith: `${uid}-good-faith`,
+    explanationError: `${uid}-explanation-error`,
+    nameError: `${uid}-name-error`,
+    emailError: `${uid}-email-error`,
   };
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setErrors({});
+          setOpen(true);
+        }}
         aria-label={`Zgłoś opinię: ${authorLabel}`}
         className="inline-flex items-center justify-center gap-1 min-h-[44px] min-w-[44px] md:min-h-[24px] md:min-w-[24px] text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
       >
@@ -209,13 +238,24 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
                 Dlaczego ta treść narusza prawo lub regulamin? *
               </Label>
               <Textarea
+                ref={explanationRef}
                 id={ids.explanation}
                 value={explanation}
-                onChange={(e) => setExplanation(e.target.value.slice(0, EXPLANATION_MAX))}
+                onChange={(e) => {
+                  setExplanation(e.target.value.slice(0, EXPLANATION_MAX));
+                  if (errors.explanation) setErrors((prev) => ({ ...prev, explanation: undefined }));
+                }}
                 rows={4}
                 maxLength={EXPLANATION_MAX}
                 aria-required="true"
+                aria-invalid={errors.explanation ? true : undefined}
+                aria-describedby={errors.explanation ? ids.explanationError : undefined}
               />
+              {errors.explanation && (
+                <p id={ids.explanationError} className="text-sm font-medium text-destructive mt-1">
+                  {errors.explanation}
+                </p>
+              )}
               <div className="text-xs text-muted-foreground mt-1">
                 {explanation.length}/{EXPLANATION_MAX}
               </div>
@@ -226,12 +266,23 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
                 Imię i nazwisko lub nazwa (opcjonalnie)
               </Label>
               <Input
+                ref={nameRef}
                 id={ids.name}
                 autoComplete="name"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  if (errors.name) setErrors((prev) => ({ ...prev, name: undefined }));
+                }}
                 maxLength={120}
+                aria-invalid={errors.name ? true : undefined}
+                aria-describedby={errors.name ? ids.nameError : undefined}
               />
+              {errors.name && (
+                <p id={ids.nameError} className="text-sm font-medium text-destructive mt-1">
+                  {errors.name}
+                </p>
+              )}
             </div>
 
             <div>
@@ -239,14 +290,25 @@ const ReportReviewButton = ({ placeId, authorLabel, reviewLocator }: Props) => {
                 Twój e-mail (jeśli chcesz poznać decyzję)
               </Label>
               <Input
+                ref={emailRef}
                 id={ids.email}
                 type="email"
                 autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.contact_email) setErrors((prev) => ({ ...prev, contact_email: undefined }));
+                }}
                 placeholder="opcjonalnie"
                 maxLength={CONTACT_EMAIL_MAX}
+                aria-invalid={errors.contact_email ? true : undefined}
+                aria-describedby={errors.contact_email ? ids.emailError : undefined}
               />
+              {errors.contact_email && (
+                <p id={ids.emailError} className="text-sm font-medium text-destructive mt-1">
+                  {errors.contact_email}
+                </p>
+              )}
             </div>
 
             <div className="flex items-start gap-2">

@@ -87,14 +87,12 @@ describe("AN-8-006/010 — e-mail kontaktowy <= 200 znaków (CHECK bazy)", () =>
   ] as const) {
     it(`${nazwa}: e-mail 206 znaków -> 0 INSERT, polski komunikat, pole maxLength 200`, async () => {
       const pole = await zglos(EMAIL_206);
-      if (zglos === zglosBlad) {
-        // AN-12-079: w „Zgłoś błąd w danych” komunikat jest przy polu (aria-describedby), nie w toaście
-        await waitFor(() => expect(pole.getAttribute("aria-invalid")).toBe("true"));
-        const id = pole.getAttribute("aria-describedby") ?? "";
-        expect(document.getElementById(id)?.textContent).toBe("Maksymalnie 200 znaków");
-      } else {
-        await waitFor(() => expect(h.toast.error).toHaveBeenCalledWith("Maksymalnie 200 znaków"));
-      }
+      // AN-12-079 („Zgłoś błąd w danych”) i AN-PO-NOCY F2 („Zgłoś opinię”): komunikat jest przy polu
+      // (aria-describedby), nie w toaście
+      await waitFor(() => expect(pole.getAttribute("aria-invalid")).toBe("true"));
+      const id = pole.getAttribute("aria-describedby") ?? "";
+      expect(document.getElementById(id)?.textContent).toBe("Maksymalnie 200 znaków");
+      expect(h.toast.error).not.toHaveBeenCalled();
       expect(h.insert).not.toHaveBeenCalled();
       expect(pole.maxLength).toBe(200);
     });
