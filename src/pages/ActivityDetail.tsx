@@ -550,11 +550,14 @@ const ActivityDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
+            {/* AN-12-077 (sticky bar): "Na liście" must look different from "Chcę odwiedzić";
+                the unsaved state stays the filled call to action, the saved one uses secondary
+                (same as the main action row). */}
             <Button
               onClick={handleWantToVisitClick}
               tabIndex={showStickyHeader ? 0 : -1}
               size="sm"
-              variant={wantToVisit ? "default" : "default"}
+              variant={wantToVisit ? "secondary" : "default"}
               className="h-10 px-3 text-xs sm:text-sm"
               disabled={isProcessing !== null}
             >
@@ -564,11 +567,13 @@ const ActivityDetail = () => {
                 "Chcę odwiedzić"
               )}
             </Button>
+            {/* Toggle button (WAI-ARIA APG): constant label + aria-pressed carries the state. */}
             <button
               onClick={handleFavoriteClick}
               tabIndex={showStickyHeader ? 0 : -1}
               className="min-h-11 min-w-11 h-11 w-11 rounded-full hover:bg-muted flex items-center justify-center transition-colors"
-              aria-label={isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"}
+              aria-label="Ulubione"
+              aria-pressed={isFavorite}
             >
               <Heart className={cn(
                 "w-5 h-5 transition-colors",
