@@ -703,11 +703,12 @@ const ActivityDetail = () => {
             <div className="flex flex-col gap-3">
               {/* Stack vertically on mobile, side-by-side on desktop */}
               <div className="flex flex-col sm:flex-row gap-3">
-                {/* AN-12-077: "not saved" must look different from "W ulubionych" (outline vs filled)
-                    and expose the toggle state to assistive tech via aria-pressed. */}
+                {/* Toggle button (WAI-ARIA APG, AN-12-077 + decision 2A): constant label "Ulubione",
+                    aria-pressed carries the state, the filled red heart shows it (same as the sticky bar).
+                    Stays outline in both states: "Chcę odwiedzić" is the one highlighted action of the row. */}
                 <Button
                   onClick={handleFavoriteClick}
-                  variant={isFavorite ? "default" : "outline"}
+                  variant="outline"
                   aria-pressed={isFavorite}
                   size={isMobile ? "lg" : "default"}
                   className="flex-1 min-h-[44px] md:min-h-0 transition-all duration-200"
@@ -733,16 +734,21 @@ const ActivityDetail = () => {
                         </>
                       ) : (
                         <>
-                          <Heart className={`w-4 h-4 mr-2 transition-all duration-200 ${isFavorite ? "fill-current scale-110" : ""}`} />
-                          {isFavorite ? "W ulubionych" : "Ulubione"}
+                          <Heart className={cn(
+                            "w-4 h-4 mr-2 transition-all duration-200",
+                            isFavorite && "fill-red-500 text-red-500 scale-110"
+                          )} />
+                          Ulubione
                         </>
                       )}
                     </motion.span>
                   </AnimatePresence>
                 </Button>
-                <Button 
+                {/* Decision 2A: the main action of the card, highlighted like in the sticky bar
+                    (default until saved, then secondary "Na liście"). */}
+                <Button
                   onClick={handleWantToVisitClick}
-                  variant={wantToVisit ? "secondary" : "outline"}
+                  variant={wantToVisit ? "secondary" : "default"}
                   size={isMobile ? "lg" : "default"}
                   className="flex-1 min-h-[44px] md:min-h-0 transition-all duration-200"
                   disabled={isProcessing !== null}
