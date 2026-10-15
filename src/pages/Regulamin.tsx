@@ -7,8 +7,8 @@ import SEOHead from "@/components/SEOHead";
 
 // N-17: data wejscia w zycie = dzien publikacji (klikniecie Publish), nie data z gory.
 // Zmieniasz regulamin merytorycznie -> podbij WERSJA i ustaw nowe OBOWIAZUJE_OD.
-const OBOWIAZUJE_OD = "4 września 2026 r.";
-const WERSJA = 1;
+const OBOWIAZUJE_OD = "15 października 2026 r.";
+const WERSJA = 2;
 
 const Regulamin = () => {
   return (
@@ -54,7 +54,7 @@ const Regulamin = () => {
                 <ul className="list-disc pl-6 space-y-2 mb-4">
                   <li><strong>Serwis</strong> — strona internetowa FamilyFun wraz z jej funkcjonalnościami.</li>
                   <li><strong>Użytkownik</strong> — osoba korzystająca z Serwisu, zarówno bez logowania, jak i po utworzeniu konta.</li>
-                  <li><strong>Konto</strong> — indywidualny profil Użytkownika, utworzony na jeden z dwóch sposobów: (a) przez zalogowanie się zewnętrznym dostawcą (Google) albo (b) przez rejestrację adresem e-mail i hasłem (min. 8 znaków, mała i wielka litera, cyfra, znak specjalny) z potwierdzeniem adresu e-mail.</li>
+                  <li><strong>Konto</strong> — indywidualny profil Użytkownika, utworzony na jeden z dwóch sposobów: (a) przez zalogowanie się zewnętrznym dostawcą (Google) albo (b) przez rejestrację adresem e-mail i hasłem (min. 12 znaków, mała i wielka litera, cyfra, znak specjalny) z potwierdzeniem adresu e-mail.</li>
                   <li><strong>Treści Użytkownika</strong> — opinie, oceny, zgłoszenia miejsc, zgłoszenia błędów oraz inne materiały przesyłane przez Użytkownika.</li>
                   <li><strong>Katalog</strong> — zbiór informacji o atrakcjach dla rodzin prezentowanych w Serwisie.</li>
                 </ul>
@@ -88,7 +88,7 @@ const Regulamin = () => {
                 <p className="mb-4">
                   Konto można założyć na dwa sposoby: (a) logując się przez Google — konto tworzone jest
                   automatycznie po pierwszym zalogowaniu, albo (b) rejestrując się adresem e-mail i hasłem
-                  (min. 8 znaków, mała i wielka litera, cyfra, znak specjalny). W przypadku rejestracji e-mailem na podany adres wysyłamy wiadomość
+                  (min. 12 znaków, mała i wielka litera, cyfra, znak specjalny). W przypadku rejestracji e-mailem na podany adres wysyłamy wiadomość
                   z linkiem potwierdzającym — konto staje się aktywne po jego kliknięciu. Użytkownik, który
                   zapomni hasła, może je zmienić korzystając z funkcji resetu hasła („Nie pamiętam hasła”),
                   która wysyła link do ustawienia nowego hasła.
