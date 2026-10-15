@@ -3,6 +3,7 @@ import {
   ARKUSZ_PEEK_PX,
   ODSTEP_LOKALIZACJI_NAD_ARKUSZEM_PX,
   dolPrzyciskuLokalizacji,
+  kontrolkiMapyWidoczne,
 } from "@/lib/arkuszMapy";
 
 describe("AN-12-085: „Moja lokalizacja” nad arkuszem mapy mobilnej", () => {
@@ -18,5 +19,16 @@ describe("AN-12-085: „Moja lokalizacja” nad arkuszem mapy mobilnej", () => {
   it("half i full bez zmian (nad arkuszem 50% / 90%)", () => {
     expect(dolPrzyciskuLokalizacji("half")).toBe("54%");
     expect(dolPrzyciskuLokalizacji("full")).toBe("92%");
+  });
+});
+
+describe("AN-PO-NOCY F3: kontrolki mapy przy pełnym arkuszu (WCAG 2.5.8)", () => {
+  it("full chowa zoom i „Moja lokalizacja” (przy 92% przycisk leżał na „Przybliż mapę”)", () => {
+    expect(kontrolkiMapyWidoczne("full")).toBe(false);
+  });
+
+  it("peek i half zostawiają kontrolki widoczne", () => {
+    expect(kontrolkiMapyWidoczne("peek")).toBe(true);
+    expect(kontrolkiMapyWidoczne("half")).toBe(true);
   });
 });

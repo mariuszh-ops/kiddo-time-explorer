@@ -21,3 +21,14 @@ export function dolPrzyciskuLokalizacji(stan: StanArkusza): string {
   if (stan === "peek") return `${ARKUSZ_PEEK_PX + ODSTEP_LOKALIZACJI_NAD_ARKUSZEM_PX}px`;
   return stan === "half" ? "54%" : "92%";
 }
+
+/**
+ * WCAG 2.5.8: czy kontrolki mapy (zoom + „Moja lokalizacja”) są widoczne przy danym stanie arkusza.
+ * W stanie full arkusz zajmuje 90% wysokości, nad nim zostaje ok. 72 px mapy: „Moja lokalizacja”
+ * (bottom 92%) leżała na „Przybliż mapę”, a „Oddal mapę” wchodziła na pasek arkusza (390x844).
+ * Wtedy chowamy je w całości (display:none — poza kolejnością Tab i drzewem dostępności);
+ * wracają po zwinięciu arkusza, jak pływające przyciski w mapach mobilnych przy pełnym arkuszu.
+ */
+export function kontrolkiMapyWidoczne(stan: StanArkusza): boolean {
+  return stan !== "full";
+}

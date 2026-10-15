@@ -38,7 +38,7 @@ import { useMergedPinDetails } from "@/hooks/useMergedPinDetails";
 import { fetchPinDetails, mergePinDetails, getCachedPinDetails, type MapBbox } from "@/lib/mapPins";
 import { formatRatingPl } from "@/lib/formatRating";
 import { komunikatBleduLokalizacji } from "@/lib/bladLokalizacji";
-import { dolPrzyciskuLokalizacji } from "@/lib/arkuszMapy";
+import { dolPrzyciskuLokalizacji, kontrolkiMapyWidoczne } from "@/lib/arkuszMapy";
 import { buildSrcSet, fallbackToOriginal } from "@/lib/imageSrcSet";
 import { activityCount, formatCountPl } from "@/lib/plural";
 import { prefersReducedMotion, scrollBehavior } from "@/lib/reducedMotion";
@@ -1024,9 +1024,11 @@ function MapFitBounds({
 function LocateButton({
   bottomOffset,
   mapRef,
+  ukryty = false,
 }: {
   bottomOffset?: string;
   mapRef: React.MutableRefObject<L.Map | null>;
+  ukryty?: boolean;
 }) {
   const [locating, setLocating] = useState(false);
   const markerRef = useRef<L.CircleMarker | null>(null);
@@ -1077,7 +1079,8 @@ function LocateButton({
       className={cn(
         "absolute z-[1000] w-11 h-11 rounded-full bg-background border border-border shadow-md flex items-center justify-center transition-colors",
         bottomOffset ? `right-4` : "bottom-4 right-4",
-        "hover:bg-accent cursor-pointer"
+        "hover:bg-accent cursor-pointer",
+        ukryty && "hidden"
       )}
       style={bottomOffset ? { bottom: bottomOffset } : undefined}
       aria-label="Moja lokalizacja"
@@ -1098,10 +1101,14 @@ function MapControls({
   mapRef,
   locateBottomOffset,
   granicaZoomu = null,
+  ukryte = false,
 }: {
   mapRef: React.MutableRefObject<L.Map | null>;
   locateBottomOffset?: string;
   granicaZoomu?: GranicaZoomu;
+  /** Pełny arkusz na telefonie (kontrolkiMapyWidoczne) — chowamy, ale NIE odmontowujemy:
+   *  LocateButton trzyma w refach znacznik pozycji użytkownika na mapie. */
+  ukryte?: boolean;
 }) {
   // FMN-B61: na granicy zoomu przycisk jest nieaktywny (aria-disabled, a nie
   // `disabled` — fokus klawiatury zostaje na przycisku zamiast spasc na <body>).
@@ -1115,7 +1122,7 @@ function MapControls({
   const naMin = granicaZoomu === "min";
   return (
     <>
-      <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-1">
+      <div className={cn("absolute top-3 right-3 z-[1000] flex flex-col gap-1", ukryte && "hidden")}>
         <button
           type="button"
           aria-label="Przybliż mapę"
@@ -1139,7 +1146,7 @@ function MapControls({
           −
         </button>
       </div>
-      <LocateButton mapRef={mapRef} bottomOffset={locateBottomOffset} />
+      <LocateButton mapRef={mapRef} bottomOffset={locateBottomOffset} ukryty={ukryte} />
     </>
   );
 }
@@ -1679,12 +1686,13 @@ const MapView = ({ activities, filters, onViewModeChange, savedMapState, onSaveM
   if (isMobile) {
     // Adjust locate button offset based on sheet state — zawsze nad arkuszem
     // (AN-12-085: przy peek 96 px przycisk zasłaniał „Ocena ↓” na pasku arkusza).
+    // Przy pełnym arkuszu kontrolki są schowane (WCAG 2.5.8, kontrolkiMapyWidoczne).
     const locateBottomOffset = dolPrzyciskuLokalizacji(mobileSheetState);
 
     return (
       <div className="fixed inset-0 top-[56px] bottom-[64px] z-20 overflow-hidden">
         {/* K-05: kontrolki mapy w DOM PRZED mapa i lista */}
-        <MapControls mapRef={mapInstanceRef} locateBottomOffset={locateBottomOffset} granicaZoomu={granicaZoomu} />
+        <MapControls mapRef={mapInstanceRef} locateBottomOffset={locateBottomOffset} granicaZoomu={granicaZoomu} ukryte={!kontrolkiMapyWidoczne(mobileSheetState)} />
         <MapContainer
           center={mapCenter}
           zoom={initialZoom}
