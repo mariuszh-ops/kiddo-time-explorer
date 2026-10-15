@@ -883,7 +883,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
       "Od Wawelu po park trampolin i kopalnię soli. Konkretne miejsca z katalogu, z ocenami, adresami i tym, dla jakiego wieku się nadają.",
     content: `# Kraków z dzieckiem — 9 atrakcji i 3 wypady poza miasto
 
-Małopolska to największy region w naszym katalogu: **ponad 680 atrakcji**, z czego ponad 200 w samym Krakowie. Poniżej wybór tych, które realnie działają z dziećmi, plus trzy wypady w promieniu godziny jazdy.
+Małopolska to największy region w naszym katalogu: **ponad 650 atrakcji**, z czego ponad 190 w samym Krakowie. Poniżej wybór tych, które realnie działają z dziećmi, plus trzy wypady w promieniu godziny jazdy.
 
 ## W Krakowie
 
@@ -984,7 +984,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
       "Afrykarium, Hydropolis, makieta Kolejkowa i taras na 49. piętrze. Wybór z katalogu, z ocenami i przedziałami wieku.",
     content: `# Wrocław z dzieckiem — 9 atrakcji w mieście i 3 poza nim
 
-Dolnośląskie ma w naszym katalogu **blisko 590 atrakcji**, a Wrocław prawie 150. To region, w którym łatwo zaplanować i miejski weekend, i wypad w góry — dlatego dzielimy listę na dwie części.
+Dolnośląskie ma w naszym katalogu **ponad 560 atrakcji**, a Wrocław ponad 130. To region, w którym łatwo zaplanować i miejski weekend, i wypad w góry — dlatego dzielimy listę na dwie części.
 
 ## We Wrocławiu
 
@@ -1085,7 +1085,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
       "Akwarium, zoo na 125 hektarach, okręt do zwiedzania i fokarium na Helu. Wybór z katalogu, z ocenami i wiekiem.",
     content: `# Trójmiasto z dzieckiem — 10 atrakcji
 
-Pomorskie ma w katalogu **blisko 400 atrakcji**. Trójmiasto jest o tyle wygodne, że wszystko leży wzdłuż jednej linii SKM — da się zaplanować dzień bez samochodu.
+Pomorskie ma w katalogu **ponad 370 atrakcji**. Trójmiasto jest o tyle wygodne, że wszystko leży wzdłuż jednej linii SKM — da się zaplanować dzień bez samochodu.
 
 ## Gdańsk
 
@@ -1190,7 +1190,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
       "Legendia, zjazd windą na 320 metrów, makieta z 12 pociągami i zamki na Jurze. Wybór z katalogu, z ocenami i wiekiem.",
     content: `# Śląskie z dzieckiem — 10 atrakcji
 
-Śląskie to drugi największy region w naszym katalogu: **ponad 600 atrakcji**. I bodaj najbardziej zróżnicowany — w promieniu godziny jazdy macie wesołe miasteczko, dwie zabytkowe kopalnie do zwiedzania i ruiny zamków na Jurze.
+Śląskie to drugi największy region w naszym katalogu: **ponad 570 atrakcji**. I bodaj najbardziej zróżnicowany — w promieniu godziny jazdy macie wesołe miasteczko, dwie zabytkowe kopalnie do zwiedzania i ruiny zamków na Jurze.
 
 ## Duże atrakcje aglomeracji
 
@@ -1297,7 +1297,7 @@ Dane: katalog FamilyFun, oceny i godziny z Google, stan na sierpień 2026.`,
       "Nowe Zoo, Stare Zoo, Palmiarnia, Termy Maltańskie i makiety z miliona klocków. Wybór z katalogu, z ocenami i wiekiem.",
     content: `# Poznań z dzieckiem — 10 atrakcji
 
-Wielkopolska ma w katalogu **ponad 320 atrakcji**, z czego ponad 100 w Poznaniu. Miasto ma jedną rzadką zaletę: dwa ogrody zoologiczne o zupełnie różnym charakterze, więc da się wybrać ten pasujący do wieku dziecka.
+Wielkopolska ma w katalogu **ponad 300 atrakcji**, z czego ponad 100 w Poznaniu. Miasto ma jedną rzadką zaletę: dwa ogrody zoologiczne o zupełnie różnym charakterze, więc da się wybrać ten pasujący do wieku dziecka.
 
 ## Dwa zoo, dwa różne pomysły na dzień
 
