@@ -138,15 +138,21 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
     // traktujemy to jako awarię zabezpieczenia i blokujemy logowanie hasłem.
     // D-15: gdy widget stoi na stronie i czeka na kliknięcie checkboxa, budżet
     // nie ma prawa go ubić — użytkownik dostaje tyle czasu, ile potrzebuje.
+    // A1000-RESEND: ekran „Sprawdź skrzynkę” montuje WŁASNY widget (ten z formularza
+    // znika razem z formularzem), więc budżet liczymy od nowa przy każdej zmianie ekranu.
+    if (screen === "reset-sent") return;
+    widgetReadyRef.current = false;
     captchaTimeoutRef.current = setTimeout(() => {
-      if (!captchaToken && !widgetReadyRef.current) {
+      // Sam `widgetReadyRef`: `captchaToken` w tym domknięciu pochodzi z renderu
+      // sprzed zmiany ekranu i bywa tokenem odmontowanego widgetu.
+      if (!widgetReadyRef.current) {
         markCaptchaUnavailable();
       }
     }, TURNSTILE_TIMEOUT_MS);
 
     return clearCaptchaTimeout;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [screen]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,15 +243,21 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
 
   const resend = async () => {
     if (busy || cooldown > 0) return;
-    setBusy(true);
     setError(null);
     setInfo(null);
+    // A1000-RESEND: /auth/v1/resend wymaga captchy jak każde inne żądanie auth.
+    // Token z rejestracji jest jednorazowy i już zużyty — bez nowego tokenu
+    // z widgetu na tym ekranie serwer odpowiada 400 captcha_failed.
+    if (!captchaToken) {
+      setError(captchaError ? turnstileUnavailableMessage() : TURNSTILE_ERROR_MESSAGE);
+      return;
+    }
+    setBusy(true);
     try {
-      await resendConfirmation(email, captchaToken || undefined);
+      await resendConfirmation(email, captchaToken);
       setInfo("Wysłaliśmy link ponownie.");
       setCooldown(RESEND_COOLDOWN);
-      setCaptchaToken("");
-      turnstileRef.current?.reset();
+      resetCaptcha();
     } catch (err) {
       // M-14: limit serwera to konkretna odpowiedź — tłumaczymy ją nawet wtedy,
       // gdy widget captchy zdążył zgłosić awarię.
@@ -264,6 +276,42 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
   };
 
 
+  // Jeden widget dla formularza i ekranu „Sprawdź skrzynkę” — oba wysyłają
+  // żądania auth, oba potrzebują świeżego tokenu i tej samej obsługi awarii.
+  const captchaWidget = (
+    <div className="flex justify-center w-full">
+      <Turnstile
+        ref={turnstileRef}
+        siteKey={TURNSTILE_SITE_KEY}
+        onWidgetLoad={() => {
+          // D-15: widget jest na stronie — dalej to już tylko czekanie na użytkownika.
+          widgetReadyRef.current = true;
+          clearCaptchaTimeout();
+        }}
+        onSuccess={(token) => {
+          widgetReadyRef.current = true;
+          clearCaptchaTimeout();
+          setCaptchaToken(token);
+          setCaptchaError(false);
+          setError((prev) => (prev === TURNSTILE_BLOCKED_MESSAGE || prev === TURNSTILE_OUR_FAULT_MESSAGE ? null : prev));
+        }}
+        onExpire={() => setCaptchaToken("")}
+        onError={() => {
+          markCaptchaUnavailable();
+        }}
+        onUnsupported={() => {
+          markCaptchaUnavailable();
+        }}
+        scriptOptions={{
+          onError: () => {
+            markCaptchaUnavailable();
+          },
+        }}
+        options={{ size: "flexible" }}
+      />
+    </div>
+  );
+
   if (screen === "confirm" || screen === "reset-sent") {
     const isConfirm = screen === "confirm";
     return (
@@ -279,11 +327,17 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
           <span className="font-medium text-foreground break-all">{email}</span>.
           {isConfirm && " Kliknij go, aby aktywować konto."}
         </p>
+        {isConfirm && captchaWidget}
         {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
         {info && <p role="status" className="text-sm text-muted-foreground">{info}</p>}
         <div className="flex flex-col gap-2 w-full pt-1">
           {isConfirm && (
-            <Button variant="outline" onClick={resend} disabled={busy || cooldown > 0} className="w-full">
+            <Button
+              variant="outline"
+              onClick={resend}
+              disabled={busy || cooldown > 0 || !captchaToken}
+              className="w-full"
+            >
               {busy ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : cooldown > 0 ? (
@@ -345,37 +399,7 @@ const EmailAuthForm = ({ onSuccess, onModeChange, initialEmail = "", initialMode
         </div>
       )}
 
-      <div className="flex justify-center">
-        <Turnstile
-          ref={turnstileRef}
-          siteKey={TURNSTILE_SITE_KEY}
-          onWidgetLoad={() => {
-            // D-15: widget jest na stronie — dalej to już tylko czekanie na użytkownika.
-            widgetReadyRef.current = true;
-            clearCaptchaTimeout();
-          }}
-          onSuccess={(token) => {
-            widgetReadyRef.current = true;
-            clearCaptchaTimeout();
-            setCaptchaToken(token);
-            setCaptchaError(false);
-            setError((prev) => (prev === TURNSTILE_BLOCKED_MESSAGE || prev === TURNSTILE_OUR_FAULT_MESSAGE ? null : prev));
-          }}
-          onExpire={() => setCaptchaToken("")}
-          onError={() => {
-            markCaptchaUnavailable();
-          }}
-          onUnsupported={() => {
-            markCaptchaUnavailable();
-          }}
-          scriptOptions={{
-            onError: () => {
-              markCaptchaUnavailable();
-            },
-          }}
-          options={{ size: "flexible" }}
-        />
-      </div>
+      {captchaWidget}
 
       {error && (
         <p id="auth-error" role="alert" className="text-sm text-destructive">
